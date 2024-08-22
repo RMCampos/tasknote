@@ -6,10 +6,6 @@ on:
       - '*'
       - '*/*'
 
-concurrency:
-  group: ${{ github.event.number }}
-  cancel-in-progress: true
-
 jobs:
   code-checks:
     name: Code Checks
