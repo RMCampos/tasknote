@@ -1,38 +1,75 @@
-# react-typescript-todolist
+# Project Name
 
-[Udemy Course] This is React App with TypeScript and CSS modules 
+[![License](https://img.shields.io/github/license/username/repo.svg)](LICENSE)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/username/repo/build.yml)](https://github.com/username/repo/actions)
 
-# Tech stack
-- [ ] Back-end
-- [x] Front-end
-- [ ] Docker
-- [ ] Database related
-- [ ] Testing
-- [ ] Maven
-- [x] NPM
-- [ ] Java related
-- [x] JavaScript/TypeScript/React related
-- [ ] Shell scripting
+## 📋 Table of Contents
 
-# Experimental stuff
-- [ ] Clojure
-- [ ] Wildfly
-- [ ] IndexedDb
-- [ ] PHP
-- [ ] Slim Framework
-- [ ] KnockoutJS
-- [ ] ServiceWorker
-- [ ] Authentication
-- [ ] NodeJS
+- [About the Project](#about-the-project)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
 
-# The course
-- Title: TypeScript from basic to advanced (w/ React, Express)
-- Subtitle: Learn TypeScript in practice, integrating with various market Frameworks (React, Express) and even creating projects!
-- Author: Matheus Battisti
-- Link: https://www.udemy.com/course/typescript-do-basico-ao-avancado-c-react-express/
+## 📝 About the Project
 
+Simple TODO app written in React.
 
-- React
-- TypeScript
-- Featuring
-  - CSS as modules
+TODO: add GIF or screenshot of the app
+
+## ✨ Features
+
+- Create TODO items
+- Edit TODO items
+- Mark items as completed
+
+## 🚀 Tech Stack
+
+- **Frontend:** React, TypeScript, Vite.
+- **Backend:** Not applicable.
+- **Database:** Not applicable.
+- **Other Technologies:** Docker, Caddy.
+
+## 🛠 Installation
+
+1. Clone the repo
+   ```sh
+   git clone https://github.com/ricardo-campos-org/react-typescript-todolist
+   ```
+2. Install NPM packages
+   ```sh
+   npm install
+   ```
+3. Start the development server
+   ```sh
+   npm start
+   ```
+
+## 🎮 Usage
+
+Once you're in the home screen, you can click the button to create your first TODO item.
+
+## 🤝 Contributing
+
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+### Steps to Contribute:
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feat/amazing-feature`)
+3. Commit your Changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the Branch (`git push origin feat/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## 📞 Contact
+
+Your Name - [@your_twitter](https://twitter.com/RicardoMpcInc)
+
+Project Link: [GitHub Repository](https://github.com/ricardo-campos-org/react-typescript-todolist)

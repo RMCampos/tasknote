@@ -1,0 +1,52 @@
+name: Main
+
+on:
+  push:
+    branches:
+      - main
+    workflow_dispatch:
+
+jobs:
+  release:
+    name: Auto release
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.changelog.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
+          fetch-depth: 0
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Conventional Changelog Update
+        uses: TriPSs/conventional-changelog-action@v5
+        id: changelog
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          output-file: 'CHANGELOG.md'
+          skip-version-file: 'true'
+          skip-commit: 'true'
+          git-push: 'false'
+          skip-on-empty: 'false'
+      - name: Set new version
+        run: |
+          echo "::set-output name=version::${{ steps.changelog.outputs.version }}"
+          npm version minor
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: Ci Bot
+          author_email: cibot@users.noreply.github.com
+          message: 'doc: updating pom to ${{ steps.changelog.outputs.version }} [ci skip]'
+          add: '["packages.json","CHANGELOG.md"]'
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag: ${{ steps.changelog.outputs.tag }}
+          name: ${{ steps.changelog.outputs.tag }}
+          body: ${{ steps.changelog.outputs.clean_changelog }}
