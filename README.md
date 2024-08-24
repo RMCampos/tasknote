@@ -1,7 +1,8 @@
-# Project Name
+# TaskNote
 
 [![License](https://img.shields.io/github/license/username/repo.svg)](LICENSE)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/username/repo/build.yml)](https://github.com/username/repo/actions)
+<!--[![Build Status](https://img.shields.io/github/actions/workflow/status/username/repo/build.yml)](https://github.com/username/repo/actions)-->
+[![Build Status](https://github.com/ricardo-campos-org/react-typescript-todolist/actions/workflows/main.yml/badge.svg)]
 
 ## 📋 Table of Contents
 
@@ -16,22 +17,25 @@
 
 ## 📝 About the Project
 
-Simple TODO app written in React.
+TaskNote was created to make our lives easier. In a nutshell, you can manage your TODOs and your
+Notes. 
+
+A key feature is that you can `#tag` a todo or note and search or filter later.
 
 TODO: add GIF or screenshot of the app
 
 ## ✨ Features
 
-- Create TODO items
-- Edit TODO items
-- Mark items as completed
+- Create and manage TODO items
+- Create and manage Notes
+- Tag TODOs and Notes
 
 ## 🚀 Tech Stack
 
-- **Frontend:** React, TypeScript, Vite.
-- **Backend:** Not applicable.
-- **Database:** Not applicable.
-- **Other Technologies:** Docker, Caddy.
+- **Frontend:** React, Typescript, Vite, Vitest, Code Coverage
+- **Backend:** Node.js
+- **Database:** PostgreSQL
+- **Other Technologies:** Docker, Docker Compose, Caddy
 
 ## 🛠 Installation
 
@@ -70,6 +74,4 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## 📞 Contact
 
-Your Name - [@your_twitter](https://twitter.com/RicardoMpcInc)
-
-Project Link: [GitHub Repository](https://github.com/ricardo-campos-org/react-typescript-todolist)
+Ricardo Campos on X - [@RicardoMpcInc](https://twitter.com/RicardoMpcInc)

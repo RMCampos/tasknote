@@ -20,12 +20,17 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           node-version: '20'
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Clean and Install
         run: npm ci
       - name: Build
         run: npm run build
-      #- name: Lint
-      #  run: npm run lint
+      - name: Lint
+        run: npm run lint
       #- name: Unit tests
       #  run: npm run test

@@ -8,19 +8,21 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^29.5.12",
     "@types/node": "^22.5.0",
-    "@types/react": "^18.3.4",
     "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-scripts": "5.0.1",
     "typescript": "^4.8.4",
-    "web-vitals": "^2.1.4"
+    "vite": "^5.4.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "vite --host",
+    "build": "tsc && vite build",
+    "preview": "vite build && vite preview",
+    "test": "vitest -u",
+    "test:coverage": "vitest run --coverage --watch=false",
+    "lint": "./node_modules/.bin/eslint \"src/**\"",
+    "lint:fix": "./node_modules/.bin/eslint --fix \"src/**\""
   },
   "eslintConfig": {
     "extends": [
@@ -39,5 +41,20 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.4",
+    "@typescript-eslint/eslint-plugin": "^8.2.0",
+    "@vitest/coverage-v8": "^2.0.5",
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsdoc": "^50.2.2",
+    "eslint-plugin-promise": "^7.1.0",
+    "eslint-plugin-react": "^7.35.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "jsdom": "^24.1.1",
+    "source-map-support": "^0.5.21",
+    "vitest": "^2.0.5"
   }
 }

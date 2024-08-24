@@ -13,17 +13,14 @@ import styles from './App.module.css';
 // Interfaces
 import { ITask } from './interfaces/Task';
 
-
-function App() {
+const App: React.FC = () => {
   const [taskList, setTaskList] = useState<ITask[]>([]);
   const [taskToUpdate, setTaskToUpdate] = useState<ITask | null>(null);
-  
+
   const deleteTask = (id: number) => {
     setTaskList(
-      taskList.filter(task => {
-        return task.id !== id;
-      })
-    )
+      taskList.filter((task) => task.id !== id)
+    );
   };
 
   const hideOrShowModal = (display: boolean) => {
@@ -41,32 +38,30 @@ function App() {
   };
 
   const updateTask = (id: number, title: string, difficulty: number) => {
-    const updatedTask: ITask = { id, title, difficulty};
-    const updatedItems = taskList.map((task) => {
-      return task.id === updatedTask.id ? updatedTask : task;
-    });
+    const updatedTask: ITask = { id, title, difficulty };
+    const updatedItems = taskList.map((task) => (task.id === updatedTask.id ? updatedTask : task));
 
     setTaskList(updatedItems);
     hideOrShowModal(false);
   };
 
   return (
-    <div>
-      <Modal children={
+    <>
+      <Modal>
         <TaskForm
-          btnText='Update task'
+          btnText="Update task"
           taskList={taskList}
           task={taskToUpdate}
           handleUpdate={updateTask}
         />
-        } />
+      </Modal>
       <Header />
-      
+
       <main className={styles.main}>
         <div>
           <h2>What are you going to do?</h2>
           <TaskForm
-            btnText='New task'
+            btnText="New task"
             taskList={taskList}
             setTaskList={setTaskList}
           />
@@ -81,10 +76,10 @@ function App() {
           />
         </div>
       </main>
-      
+
       <Footer />
-    </div>
+    </>
   );
-}
+};
 
 export default App;
