@@ -14,7 +14,7 @@ import styles from './App.module.css';
 import { ITask } from './interfaces/Task';
 
 
-function App() {
+const App: React.FC = () => {
   const [taskList, setTaskList] = useState<ITask[]>([]);
   const [taskToUpdate, setTaskToUpdate] = useState<ITask | null>(null);
   
@@ -51,7 +51,7 @@ function App() {
   };
 
   return (
-    <div>
+    <>
       <Modal children={
         <TaskForm
           btnText='Update task'
@@ -83,8 +83,8 @@ function App() {
       </main>
       
       <Footer />
-    </div>
+    </>
   );
-}
+};
 
 export default App;
