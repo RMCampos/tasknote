@@ -1,4 +1,9 @@
-import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
+import React, {
+  useState,
+  ChangeEvent,
+  FormEvent,
+  useEffect
+} from 'react';
 
 // CSS
 import styles from './TaskForm.module.css';
@@ -39,8 +44,12 @@ const TaskForm = ({
     if (handleUpdate) {
       handleUpdate(id, title, difficulty);
     } else {
-      const id = Math.floor(Math.random() * 1000);
-      const newTask: ITask = {id, title, difficulty};
+      const newId: number = Math.floor(Math.random() * 1000);
+      const newTask: ITask = {
+        id: newId,
+        title,
+        difficulty
+      };
 
       setTaskList!([...taskList, newTask]);
       setTitle('');
@@ -52,35 +61,35 @@ const TaskForm = ({
     if (e.target.name === 'title') {
       setTitle(e.target.value);
     } else {
-      setDifficulty(parseInt(e.target.value));
+      setDifficulty(parseInt(e.target.value, 10));
     }
   };
-  
+
   return (
     <form onSubmit={addTaskHandler} className={styles.form}>
       <div className={styles.input_container}>
-        <label htmlFor='title'>Title</label>
+        <label htmlFor="title">Title</label>
         <input
-          type='text'
-          name='title'
-          placeholder='Task title'
+          type="text"
+          name="title"
+          placeholder="Task title"
           onChange={handleChange}
           value={title}
         />
       </div>
 
       <div className={styles.input_container}>
-        <label htmlFor='difficulty'>Difficulty</label>
+        <label htmlFor="difficulty">Difficulty</label>
         <input
-          type='text'
-          name='difficulty'
-          placeholder='Task difficulty'
+          type="text"
+          name="difficulty"
+          placeholder="Task difficulty"
           onChange={handleChange}
           value={difficulty}
         />
       </div>
 
-      <input type='submit' value={btnText} />
+      <input type="submit" value={btnText} />
     </form>
   );
 };

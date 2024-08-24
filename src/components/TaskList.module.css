@@ -23,7 +23,7 @@
   justify-content: center;
 }
 
-.actions i {
+.actions button {
   margin-bottom: .5em;
   font-size: 1.2em;
   cursor: pointer;
@@ -33,6 +33,6 @@
   transition: .5s;
 }
 
-.actions i:hover {
+.actions button:hover {
   color: #61dafb;
 }

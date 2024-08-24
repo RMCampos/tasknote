@@ -21,7 +21,8 @@
     "preview": "vite build && vite preview",
     "test": "vitest -u",
     "test:coverage": "vitest run --coverage --watch=false",
-    "lint": "./node_modules/.bin/eslint \"src/**\""
+    "lint": "./node_modules/.bin/eslint \"src/**\"",
+    "lint:fix": "./node_modules/.bin/eslint --fix \"src/**\""
   },
   "eslintConfig": {
     "extends": [

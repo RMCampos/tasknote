@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 import styles from './Modal.module.css';
 
@@ -6,9 +6,8 @@ interface Props {
   children: React.ReactNode
 }
 
-const Modal = ({children}: Props) => {
-  
-  const closeModal = (e: React.MouseEvent): void => {
+const Modal: React.FC<{ children: React.ReactNode }> = ({ children }: Props) => {
+  const closeModal = (): void => {
     const modal = document.querySelector('#modal');
     modal!.classList.add('hide');
   };
@@ -16,14 +15,20 @@ const Modal = ({children}: Props) => {
   return (
     <div>
       <div id="modal" className="hide">
-        <div className={styles.fade} onClick={closeModal}></div>
+        <button
+          type="button"
+          className={styles.fade}
+          onClick={() => closeModal()}
+        >
+          Close
+        </button>
         <div className={styles.modal}>
           <h2>Modal text</h2>
-          {children}
+          { children }
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default Modal;
