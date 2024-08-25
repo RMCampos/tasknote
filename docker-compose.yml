@@ -1,0 +1,36 @@
+---
+
+services:
+  tasknote:
+    container_name: tasknote
+    profiles: 
+      - "dev"
+    image: node:20.17-bullseye-slim
+    ports: 
+      - "5000:5000"
+    entrypoint: sh -c "npm i --no-update-notifier && npm start"
+    user: root
+    volumes: 
+      - "./:/app"
+    working_dir: /app
+    environment:
+      LOG_LEVEL: debug
+    healthcheck:
+      test: timeout 10s bash -c 'true > /dev/tcp/127.0.0.1/3000'
+
+  caddy:
+    container_name: caddy
+    profiles: 
+      - "caddy"
+    build:
+      context: .
+      args:
+        BUILD: nightly
+    ports: 
+      - "80:5000"
+    volumes: 
+      - "./Caddyfile:/etc/caddy/Caddyfile"
+    environment:
+      LOG_LEVEL: debug
+    healthcheck:
+      test: timeout 10s bash -c 'true > /dev/tcp/127.0.0.1/3000'

@@ -1,8 +1,7 @@
 # TaskNote
 
-[![License](https://img.shields.io/github/license/username/repo.svg)](LICENSE)
-<!--[![Build Status](https://img.shields.io/github/actions/workflow/status/username/repo/build.yml)](https://github.com/username/repo/actions)-->
-[![Build Status](https://github.com/ricardo-campos-org/react-typescript-todolist/actions/workflows/main.yml/badge.svg)]
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+![Build Status](https://github.com/ricardo-campos-org/react-typescript-todolist/actions/workflows/main.yml/badge.svg)
 
 ## 📋 Table of Contents
 
@@ -70,7 +69,7 @@ Contributions are what make the open-source community such an amazing place to l
 
 ## 📄 License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under GPLv3 License. See `LICENSE` for more information.
 
 ## 📞 Contact
 

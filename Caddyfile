@@ -1,0 +1,57 @@
+{
+  auto_https off
+  admin off
+}
+
+:5000 {
+  root * /app/dist
+
+  encode gzip
+
+  log {
+    output stdout
+    format console {
+      time_format iso8601
+      level_format color
+    }
+    level "{$LOG_LEVEL}"
+  }
+
+  header {
+    X-Frame-Options "SAMEORIGIN"
+    X-XSS-Protection "1;mode=block"
+    Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate"
+    X-Content-Type-Options "nosniff"
+    Strict-Transport-Security "max-age=31536000"
+    Content-Security-Policy "
+        base-uri 'self';
+        connect-src 'self';
+        default-src 'self';
+        font-src https://cdn.jsdelivr.net/npm/ 'self';
+        frame-src 'self';
+        img-src 'self';
+        manifest-src 'self';
+        media-src 'self';
+        object-src 'none';
+        script-src 'unsafe-inline' 'report-sample' 'self';
+        style-src https://cdn.jsdelivr.net/npm/ 'report-sample' 'self';
+        worker-src 'none';
+    "
+    Referrer-Policy "same-origin"
+  }
+
+  handle /env.js {
+		header Content-Type "text/javascript"
+		respond `window.config = {"BUILD":"{$BUILD}"};`
+	}
+
+  file_server
+
+  handle_errors {
+    @404 {
+      expression {http.error.status_code} == 404
+    }
+    rewrite @404 /
+    file_server
+  }
+}
