@@ -1,9 +1,13 @@
 # Description
 Closes #issue
 
-### Additional Notes
+## Time Spent
 
-### Tests
+X hours and X minutes
+
+## Additional Notes
+
+## Tests
 - [ ] 🧠 Not needed
 - [ ] 👀 Eyeball
 - [ ] 🤖 Added tests
