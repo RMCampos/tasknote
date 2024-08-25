@@ -6,14 +6,14 @@ import { Button } from 'react-bootstrap';
 
 const Footer = () => {
   const { signOut } = useContext(AuthContext);
-  const build = env.BUILD;
+  const build = env.VITE_BUILD;
 
   return (
     <footer className={style.footer}>
       
         <span>React + TS Todoo</span>
         {' '}
-        @ 2022
+        @ 2024
         {` Build: ${build}`}
       
       <Button

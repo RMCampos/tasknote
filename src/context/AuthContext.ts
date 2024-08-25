@@ -3,7 +3,7 @@ import { User } from '../types/User';
 
 export interface AuthContextData {
   signed: boolean;
-  user: User | null;
+  user: User | undefined;
   checkCurrentAuthUser: (pathname: string) => Promise<void>;
   signIn: () => void;
   signOut: () => void;

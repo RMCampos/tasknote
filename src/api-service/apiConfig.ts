@@ -18,12 +18,16 @@ const ApiConfig = {
     });
   },
 
-  currentSessionFake: async (): Promise<User | null> => {
-    return new Promise((resolve) => {
-      resolve({
-        name: 'User',
-        email: 'email@domain.com'
-      });
+  currentSessionFake: async (signed: boolean): Promise<User | undefined> => {
+    return new Promise((resolve, reject) => {
+      if (signed) {
+        resolve({
+          name: 'User',
+          email: 'email@domain.com'
+        });
+      } else {
+        reject();
+      }
     });
   },
 };

@@ -11,7 +11,7 @@ interface Props {
 
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}: Props) => {
   const [signed, setSigned] = useState<boolean>(false);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | undefined>();
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [intervalInstance, setIntervalInstance] = useState<NodeJS.Timeout | null>(null);
 
@@ -38,7 +38,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}: Props
   const signOut = async (): Promise<void> => {
     await ApiConfig.logoutFake();
     setSigned(false);
-    setUser(null);
+    setUser(undefined);
     setIsAdmin(false);
     if (intervalInstance) {
       console.log('stopping refresh token');
@@ -72,22 +72,26 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}: Props
     setIntervalInstance(instance);
   }
 
-  const fetchCurrentSession = async (pathname: string): Promise<User | null> => {
+  const fetchCurrentSession = async (pathname: string): Promise<User | undefined> => {
     try {
-      const currentUser = await ApiConfig.currentSessionFake();
+      const currentUser = await ApiConfig.currentSessionFake(signed);
       if (currentUser) {
         setSigned(true);
       }
       return currentUser;
     } catch (e) {
-      console.warn(e);
+      if (e instanceof Error) {
+        console.warn(e.message);
+      } else if (e) {
+        console.warn(e);
+      }
       // Clear stored client id and name
       localStorage.clear();
       localStorage.setItem(REDIRECT_PATH, pathname);
-      setUser(null);
+      setUser(undefined);
       setSigned(false);
     }
-    return null;
+    return undefined;
   };
 
   const updateUserSession = (user: User) => {
