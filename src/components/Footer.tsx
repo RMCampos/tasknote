@@ -1,18 +1,27 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import style from './Footer.module.css';
 import { env } from '../env';
+import AuthContext from '../context/AuthContext';
+import { Button } from 'react-bootstrap';
 
 const Footer = () => {
+  const { signOut } = useContext(AuthContext);
   const build = env.BUILD;
 
   return (
     <footer className={style.footer}>
-      <p>
-        <span>React + TS Todo</span>
+      
+        <span>React + TS Todoo</span>
         {' '}
         @ 2022
         {` Build: ${build}`}
-      </p>
+      
+      <Button
+        type="button"
+        onClick={() => signOut()}
+      >
+        Sair
+      </Button>
     </footer>
   );
 };
