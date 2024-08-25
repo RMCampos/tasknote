@@ -1,6 +1,10 @@
 {
-  "name": "12_todo_react",
+  "name": "TaskNote",
   "version": "1.0.0",
+  "license": "GPL-3.0-only",
+  "description": "TaskNote App - Your daily-basis friend to help you with TODOs and Notes",
+  "keywords": ["react", "typescript", "node", "nestjs"],
+  "repository": "https://github.com/ricardo-campos-org/react-typescript-todolist",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
