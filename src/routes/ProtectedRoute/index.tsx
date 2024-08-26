@@ -7,7 +7,7 @@ const ProtectedRoute = (): React.JSX.Element => {
 
   if (!signed) {
     signOut();
-    return <Navigate to={'/'} replace />;
+    return <Navigate to="/" replace />;
   }
   return <Outlet />;
 };

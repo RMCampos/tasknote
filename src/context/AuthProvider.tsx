@@ -1,19 +1,46 @@
-import { useMemo, useState } from "react";
-import { User } from "../types/User";
-import { env } from "../env";
-import ApiConfig from "../api-service/apiConfig";
-import AuthContext, { AuthContextData } from "./AuthContext";
-import { REDIRECT_PATH } from "../app-constants/app-constants";
+/* eslint-disable no-console */
+import React, { useMemo, useState } from 'react';
+import { User } from '../types/User';
+import { env } from '../env';
+import ApiConfig from '../api-service/apiConfig';
+import AuthContext, { AuthContextData } from './AuthContext';
+import { REDIRECT_PATH } from '../app-constants/app-constants';
 
 interface Props {
   children: React.ReactNode;
 }
 
-const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}: Props) => {
+const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Props) => {
   const [signed, setSigned] = useState<boolean>(false);
   const [user, setUser] = useState<User | undefined>();
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [intervalInstance, setIntervalInstance] = useState<NodeJS.Timeout | null>(null);
+
+  const fetchCurrentSession = async (pathname: string): Promise<User | undefined> => {
+    try {
+      const currentUser = await ApiConfig.currentSessionFake(signed);
+      if (currentUser) {
+        setSigned(true);
+      }
+      return currentUser;
+    } catch (e) {
+      if (e instanceof Error) {
+        console.warn(e.message);
+      } else if (e) {
+        console.warn(e);
+      }
+      // Clear stored client id and name
+      localStorage.clear();
+      localStorage.setItem(REDIRECT_PATH, pathname);
+      setUser(undefined);
+      setSigned(false);
+    }
+    return undefined;
+  };
+
+  const updateUserSession = (userPriv: User) => {
+    localStorage.setItem('TaskNote-token', userPriv.email);
+  };
 
   const checkCurrentAuthUser = async (pathname: string): Promise<void> => {
     const currentUser = await fetchCurrentSession(pathname);
@@ -24,11 +51,11 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}: Props
   };
 
   const signIn = async (): Promise<void> => {
-    // const appEnv = 'DEV';
+    const appEnv = env.VITE_ENV || 'dev';
     await ApiConfig.loginFake();
     setSigned(true);
     const currentUser: User = {
-      name: 'Ricardo',
+      name: `Ricardo ${appEnv}`,
       email: 'ricardompcampos@gmail.com'
     };
 
@@ -41,7 +68,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}: Props
     setUser(undefined);
     setIsAdmin(false);
     if (intervalInstance) {
-      console.log('stopping refresh token');
       clearInterval(intervalInstance);
       setIntervalInstance(null);
     }
@@ -72,32 +98,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}: Props
     setIntervalInstance(instance);
   }
 
-  const fetchCurrentSession = async (pathname: string): Promise<User | undefined> => {
-    try {
-      const currentUser = await ApiConfig.currentSessionFake(signed);
-      if (currentUser) {
-        setSigned(true);
-      }
-      return currentUser;
-    } catch (e) {
-      if (e instanceof Error) {
-        console.warn(e.message);
-      } else if (e) {
-        console.warn(e);
-      }
-      // Clear stored client id and name
-      localStorage.clear();
-      localStorage.setItem(REDIRECT_PATH, pathname);
-      setUser(undefined);
-      setSigned(false);
-    }
-    return undefined;
-  };
-
-  const updateUserSession = (user: User) => {
-    localStorage.setItem('TaskNote-token', user.email);
-  };
-
   const contextValue: AuthContextData = useMemo(() => ({
     signed,
     user,
@@ -111,7 +111,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}: Props
     <AuthContext.Provider value={contextValue}>
       { children }
     </AuthContext.Provider>
-  )
-}
+  );
+};
 
 export default AuthProvider;

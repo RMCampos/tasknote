@@ -2,9 +2,12 @@ import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import Logo from '../../assets/logo2-450-450.png';
 import { LinkContainer } from 'react-router-bootstrap';
+import Logo from '../../assets/logo2-450-450.png';
 
+/**
+ *
+ */
 function Header() {
   return (
     <header>

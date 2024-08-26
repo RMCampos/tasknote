@@ -1,8 +1,9 @@
-import { Navigate, RouteObject } from "react-router-dom";
-import getStoredPath from "../utils/PathUtils";
-import Home from "../views/Home";
-import About from "../views/About";
-import NotFound from "../views/NotFound";
+import React from 'react';
+import { Navigate, RouteObject } from 'react-router-dom';
+import getStoredPath from '../utils/PathUtils';
+import Home from '../views/Home';
+import About from '../views/About';
+import NotFound from '../views/NotFound';
 
 const browserRoutes: RouteObject[] = [
   {

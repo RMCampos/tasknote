@@ -1,11 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
-
-// Components
-import Footer from './components/Footer';
-import Header from './components/Header';
-import TaskForm from './components/TaskForm';
-import TaskList from './components/TaskList';
-import Modal from './components/Modal';
+import React, { useContext, useEffect } from 'react';
 
 // Styles
 import './styles/custom.scss';
@@ -51,7 +44,7 @@ const App: React.FC = () => {
       return signedRouter;
     }
     return notSignedRouter;
-  }
+  };
 
   useEffect(() => {
     checkCurrentAuthUser(window.location.pathname);

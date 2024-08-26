@@ -3,6 +3,9 @@ import { Button } from 'react-bootstrap';
 import './styles.scss';
 import AuthContext from '../../context/AuthContext';
 
+/**
+ *
+ */
 function Landing() {
   const { signIn } = useContext(AuthContext);
 
@@ -16,7 +19,7 @@ function Landing() {
         Login
       </Button>
     </>
-  )
+  );
 }
 
 export default Landing;

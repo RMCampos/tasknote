@@ -1,8 +1,7 @@
-
 const getHeaders = (): Headers => {
-  let headers = new Headers();
+  const headers = new Headers();
   return headers;
-}
+};
 
 const api = {
   get: (url: string, params?: object) => fetch(url, {
