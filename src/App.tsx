@@ -1,84 +1,57 @@
-import React, { useState } from 'react';
-
-// Components
-import Footer from './components/Footer';
-import Header from './components/Header';
-import TaskForm from './components/TaskForm';
-import TaskList from './components/TaskList';
-import Modal from './components/Modal';
+import React, { useContext, useEffect } from 'react';
 
 // Styles
-import styles from './App.module.css';
+import './styles/custom.scss';
 
 // Interfaces
-import { ITask } from './interfaces/Task';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Landing from './views/Landing';
+import ProtectedRoute from './routes/ProtectedRoute';
+import Layout from './layout/PrivateLayout';
+import browserRoutes from './routes';
+import NotFound from './views/NotFound';
+import AuthContext from './context/AuthContext';
 
 const App: React.FC = () => {
-  const [taskList, setTaskList] = useState<ITask[]>([]);
-  const [taskToUpdate, setTaskToUpdate] = useState<ITask | null>(null);
+  const { signed, checkCurrentAuthUser } = useContext(AuthContext);
 
-  const deleteTask = (id: number) => {
-    setTaskList(
-      taskList.filter((task) => task.id !== id)
-    );
-  };
-
-  const hideOrShowModal = (display: boolean) => {
-    const modal = document.querySelector('#modal');
-    if (display) {
-      modal!.classList.remove('hide');
-    } else {
-      modal!.classList.add('hide');
+  const notSignedRouter = createBrowserRouter([
+    {
+      path: '*',
+      element: <Landing />
     }
+  ]);
+
+  const signedRouter = createBrowserRouter([
+    {
+      path: '/',
+      element: <ProtectedRoute />,
+      children: [
+        {
+          element: <Layout />,
+          children: browserRoutes
+        }
+      ]
+    },
+    {
+      path: '*',
+      element: <NotFound />
+    }
+  ]);
+
+  const getBrowserRoutes = () => {
+    if (signed) {
+      return signedRouter;
+    }
+    return notSignedRouter;
   };
 
-  const editTask = (task: ITask): void => {
-    hideOrShowModal(true);
-    setTaskToUpdate(task);
-  };
-
-  const updateTask = (id: number, title: string, difficulty: number) => {
-    const updatedTask: ITask = { id, title, difficulty };
-    const updatedItems = taskList.map((task) => (task.id === updatedTask.id ? updatedTask : task));
-
-    setTaskList(updatedItems);
-    hideOrShowModal(false);
-  };
+  useEffect(() => {
+    checkCurrentAuthUser(window.location.pathname);
+  }, []);
 
   return (
-    <>
-      <Modal>
-        <TaskForm
-          btnText="Update task"
-          taskList={taskList}
-          task={taskToUpdate}
-          handleUpdate={updateTask}
-        />
-      </Modal>
-      <Header />
-
-      <main className={styles.main}>
-        <div>
-          <h2>What are you going to do?</h2>
-          <TaskForm
-            btnText="New task"
-            taskList={taskList}
-            setTaskList={setTaskList}
-          />
-        </div>
-
-        <div>
-          <h2>Your tasks</h2>
-          <TaskList
-            taskList={taskList}
-            handleDelete={deleteTask}
-            handleEdit={editTask}
-          />
-        </div>
-      </main>
-
-      <Footer />
-    </>
+    <RouterProvider router={getBrowserRoutes()} />
   );
 };
 

@@ -1,0 +1,10 @@
+$theme-colors: (
+  'info': tomato,
+  'danger': teal
+);
+
+@import '~bootstrap/scss/bootstrap';
+
+.bg-body-secondary {
+  background-color: red;
+}
