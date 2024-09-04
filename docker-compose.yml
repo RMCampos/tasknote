@@ -1,7 +1,7 @@
 ---
 
 services:
-  tasknote:
+  client:
     container_name: tasknote
     profiles: 
       - "dev"
@@ -17,6 +17,57 @@ services:
       LOG_LEVEL: debug
     healthcheck:
       test: timeout 10s bash -c 'true > /dev/tcp/127.0.0.1/3000'
+
+  java-api:
+    container_name: java-api
+    profiles: 
+      - "dev"
+    depends_on:
+      postgres:
+        condition: service_started
+    environment:
+      POSTGRES_DB: tasknote
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: tasknoteuser
+      POSTGRES_PASSWORD: default
+      POSTGRES_PORT: 5432
+    ports:
+      - "8585:8585"
+      - "5005:5005"
+    image: maven:3.9.9-eclipse-temurin-17
+    entrypoint: sh -c './encora-cert.sh'
+    working_dir: /app
+    volumes:
+      - "./java-api:/app"
+      - $HOME/zscaler-certs:/certs
+    healthcheck:
+      test: curl -f http://localhost:8585/actuator/health | grep '"status":"UP"'
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+
+  postgres:
+    container_name: postgres
+    profiles: 
+      - "dev"
+    image: postgres:15.8-bookworm
+    environment:
+      POSTGRES_DB: tasknote
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: tasknoteuser
+      POSTGRES_PASSWORD: default
+      POSTGRES_PORT: 5432
+    volumes:
+      - "./localpgdata:/pgdata"
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: psql -q -U $${POSTGRES_USER} -d $${POSTGRES_DB} -c 'SELECT 1'
+      interval: 1m30s
+      timeout: 15s
+      retries: 3
+      start_period: 15s
 
   caddy:
     container_name: caddy
