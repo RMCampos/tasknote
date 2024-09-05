@@ -32,8 +32,8 @@ TODO: add GIF or screenshot of the app
 ## 🚀 Tech Stack
 
 - **Frontend:** React, Typescript, Vite, Vitest, Code Coverage
-- **Backend:** Node.js
-- **Database:** PostgreSQL
+- **Backend:** Java 17, Spring Web, GraalVM Cloud Native Image
+- **Database:** PostgreSQL, Flyway
 - **Other Technologies:** Docker, Docker Compose, Caddy
 
 ## 🛠 Installation
@@ -50,6 +50,95 @@ TODO: add GIF or screenshot of the app
    ```sh
    npm start
    ```
+
+## 🏃‍♀️ Running locally
+
+### Locally without Docker
+
+  **Client:**
+
+  ```sh
+  cd client
+  npm install
+  npm start 
+  ```
+
+  **Java API:**
+  ```sh
+  cd java-api
+  ./mvnw spring-boot:run \
+    -Dspring-boot.run.jvmArguments="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"
+  ```  
+
+  PS: You have the option to define four environment variables for the database connection. In case
+    you decide not to do, they'll be set to default. They are:
+
+  ```
+  POSTGRES_HOST=localhost
+  POSTGRES_DB=tasknote
+  POSTGRES_USER=tasknoteuser
+  POSTGRES_PASSWORD=default
+  ```
+
+  PS2: Java API needs a running database to work. You can leverage Docker Compose for this, running
+    this command:
+
+  ```sh
+  docker-compose up --profile dev postgres -d
+  ```
+
+  **Checking if it's running:**
+  
+  - You can head to the Actuator Health page at: http://localhost:8585/actuator/health
+  - And you want, you can open up the Swagger UI at: http://localhost:8585/swagger-ui/index.html
+
+### Locally with Docker Compose
+  **All at once:**
+  ```sh
+  docker compose --profile dev up -d
+  ```
+
+  **Cleaning up:**
+  ```sh
+  docker compose --profile dev down --remove-orphans
+  ```
+
+## 🦾 Automation
+
+### Client
+
+Unit tests: Client relies on these libraries:  
+ - React-Testing-Library
+ - Vitest
+
+Here's how you can run locally:
+
+```sh
+cd client
+npm run test
+```
+
+**Integration tests**
+
+Not available.
+
+**Code style enforcement**
+
+Here, ESlint, Airbnb
+
+### Java API
+
+**Unit tests**
+
+Here
+
+**Integration tests**
+
+Here
+
+**Code style enforcement**
+
+Google Checkstyle
 
 ## 🎮 Usage
 
