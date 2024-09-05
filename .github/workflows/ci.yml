@@ -27,10 +27,10 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Clean and Install
-        run: npm ci
+        run: cd client && npm ci
       - name: Build
-        run: npm run build
+        run: cd client && npm run build
       - name: Lint
-        run: npm run lint
+        run: cd client && npm run lint
       #- name: Unit tests
       #  run: npm run test
