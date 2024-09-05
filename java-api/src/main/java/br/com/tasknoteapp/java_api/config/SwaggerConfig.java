@@ -55,6 +55,6 @@ public class SwaggerConfig {
     openApi.addSecurityItem(new SecurityRequirement().addList("bearerAuth"));
     openApi.setComponents(components);
 
-    return new OpenAPI().info(info);
+    return openApi;
   }
 }
