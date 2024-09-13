@@ -11,14 +11,23 @@ import Layout from './layout/PrivateLayout';
 import browserRoutes from './routes';
 import NotFound from './views/NotFound';
 import AuthContext from './context/AuthContext';
+import Login from './views/Login';
 
 const App: React.FC = () => {
   const { signed, checkCurrentAuthUser } = useContext(AuthContext);
 
   const notSignedRouter = createBrowserRouter([
     {
-      path: '*',
+      path: '/',
       element: <Landing />
+    },
+    {
+      path: '/signin',
+      element: <Login />
+    },
+    {
+      path: '*',
+      element: <NotFound />
     }
   ]);
 

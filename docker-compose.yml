@@ -2,19 +2,23 @@
 
 services:
   client:
-    container_name: tasknote
+    container_name: client
     image: node:20.17-bullseye-slim
     ports: 
       - "5000:5000"
     entrypoint: sh -c "npm i --no-update-notifier && npm start"
     user: root
     volumes: 
-      - "./:/app"
+      - "./client:/app"
     working_dir: /app
     environment:
       LOG_LEVEL: debug
     healthcheck:
-      test: timeout 10s bash -c 'true > /dev/tcp/127.0.0.1/3000'
+      test: timeout 10s bash -c 'true > /dev/tcp/127.0.0.1/5000'
+      interval: 1m30s
+      timeout: 15s
+      retries: 3
+      start_period: 10s
 
   java-api:
     container_name: java-api
@@ -39,9 +43,9 @@ services:
     healthcheck:
       test: curl -f http://localhost:8585/actuator/health | grep '"status":"UP"'
       interval: 1m30s
-      timeout: 30s
-      retries: 5
-      start_period: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 10s
 
   postgres:
     container_name: postgres
@@ -52,8 +56,9 @@ services:
       POSTGRES_USER: tasknoteuser
       POSTGRES_PASSWORD: default
       POSTGRES_PORT: 5432
+      PGDATA: /tmp
     volumes:
-      - "/pgdata"
+      - "./data:/tmp"
     ports:
       - "5432:5432"
     healthcheck:
@@ -61,7 +66,7 @@ services:
       interval: 1m30s
       timeout: 15s
       retries: 3
-      start_period: 15s
+      start_period: 10s
 
   caddy:
     container_name: caddy
