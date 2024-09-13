@@ -47,8 +47,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          context: ./
-          file: client/Dockerfile
+          context: ./client
           tags: rmcampos/tasknote-client:${{ github.event.number }}
           build-args: BUILD=${{ github.event.number }}
           cache-from: type=gha
