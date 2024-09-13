@@ -14,7 +14,7 @@ function Landing() {
       <h1>This is landing page</h1>
       <Button
         type="button"
-        onClick={() => navigate("/signin")}
+        onClick={() => navigate('/signin')}
       >
         SignIn
       </Button>

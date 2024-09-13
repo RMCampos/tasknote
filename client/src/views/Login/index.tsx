@@ -1,8 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import AuthContext from '../../context/AuthContext';
 import { Button, Form } from 'react-bootstrap';
 import { FeedbackType } from 'react-bootstrap/esm/Feedback';
+import AuthContext from '../../context/AuthContext';
 
+/**
+ * Created the Login component.
+ */
 function Login() {
   const { signIn } = useContext(AuthContext);
   const [validated, setValidated] = useState<boolean>(true);
@@ -20,8 +23,6 @@ function Login() {
 
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
-      console.log('form is invalid!');
-
       if (email.length === 0) {
         setEmailValidType('invalid');
         setEmailValidMsg('Please type your email!');
@@ -29,7 +30,7 @@ function Login() {
         setEmailValidType('valid');
         setEmailValidMsg('Looks good!');
       }
-      
+
       if (password.length === 0) {
         setPasswordValidType('invalid');
         setPasswordValidMsg('Please type your password!');
@@ -43,11 +44,10 @@ function Login() {
 
     setEmailValidType('valid');
     setEmailValidMsg('Looks good!');
-    
+
     setPasswordValidType('valid');
     setPasswordValidMsg('Looks good!');
-    console.log('form is valid!');
-    console.log(`email=${email}, password=${password}`);
+    signIn();
   };
 
   const resetForm = () => {
