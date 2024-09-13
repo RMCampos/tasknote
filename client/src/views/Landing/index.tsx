@@ -1,22 +1,22 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Button } from 'react-bootstrap';
 import './styles.scss';
-import AuthContext from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 /**
  *
  */
 function Landing() {
-  const { signIn } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   return (
     <>
       <h1>This is landing page</h1>
       <Button
         type="button"
-        onClick={() => signIn()}
+        onClick={() => navigate('/signin')}
       >
-        Login
+        SignIn
       </Button>
     </>
   );
