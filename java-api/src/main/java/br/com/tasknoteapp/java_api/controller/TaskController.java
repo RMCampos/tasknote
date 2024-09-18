@@ -148,8 +148,40 @@ public class TaskController {
     return ResponseEntity.status(HttpStatus.CREATED).body(TaskResponse.fromEntity(createdTask));
   }
 
-  @DeleteMapping
-  public String deleteTasks() {
-    return "Delete Tasks";
+  /**
+   * Delete a task given its ID.
+   *
+   * @param id Task identification.
+   * @throws TaskNotFoundException when task not found.
+   */
+  @DeleteMapping("/{id}")
+  @Operation(
+      summary = "Delete a task",
+      description = "Delete a task given its ID.",
+      responses = {
+        @ApiResponse(
+            responseCode = "204",
+            description = "Task successfully deleted",
+            content = @Content(schema = @Schema(implementation = Void.class))),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Forbidden. Access Denied",
+            content = @Content(schema = @Schema(implementation = Void.class))),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Task not found",
+            content = @Content(schema = @Schema(implementation = Void.class)))
+      })
+  public ResponseEntity<Void> deleteTasks(
+      @Parameter(
+              name = "id",
+              in = ParameterIn.PATH,
+              description = "Task id to be patched.",
+              required = true,
+              schema = @Schema(type = "integer", format = "int64"))
+          @PathVariable
+          Long id) {
+    taskService.deleteTask(id);
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 }

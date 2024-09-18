@@ -69,8 +69,8 @@ class TaskServiceImpl implements TaskService {
     return created;
   }
 
-  @Transactional
   @Override
+  @Transactional
   public TaskResponse patchTask(Long taskId, TaskPatchRequest patch) {
     UserEntity user = getCurrentUser();
 
@@ -114,15 +114,28 @@ class TaskServiceImpl implements TaskService {
   }
 
   @Override
-  public void updateTaskDone(Long taskId) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'updateTaskDone'");
-  }
-
-  @Override
+  @Transactional
   public void deleteTask(Long taskId) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'deleteTask'");
+    UserEntity user = getCurrentUser();
+
+    log.info("Deleting task {} to user {}", taskId, user.getId());
+
+    Optional<TaskEntity> task = taskRepository.findById(taskId);
+    if (task.isEmpty()) {
+      throw new TaskNotFoundException();
+    }
+
+    List<TaskUrlEntity> urls = task.get().getUrls();
+    if (!urls.isEmpty()) {
+      taskUrlRepository.deleteAll(urls);
+      log.info("Deleted {} urls from task {}", urls.size(), taskId);
+    } else {
+      log.info("No urls to delete for task {}", taskId);
+    }
+
+    taskRepository.delete(task.get());
+
+    log.info("Task deleted! Id {}", taskId);
   }
 
   private UserEntity getCurrentUser() {
