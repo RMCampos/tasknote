@@ -6,7 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.List;
 import lombok.Data;
@@ -28,9 +29,10 @@ public class TaskEntity {
 
   private Boolean done;
 
-  @JoinColumn(name = "user_id", nullable = false, updatable = false)
-  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, updatable = false)
+  @ManyToOne(fetch = FetchType.LAZY)
   private UserEntity user;
 
+  @OneToMany(mappedBy = "task")
   private List<TaskUrlEntity> urls;
 }

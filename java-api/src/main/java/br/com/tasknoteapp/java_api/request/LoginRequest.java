@@ -1,4 +1,4 @@
-package br.com.tasknoteapp.java_api.auth;
+package br.com.tasknoteapp.java_api.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;

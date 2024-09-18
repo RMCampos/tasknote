@@ -1,10 +1,10 @@
 package br.com.tasknoteapp.java_api.service.impl;
 
-import br.com.tasknoteapp.java_api.auth.LoginRequest;
 import br.com.tasknoteapp.java_api.entity.UserEntity;
 import br.com.tasknoteapp.java_api.exception.UserAlreadyExistsException;
 import br.com.tasknoteapp.java_api.exception.UserNotFoundException;
 import br.com.tasknoteapp.java_api.repository.UserRepository;
+import br.com.tasknoteapp.java_api.request.LoginRequest;
 import br.com.tasknoteapp.java_api.service.AuthService;
 import br.com.tasknoteapp.java_api.service.JwtService;
 import java.time.LocalDateTime;

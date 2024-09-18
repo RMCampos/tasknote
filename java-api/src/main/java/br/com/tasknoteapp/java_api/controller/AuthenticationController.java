@@ -1,8 +1,8 @@
 package br.com.tasknoteapp.java_api.controller;
 
-import br.com.tasknoteapp.java_api.auth.JwtAuthenticationResponse;
-import br.com.tasknoteapp.java_api.auth.LoginRequest;
 import br.com.tasknoteapp.java_api.exception.UserAlreadyExistsException;
+import br.com.tasknoteapp.java_api.request.LoginRequest;
+import br.com.tasknoteapp.java_api.response.JwtAuthenticationResponse;
 import br.com.tasknoteapp.java_api.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

@@ -1,5 +1,6 @@
 package br.com.tasknoteapp.java_api.service;
 
+import br.com.tasknoteapp.java_api.entity.TaskEntity;
 import br.com.tasknoteapp.java_api.request.TaskRequest;
 import br.com.tasknoteapp.java_api.response.TaskResponse;
 import java.util.List;
@@ -8,7 +9,7 @@ public interface TaskService {
 
   public List<TaskResponse> getAllTasks(Long userId);
 
-  public void createTask(TaskRequest taskRequest);
+  public TaskEntity createTask(TaskRequest taskRequest);
 
   public void updateTask(TaskRequest taskRequest);
 

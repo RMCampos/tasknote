@@ -1,7 +1,7 @@
 package br.com.tasknoteapp.java_api.service;
 
-import br.com.tasknoteapp.java_api.auth.LoginRequest;
 import br.com.tasknoteapp.java_api.entity.UserEntity;
+import br.com.tasknoteapp.java_api.request.LoginRequest;
 import java.util.Optional;
 import org.springframework.security.core.userdetails.User;
 
