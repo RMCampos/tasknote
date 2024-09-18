@@ -15,7 +15,7 @@ import lombok.ToString;
 @Data
 @Entity
 @ToString
-@Table(name = "task_links")
+@Table(name = "task_url")
 @EqualsAndHashCode
 public class TaskUrlEntity {
 

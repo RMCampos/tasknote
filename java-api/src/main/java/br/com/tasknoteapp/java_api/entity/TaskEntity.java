@@ -33,6 +33,6 @@ public class TaskEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   private UserEntity user;
 
-  @OneToMany(mappedBy = "task")
+  @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
   private List<TaskUrlEntity> urls;
 }

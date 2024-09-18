@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
 
-  List<TaskEntity> findAllByUserId(Long userId);
+  List<TaskEntity> findAllByUser_id(Long userId);
 }

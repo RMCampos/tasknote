@@ -93,7 +93,7 @@ class AuthServiceImpl implements AuthService {
    */
   @Override
   public String signin(LoginRequest login) {
-    log.info("Creating user! {}", login.email());
+    log.info("Signing in user! {}", login.email());
 
     Optional<UserEntity> user = findByEmail(login.email());
     if (user.isEmpty()) {
