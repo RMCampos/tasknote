@@ -2,6 +2,9 @@ package br.com.tasknoteapp.java_api.service;
 
 import br.com.tasknoteapp.java_api.entity.UserEntity;
 import br.com.tasknoteapp.java_api.request.LoginRequest;
+import br.com.tasknoteapp.java_api.response.UserResponse;
+
+import java.util.List;
 import java.util.Optional;
 import org.springframework.security.core.userdetails.User;
 
@@ -39,4 +42,11 @@ public interface AuthService {
    * @return Token
    */
   public String signin(LoginRequest login);
+
+  /**
+   * Get all registered users.
+   *
+   * @return List of UserEntity.
+   */
+  public List<UserResponse> getAllUsers();
 }
