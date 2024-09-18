@@ -5,6 +5,7 @@ import br.com.tasknoteapp.java_api.request.LoginRequest;
 import java.util.Optional;
 import org.springframework.security.core.userdetails.User;
 
+/** This interface contains methods for handling user Authentication. */
 public interface AuthService {
 
   /**

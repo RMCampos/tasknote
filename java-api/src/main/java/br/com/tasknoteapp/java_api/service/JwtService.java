@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import org.springframework.security.core.userdetails.UserDetails;
 
+/** This interface contains methods for handling user JWT tokens. */
 public interface JwtService {
 
   public String getEmailFromToken(String token);

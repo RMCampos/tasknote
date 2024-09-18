@@ -6,6 +6,7 @@ import br.com.tasknoteapp.java_api.request.TaskRequest;
 import br.com.tasknoteapp.java_api.response.TaskResponse;
 import java.util.List;
 
+/** This interface contains methods for handling user user Tasks. */
 public interface TaskService {
 
   public List<TaskResponse> getAllTasks();

@@ -9,9 +9,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+/** This class contains the implementation for the User Service class. */
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
 
