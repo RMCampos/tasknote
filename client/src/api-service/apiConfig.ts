@@ -58,8 +58,11 @@ const ApiConfig = {
           token: data.token
         };
       }
-      if (response.status === 404) {
+      if (response.status === 403) {
         return new Error('Wrong username or password!');
+      }
+      if (response.status === 404) {
+        return new Error('Username not found!');
       }
     }
     catch (error) {

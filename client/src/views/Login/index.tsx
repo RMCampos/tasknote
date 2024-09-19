@@ -16,6 +16,7 @@ function Login(): JSX.Element {
   const navigate = useNavigate();
   const [validated, setValidated] = useState<boolean>(true);
   const [formInvalid, setFormInvalid] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   /**
    * Handles the form submit button click event.
@@ -35,8 +36,17 @@ function Login(): JSX.Element {
     }
 
     setFormInvalid(false);
-    await signIn(form.email.value, form.password.value);
-    goTo("/home");
+    try {
+      await signIn(form.email.value, form.password.value);
+      goTo("/home");
+    } catch (e) {
+      setFormInvalid(true);
+      if (typeof e === 'string') {
+        setErrorMessage(e);
+      } else if (e instanceof Error) {
+        setErrorMessage(e.message);
+      }
+    }
   };
 
   /**
@@ -60,7 +70,7 @@ function Login(): JSX.Element {
 
               {formInvalid ? (
                 <Alert variant={"danger"}>
-                  Invalid email or password.
+                  { errorMessage }
                 </Alert>
               ) : null}
 
