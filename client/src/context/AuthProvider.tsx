@@ -53,23 +53,42 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     }
   };
 
-  const signIn = async (email: string, password: string): Promise<void> => {
-    const bearerToken: SigninResponse | undefined = await ApiConfig.login(email, password);
-    if (bearerToken && bearerToken.token) {
-      const currentUser: User = {
-        email
-      };
-
-      setSigned(true);
-      setUser(currentUser);
-      updateUserSession(currentUser, bearerToken.token);
-      return Promise.resolve();
+  const register = async (email: string, password: string): Promise<string> => {
+    const registerResponse: SigninResponse | Error = await ApiConfig.register(email, password);
+    
+    if (registerResponse instanceof Error) {
+      return Promise.reject(registerResponse.message);
     }
-    return Promise.reject();
+
+    const currentUser: User = {
+      email
+    };
+
+    setSigned(true);
+    setUser(currentUser);
+    updateUserSession(currentUser, registerResponse.token);
+    return Promise.resolve('OK');
+  };
+
+  const signIn = async (email: string, password: string): Promise<string> => {
+    const registerResponse: SigninResponse | Error = await ApiConfig.login(email, password);
+
+    if (registerResponse instanceof Error) {
+      return Promise.reject(registerResponse.message);
+    }
+
+    const currentUser: User = {
+      email
+    };
+
+    setSigned(true);
+    setUser(currentUser);
+    updateUserSession(currentUser, registerResponse.token);
+    return Promise.resolve('OK');
   };
 
   const signOut = async (): Promise<void> => {
-    await ApiConfig.logoutFake();
+    ApiConfig.logout();
     setSigned(false);
     setUser(undefined);
     setIsAdmin(false);
@@ -111,8 +130,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     checkCurrentAuthUser,
     signIn,
     signOut,
+    register,
     isAdmin
-  }), [signed, user, checkCurrentAuthUser, signIn, signOut, isAdmin]);
+  }), [signed, user, checkCurrentAuthUser, signIn, signOut, register, isAdmin]);
 
   return (
     <AuthContext.Provider value={contextValue}>

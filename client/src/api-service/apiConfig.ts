@@ -34,13 +34,15 @@ async function privateSessionState(): Promise<SigninResponse | undefined> {
 }
 
 const ApiConfig = {
-  signinUrl: `${server}/auth/signin`,
+  signInUrl: `${server}/auth/signin`,
+
+  registerUrl: `${server}/auth/signup`,
 
   refreshTokenUrl: `${server}/rest/user-sessions/refresh`,
 
-  login: async (email: string, password: string): Promise<SigninResponse | undefined> => {
+  login: async (email: string, password: string): Promise<SigninResponse | Error> => {
     try {
-      const response = await fetch(ApiConfig.signinUrl, {
+      const response = await fetch(ApiConfig.signInUrl, {
         method: 'POST',
         mode: 'cors',
         headers: {
@@ -55,18 +57,52 @@ const ApiConfig = {
         return {
           token: data.token
         };
-      } else {
-        console.error('login error', response);
+      }
+      if (response.status === 404) {
+        return new Error('Wrong username or password!');
       }
     }
     catch (error) {
-      console.error(error);
+      if (typeof error === 'string') {
+        return new Error(error as string);
+      }
     }
+    return new Error('Unknown error');
   },
 
-  logoutFake: async (): Promise<void> => new Promise((resolve) => {
-    resolve();
-  }),
+  register: async (email: string, password: string): Promise<SigninResponse | Error> => {
+    try {
+      const response = await fetch(ApiConfig.registerUrl, {
+        method: 'PUT',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem(API_TOKEN, data.token);
+        return {
+          token: data.token
+        };
+      }
+      if (response.status === 409) {
+        return new Error('Email already exists!');
+      }
+    }
+    catch (error) {
+      if (typeof error === 'string') {
+        return new Error(error as string);
+      }
+    }
+    return new Error('Unknown error');
+  },
+
+  logout: (): void => {
+    localStorage.removeItem(API_TOKEN);
+  },
 
   currentSessionState: privateSessionState
 };
