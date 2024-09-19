@@ -60,7 +60,7 @@ class TaskServiceImpl implements TaskService {
     task.setUser(user);
     TaskEntity created = taskRepository.save(task);
 
-    if (Objects.isNull(taskRequest.urls())) {
+    if (!Objects.isNull(taskRequest.urls()) && !taskRequest.urls().isEmpty()) {
       List<TaskUrlEntity> urls = saveUrls(task, taskRequest.urls());
       task.setUrls(urls);
     }

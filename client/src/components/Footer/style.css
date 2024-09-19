@@ -1,0 +1,19 @@
+.footer {
+  background-color: #f8f9fa;
+  padding: 20px 0;
+  margin-top: 50px;
+}
+
+.link {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.logout-button {
+  color: #dc3545!important;
+  text-decoration: none!important;
+}

@@ -39,17 +39,29 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     return undefined;
   };
 
-  const updateUserSession = (userPriv: User | null, bearerToken: string) => {
+  const updateUserSession = (userPriv: User | null, bearerToken: string): User => {
     if (userPriv) {
       localStorage.setItem(USER_DATA, JSON.stringify(userPriv));
     }
     localStorage.setItem(API_TOKEN, bearerToken);
+
+    if (userPriv) {
+      return userPriv;
+    }
+
+    const savedUser = localStorage.getItem(USER_DATA);
+    if (savedUser) {
+      return JSON.parse(savedUser);
+    }
+
+    return { email: 'undefined' };
   };
 
   const checkCurrentAuthUser = async (pathname: string): Promise<void> => {
     const bearerToken: SigninResponse | undefined = await fetchCurrentSession(pathname);
     if (bearerToken && bearerToken.token) {
-      updateUserSession(null, bearerToken.token);
+      const userLocal = updateUserSession(null, bearerToken.token);
+      setUser(userLocal);
     }
   };
 
@@ -61,7 +73,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     }
 
     const currentUser: User = {
-      email
+      email: email
     };
 
     setSigned(true);
@@ -78,7 +90,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     }
 
     const currentUser: User = {
-      email
+      email: email
     };
 
     setSigned(true);
@@ -102,7 +114,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
   const refreshTokenPvt = async (): Promise<void> => {
     const bearerToken: SigninResponse | undefined = await fetchCurrentSession('/');
     if (bearerToken) {
-      updateUserSession(null, bearerToken.token);
+      const userLocal = updateUserSession(null, bearerToken.token);
+      setUser(userLocal);
     }
     return Promise.resolve();
   };

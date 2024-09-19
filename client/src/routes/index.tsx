@@ -2,6 +2,8 @@ import { Navigate, RouteObject } from 'react-router-dom';
 import getStoredPath from '../utils/PathUtils';
 import Home from '../views/Home';
 import About from '../views/About';
+import Task from '../views/Task';
+import Note from '../views/Note';
 
 const BrowserRoutes: RouteObject[] = [
   {
@@ -24,15 +26,19 @@ const BrowserRoutes: RouteObject[] = [
   },
   {
     path: '/home',
-    element: (
-      <Home />
-    )
+    element: <Home />
   },
   {
     path: '/about',
-    element: (
-      <About />
-    )
+    element: <About />
+  },
+  {
+    path: '/tasks',
+    element: <Task />
+  },
+  {
+    path: '/notes',
+    element: <Note />
   }
 ];
 

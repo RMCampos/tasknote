@@ -40,6 +40,8 @@ const ApiConfig = {
 
   refreshTokenUrl: `${server}/rest/user-sessions/refresh`,
 
+  tasksUrl: `${server}/rest/tasks`,
+
   login: async (email: string, password: string): Promise<SigninResponse | Error> => {
     try {
       const response = await fetch(ApiConfig.signInUrl, {

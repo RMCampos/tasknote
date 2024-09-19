@@ -24,6 +24,12 @@ function Header() {
               <LinkContainer to="/home">
                 <Nav.Link>Home</Nav.Link>
               </LinkContainer>
+              <LinkContainer to="/tasks">
+                <Nav.Link>Tasks</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to="/notes">
+                <Nav.Link>Notes</Nav.Link>
+              </LinkContainer>
               <LinkContainer to="/about">
                 <Nav.Link>About</Nav.Link>
               </LinkContainer>
