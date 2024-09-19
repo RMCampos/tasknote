@@ -124,13 +124,9 @@ class AuthServiceImpl implements AuthService {
    */
   @Override
   public List<UserResponse> getAllUsers() {
-    log.info("1");
     Optional<String> currentUserEmail = authUtil.getCurrentUserEmail();
-    log.info("2");
     String email = currentUserEmail.orElseThrow();
-    log.info("3");
     UserEntity currentUser = findByEmail(email).orElseThrow();
-    log.info("4");
 
     log.info("Getting all users to user {}", currentUser.getId());
 
@@ -155,5 +151,24 @@ class AuthServiceImpl implements AuthService {
     log.info("{} Users found!", usersResponse.size());
 
     return usersResponse;
+  }
+
+  /**
+   * Refresh the current user token.
+   *
+   * @return Token
+   */
+  @Override
+  public String refreshCurrentUserToken() {
+    Optional<String> currentUserEmail = authUtil.getCurrentUserEmail();
+    String email = currentUserEmail.orElseThrow();
+    UserEntity currentUser = findByEmail(email).orElseThrow();
+
+    log.info("Refreshing current session to user {}", currentUser.getId());
+
+    String token = jwtService.generateToken(email);
+
+    log.info("User refreshed! Token {}", token);
+    return token;
   }
 }

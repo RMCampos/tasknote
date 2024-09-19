@@ -49,4 +49,11 @@ public interface AuthService {
    * @return List of UserEntity.
    */
   public List<UserResponse> getAllUsers();
+
+  /**
+   * Refresh the current user token.
+   *
+   * @return Token
+   */
+  public String refreshCurrentUserToken();
 }
