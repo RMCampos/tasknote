@@ -36,7 +36,7 @@ function Login() {
 
   return (
     <>
-      <h1>This is login page</h1>
+      <h1>This is register page</h1>
       <Form noValidate validated={validated} onSubmit={handleSubmit}>
         <Form.Group as={Col} md="4" className="mb-3" controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
@@ -62,16 +62,16 @@ function Login() {
           variant="primary"
           type="submit"
         >
-          Login
+          Register
         </Button>
       </Form>
 
       <Button
         variant="seconday"
         type="button"
-        onClick={() => goTo("/register")}
+        onClick={() => goTo("/login")}
       >
-        Register
+        Go to login instead
       </Button>
 
       <Button

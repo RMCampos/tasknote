@@ -5,7 +5,7 @@ export interface AuthContextData {
   signed: boolean;
   user: User | undefined;
   checkCurrentAuthUser: (pathname: string) => Promise<void>;
-  signIn: (email: string, password: string) => void;
+  signIn: (email: string, password: string) => Promise<void>;
   signOut: () => void;
   isAdmin: boolean;
 }

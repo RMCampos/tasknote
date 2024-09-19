@@ -8,7 +8,6 @@ import Footer from '../../components/Footer';
  *
  */
 function Layout() {
-  console.log('Layout');
   return (
     <>
       <Header />

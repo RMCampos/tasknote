@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { createBrowserRouter, RouteObject, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouteObject, RouterProvider } from 'react-router-dom';
 import AuthContext from './context/AuthContext';
 
 import BrowserRoutes from './routes';
@@ -9,6 +9,7 @@ import Layout from './layout/PrivateLayout';
 import Landing from './views/Landing';
 import Login from './views/Login';
 import NotFound from './views/NotFound';
+import Register from './views/Register';
 
 import './styles/custom.scss';
 
@@ -21,8 +22,16 @@ const App: React.FC = () => {
       element: <Landing />
     },
     {
-      path: '/signin',
+      path: '/login',
       element: <Login />
+    },
+    {
+      path: '/register',
+      element: <Register />
+    },
+    {
+      path: '/home',
+      element: <Navigate to={"/login"} replace />
     },
     {
       path: '*',
@@ -49,10 +58,8 @@ const App: React.FC = () => {
 
   const getBrowserRouter = () => {
     if (signed) {
-      console.log('app signed');
       return createBrowserRouter(signedRouter);
     }
-    console.log('app not signed');
     return createBrowserRouter(notSignedRouter);
   };
 

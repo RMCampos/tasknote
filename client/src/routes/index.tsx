@@ -1,9 +1,7 @@
-import React from 'react';
 import { Navigate, RouteObject } from 'react-router-dom';
 import getStoredPath from '../utils/PathUtils';
 import Home from '../views/Home';
 import About from '../views/About';
-import NotFound from '../views/NotFound';
 
 const BrowserRoutes: RouteObject[] = [
   {
@@ -15,7 +13,13 @@ const BrowserRoutes: RouteObject[] = [
   {
     path: '/login',
     element: (
-      <Navigate to="/home" replace />
+      <Navigate to={"/home"} replace />
+    )
+  },
+  {
+    path: '/register',
+    element: (
+      <Navigate to={"/home"} replace />
     )
   },
   {
@@ -28,12 +32,6 @@ const BrowserRoutes: RouteObject[] = [
     path: '/about',
     element: (
       <About />
-    )
-  },
-  {
-    path: '/404',
-    element: (
-      <NotFound />
     )
   }
 ];

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import './styles.scss';
 import { useNavigate } from 'react-router-dom';
@@ -12,13 +12,17 @@ function Landing() {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    console.log('Landing signed', signed);
+    console.log('Landing handleLogin signed', signed);
     if (signed) {
-      navigate('/home');
+      goTo('/home');
     } else {
-      navigate('/signin');
+      goTo('/login');
     }
   };
+
+  const goTo = useCallback((page: string) => {
+    navigate(page);
+  }, []);
 
   useEffect(() => {
     checkCurrentAuthUser(window.location.pathname);
@@ -29,9 +33,17 @@ function Landing() {
       <h1>This is landing page</h1>
       <Button
         type="button"
+        variant="primary"
         onClick={handleLogin}
       >
-        SignIn
+        Login
+      </Button>
+      <Button
+        variant="seconday"
+        type="button"
+        onClick={() => goTo("/register")}
+      >
+        Register
       </Button>
     </>
   );

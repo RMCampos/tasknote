@@ -19,7 +19,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
 
   const fetchCurrentSession = async (pathname: string): Promise<SigninResponse | undefined> => {
     try {
-      const bearerToken: SigninResponse | undefined = await ApiConfig.currentSessionState(signed);
+      const bearerToken: SigninResponse | undefined = await ApiConfig.currentSessionState();
       if (bearerToken && bearerToken.token) {
         setSigned(true);
       }
@@ -47,16 +47,14 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
   };
 
   const checkCurrentAuthUser = async (pathname: string): Promise<void> => {
-    console.log('checkCurrentAuthUser', pathname);
     const bearerToken: SigninResponse | undefined = await fetchCurrentSession(pathname);
     if (bearerToken && bearerToken.token) {
-      console.log('checkCurrentAuthUser token', bearerToken);
       updateUserSession(null, bearerToken.token);
     }
   };
 
   const signIn = async (email: string, password: string): Promise<void> => {
-    const bearerToken: SigninResponse | undefined = await ApiConfig.signin(email, password);
+    const bearerToken: SigninResponse | undefined = await ApiConfig.login(email, password);
     if (bearerToken && bearerToken.token) {
       const currentUser: User = {
         email

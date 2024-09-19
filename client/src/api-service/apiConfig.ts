@@ -7,10 +7,10 @@ const server = env.VITE_BACKEND_SERVER;
 /**
  *
  */
-async function privateSessionState(signed: boolean): Promise<SigninResponse | undefined> {
+async function privateSessionState(): Promise<SigninResponse | undefined> {
   const tokenState = localStorage.getItem(API_TOKEN);
 
-  if (signed && tokenState) {
+  if (tokenState) {
     const response = await fetch(ApiConfig.refreshTokenUrl, {
       method: 'GET',
       mode: 'cors',
@@ -38,7 +38,7 @@ const ApiConfig = {
 
   refreshTokenUrl: `${server}/rest/user-sessions/refresh`,
 
-  signin: async (email: string, password: string): Promise<SigninResponse | undefined> => {
+  login: async (email: string, password: string): Promise<SigninResponse | undefined> => {
     try {
       const response = await fetch(ApiConfig.signinUrl, {
         method: 'POST',
@@ -56,7 +56,7 @@ const ApiConfig = {
           token: data.token
         };
       } else {
-        console.error('signin error', response);
+        console.error('login error', response);
       }
     }
     catch (error) {
