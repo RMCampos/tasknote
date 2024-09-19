@@ -4,7 +4,8 @@ import { User } from '../types/User';
 import { env } from '../env';
 import ApiConfig from '../api-service/apiConfig';
 import AuthContext, { AuthContextData } from './AuthContext';
-import { REDIRECT_PATH } from '../app-constants/app-constants';
+import { API_TOKEN, REDIRECT_PATH, USER_DATA } from '../app-constants/app-constants';
+import { SigninResponse } from '../types/SigninResponse';
 
 interface Props {
   children: React.ReactNode;
@@ -16,13 +17,13 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [intervalInstance, setIntervalInstance] = useState<NodeJS.Timeout | null>(null);
 
-  const fetchCurrentSession = async (pathname: string): Promise<User | undefined> => {
+  const fetchCurrentSession = async (pathname: string): Promise<SigninResponse | undefined> => {
     try {
-      const currentUser = await ApiConfig.currentSessionFake(signed);
-      if (currentUser) {
+      const bearerToken: SigninResponse | undefined = await ApiConfig.currentSessionState(signed);
+      if (bearerToken && bearerToken.token) {
         setSigned(true);
       }
-      return currentUser;
+      return bearerToken;
     } catch (e) {
       if (e instanceof Error) {
         console.warn(e.message);
@@ -38,28 +39,35 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     return undefined;
   };
 
-  const updateUserSession = (userPriv: User) => {
-    localStorage.setItem('TaskNote-token', userPriv.email);
+  const updateUserSession = (userPriv: User | null, bearerToken: string) => {
+    if (userPriv) {
+      localStorage.setItem(USER_DATA, JSON.stringify(userPriv));
+    }
+    localStorage.setItem(API_TOKEN, bearerToken);
   };
 
   const checkCurrentAuthUser = async (pathname: string): Promise<void> => {
-    const currentUser = await fetchCurrentSession(pathname);
-    if (currentUser) {
-      updateUserSession(currentUser);
-      setUser(currentUser);
+    console.log('checkCurrentAuthUser', pathname);
+    const bearerToken: SigninResponse | undefined = await fetchCurrentSession(pathname);
+    if (bearerToken && bearerToken.token) {
+      console.log('checkCurrentAuthUser token', bearerToken);
+      updateUserSession(null, bearerToken.token);
     }
   };
 
-  const signIn = async (): Promise<void> => {
-    const appEnv = env.VITE_ENV || 'dev';
-    await ApiConfig.loginFake();
-    setSigned(true);
-    const currentUser: User = {
-      name: `Ricardo ${appEnv}`,
-      email: 'ricardompcampos@gmail.com'
-    };
+  const signIn = async (email: string, password: string): Promise<void> => {
+    const bearerToken: SigninResponse | undefined = await ApiConfig.signin(email, password);
+    if (bearerToken && bearerToken.token) {
+      const currentUser: User = {
+        email
+      };
 
-    setUser(currentUser);
+      setSigned(true);
+      setUser(currentUser);
+      updateUserSession(currentUser, bearerToken.token);
+      return Promise.resolve();
+    }
+    return Promise.reject();
   };
 
   const signOut = async (): Promise<void> => {
@@ -74,11 +82,12 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     localStorage.clear();
   };
 
-  const refreshTokenPvt = async () => {
-    const currentUser = await fetchCurrentSession('/');
-    if (currentUser) {
-      updateUserSession(currentUser);
+  const refreshTokenPvt = async (): Promise<void> => {
+    const bearerToken: SigninResponse | undefined = await fetchCurrentSession('/');
+    if (bearerToken) {
+      updateUserSession(null, bearerToken.token);
     }
+    return Promise.resolve();
   };
 
   // 2 minutes

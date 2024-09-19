@@ -1,22 +1,21 @@
 import React, { useContext, useEffect } from 'react';
+import { createBrowserRouter, RouteObject, RouterProvider } from 'react-router-dom';
+import AuthContext from './context/AuthContext';
 
-// Styles
-import './styles/custom.scss';
-
-// Interfaces
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import Landing from './views/Landing';
+import BrowserRoutes from './routes';
 import ProtectedRoute from './routes/ProtectedRoute';
 import Layout from './layout/PrivateLayout';
-import browserRoutes from './routes';
-import NotFound from './views/NotFound';
-import AuthContext from './context/AuthContext';
+
+import Landing from './views/Landing';
 import Login from './views/Login';
+import NotFound from './views/NotFound';
+
+import './styles/custom.scss';
 
 const App: React.FC = () => {
   const { signed, checkCurrentAuthUser } = useContext(AuthContext);
 
-  const notSignedRouter = createBrowserRouter([
+  const notSignedRouter: RouteObject[] = [
     {
       path: '/',
       element: <Landing />
@@ -29,38 +28,42 @@ const App: React.FC = () => {
       path: '*',
       element: <NotFound />
     }
-  ]);
+  ];
 
-  const signedRouter = createBrowserRouter([
+  const signedRouter: RouteObject[] = [
     {
-      path: '/',
+      path: '/', // ROUTES.ROOT='/'
       element: <ProtectedRoute />,
       children: [
         {
           element: <Layout />,
-          children: browserRoutes
+          children: BrowserRoutes
         }
       ]
     },
     {
-      path: '*',
+      path: '*', // ROUTES.ALL_ROUTES='*'
       element: <NotFound />
     }
-  ]);
+  ];
 
-  const getBrowserRoutes = () => {
+  const getBrowserRouter = () => {
     if (signed) {
-      return signedRouter;
+      console.log('app signed');
+      return createBrowserRouter(signedRouter);
     }
-    return notSignedRouter;
+    console.log('app not signed');
+    return createBrowserRouter(notSignedRouter);
   };
+
+  const browserRouter = getBrowserRouter();
 
   useEffect(() => {
     checkCurrentAuthUser(window.location.pathname);
   }, []);
 
   return (
-    <RouterProvider router={getBrowserRoutes()} />
+    <RouterProvider router={browserRouter} />
   );
 };
 

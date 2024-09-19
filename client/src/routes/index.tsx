@@ -5,7 +5,7 @@ import Home from '../views/Home';
 import About from '../views/About';
 import NotFound from '../views/NotFound';
 
-const browserRoutes: RouteObject[] = [
+const BrowserRoutes: RouteObject[] = [
   {
     path: '/',
     element: (
@@ -38,4 +38,4 @@ const browserRoutes: RouteObject[] = [
   }
 ];
 
-export default browserRoutes;
+export default BrowserRoutes;
