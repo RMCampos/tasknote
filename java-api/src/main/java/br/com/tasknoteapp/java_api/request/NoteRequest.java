@@ -7,5 +7,6 @@ import java.util.List;
 /** This record represents a note request to be created. */
 @Schema(description = "Note request to be created.")
 public record NoteRequest(
+    @Schema(description = "Note title.") @NotNull String title,
     @Schema(description = "Note description.") @NotNull String description,
     @Schema(description = "Note urls. Optional.") List<String> urls) {}

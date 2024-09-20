@@ -11,7 +11,8 @@ import java.util.Objects;
 @Schema(description = "This record represents a task and its urls object to be returned.")
 public record NoteResponse(
     @Schema(description = "The id of the note", example = "1") Long id,
-    @Schema(description = "The description of the note", example = "Note 1") String description,
+    @Schema(description = "The title of the note", example = "Note 1") String title,
+    @Schema(description = "The description of the note", example = "Note desc") String description,
     @Schema(description = "The urls of the task, zero, one or more.", example = "[]")
         List<NoteUrlResponse> urls) {
 
@@ -33,6 +34,7 @@ public record NoteResponse(
       }
     }
 
-    return new NoteResponse(entity.getId(), entity.getDescription(), urlsResponse);
+    return new NoteResponse(
+        entity.getId(), entity.getTitle(), entity.getDescription(), urlsResponse);
   }
 }

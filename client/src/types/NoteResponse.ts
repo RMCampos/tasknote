@@ -5,6 +5,7 @@ type NoteUrlResponse = {
 
 type NoteResponse = {
   id: number,
+  title: string,
   description: string,
   urls: NoteUrlResponse[]
 }

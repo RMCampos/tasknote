@@ -65,17 +65,20 @@ async function getNotesRequest(): Promise<NoteResponse[] | Error> {
   return new Error('Unknown error');
 }
 
-async function updateNoteRequest(id: number, desc: string): Promise<Error | undefined> {
+async function updateNoteRequest(note: NoteResponse): Promise<Error | undefined> {
   try {
     const tokenState = localStorage.getItem(API_TOKEN);
-    const response = await fetch(`${ApiConfig.notesUrl}/${id}`, {
+    const response = await fetch(`${ApiConfig.notesUrl}/${note.id}`, {
       method: 'PATCH',
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${tokenState}`
       },
-      body: JSON.stringify({ description: desc })
+      body: JSON.stringify({
+        title: note.title,
+        description: note.description
+      })
     });
     if (response.ok) {
       await response.json();

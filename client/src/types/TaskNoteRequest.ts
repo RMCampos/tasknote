@@ -1,4 +1,5 @@
 type TaskNoteRequest = {
+  title: string;
   description: string;
   urls?: string[];
 }

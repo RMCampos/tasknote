@@ -54,6 +54,7 @@ public class NoteServiceImpl implements NoteService {
     log.info("Creating note to user {}", user.getId());
 
     NoteEntity note = new NoteEntity();
+    note.setTitle(noteRequest.title());
     note.setDescription(noteRequest.description());
     note.setUser(user);
     NoteEntity created = noteRepository.save(note);
@@ -80,6 +81,9 @@ public class NoteServiceImpl implements NoteService {
     }
 
     NoteEntity noteEntity = note.get();
+    if (!Objects.isNull(patch.title()) && !patch.title().isBlank()) {
+      noteEntity.setTitle(patch.title());
+    }
     if (!Objects.isNull(patch.description()) && !patch.description().isBlank()) {
       noteEntity.setDescription(patch.description());
     }
