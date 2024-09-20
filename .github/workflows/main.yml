@@ -7,8 +7,8 @@ on:
     workflow_dispatch:
 
 jobs:
-  code-checks:
-    name: Code Checks
+  client-code-checks:
+    name: Client Code Checks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -27,5 +27,21 @@ jobs:
         run: cd client && npm run build
       - name: Lint
         run: cd client && npm run lint
-      #- name: Unit tests
-      #  run: npm run test
+      - name: Unit tests
+        run: cd client && npm run test:coverage
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v3.0.0
+        with:
+          projectBaseDir: client
+          args: >
+            -Dsonar.organization=ricardo-campos-org
+            -Dsonar.projectKey=ricardo-campos-org_react-typescript-todolist
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.typescript.tsconfigPaths=tsconfig.json
+            -Dsonar.sources=src/
+            -Dsonar.exclusions=src/__test__/**
+            -Dsonar.tests=src/__test__/
+            -Dsonar.verbose=false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    
