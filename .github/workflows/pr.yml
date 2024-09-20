@@ -23,8 +23,8 @@ jobs:
         run: cd client && npm run build
       - name: Lint
         run: cd client && npm run lint
-      #- name: Unit tests
-      #  run: npm run test
+      - name: Unit tests
+        run: cd client && npm run test:coverage
 
   client-sonarcloud:
     name: Client SonarCloud
@@ -44,7 +44,7 @@ jobs:
             -Dsonar.projectKey=ricardo-campos-org_react-typescript-todolist
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
             -Dsonar.sources=src/
-            -Dsonar.tests=src/__test__/__
+            -Dsonar.tests=src/__test__/
             -Dsonar.verbose=true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
