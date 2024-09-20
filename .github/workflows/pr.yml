@@ -43,8 +43,9 @@ jobs:
             -Dsonar.organization=ricardo-campos-org
             -Dsonar.projectKey=ricardo-campos-org_react-typescript-todolist
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.typescript.tsconfigPaths=tsconfig.json
             -Dsonar.sources=src/
-            -Dsonar.test.exclusions=src/__test__/setup.ts,src/__test__/__mocks__/**
+            -Dsonar.exclusions=src/__test__/**
             -Dsonar.tests=src/__test__/
             -Dsonar.verbose=true
         env:
