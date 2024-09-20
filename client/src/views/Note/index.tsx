@@ -232,7 +232,7 @@ function Note(): JSX.Element {
           </Accordion>
 
           {/* add pagination here */}
-            
+
         </Col>
       </Row>
     </Container>
