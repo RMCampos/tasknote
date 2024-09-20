@@ -1,9 +1,11 @@
 package br.com.tasknoteapp.java_api.service.impl;
 
+import br.com.tasknoteapp.java_api.response.NoteResponse;
 import br.com.tasknoteapp.java_api.response.SearchResponse;
 import br.com.tasknoteapp.java_api.response.SummaryResponse;
 import br.com.tasknoteapp.java_api.response.TaskResponse;
 import br.com.tasknoteapp.java_api.service.HomeService;
+import br.com.tasknoteapp.java_api.service.NoteService;
 import br.com.tasknoteapp.java_api.service.TaskService;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Service;
 class HomeServiceImpl implements HomeService {
 
   private final TaskService taskService;
+
+  private final NoteService noteService;
 
   /**
    * Get summary for the home page.
@@ -45,7 +49,11 @@ class HomeServiceImpl implements HomeService {
     log.info("Searching for {}", term);
 
     List<TaskResponse> tasks = taskService.searchTasks(term);
+    log.info("{} tasks found!", tasks.size());
 
-    return new SearchResponse(tasks);
+    List<NoteResponse> notes = noteService.searchNotes(term);
+    log.info("{} notes found!", notes.size());
+
+    return new SearchResponse(tasks, notes);
   }
 }

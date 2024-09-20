@@ -143,7 +143,8 @@ public class NoteServiceImpl implements NoteService {
 
     log.info("Searching notes to user {}", user.getId());
 
-    List<NoteEntity> notes = noteRepository.findAllBySearchTerm(searchTerm, user.getId());
+    List<NoteEntity> notes =
+        noteRepository.findAllBySearchTerm(searchTerm.toUpperCase(), user.getId());
     log.info("{} tasks found!", notes.size());
 
     return notes.stream().map(NoteResponse::fromEntity).toList();

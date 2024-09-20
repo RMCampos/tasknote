@@ -82,6 +82,5 @@ public class HomeController {
           @RequestParam(value = "term", required = false)
           String term) {
     return homeService.search(term);
-    // keep going from here
   }
 }

@@ -144,7 +144,8 @@ class TaskServiceImpl implements TaskService {
 
     log.info("Searching tasks to user {}", user.getId());
 
-    List<TaskEntity> tasks = taskRepository.findAllBySearchTerm(searchTerm, user.getId());
+    List<TaskEntity> tasks =
+        taskRepository.findAllBySearchTerm(searchTerm.toUpperCase(), user.getId());
     log.info("{} tasks found!", tasks.size());
 
     return tasks.stream().map(TaskResponse::fromEntity).toList();
