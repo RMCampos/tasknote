@@ -36,7 +36,7 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@3.0.0
+        uses: SonarSource/sonarcloud-github-action@v3.0.0
         with:
           projectBaseDir: client
           args: >
