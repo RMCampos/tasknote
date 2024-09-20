@@ -3,7 +3,14 @@ import TaskNoteRequest from '../types/TaskNoteRequest';
 import { NoteResponse } from '../types/NoteResponse';
 import ApiConfig from './apiConfig';
 
-async function addNoteRequest(note: TaskNoteRequest): Promise<NoteResponse | Error> {
+/**
+ * Sends a POST request to the server to create a note.
+ *
+ * @returns {Promise<NoteResponse>} A promise that resolves to a NoteResponse if the request
+ * was successful.
+ * @throws {Error} An error object if there was an error
+ */
+async function addNoteRequest(note: TaskNoteRequest): Promise<NoteResponse> {
   try {
     const tokenState = localStorage.getItem(API_TOKEN);
     const response = await fetch(ApiConfig.notesUrl, {
@@ -11,7 +18,7 @@ async function addNoteRequest(note: TaskNoteRequest): Promise<NoteResponse | Err
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${tokenState}`
+        Authorization: `Bearer ${tokenState}`
       },
       body: JSON.stringify(note)
     });
@@ -20,23 +27,30 @@ async function addNoteRequest(note: TaskNoteRequest): Promise<NoteResponse | Err
       return data;
     }
     if (response.status === 400) {
-      return new Error('Wrong or missing information!');
+      throw new Error('Wrong or missing information!');
     }
     if (response.status === 403) {
-      return new Error('Forbidden! Access denied');
+      throw new Error('Forbidden! Access denied');
     }
     if (response.status === 500) {
-      return new Error('Internal Server Error!');
+      throw new Error('Internal Server Error!');
     }
   } catch (e) {
     if (typeof e === 'string') {
-      return new Error(e as string);
+      throw new Error(e as string);
     }
   }
-  return new Error('Unknown error');
+  throw new Error('Unknown error');
 }
 
-async function getNotesRequest(): Promise<NoteResponse[] | Error> {
+/**
+ * Sends a GET request to the server to fetch all notes.
+ *
+ * @returns {Promise<NoteResponse[]>} A promise that resolves to an array of NoteResponse if the
+ * request was successful.
+ * @throws {Error} An error object if there was an error
+ */
+async function getNotesRequest(): Promise<NoteResponse[]> {
   try {
     const tokenState = localStorage.getItem(API_TOKEN);
     const response = await fetch(ApiConfig.notesUrl, {
@@ -44,7 +58,7 @@ async function getNotesRequest(): Promise<NoteResponse[] | Error> {
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${tokenState}`
+        Authorization: `Bearer ${tokenState}`
       }
     });
     if (response.ok) {
@@ -52,20 +66,28 @@ async function getNotesRequest(): Promise<NoteResponse[] | Error> {
       return data;
     }
     if (response.status === 403) {
-      return new Error('Forbidden! Access denied');
+      throw new Error('Forbidden! Access denied');
     }
     if (response.status === 500) {
-      return new Error('Internal Server Error!');
+      throw new Error('Internal Server Error!');
     }
   } catch (e) {
     if (typeof e === 'string') {
-      return new Error(e as string);
+      throw new Error(e as string);
     }
   }
-  return new Error('Unknown error');
+  throw new Error('Unknown error');
 }
 
-async function updateNoteRequest(note: NoteResponse): Promise<Error | undefined> {
+/**
+ * Sends a PATCH request to the server to update a note.
+ *
+ * @param {NoteResponse} note - The note to be updated.
+ * @returns {Promise<undefined>} A promise that resolves to undefined if the deletion was
+ * successful.
+ * @throws {Error} An error object if there was an error
+ */
+async function updateNoteRequest(note: NoteResponse): Promise<undefined> {
   try {
     const tokenState = localStorage.getItem(API_TOKEN);
     const response = await fetch(`${ApiConfig.notesUrl}/${note.id}`, {
@@ -73,7 +95,7 @@ async function updateNoteRequest(note: NoteResponse): Promise<Error | undefined>
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${tokenState}`
+        Authorization: `Bearer ${tokenState}`
       },
       body: JSON.stringify({
         title: note.title,
@@ -85,20 +107,28 @@ async function updateNoteRequest(note: NoteResponse): Promise<Error | undefined>
       return;
     }
     if (response.status === 403) {
-      return new Error('Forbidden! Access denied');
+      throw new Error('Forbidden! Access denied');
     }
     if (response.status === 500) {
-      return new Error('Internal Server Error!');
+      throw new Error('Internal Server Error!');
     }
   } catch (e) {
     if (typeof e === 'string') {
-      return new Error(e as string);
+      throw new Error(e as string);
     }
   }
-  return new Error('Unknown error');
+  throw new Error('Unknown error');
 }
 
-async function deleteNoteRequest(id: number): Promise<Error | undefined> {
+/**
+ * Sends a DELETE request to the server to delete a note by its ID.
+ *
+ * @param {number} id - The ID of the note to delete.
+ * @returns {Promise<undefined>} A promise that resolves to undefined if the deletion was
+ * successful.
+ * @throws {Error} An error object if there was an error
+ */
+async function deleteNoteRequest(id: number): Promise<undefined> {
   try {
     const tokenState = localStorage.getItem(API_TOKEN);
     const response = await fetch(`${ApiConfig.notesUrl}/${id}`, {
@@ -106,25 +136,26 @@ async function deleteNoteRequest(id: number): Promise<Error | undefined> {
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${tokenState}`
+        Authorization: `Bearer ${tokenState}`
       }
     });
     if (response.status === 204) {
       return;
     }
     if (response.status === 403) {
-      return new Error('Forbidden! Access denied');
+      throw new Error('Forbidden! Access denied');
     }
     if (response.status === 500) {
-      return new Error('Internal Server Error!');
+      throw new Error('Internal Server Error!');
     }
   } catch (e) {
-    console.log('aha!');
     if (typeof e === 'string') {
-      return new Error(e as string);
+      throw new Error(e as string);
     }
   }
-  return new Error('Unknown error');
+  throw new Error('Unknown error');
 }
-    
-export { addNoteRequest, getNotesRequest, updateNoteRequest, deleteNoteRequest };
+
+export {
+  addNoteRequest, getNotesRequest, updateNoteRequest, deleteNoteRequest
+};

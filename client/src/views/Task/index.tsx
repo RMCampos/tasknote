@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, Card, Col, Container, Form, InputGroup, Row, Table } from 'react-bootstrap';
+import {
+  Alert, Button, Card, Col, Container, Form, Row, Table
+} from 'react-bootstrap';
 import {
   addTaskRequest,
   deleteTaskRequest,
@@ -10,6 +12,9 @@ import TaskNoteRequest from '../../types/TaskNoteRequest';
 import { TaskResponse } from '../../types/TaskResponse';
 import './style.css';
 
+/**
+ *
+ */
 function Task(): JSX.Element {
   const [validated, setValidated] = useState<boolean>(true);
   const [formInvalid, setFormInvalid] = useState<boolean>(false);
@@ -24,22 +29,30 @@ function Task(): JSX.Element {
       setErrorMessage(e.message);
       setFormInvalid(true);
     }
-  }
+  };
+
+  const loadTasks = async () => {
+    const tasksFetched: TaskResponse[] | Error = await getTasksRequest();
+    if (tasksFetched instanceof Error) {
+      handleError(tasksFetched);
+    } else {
+      setTasks(tasksFetched);
+    }
+  };
 
   const addTask = async (desc: string, url?: string): Promise<boolean> => {
     const payload: TaskNoteRequest = {
       description: desc,
-      urls: url? [url] : []
+      urls: url ? [url] : []
     };
     const response = await addTaskRequest(payload);
 
     if ('id' in response) {
-      const task: TaskResponse = response;
       loadTasks();
       return true;
-    } else {
-      handleError(response);
     }
+    handleError(response);
+
     return false;
   };
 
@@ -61,30 +74,21 @@ function Task(): JSX.Element {
     }
   };
 
-  const loadTasks = async() => {
-    const tasks: TaskResponse[] | Error = await getTasksRequest();
-    if (tasks instanceof Error) {
-      handleError(tasks);
-    } else {
-      setTasks(tasks);
-    }
-  };
-
   const markAsDone = async (task: TaskResponse) => {
-    const tasks: Error | undefined = await updateTaskDoneRequest(task.id, !task.done);
-    if (tasks instanceof Error) {
-      handleError(tasks);
-    } else {
+    try {
+      await updateTaskDoneRequest(task.id, !task.done);
       loadTasks();
+    } catch (e) {
+      handleError(e);
     }
   };
 
   const deleteTask = async (taskId: number) => {
-    const response: Error | undefined = await deleteTaskRequest(taskId);
-    if (response instanceof Error) {
-      handleError(response);
-    } else {
+    try {
+      await deleteTaskRequest(taskId);
       loadTasks();
+    } catch (e) {
+      handleError(e);
     }
   };
 
@@ -101,11 +105,11 @@ function Task(): JSX.Element {
               <Card.Title>Add task</Card.Title>
 
               {formInvalid ? (
-                <Alert variant={"danger"}>
+                <Alert variant="danger">
                   { errorMessage }
                 </Alert>
               ) : null}
-              
+
               <Form noValidate validated={validated} onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <Form.Label>Description</Form.Label>
@@ -135,63 +139,54 @@ function Task(): JSX.Element {
                   Save
                 </Button>
               </Form>
-              
+
             </Card.Body>
           </Card>
         </Col>
       </Row>
       <Row className="mt-3">
         <Col xs={12}>
-          <Card>
-            <Card.Body>
-              <Card.Title>Task list</Card.Title>
-              
-              <Table striped bordered hover>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Description</th>
-                    <th>Done</th>
-                    <th>URL</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tasks.map((task: TaskResponse) => (
-                    <tr key={`task-${task.id}`}>
-                      <td className={task.done ? 'text-done' : ''}>{task.id}</td>
-                      <td className={task.done ? 'text-done' : ''}>{task.description}</td>
-                      <td className={task.done ? 'text-done' : ''}>{task.done? 'Yes' : 'No'}</td>
-                      <td className={task.done ? 'text-done' : ''}>
-                        {task.urls.length > 0? (
-                          <a href={`${task.urls[0].url}`}>Link</a>
-                        ) : '-'}
-                      </td>
-                      <td className={task.done ? 'text-done' : ''}>
-                      <Button
-                        type="button"
-                        variant="link"
-                        onClick={() => markAsDone(task)}
-                      >
-                        {task.done ? 'Undone' : 'Done'}
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="link"
-                        onClick={() => deleteTask(task.id)}
-                      >
-                        Delete
-                      </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </Card.Body>
-            <Card.Footer>
-              {tasks.length === 0? 'No tasks' : `${tasks.length} pending task(s)`}
-            </Card.Footer>
-          </Card>
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Description</th>
+                <th>Done</th>
+                <th>URL</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tasks.map((task: TaskResponse) => (
+                <tr key={`task-${task.id}`}>
+                  <td className={task.done ? 'text-done' : ''}>{task.id}</td>
+                  <td className={task.done ? 'text-done' : ''}>{task.description}</td>
+                  <td className={task.done ? 'text-done' : ''}>{task.done ? 'Yes' : 'No'}</td>
+                  <td className={task.done ? 'text-done' : ''}>
+                    {task.urls.length > 0 ? (
+                      <a href={`${task.urls[0].url}`}>Link</a>
+                    ) : '-'}
+                  </td>
+                  <td className={task.done ? 'text-done' : ''}>
+                    <Button
+                      type="button"
+                      variant="link"
+                      onClick={() => markAsDone(task)}
+                    >
+                      {task.done ? 'Undone' : 'Done'}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="link"
+                      onClick={() => deleteTask(task.id)}
+                    >
+                      Delete
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
         </Col>
       </Row>
     </Container>

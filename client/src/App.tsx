@@ -1,5 +1,7 @@
 import React, { useContext, useEffect } from 'react';
-import { createBrowserRouter, Navigate, RouteObject, RouterProvider } from 'react-router-dom';
+import {
+  createBrowserRouter, Navigate, RouteObject, RouterProvider
+} from 'react-router-dom';
 import AuthContext from './context/AuthContext';
 
 import BrowserRoutes from './routes';
@@ -31,7 +33,7 @@ const App: React.FC = () => {
     },
     {
       path: '/home',
-      element: <Navigate to={"/login"} replace />
+      element: <Navigate to="/login" replace />
     },
     {
       path: '*',

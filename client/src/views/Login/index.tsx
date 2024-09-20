@@ -1,7 +1,11 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
-import AuthContext from '../../context/AuthContext';
+import React, {
+  useCallback, useContext, useEffect, useState
+} from 'react';
+import {
+  Alert, Button, Card, Col, Container, Form, Row
+} from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import AuthContext from '../../context/AuthContext';
 
 /**
  * Login page component.
@@ -9,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
  * This component displays the login page of the application,
  * providing navigation to register or back to home.
  *
- * @returns The Login page component.
+ * @returns {JSX.Element} The Login page component.
  */
 function Login(): JSX.Element {
   const { signIn } = useContext(AuthContext);
@@ -17,6 +21,15 @@ function Login(): JSX.Element {
   const [validated, setValidated] = useState<boolean>(true);
   const [formInvalid, setFormInvalid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
+
+  /**
+   * Navigates to the specified page.
+   *
+   * @param {string} page - The page to navigate to.
+   */
+  const goTo = useCallback((page: string): void => {
+    navigate(page);
+  }, []);
 
   /**
    * Handles the form submit button click event.
@@ -38,7 +51,7 @@ function Login(): JSX.Element {
     setFormInvalid(false);
     try {
       await signIn(form.email.value, form.password.value);
-      goTo("/home");
+      goTo('/home');
     } catch (e) {
       setFormInvalid(true);
       if (typeof e === 'string') {
@@ -48,15 +61,6 @@ function Login(): JSX.Element {
       }
     }
   };
-
-  /**
-   * Navigates to the specified page.
-   *
-   * @param {string} page - The page to navigate to.
-   */
-  const goTo = useCallback((page: string): void => {
-    navigate(page);
-  }, []);
 
   useEffect(() => {}, [formInvalid]);
 
@@ -69,7 +73,7 @@ function Login(): JSX.Element {
               <h2 className="text-center mb-4">Login</h2>
 
               {formInvalid ? (
-                <Alert variant={"danger"}>
+                <Alert variant="danger">
                   { errorMessage }
                 </Alert>
               ) : null}
@@ -105,7 +109,7 @@ function Login(): JSX.Element {
               </Form>
 
               <div className="text-center mt-3">
-                Don't have an account?&nbsp;
+                Don&apos;t have an account?&nbsp;
                 <a href="/register" className="text-decoration-none">
                   Register
                 </a>

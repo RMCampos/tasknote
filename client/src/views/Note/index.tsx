@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Accordion, Alert, Button, Card, Col, Container, Form, InputGroup, Row, Table } from 'react-bootstrap';
+import {
+  Accordion, Alert, Button, Card, Col, Container, Form, Row
+} from 'react-bootstrap';
 
 import TaskNoteRequest from '../../types/TaskNoteRequest';
 import { NoteResponse } from '../../types/NoteResponse';
 import './style.css';
-import { addNoteRequest, deleteNoteRequest, getNotesRequest, updateNoteRequest } from '../../api-service/noteService';
+import {
+  addNoteRequest, deleteNoteRequest, getNotesRequest, updateNoteRequest
+} from '../../api-service/noteService';
 
 type NoteAction = 'add' | 'edit';
 
+/**
+ *
+ */
 function Note(): JSX.Element {
   const [validated, setValidated] = useState<boolean>(true);
   const [formInvalid, setFormInvalid] = useState<boolean>(false);
@@ -26,29 +33,36 @@ function Note(): JSX.Element {
       setErrorMessage(e.message);
       setFormInvalid(true);
     }
-  }
+  };
+
+  const loadNotes = async () => {
+    const notesFetched: NoteResponse[] | Error = await getNotesRequest();
+    if (notesFetched instanceof Error) {
+      handleError(notesFetched);
+    } else {
+      setNotes(notesFetched);
+    }
+  };
 
   const addNote = async (payload: TaskNoteRequest): Promise<boolean> => {
-    let response = await addNoteRequest(payload);
+    const response = await addNoteRequest(payload);
 
     if ('id' in response) {
-      const note: NoteResponse = response;
       loadNotes();
       return true;
-    } else {
-      handleError(response);
     }
+    handleError(response);
+
     return false;
   };
 
   const submitEditNote = async (payload: NoteResponse): Promise<boolean> => {
-    let response: Error | undefined = await updateNoteRequest(payload);
-
-    if (response instanceof Error) {
-      handleError(response);
-    } else {
+    try {
+      await updateNoteRequest(payload);
       loadNotes();
       return true;
+    } catch (e) {
+      handleError(e);
     }
     return false;
   };
@@ -69,11 +83,11 @@ function Note(): JSX.Element {
 
     const title: string = form.note_title.value;
     const description: string = form.note_description.value;
-    
+
     if (action === 'add') {
       const payload: TaskNoteRequest = {
-        title: title,
-        description: description,
+        title,
+        description,
         urls: []
       };
 
@@ -88,8 +102,8 @@ function Note(): JSX.Element {
     } else if (action === 'edit') {
       const payload: NoteResponse = {
         id: noteId,
-        title: title,
-        description: description,
+        title,
+        description,
         urls: []
       };
 
@@ -104,21 +118,12 @@ function Note(): JSX.Element {
     }
   };
 
-  const loadNotes = async() => {
-    const notes: NoteResponse[] | Error = await getNotesRequest();
-    if (notes instanceof Error) {
-      handleError(notes);
-    } else {
-      setNotes(notes);
-    }
-  };
-
-  const deleteNote = async (noteId: number) => {
-    const response: Error | undefined = await deleteNoteRequest(noteId);
-    if (response instanceof Error) {
-      handleError(response);
-    } else {
+  const deleteNote = async (noteIdParam: number) => {
+    try {
+      await deleteNoteRequest(noteIdParam);
       loadNotes();
+    } catch (e) {
+      handleError(e);
     }
   };
 
@@ -142,11 +147,11 @@ function Note(): JSX.Element {
               <Card.Title>Add note</Card.Title>
 
               {formInvalid ? (
-                <Alert variant={"danger"}>
+                <Alert variant="danger">
                   { errorMessage }
                 </Alert>
               ) : null}
-              
+
               <Form noValidate validated={validated} onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="form_noteTitle">
                   <Form.Label>Title</Form.Label>
@@ -185,57 +190,49 @@ function Note(): JSX.Element {
                   Save note
                 </Button>
               </Form>
-              
+
             </Card.Body>
           </Card>
         </Col>
       </Row>
       <Row className="mt-3">
         <Col xs={12}>
-          <Card>
-            <Card.Body>
-              <Accordion defaultActiveKey="0">
-              {notes.map((note: NoteResponse) => (
-                <Accordion.Item key={note.id.toString()} eventKey={note.id.toString()}>
-                  <Accordion.Header>
-                    {note.title}
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    {note.description.split(/(?:\r\n|\r|\n)/g).map((item: string) => {
-                      return (
-                        <>
-                          <span key={item}>{item}</span>
-                          <br />
-                        </>
-                      )
-                    })}
-                    
-                    <Button
-                      type="button"
-                      variant="primary"
-                      onClick={() => editNote(note)}
-                      className="mt-3"
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="danger"
-                      onClick={() => deleteNote(note.id)}
-                      className="mt-3 mx-3"
-                    >
-                      Delete
-                    </Button>
-                  </Accordion.Body>
-                </Accordion.Item>
-              ))}
-              </Accordion>
-              
-            </Card.Body>
-            <Card.Footer>
-              {notes.length === 0? 'No notes' : `${notes.length} note(s)`}
-            </Card.Footer>
-          </Card>
+          <Accordion defaultActiveKey="0">
+            {notes.map((note: NoteResponse) => (
+              <Accordion.Item key={note.id.toString()} eventKey={note.id.toString()}>
+                <Accordion.Header>
+                  {note.title}
+                </Accordion.Header>
+                <Accordion.Body>
+                  <span className="span-line-break">
+                    { note.description }
+                  </span>
+
+                  <br />
+
+                  <Button
+                    type="button"
+                    variant="primary"
+                    onClick={() => editNote(note)}
+                    className="mt-3"
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="danger"
+                    onClick={() => deleteNote(note.id)}
+                    className="mt-3 mx-3"
+                  >
+                    Delete
+                  </Button>
+                </Accordion.Body>
+              </Accordion.Item>
+            ))}
+          </Accordion>
+
+          {/* add pagination here */}
+            
         </Col>
       </Row>
     </Container>

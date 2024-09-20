@@ -1,5 +1,7 @@
 import React from 'react';
-import { Card, Col, Container, Row } from 'react-bootstrap';
+import {
+  Card, Col, Container, Row
+} from 'react-bootstrap';
 
 /**
  * Not Found page component.
@@ -7,7 +9,7 @@ import { Card, Col, Container, Row } from 'react-bootstrap';
  * This component displays the not found page of the application,
  * providing navigation to back to home.
  *
- * @returns The NotFound page component.
+ * @returns {JSX.Element} The NotFound page component.
  */
 function NotFound(): JSX.Element {
   return (

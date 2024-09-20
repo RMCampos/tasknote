@@ -11,11 +11,20 @@ import AuthContext from '../../context/AuthContext';
  * providing navigation to login or register.
  * It also checks for an existing user session.
  *
- * @returns The Landing page component.
+ * @returns {JSX.Element} The Landing page component.
  */
 function Landing(): JSX.Element {
   const { signed, checkCurrentAuthUser } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  /**
+   * Navigates to the specified page.
+   *
+   * @param {string} page - The page to navigate to.
+   */
+  const goTo = useCallback((page: string): void => {
+    navigate(page);
+  }, []);
 
   /**
    * Handles the login button click event.
@@ -30,15 +39,6 @@ function Landing(): JSX.Element {
       goTo('/login');
     }
   };
-
-  /**
-   * Navigates to the specified page.
-   *
-   * @param {string} page - The page to navigate to.
-   */
-  const goTo = useCallback((page: string): void => {
-    navigate(page);
-  }, []);
 
   useEffect(() => {
     checkCurrentAuthUser(window.location.pathname);
@@ -65,13 +65,13 @@ function Landing(): JSX.Element {
           variant="outline-primary"
           className="btn-lg"
           type="button"
-          onClick={() => goTo("/register")}
+          onClick={() => goTo('/register')}
         >
           Register
         </Button>
       </div>
     </Container>
-      
+
   );
 }
 

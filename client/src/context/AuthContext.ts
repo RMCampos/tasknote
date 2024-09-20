@@ -1,6 +1,5 @@
 import { createContext } from 'react';
 import { User } from '../types/User';
-import { SigninResponse } from '../types/SigninResponse';
 
 export interface AuthContextData {
   signed: boolean;

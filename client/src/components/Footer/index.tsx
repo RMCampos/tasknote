@@ -1,5 +1,7 @@
 import React, { useContext } from 'react';
-import { Button, Col, Container, Row } from 'react-bootstrap';
+import {
+  Button, Col, Container, Row
+} from 'react-bootstrap';
 import { env } from '../../env';
 import AuthContext from '../../context/AuthContext';
 import './style.css';
@@ -11,7 +13,7 @@ import './style.css';
  * providing navigation to logout.
  * It also includes the build version.
  *
- * @returns The Footer component.
+ * @returns {JSX.Element} The Footer component.
  */
 function Footer(): JSX.Element {
   const { signOut, user } = useContext(AuthContext);
@@ -23,7 +25,14 @@ function Footer(): JSX.Element {
       <Container>
         <Row className="align-items-center">
           <Col xs={12} sm={4} className="text-center text-sm-start">
-            <span>TaskNote App &copy; {currentYear} ({build})</span>
+            <span>
+              TaskNote App &copy;
+              {currentYear}
+              {' '}
+              (
+              {build}
+              )
+            </span>
           </Col>
           <Col xs={12} sm={4} className="text-center text-sm-end">
             {user?.email}
@@ -37,6 +46,6 @@ function Footer(): JSX.Element {
       </Container>
     </footer>
   );
-};
+}
 
 export default Footer;

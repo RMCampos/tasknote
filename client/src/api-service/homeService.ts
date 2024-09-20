@@ -2,6 +2,9 @@ import { API_TOKEN } from '../app-constants/app-constants';
 import { SummaryResponse } from '../types/SummaryResponse';
 import ApiConfig from './apiConfig';
 
+/**
+ *
+ */
 async function getHomeSummary(): Promise<SummaryResponse | Error> {
   try {
     const tokenState = localStorage.getItem(API_TOKEN);
@@ -10,7 +13,7 @@ async function getHomeSummary(): Promise<SummaryResponse | Error> {
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${tokenState}`
+        Authorization: `Bearer ${tokenState}`
       }
     });
     if (response.ok) {

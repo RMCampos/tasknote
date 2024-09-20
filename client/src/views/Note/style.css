@@ -5,3 +5,7 @@
 .text-done .btn.btn-link {
   color: #ccc!important;
 }
+
+.span-line-break {
+  white-space: pre;
+}

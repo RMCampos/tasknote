@@ -12,7 +12,7 @@ import './style.css';
  * including the outlet responsible for the main content.
  * It also includes the header and the footer.
  *
- * @returns The Layout component.
+ * @returns {JSX.Element} The Layout component.
  */
 function Layout(): JSX.Element {
   return (

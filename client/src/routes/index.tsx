@@ -1,3 +1,4 @@
+import React from 'react';
 import { Navigate, RouteObject } from 'react-router-dom';
 import getStoredPath from '../utils/PathUtils';
 import Home from '../views/Home';
@@ -15,13 +16,13 @@ const BrowserRoutes: RouteObject[] = [
   {
     path: '/login',
     element: (
-      <Navigate to={"/home"} replace />
+      <Navigate to="/home" replace />
     )
   },
   {
     path: '/register',
     element: (
-      <Navigate to={"/home"} replace />
+      <Navigate to="/home" replace />
     )
   },
   {

@@ -1,7 +1,11 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
-import AuthContext from '../../context/AuthContext';
+import React, {
+  useCallback, useContext, useEffect, useState
+} from 'react';
+import {
+  Alert, Button, Card, Col, Container, Form, Row
+} from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import AuthContext from '../../context/AuthContext';
 
 /**
  * Register page component.
@@ -9,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
  * This component displays the register page of the application,
  * providing navigation to login or back to home.
  *
- * @returns The Register page component.
+ * @returns {JSX.Element} The Register page component.
  */
 function Register(): JSX.Element {
   const { register } = useContext(AuthContext);
@@ -17,6 +21,15 @@ function Register(): JSX.Element {
   const [validated, setValidated] = useState<boolean>(true);
   const [formInvalid, setFormInvalid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
+
+  /**
+   * Navigates to the specified page.
+   *
+   * @param {string} page - The page to navigate to.
+   */
+  const goTo = useCallback((page: string) => {
+    navigate(page);
+  }, []);
 
   /**
    * Handles the form submit button click event.
@@ -38,7 +51,7 @@ function Register(): JSX.Element {
     setFormInvalid(false);
     try {
       await register(form.email.value, form.password.value);
-      goTo("/home");
+      goTo('/home');
     } catch (e) {
       setFormInvalid(true);
       if (typeof e === 'string') {
@@ -48,15 +61,6 @@ function Register(): JSX.Element {
       }
     }
   };
-
-  /**
-   * Navigates to the specified page.
-   *
-   * @param {string} page - The page to navigate to.
-   */
-  const goTo = useCallback((page: string) => {
-    navigate(page);
-  }, []);
 
   useEffect(() => {}, [formInvalid]);
 
@@ -69,7 +73,7 @@ function Register(): JSX.Element {
               <h2 className="text-center mb-4">Create account</h2>
 
               {formInvalid ? (
-                <Alert variant={"danger"}>
+                <Alert variant="danger">
                   { errorMessage }
                 </Alert>
               ) : null}

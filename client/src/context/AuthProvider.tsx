@@ -1,11 +1,15 @@
 /* eslint-disable no-console */
 import React, { useMemo, useState } from 'react';
 import { User } from '../types/User';
-import { env } from '../env';
-import ApiConfig from '../api-service/apiConfig';
 import AuthContext, { AuthContextData } from './AuthContext';
 import { API_TOKEN, REDIRECT_PATH, USER_DATA } from '../app-constants/app-constants';
 import { SigninResponse } from '../types/SigninResponse';
+import {
+  authenticateUser,
+  logoutUser,
+  refreshToken,
+  registerUser
+} from '../api-service/authService';
 
 interface Props {
   children: React.ReactNode;
@@ -19,14 +23,16 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
 
   const fetchCurrentSession = async (pathname: string): Promise<SigninResponse | undefined> => {
     try {
-      const bearerToken: SigninResponse | undefined = await ApiConfig.currentSessionState();
+      const bearerToken: SigninResponse = await refreshToken();
       if (bearerToken && bearerToken.token) {
         setSigned(true);
       }
       return bearerToken;
     } catch (e) {
       if (e instanceof Error) {
-        console.warn(e.message);
+        if (e.message !== 'No saved token!') {
+          console.warn(e.message);
+        }
       } else if (e) {
         console.warn(e);
       }
@@ -66,41 +72,39 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
   };
 
   const register = async (email: string, password: string): Promise<string> => {
-    const registerResponse: SigninResponse | Error = await ApiConfig.register(email, password);
-    
-    if (registerResponse instanceof Error) {
-      return Promise.reject(registerResponse.message);
+    try {
+      const registerResponse: SigninResponse = await registerUser(email, password);
+      const currentUser: User = {
+        email
+      };
+
+      setSigned(true);
+      setUser(currentUser);
+      updateUserSession(currentUser, registerResponse.token);
+      return Promise.resolve('OK');
+    } catch (e) {
+      return Promise.reject(e);
     }
-
-    const currentUser: User = {
-      email: email
-    };
-
-    setSigned(true);
-    setUser(currentUser);
-    updateUserSession(currentUser, registerResponse.token);
-    return Promise.resolve('OK');
   };
 
   const signIn = async (email: string, password: string): Promise<string> => {
-    const registerResponse: SigninResponse | Error = await ApiConfig.login(email, password);
+    try {
+      const registerResponse: SigninResponse = await authenticateUser(email, password);
+      const currentUser: User = {
+        email
+      };
 
-    if (registerResponse instanceof Error) {
-      return Promise.reject(registerResponse.message);
+      setSigned(true);
+      setUser(currentUser);
+      updateUserSession(currentUser, registerResponse.token);
+      return Promise.resolve('OK');
+    } catch (e) {
+      return Promise.reject(e);
     }
-
-    const currentUser: User = {
-      email: email
-    };
-
-    setSigned(true);
-    setUser(currentUser);
-    updateUserSession(currentUser, registerResponse.token);
-    return Promise.resolve('OK');
   };
 
   const signOut = async (): Promise<void> => {
-    ApiConfig.logout();
+    logoutUser();
     setSigned(false);
     setUser(undefined);
     setIsAdmin(false);

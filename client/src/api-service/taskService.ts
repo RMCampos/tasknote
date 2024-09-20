@@ -3,6 +3,9 @@ import TaskNoteRequest from '../types/TaskNoteRequest';
 import { TaskResponse } from '../types/TaskResponse';
 import ApiConfig from './apiConfig';
 
+/**
+ *
+ */
 async function addTaskRequest(task: TaskNoteRequest): Promise<TaskResponse | Error> {
   try {
     const tokenState = localStorage.getItem(API_TOKEN);
@@ -11,7 +14,7 @@ async function addTaskRequest(task: TaskNoteRequest): Promise<TaskResponse | Err
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${tokenState}`
+        Authorization: `Bearer ${tokenState}`
       },
       body: JSON.stringify(task)
     });
@@ -20,23 +23,26 @@ async function addTaskRequest(task: TaskNoteRequest): Promise<TaskResponse | Err
       return data;
     }
     if (response.status === 400) {
-      return new Error('Wrong or missing information!');
+      throw new Error('Wrong or missing information!');
     }
     if (response.status === 403) {
-      return new Error('Forbidden! Access denied');
+      throw new Error('Forbidden! Access denied');
     }
     if (response.status === 500) {
-      return new Error('Internal Server Error!');
+      throw new Error('Internal Server Error!');
     }
   } catch (e) {
     if (typeof e === 'string') {
-      return new Error(e as string);
+      throw new Error(e as string);
     }
   }
-  return new Error('Unknown error');
+  throw new Error('Unknown error');
 }
 
-async function getTasksRequest(): Promise<TaskResponse[] | Error> {
+/**
+ *
+ */
+async function getTasksRequest(): Promise<TaskResponse[]> {
   try {
     const tokenState = localStorage.getItem(API_TOKEN);
     const response = await fetch(ApiConfig.tasksUrl, {
@@ -44,7 +50,7 @@ async function getTasksRequest(): Promise<TaskResponse[] | Error> {
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${tokenState}`
+        Authorization: `Bearer ${tokenState}`
       }
     });
     if (response.ok) {
@@ -52,20 +58,23 @@ async function getTasksRequest(): Promise<TaskResponse[] | Error> {
       return data;
     }
     if (response.status === 403) {
-      return new Error('Forbidden! Access denied');
+      throw new Error('Forbidden! Access denied');
     }
     if (response.status === 500) {
-      return new Error('Internal Server Error!');
+      throw new Error('Internal Server Error!');
     }
   } catch (e) {
     if (typeof e === 'string') {
-      return new Error(e as string);
+      throw new Error(e as string);
     }
   }
-  return new Error('Unknown error');
+  throw new Error('Unknown error');
 }
 
-async function updateTaskDoneRequest(id: number, done: boolean): Promise<Error | undefined> {
+/**
+ *
+ */
+async function updateTaskDoneRequest(id: number, done: boolean): Promise<undefined> {
   try {
     const tokenState = localStorage.getItem(API_TOKEN);
     const response = await fetch(`${ApiConfig.tasksUrl}/${id}`, {
@@ -73,7 +82,7 @@ async function updateTaskDoneRequest(id: number, done: boolean): Promise<Error |
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${tokenState}`
+        Authorization: `Bearer ${tokenState}`
       },
       body: JSON.stringify({ done })
     });
@@ -82,20 +91,23 @@ async function updateTaskDoneRequest(id: number, done: boolean): Promise<Error |
       return;
     }
     if (response.status === 403) {
-      return new Error('Forbidden! Access denied');
+      throw new Error('Forbidden! Access denied');
     }
     if (response.status === 500) {
-      return new Error('Internal Server Error!');
+      throw new Error('Internal Server Error!');
     }
   } catch (e) {
     if (typeof e === 'string') {
-      return new Error(e as string);
+      throw new Error(e as string);
     }
   }
-  return new Error('Unknown error');
+  throw new Error('Unknown error');
 }
 
-async function deleteTaskRequest(id: number): Promise<Error | undefined> {
+/**
+ *
+ */
+async function deleteTaskRequest(id: number): Promise<undefined> {
   try {
     const tokenState = localStorage.getItem(API_TOKEN);
     const response = await fetch(`${ApiConfig.tasksUrl}/${id}`, {
@@ -103,25 +115,26 @@ async function deleteTaskRequest(id: number): Promise<Error | undefined> {
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${tokenState}`
+        Authorization: `Bearer ${tokenState}`
       }
     });
     if (response.status === 204) {
       return;
     }
     if (response.status === 403) {
-      return new Error('Forbidden! Access denied');
+      throw new Error('Forbidden! Access denied');
     }
     if (response.status === 500) {
-      return new Error('Internal Server Error!');
+      throw new Error('Internal Server Error!');
     }
   } catch (e) {
-    console.log('aha!');
     if (typeof e === 'string') {
-      return new Error(e as string);
+      throw new Error(e as string);
     }
   }
-  return new Error('Unknown error');
+  throw new Error('Unknown error');
 }
-    
-export { addTaskRequest, getTasksRequest, updateTaskDoneRequest, deleteTaskRequest };
+
+export {
+  addTaskRequest, getTasksRequest, updateTaskDoneRequest, deleteTaskRequest
+};
