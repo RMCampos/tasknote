@@ -47,13 +47,13 @@ jobs:
             -Dsonar.sources=src/
             -Dsonar.exclusions=src/__test__/**
             -Dsonar.tests=src/__test__/
-            -Dsonar.verbose=true
+            -Dsonar.verbose=false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   client-docker-build:
-    name: Build Docker image
+    name: Build Client Docker image
     runs-on: ubuntu-latest
     needs:
       - client-sonarcloud
