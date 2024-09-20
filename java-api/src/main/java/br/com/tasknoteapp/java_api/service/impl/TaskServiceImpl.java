@@ -138,6 +138,18 @@ class TaskServiceImpl implements TaskService {
     log.info("Task deleted! Id {}", taskId);
   }
 
+  @Override
+  public List<TaskResponse> searchTasks(String searchTerm) {
+    UserEntity user = getCurrentUser();
+
+    log.info("Searching tasks to user {}", user.getId());
+
+    List<TaskEntity> tasks = taskRepository.findAllBySearchTerm(searchTerm, user.getId());
+    log.info("{} tasks found!", tasks.size());
+
+    return tasks.stream().map(TaskResponse::fromEntity).toList();
+  }
+
   private UserEntity getCurrentUser() {
     Optional<String> currentUserEmail = authUtil.getCurrentUserEmail();
     String email = currentUserEmail.orElseThrow();

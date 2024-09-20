@@ -42,6 +42,8 @@ const ApiConfig = {
 
   tasksUrl: `${server}/rest/tasks`,
 
+  homeUrl: `${server}/rest/home`,
+
   login: async (email: string, password: string): Promise<SigninResponse | Error> => {
     try {
       const response = await fetch(ApiConfig.signInUrl, {

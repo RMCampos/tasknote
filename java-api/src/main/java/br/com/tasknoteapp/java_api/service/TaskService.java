@@ -16,4 +16,6 @@ public interface TaskService {
   public TaskResponse patchTask(Long taskId, TaskPatchRequest taskRequest);
 
   public void deleteTask(Long taskId);
+
+  public List<TaskResponse> searchTasks(String searchTerm);
 }
