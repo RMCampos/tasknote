@@ -7,8 +7,8 @@ on:
     workflow_dispatch:
 
 jobs:
-  code-checks:
-    name: Code Checks
+  client-code-checks:
+    name: Client Code Checks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -30,17 +30,26 @@ jobs:
       #- name: Unit tests
       #  run: npm run test
 
-  sonarcloud:
-    name: SonarCloud
+  client-sonarcloud:
+    name: Client SonarCloud
     runs-on: ubuntu-latest
     needs:
-      - code-checks
+      - client-code-checks
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v3.0.0
+        with:
+          projectBaseDir: client
+          args: >
+            -Dsonar.organization=ricardo-campos-org
+            -Dsonar.projectKey=ricardo-campos-org_react-typescript-todolist
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.sources=src/
+            -Dsonar.tests=src/__test__/__
+            -Dsonar.verbose=true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
