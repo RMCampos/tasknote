@@ -48,7 +48,9 @@ function Landing(): JSX.Element {
     <Container fluid className="vh-100 d-flex justify-content-center align-items-center">
       <div className="text-center">
         <h1 className="display-4 fw-bold">Welcome to TaskNote App</h1>
-        <p className="lead mb-4">Notes here</p>
+        <p className="lead mb-4">
+          Your best friend to keep up with notes and tasks!
+        </p>
 
         <Button
           type="button"

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Button, Card, Col, Container, Form, InputGroup, Row, Table } from 'react-bootstrap';
 import {
   addTaskRequest,
@@ -6,7 +6,7 @@ import {
   getTasksRequest,
   updateTaskDoneRequest
 } from '../../api-service/taskService';
-import TaskRequest from '../../types/TaskRequest';
+import TaskNoteRequest from '../../types/TaskNoteRequest';
 import { TaskResponse } from '../../types/TaskResponse';
 import './style.css';
 
@@ -27,7 +27,7 @@ function Task(): JSX.Element {
   }
 
   const addTask = async (desc: string, url?: string): Promise<boolean> => {
-    const payload: TaskRequest = {
+    const payload: TaskNoteRequest = {
       description: desc,
       urls: url? [url] : []
     };
@@ -82,7 +82,7 @@ function Task(): JSX.Element {
   const deleteTask = async (taskId: number) => {
     const response: Error | undefined = await deleteTaskRequest(taskId);
     if (response instanceof Error) {
-      handleError(tasks);
+      handleError(response);
     } else {
       loadTasks();
     }

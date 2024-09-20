@@ -1,19 +1,19 @@
 import { API_TOKEN } from '../app-constants/app-constants';
 import TaskNoteRequest from '../types/TaskNoteRequest';
-import { TaskResponse } from '../types/TaskResponse';
+import { NoteResponse } from '../types/NoteResponse';
 import ApiConfig from './apiConfig';
 
-async function addTaskRequest(task: TaskNoteRequest): Promise<TaskResponse | Error> {
+async function addNoteRequest(note: TaskNoteRequest): Promise<NoteResponse | Error> {
   try {
     const tokenState = localStorage.getItem(API_TOKEN);
-    const response = await fetch(ApiConfig.tasksUrl, {
+    const response = await fetch(ApiConfig.notesUrl, {
       method: 'POST',
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${tokenState}`
       },
-      body: JSON.stringify(task)
+      body: JSON.stringify(note)
     });
     if (response.ok) {
       const data = await response.json();
@@ -36,10 +36,10 @@ async function addTaskRequest(task: TaskNoteRequest): Promise<TaskResponse | Err
   return new Error('Unknown error');
 }
 
-async function getTasksRequest(): Promise<TaskResponse[] | Error> {
+async function getNotesRequest(): Promise<NoteResponse[] | Error> {
   try {
     const tokenState = localStorage.getItem(API_TOKEN);
-    const response = await fetch(ApiConfig.tasksUrl, {
+    const response = await fetch(ApiConfig.notesUrl, {
       method: 'GET',
       mode: 'cors',
       headers: {
@@ -65,17 +65,17 @@ async function getTasksRequest(): Promise<TaskResponse[] | Error> {
   return new Error('Unknown error');
 }
 
-async function updateTaskDoneRequest(id: number, done: boolean): Promise<Error | undefined> {
+async function updateNoteRequest(id: number, desc: string): Promise<Error | undefined> {
   try {
     const tokenState = localStorage.getItem(API_TOKEN);
-    const response = await fetch(`${ApiConfig.tasksUrl}/${id}`, {
+    const response = await fetch(`${ApiConfig.notesUrl}/${id}`, {
       method: 'PATCH',
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${tokenState}`
       },
-      body: JSON.stringify({ done })
+      body: JSON.stringify({ description: desc })
     });
     if (response.ok) {
       await response.json();
@@ -95,10 +95,10 @@ async function updateTaskDoneRequest(id: number, done: boolean): Promise<Error |
   return new Error('Unknown error');
 }
 
-async function deleteTaskRequest(id: number): Promise<Error | undefined> {
+async function deleteNoteRequest(id: number): Promise<Error | undefined> {
   try {
     const tokenState = localStorage.getItem(API_TOKEN);
-    const response = await fetch(`${ApiConfig.tasksUrl}/${id}`, {
+    const response = await fetch(`${ApiConfig.notesUrl}/${id}`, {
       method: 'DELETE',
       mode: 'cors',
       headers: {
@@ -124,4 +124,4 @@ async function deleteTaskRequest(id: number): Promise<Error | undefined> {
   return new Error('Unknown error');
 }
     
-export { addTaskRequest, getTasksRequest, updateTaskDoneRequest, deleteTaskRequest };
+export { addNoteRequest, getNotesRequest, updateNoteRequest, deleteNoteRequest };
