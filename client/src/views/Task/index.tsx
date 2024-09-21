@@ -3,7 +3,6 @@ import {
   Alert, Button, Card, Col, Container, Form, Row, Table
 } from 'react-bootstrap';
 import {
-  addTaskRequest,
   deleteTaskRequest
 } from '../../api-service/taskService';
 import TaskNoteRequest from '../../types/TaskNoteRequest';
@@ -45,13 +44,13 @@ function Task(): JSX.Element {
       description: desc,
       urls: url ? [url] : []
     };
-    const response = await addTaskRequest(payload);
-
-    if ('id' in response) {
+    try {
+      await api.postJSON(ApiConfig.tasksUrl, payload);
       loadTasks();
       return true;
+    } catch (e) {
+      handleError(e);
     }
-    handleError(response);
 
     return false;
   };
