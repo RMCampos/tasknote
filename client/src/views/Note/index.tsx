@@ -7,7 +7,7 @@ import TaskNoteRequest from '../../types/TaskNoteRequest';
 import { NoteResponse } from '../../types/NoteResponse';
 import './style.css';
 import {
-  addNoteRequest, deleteNoteRequest, updateNoteRequest
+  addNoteRequest, deleteNoteRequest
 } from '../../api-service/noteService';
 import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
@@ -60,7 +60,7 @@ function Note(): JSX.Element {
 
   const submitEditNote = async (payload: NoteResponse): Promise<boolean> => {
     try {
-      await updateNoteRequest(payload);
+      await api.patchJSON(`${ApiConfig.notesUrl}/${payload.id}`, payload);
       loadNotes();
       return true;
     } catch (e) {

@@ -4,8 +4,7 @@ import {
 } from 'react-bootstrap';
 import {
   addTaskRequest,
-  deleteTaskRequest,
-  updateTaskDoneRequest
+  deleteTaskRequest
 } from '../../api-service/taskService';
 import TaskNoteRequest from '../../types/TaskNoteRequest';
 import { TaskResponse } from '../../types/TaskResponse';
@@ -77,7 +76,11 @@ function Task(): JSX.Element {
 
   const markAsDone = async (task: TaskResponse) => {
     try {
-      await updateTaskDoneRequest(task.id, !task.done);
+      const updatedTask = {
+        ...task,
+        done: !task.done
+      };
+      await api.patchJSON(`${ApiConfig.tasksUrl}/${task.id}`, updatedTask);
       loadTasks();
     } catch (e) {
       handleError(e);

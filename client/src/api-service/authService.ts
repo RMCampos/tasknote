@@ -1,6 +1,5 @@
 import { API_TOKEN } from '../app-constants/app-constants';
 import { SigninResponse } from '../types/SigninResponse';
-import api from './api';
 import ApiConfig from './apiConfig';
 
 /**

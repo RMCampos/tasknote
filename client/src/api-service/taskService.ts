@@ -42,39 +42,6 @@ async function addTaskRequest(task: TaskNoteRequest): Promise<TaskResponse | Err
 /**
  *
  */
-async function updateTaskDoneRequest(id: number, done: boolean): Promise<undefined> {
-  try {
-    const tokenState = localStorage.getItem(API_TOKEN);
-    const response = await fetch(`${ApiConfig.tasksUrl}/${id}`, {
-      method: 'PATCH',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${tokenState}`
-      },
-      body: JSON.stringify({ done })
-    });
-    if (response.ok) {
-      await response.json();
-      return;
-    }
-    if (response.status === 403) {
-      throw new Error('Forbidden! Access denied');
-    }
-    if (response.status === 500) {
-      throw new Error('Internal Server Error!');
-    }
-  } catch (e) {
-    if (typeof e === 'string') {
-      throw new Error(e as string);
-    }
-  }
-  throw new Error('Unknown error');
-}
-
-/**
- *
- */
 async function deleteTaskRequest(id: number): Promise<undefined> {
   try {
     const tokenState = localStorage.getItem(API_TOKEN);
@@ -104,5 +71,5 @@ async function deleteTaskRequest(id: number): Promise<undefined> {
 }
 
 export {
-  addTaskRequest, updateTaskDoneRequest, deleteTaskRequest
+  addTaskRequest, deleteTaskRequest
 };

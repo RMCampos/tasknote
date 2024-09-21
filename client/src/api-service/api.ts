@@ -2,6 +2,9 @@ import { API_TOKEN } from '../app-constants/app-constants';
 
 const tokenState = localStorage.getItem(API_TOKEN);
 
+/**
+ *
+ */
 function handleError(httpStatusCode: number) {
   if (httpStatusCode === 403) {
     throw new Error('Forbidden! Access denied');
@@ -25,10 +28,28 @@ const api = {
     if (response.ok) {
       const data = await response.json();
       return data;
-    } else {
-      handleError(response.status);
     }
+    handleError(response.status);
+    return false;
+  },
+
+  patchJSON: async (url: string, payload: object) => {
+    const response = await fetch(url, {
+      method: 'PATCH',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${tokenState}`
+      },
+      body: JSON.stringify(payload)
+    });
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    }
+    handleError(response.status);
+    return false;
   }
-}
+};
 
 export default api;
