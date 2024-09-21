@@ -1,5 +1,6 @@
 import { API_TOKEN } from '../app-constants/app-constants';
 import { SigninResponse } from '../types/SigninResponse';
+import api from './api';
 import ApiConfig from './apiConfig';
 
 /**
@@ -88,41 +89,8 @@ function logoutUser(): void {
   localStorage.removeItem(API_TOKEN);
 }
 
-/**
- * Sends a GET request to the server to refresh the user token.
- *
- * @returns {Promise<SigninResponse>} A promise that resolves to SigninResponse if the request was
- * successful.
- * @throws {Error} An error object if there was an error
- */
-async function refreshToken(): Promise<SigninResponse> {
-  const tokenState = localStorage.getItem(API_TOKEN);
-
-  if (tokenState) {
-    const response = await fetch(ApiConfig.refreshTokenUrl, {
-      method: 'GET',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${tokenState}`
-      }
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      localStorage.setItem(API_TOKEN, data.token);
-      return {
-        token: data.token
-      };
-    }
-    throw new Error(response.statusText);
-  }
-  throw new Error('No saved token!');
-}
-
 export {
   registerUser,
   authenticateUser,
-  logoutUser,
-  refreshToken
+  logoutUser
 };

@@ -7,9 +7,10 @@ import { SigninResponse } from '../types/SigninResponse';
 import {
   authenticateUser,
   logoutUser,
-  refreshToken,
   registerUser
 } from '../api-service/authService';
+import api from '../api-service/api';
+import ApiConfig from '../api-service/apiConfig';
 
 interface Props {
   children: React.ReactNode;
@@ -23,10 +24,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
 
   const fetchCurrentSession = async (pathname: string): Promise<SigninResponse | undefined> => {
     try {
-      const bearerToken: SigninResponse = await refreshToken();
-      if (bearerToken && bearerToken.token) {
-        setSigned(true);
-      }
+      const bearerToken: SigninResponse = await api.getJSON(ApiConfig.refreshTokenUrl);
+      setSigned(true);
       return bearerToken;
     } catch (e) {
       if (e instanceof Error) {

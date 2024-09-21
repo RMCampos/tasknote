@@ -2,6 +2,7 @@ import { API_TOKEN } from '../app-constants/app-constants';
 import TaskNoteRequest from '../types/TaskNoteRequest';
 import { NoteResponse } from '../types/NoteResponse';
 import ApiConfig from './apiConfig';
+import api from './api';
 
 /**
  * Sends a POST request to the server to create a note.
@@ -28,42 +29,6 @@ async function addNoteRequest(note: TaskNoteRequest): Promise<NoteResponse> {
     }
     if (response.status === 400) {
       throw new Error('Wrong or missing information!');
-    }
-    if (response.status === 403) {
-      throw new Error('Forbidden! Access denied');
-    }
-    if (response.status === 500) {
-      throw new Error('Internal Server Error!');
-    }
-  } catch (e) {
-    if (typeof e === 'string') {
-      throw new Error(e as string);
-    }
-  }
-  throw new Error('Unknown error');
-}
-
-/**
- * Sends a GET request to the server to fetch all notes.
- *
- * @returns {Promise<NoteResponse[]>} A promise that resolves to an array of NoteResponse if the
- * request was successful.
- * @throws {Error} An error object if there was an error
- */
-async function getNotesRequest(): Promise<NoteResponse[]> {
-  try {
-    const tokenState = localStorage.getItem(API_TOKEN);
-    const response = await fetch(ApiConfig.notesUrl, {
-      method: 'GET',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${tokenState}`
-      }
-    });
-    if (response.ok) {
-      const data = await response.json();
-      return data;
     }
     if (response.status === 403) {
       throw new Error('Forbidden! Access denied');
@@ -157,5 +122,5 @@ async function deleteNoteRequest(id: number): Promise<undefined> {
 }
 
 export {
-  addNoteRequest, getNotesRequest, updateNoteRequest, deleteNoteRequest
+  addNoteRequest, updateNoteRequest, deleteNoteRequest
 };

@@ -5,12 +5,13 @@ import {
 import {
   addTaskRequest,
   deleteTaskRequest,
-  getTasksRequest,
   updateTaskDoneRequest
 } from '../../api-service/taskService';
 import TaskNoteRequest from '../../types/TaskNoteRequest';
 import { TaskResponse } from '../../types/TaskResponse';
 import './style.css';
+import api from '../../api-service/api';
+import ApiConfig from '../../api-service/apiConfig';
 
 /**
  *
@@ -32,7 +33,7 @@ function Task(): JSX.Element {
   };
 
   const loadTasks = async () => {
-    const tasksFetched: TaskResponse[] | Error = await getTasksRequest();
+    const tasksFetched: TaskResponse[] | Error = await api.getJSON(ApiConfig.tasksUrl);
     if (tasksFetched instanceof Error) {
       handleError(tasksFetched);
     } else {

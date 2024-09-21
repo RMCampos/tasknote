@@ -7,8 +7,10 @@ import TaskNoteRequest from '../../types/TaskNoteRequest';
 import { NoteResponse } from '../../types/NoteResponse';
 import './style.css';
 import {
-  addNoteRequest, deleteNoteRequest, getNotesRequest, updateNoteRequest
+  addNoteRequest, deleteNoteRequest, updateNoteRequest
 } from '../../api-service/noteService';
+import api from '../../api-service/api';
+import ApiConfig from '../../api-service/apiConfig';
 
 type NoteAction = 'add' | 'edit';
 
@@ -36,11 +38,11 @@ function Note(): JSX.Element {
   };
 
   const loadNotes = async () => {
-    const notesFetched: NoteResponse[] | Error = await getNotesRequest();
-    if (notesFetched instanceof Error) {
-      handleError(notesFetched);
-    } else {
+    try {
+      const notesFetched: NoteResponse[] = await api.getJSON(ApiConfig.notesUrl);
       setNotes(notesFetched);
+    } catch (e) {
+      handleError(e);
     }
   };
 

@@ -5,11 +5,13 @@ import {
   Button, Card, Col, Container, Form, InputGroup, Row
 } from 'react-bootstrap';
 import './style.css';
-import { getHomeSummary, searchHomeRequest } from '../../api-service/homeService';
+import { useNavigate } from 'react-router-dom';
 import { SummaryResponse } from '../../types/SummaryResponse';
 import { HomeSearchResponse } from '../../types/HomeSearchResponse';
 import { TaskResponse } from '../../types/TaskResponse';
 import { NoteResponse } from '../../types/NoteResponse';
+import api from '../../api-service/api';
+import ApiConfig from '../../api-service/apiConfig';
 
 /**
  *
@@ -20,6 +22,7 @@ function Home(): JSX.Element {
   const [validated, setValidated] = useState<boolean>(true);
   const [formInvalid, setFormInvalid] = useState<boolean>(false);
   const [searchResults, setSearchResults] = useState<HomeSearchResponse | null>(null);
+  const navigate = useNavigate();
 
   const handleError = (e: unknown): void => {
     if (typeof e === 'string') {
@@ -31,7 +34,7 @@ function Home(): JSX.Element {
 
   const getSummary = async () => {
     try {
-      const response = await getHomeSummary();
+      const response = await api.getJSON(`${ApiConfig.homeUrl}/summary`);
       setSummary(response);
     } catch (e) {
       handleError(e);
@@ -40,7 +43,7 @@ function Home(): JSX.Element {
 
   const searchTerm = async (term: string): Promise<boolean> => {
     try {
-      const response: HomeSearchResponse = await searchHomeRequest(term);
+      const response: HomeSearchResponse = await api.getJSON(`${ApiConfig.homeUrl}/search?term=${term}`);
       setSearchResults(response);
       return true;
     } catch (e) {
@@ -91,7 +94,11 @@ function Home(): JSX.Element {
                   ? 'Pending Tasks'
                   : 'No pending tasks!'}
               </Card.Text>
-              <Button variant="primary" href="/tasks">
+              <Button
+                variant="primary"
+                type="button"
+                onClick={() => navigate('/tasks')}
+              >
                 Go to Tasks
               </Button>
             </Card.Body>
@@ -106,7 +113,11 @@ function Home(): JSX.Element {
             <Card.Body className="d-flex flex-column align-items-center justify-content-center">
               <Card.Title className="display-4">10</Card.Title>
               <Card.Text>Notes</Card.Text>
-              <Button variant="success" href="/notes">
+              <Button
+                variant="success"
+                type="button"
+                onClick={() => navigate('/notes')}
+              >
                 Go to Notes
               </Button>
             </Card.Body>
