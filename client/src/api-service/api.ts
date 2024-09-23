@@ -1,6 +1,10 @@
 import { API_TOKEN } from '../app-constants/app-constants';
 
-const tokenState = localStorage.getItem(API_TOKEN);
+
+function getToken(): string {
+  const tokenState = localStorage.getItem(API_TOKEN);
+  return tokenState ?? '';
+}
 
 /**
  *
@@ -25,7 +29,7 @@ const api = {
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${tokenState}`
+        Authorization: `Bearer ${getToken()}`
       }
     });
     if (response.ok) {
@@ -42,7 +46,7 @@ const api = {
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${tokenState}`
+        Authorization: `Bearer ${getToken()}`
       },
       body: JSON.stringify(payload)
     });
@@ -60,7 +64,7 @@ const api = {
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${tokenState}`
+        Authorization: `Bearer ${getToken()}`
       },
       body: JSON.stringify(payload)
     });
@@ -78,7 +82,7 @@ const api = {
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${tokenState}`
+        Authorization: `Bearer ${getToken()}`
       }
     });
     if (response.status === 204) {
