@@ -2,15 +2,11 @@ import React, { useEffect, useState } from 'react';
 import {
   Accordion, Alert, Button, Card, Col, Container, Form, Row
 } from 'react-bootstrap';
-
 import TaskNoteRequest from '../../types/TaskNoteRequest';
 import { NoteResponse } from '../../types/NoteResponse';
-import './style.css';
-import {
-  deleteNoteRequest
-} from '../../api-service/noteService';
 import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
+import './style.css';
 
 type NoteAction = 'add' | 'edit';
 
@@ -122,7 +118,7 @@ function Note(): JSX.Element {
 
   const deleteNote = async (noteIdParam: number) => {
     try {
-      await deleteNoteRequest(noteIdParam);
+      await api.deleteNoContent(`${ApiConfig.notesUrl}/${noteIdParam}`);
       loadNotes();
     } catch (e) {
       handleError(e);

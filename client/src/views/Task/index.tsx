@@ -2,14 +2,11 @@ import React, { useEffect, useState } from 'react';
 import {
   Alert, Button, Card, Col, Container, Form, Row, Table
 } from 'react-bootstrap';
-import {
-  deleteTaskRequest
-} from '../../api-service/taskService';
 import TaskNoteRequest from '../../types/TaskNoteRequest';
 import { TaskResponse } from '../../types/TaskResponse';
-import './style.css';
 import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
+import './style.css';
 
 /**
  *
@@ -88,7 +85,7 @@ function Task(): JSX.Element {
 
   const deleteTask = async (taskId: number) => {
     try {
-      await deleteTaskRequest(taskId);
+      await api.deleteNoContent(`${ApiConfig.tasksUrl}/${taskId}`);
       loadTasks();
     } catch (e) {
       handleError(e);

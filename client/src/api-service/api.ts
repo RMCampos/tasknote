@@ -70,6 +70,22 @@ const api = {
     }
     handleError(response.status);
     return false;
+  },
+
+  deleteNoContent: async (url: string) => {
+    const response = await fetch(url, {
+      method: 'DELETE',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${tokenState}`
+      }
+    });
+    if (response.status === 204) {
+      return true;
+    }
+    handleError(response.status);
+    return false;
   }
 };
 
