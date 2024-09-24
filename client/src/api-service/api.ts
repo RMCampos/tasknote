@@ -1,6 +1,10 @@
 import { API_TOKEN } from '../app-constants/app-constants';
 
-
+/**
+ * Retrieves the API token from local storage.
+ *
+ * @returns {string} The API token if it exists in local storage, otherwise an empty string.
+ */
 function getToken(): string {
   const tokenState = localStorage.getItem(API_TOKEN);
   return tokenState ?? '';

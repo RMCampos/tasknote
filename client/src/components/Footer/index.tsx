@@ -25,7 +25,7 @@ function Footer(): JSX.Element {
       <Container>
         <Row className="align-items-center">
           <Col xs={12} sm={4} className="text-center text-sm-start">
-            <span>
+            <span data-testid="footer-text">
               TaskNote App &copy;
               {currentYear}
               {' '}
