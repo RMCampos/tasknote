@@ -184,7 +184,7 @@
   </dependencies>
 
   <build>
-    <finalName>tasknote-api</finalName>
+    <finalName>java-api</finalName>
 
     <plugins>
       <plugin>
