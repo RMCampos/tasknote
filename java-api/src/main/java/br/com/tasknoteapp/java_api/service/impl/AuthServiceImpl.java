@@ -1,6 +1,7 @@
 package br.com.tasknoteapp.java_api.service.impl;
 
 import br.com.tasknoteapp.java_api.entity.UserEntity;
+import br.com.tasknoteapp.java_api.exception.BadPasswordException;
 import br.com.tasknoteapp.java_api.exception.UserAlreadyExistsException;
 import br.com.tasknoteapp.java_api.exception.UserForbiddenException;
 import br.com.tasknoteapp.java_api.exception.UserNotFoundException;
@@ -50,6 +51,11 @@ class AuthServiceImpl implements AuthService {
 
     if (findByEmail(login.email()).isPresent()) {
       throw new UserAlreadyExistsException();
+    }
+
+    Optional<String> passwordValidation = authUtil.validatePassword(login.password());
+    if (passwordValidation.isPresent()) {
+      throw new BadPasswordException(passwordValidation.get());
     }
 
     UserEntity user = new UserEntity();

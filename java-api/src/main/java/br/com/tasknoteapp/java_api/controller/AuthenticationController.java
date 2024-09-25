@@ -38,7 +38,7 @@ public class AuthenticationController {
    * @return JwtAuthenticationResponse containing user token
    * @throws UserAlreadyExistsException
    */
-  @PutMapping(path = "/signup", consumes = "application/json", produces = "application/json")
+  @PutMapping(path = "/sign-up", consumes = "application/json", produces = "application/json")
   @Operation(
       summary = "Signup a new user",
       description = "Signup a new user given his email and password",
@@ -53,7 +53,7 @@ public class AuthenticationController {
             description = "User already exists",
             content = @Content(schema = @Schema(implementation = Void.class)))
       })
-  public ResponseEntity<JwtAuthenticationResponse> signup(
+  public ResponseEntity<JwtAuthenticationResponse> signUp(
       @RequestBody @Valid LoginRequest loginRequest) {
     String token = authService.create(loginRequest);
     return ResponseEntity.status(HttpStatus.CREATED).body(new JwtAuthenticationResponse(token));
@@ -66,7 +66,7 @@ public class AuthenticationController {
    * @return JwtAuthenticationResponse with token created.
    * @throws UserNotFoundException if user not found
    */
-  @PostMapping(path = "/signin", consumes = "application/json", produces = "application/json")
+  @PostMapping(path = "/sign-in", consumes = "application/json", produces = "application/json")
   @Operation(
       summary = "SigIn an existing user",
       description = "SigIn an existing user given his email and password",
@@ -85,7 +85,7 @@ public class AuthenticationController {
             description = "User not found",
             content = @Content(schema = @Schema(implementation = Void.class)))
       })
-  public JwtAuthenticationResponse signin(@RequestBody @Valid LoginRequest loginRequest) {
+  public JwtAuthenticationResponse signIn(@RequestBody @Valid LoginRequest loginRequest) {
     String token = authService.signin(loginRequest);
     return new JwtAuthenticationResponse(token);
   }  
