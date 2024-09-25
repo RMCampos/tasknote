@@ -32,6 +32,34 @@ public class AuthenticationController {
   private final AuthService authService;
 
   /**
+   * Signup a new user.
+   *
+   * @param loginRequest User data with email and password.
+   * @return JwtAuthenticationResponse containing user token
+   * @throws UserAlreadyExistsException
+   */
+  @PutMapping(path = "/signup", consumes = "application/json", produces = "application/json")
+  @Operation(
+      summary = "Signup a new user",
+      description = "Signup a new user given his email and password",
+      responses = {
+        @ApiResponse(responseCode = "201", description = "User successfully created and saved"),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Wrong or missing information",
+            content = @Content(schema = @Schema(implementation = Void.class))),
+        @ApiResponse(
+            responseCode = "409",
+            description = "User already exists",
+            content = @Content(schema = @Schema(implementation = Void.class)))
+      })
+  public ResponseEntity<JwtAuthenticationResponse> signup(
+      @RequestBody @Valid LoginRequest loginRequest) {
+    String token = authService.create(loginRequest);
+    return ResponseEntity.status(HttpStatus.CREATED).body(new JwtAuthenticationResponse(token));
+  }
+
+  /**
    * Authenticate a user given his email and password.
    *
    * @param loginRequest User data containing email and password.
@@ -60,33 +88,5 @@ public class AuthenticationController {
   public JwtAuthenticationResponse signin(@RequestBody @Valid LoginRequest loginRequest) {
     String token = authService.signin(loginRequest);
     return new JwtAuthenticationResponse(token);
-  }
-
-  /**
-   * Signup a new user.
-   *
-   * @param loginRequest User data with email and password.
-   * @return JwtAuthenticationResponse containing user token
-   * @throws UserAlreadyExistsException
-   */
-  @PutMapping(path = "/signup", consumes = "application/json", produces = "application/json")
-  @Operation(
-      summary = "Signup a new user",
-      description = "Signup a new user given his email and password",
-      responses = {
-        @ApiResponse(responseCode = "201", description = "User successfully created and saved"),
-        @ApiResponse(
-            responseCode = "400",
-            description = "Wrong or missing information",
-            content = @Content(schema = @Schema(implementation = Void.class))),
-        @ApiResponse(
-            responseCode = "409",
-            description = "User already exists",
-            content = @Content(schema = @Schema(implementation = Void.class)))
-      })
-  public ResponseEntity<JwtAuthenticationResponse> signup(
-      @RequestBody @Valid LoginRequest loginRequest) {
-    String token = authService.create(loginRequest);
-    return ResponseEntity.status(HttpStatus.CREATED).body(new JwtAuthenticationResponse(token));
-  }
+  }  
 }
