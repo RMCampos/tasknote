@@ -6,9 +6,14 @@ import { LinkContainer } from 'react-router-bootstrap';
 import Logo from '../../assets/logo2-450-450.png';
 
 /**
+ * Header component.
  *
+ * This component provides the header section of the application,
+ * providing navigation to home, tasks, notes, and about.
+ *
+ * @returns {JSX.Element} The Header component.
  */
-function Header() {
+function Header(): JSX.Element {
   return (
     <header>
       <Navbar expand="lg" className="bg-body-secondary">
@@ -23,6 +28,12 @@ function Header() {
             <Nav className="me-auto">
               <LinkContainer to="/home">
                 <Nav.Link>Home</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to="/tasks">
+                <Nav.Link>Tasks</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to="/notes">
+                <Nav.Link>Notes</Nav.Link>
               </LinkContainer>
               <LinkContainer to="/about">
                 <Nav.Link>About</Nav.Link>

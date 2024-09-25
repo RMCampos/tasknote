@@ -1,36 +1,21 @@
 import { env } from '../env';
-import { User } from '../types/User';
 
 const server = env.VITE_BACKEND_SERVER;
 
-/**
- *
- */
-function privateSessionFake(signed: boolean): Promise<User | undefined> {
-  return new Promise((resolve, reject) => {
-    if (signed) {
-      resolve({
-        name: 'User',
-        email: 'email@domain.com'
-      });
-    } else {
-      reject();
-    }
-  });
-}
-
 const ApiConfig = {
-  login: `${server}/login`,
 
-  loginFake: async (): Promise<void> => new Promise((resolve) => {
-    resolve();
-  }),
+  signInUrl: `${server}/auth/signin`,
 
-  logoutFake: async (): Promise<void> => new Promise((resolve) => {
-    resolve();
-  }),
+  registerUrl: `${server}/auth/signup`,
 
-  currentSessionFake: privateSessionFake
+  refreshTokenUrl: `${server}/rest/user-sessions/refresh`,
+
+  tasksUrl: `${server}/rest/tasks`,
+
+  homeUrl: `${server}/rest/home`,
+
+  notesUrl: `${server}/rest/notes`
+
 };
 
 export default ApiConfig;

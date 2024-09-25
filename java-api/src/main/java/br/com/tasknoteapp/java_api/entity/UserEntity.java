@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -37,6 +38,10 @@ public class UserEntity implements UserDetails {
 
   @Column(name = "inactivated_at", nullable = true)
   private LocalDateTime inactivatedAt;
+
+  @OneToMany(mappedBy = "user")
+  private List<TaskEntity> tasks;
+
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

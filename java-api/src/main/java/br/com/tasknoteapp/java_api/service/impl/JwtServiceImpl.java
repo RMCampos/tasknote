@@ -12,8 +12,9 @@ import javax.crypto.SecretKey;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+/** This class contains the implementation for the Jwt Service class. */
 @Service
-public class JwtServiceImpl implements JwtService {
+class JwtServiceImpl implements JwtService {
 
   private final long SECOND = 1000;
   private final long MINUTE = SECOND * 60;

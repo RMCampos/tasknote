@@ -1,3 +1,3 @@
-package br.com.tasknoteapp.java_api.auth;
+package br.com.tasknoteapp.java_api.response;
 
 public record JwtAuthenticationResponse(String token) {}

@@ -20,17 +20,17 @@ services:
       retries: 3
       start_period: 10s
 
-  java-api:
-    container_name: java-api
+  server:
+    container_name: server
     depends_on:
-      postgres:
+      db:
         condition: service_started
     environment:
       POSTGRES_DB: tasknote
-      POSTGRES_HOST: postgres
+      POSTGRES_HOST: db
       POSTGRES_USER: tasknoteuser
       POSTGRES_PASSWORD: default
-      POSTGRES_PORT: 5432
+      POSTGRES_PORT: 5435
     ports:
       - "8585:8585"
       - "5005:5005"
@@ -47,20 +47,19 @@ services:
       retries: 3
       start_period: 10s
 
-  postgres:
-    container_name: postgres
+  db:
+    container_name: db
     image: postgres:15.8-bookworm
     environment:
       POSTGRES_DB: tasknote
-      POSTGRES_HOST: postgres
       POSTGRES_USER: tasknoteuser
       POSTGRES_PASSWORD: default
-      POSTGRES_PORT: 5432
+      POSTGRES_PORT: 5435
       PGDATA: /tmp
     volumes:
       - "./data:/tmp"
     ports:
-      - "5432:5432"
+      - "5435:5432"
     healthcheck:
       test: psql -q -U $${POSTGRES_USER} -d $${POSTGRES_DB} -c 'SELECT 1'
       interval: 1m30s

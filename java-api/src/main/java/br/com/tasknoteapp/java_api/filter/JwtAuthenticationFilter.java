@@ -35,28 +35,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
     final String authorizationHeader = request.getHeader("Authorization");
 
-    log.info("-1-authorizationHeader {}", authorizationHeader);
-
     if (Objects.isNull(authorizationHeader) || authorizationHeader.isBlank()) {
-      log.info("-2-authorizationHeader {}", authorizationHeader);
       filterChain.doFilter(request, response);
       return;
     }
 
-    log.info("-3-authorizationHeader {}", authorizationHeader);
-
-    String jwtToken = authorizationHeader.substring(7);
+    String jwtToken = authorizationHeader;
+    if (authorizationHeader.startsWith("Bearer ")) {
+      jwtToken = authorizationHeader.substring(7);
+    }
     String email = jwtService.getEmailFromToken(jwtToken);
-
-    log.info("-4-email {}", email);
 
     if (!Objects.isNull(email)
         && Objects.isNull(SecurityContextHolder.getContext().getAuthentication())) {
-      log.info("-5-email {}", email);
       UserDetails user = userService.userDetailsService().loadUserByUsername(email);
 
       if (jwtService.validateTokenAndUser(jwtToken, user)) {
-        log.info("-6-jwtToken {}", jwtToken);
         SecurityContext context = SecurityContextHolder.createEmptyContext();
 
         UsernamePasswordAuthenticationToken authToken =

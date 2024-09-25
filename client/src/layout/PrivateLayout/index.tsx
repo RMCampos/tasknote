@@ -3,21 +3,28 @@ import { Outlet } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import './style.css';
 
 /**
+ * Layout component.
  *
+ * This component provides the layout of the application,
+ * including the outlet responsible for the main content.
+ * It also includes the header and the footer.
+ *
+ * @returns {JSX.Element} The Layout component.
  */
-function Layout() {
+function Layout(): JSX.Element {
   return (
-    <>
+    <div className="page-container">
       <Header />
 
-      <Container>
+      <Container className="content-container">
         <Outlet />
       </Container>
 
       <Footer />
-    </>
+    </div>
   );
 }
 

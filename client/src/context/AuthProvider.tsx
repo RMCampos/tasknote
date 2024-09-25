@@ -1,10 +1,16 @@
 /* eslint-disable no-console */
 import React, { useMemo, useState } from 'react';
 import { User } from '../types/User';
-import { env } from '../env';
-import ApiConfig from '../api-service/apiConfig';
 import AuthContext, { AuthContextData } from './AuthContext';
-import { REDIRECT_PATH } from '../app-constants/app-constants';
+import { API_TOKEN, REDIRECT_PATH, USER_DATA } from '../app-constants/app-constants';
+import { SigninResponse } from '../types/SigninResponse';
+import {
+  authenticateUser,
+  logoutUser,
+  registerUser
+} from '../api-service/authService';
+import api from '../api-service/api';
+import ApiConfig from '../api-service/apiConfig';
 
 interface Props {
   children: React.ReactNode;
@@ -16,16 +22,16 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [intervalInstance, setIntervalInstance] = useState<NodeJS.Timeout | null>(null);
 
-  const fetchCurrentSession = async (pathname: string): Promise<User | undefined> => {
+  const fetchCurrentSession = async (pathname: string): Promise<SigninResponse | undefined> => {
     try {
-      const currentUser = await ApiConfig.currentSessionFake(signed);
-      if (currentUser) {
-        setSigned(true);
-      }
-      return currentUser;
+      const bearerToken: SigninResponse = await api.getJSON(ApiConfig.refreshTokenUrl);
+      setSigned(true);
+      return bearerToken;
     } catch (e) {
       if (e instanceof Error) {
-        console.warn(e.message);
+        if (e.message !== 'No saved token!') {
+          console.warn(e.message);
+        }
       } else if (e) {
         console.warn(e);
       }
@@ -38,32 +44,66 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     return undefined;
   };
 
-  const updateUserSession = (userPriv: User) => {
-    localStorage.setItem('TaskNote-token', userPriv.email);
+  const updateUserSession = (userPriv: User | null, bearerToken: string): User => {
+    if (userPriv) {
+      localStorage.setItem(USER_DATA, JSON.stringify(userPriv));
+    }
+    localStorage.setItem(API_TOKEN, bearerToken);
+
+    if (userPriv) {
+      return userPriv;
+    }
+
+    const savedUser = localStorage.getItem(USER_DATA);
+    if (savedUser) {
+      return JSON.parse(savedUser);
+    }
+
+    return { email: 'undefined' };
   };
 
   const checkCurrentAuthUser = async (pathname: string): Promise<void> => {
-    const currentUser = await fetchCurrentSession(pathname);
-    if (currentUser) {
-      updateUserSession(currentUser);
-      setUser(currentUser);
+    const bearerToken: SigninResponse | undefined = await fetchCurrentSession(pathname);
+    if (bearerToken && bearerToken.token) {
+      const userLocal = updateUserSession(null, bearerToken.token);
+      setUser(userLocal);
     }
   };
 
-  const signIn = async (): Promise<void> => {
-    const appEnv = env.VITE_ENV || 'dev';
-    await ApiConfig.loginFake();
-    setSigned(true);
-    const currentUser: User = {
-      name: `Ricardo ${appEnv}`,
-      email: 'ricardompcampos@gmail.com'
-    };
+  const register = async (email: string, password: string): Promise<string> => {
+    try {
+      const registerResponse: SigninResponse = await registerUser(email, password);
+      const currentUser: User = {
+        email
+      };
 
-    setUser(currentUser);
+      setSigned(true);
+      setUser(currentUser);
+      updateUserSession(currentUser, registerResponse.token);
+      return Promise.resolve('OK');
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  };
+
+  const signIn = async (email: string, password: string): Promise<string> => {
+    try {
+      const registerResponse: SigninResponse = await authenticateUser(email, password);
+      const currentUser: User = {
+        email
+      };
+
+      setSigned(true);
+      setUser(currentUser);
+      updateUserSession(currentUser, registerResponse.token);
+      return Promise.resolve('OK');
+    } catch (e) {
+      return Promise.reject(e);
+    }
   };
 
   const signOut = async (): Promise<void> => {
-    await ApiConfig.logoutFake();
+    logoutUser();
     setSigned(false);
     setUser(undefined);
     setIsAdmin(false);
@@ -74,11 +114,13 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     localStorage.clear();
   };
 
-  const refreshTokenPvt = async () => {
-    const currentUser = await fetchCurrentSession('/');
-    if (currentUser) {
-      updateUserSession(currentUser);
+  const refreshTokenPvt = async (): Promise<void> => {
+    const bearerToken: SigninResponse | undefined = await fetchCurrentSession('/');
+    if (bearerToken) {
+      const userLocal = updateUserSession(null, bearerToken.token);
+      setUser(userLocal);
     }
+    return Promise.resolve();
   };
 
   // 2 minutes
@@ -104,8 +146,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     checkCurrentAuthUser,
     signIn,
     signOut,
+    register,
     isAdmin
-  }), [signed, user, checkCurrentAuthUser, signIn, signOut, isAdmin]);
+  }), [signed, user, checkCurrentAuthUser, signIn, signOut, register, isAdmin]);
 
   return (
     <AuthContext.Provider value={contextValue}>
