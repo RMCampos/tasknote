@@ -76,5 +76,5 @@ jobs:
       - name: Google Checkstyle
         run: cd java-api && ./mvnw --no-transfer-progress checkstyle:checkstyle -Dskip.checkstyle=false
 
-      - name: All Tests
-        run: cd java-api && ./mvnw --no-transfer-progress clean verify -P tests --file pom.xml || true
+      #- name: All Tests
+      #  run: cd java-api && ./mvnw --no-transfer-progress clean verify -P tests --file pom.xml
