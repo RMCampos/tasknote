@@ -2,6 +2,7 @@ package br.com.tasknoteapp.java_api.controller;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,7 +33,7 @@ class AuthenticationControllerTest {
     LoginRequest request = new LoginRequest("user@domain.com", "abcde123456");
     final String token = "xaxbxcxdx1x2x3A@";
 
-    when(authService.create(request)).thenReturn(token);
+    when(authService.signUpNewUser(request)).thenReturn(token);
 
     String jsonString =
         """
@@ -60,7 +61,7 @@ class AuthenticationControllerTest {
     LoginRequest request = new LoginRequest("user@domain..com", "abcde123456");
     final String token = "xaxbxcxdx1x2x3@A";
 
-    when(authService.create(request)).thenReturn(token);
+    when(authService.signUpNewUser(request)).thenReturn(token);
 
     String jsonString =
         """
@@ -86,7 +87,7 @@ class AuthenticationControllerTest {
   void signup_userAlreadyExists_shouldFail() throws Exception {
     LoginRequest request = new LoginRequest("user@domain.com", "abcde123456");
 
-    when(authService.create(request)).thenThrow(new UserAlreadyExistsException());
+    when(authService.signUpNewUser(request)).thenThrow(new UserAlreadyExistsException());
 
     String jsonString =
         """
@@ -104,6 +105,34 @@ class AuthenticationControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(jsonString))
         .andExpect(status().isBadRequest())
+        .andReturn();
+  }
+
+  @Test
+  @DisplayName("Sign in happy path should succeed")
+  void signin_happyPath_shouldSucceed() throws Exception {
+    LoginRequest request = new LoginRequest("user@domain.com", "abcde123456");
+    final String token = "xaxbxcxdx1x2x3A@";
+
+    when(authService.signInUser(request)).thenReturn(token);
+
+    String jsonString =
+        """
+        {
+          "email": "user@domain.com",
+          "password": "abcde123456"
+        }
+        """;
+
+    mockMvc
+        .perform(
+            post("/auth/sign-in")
+                .with(csrf().asHeader())
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.token").value(token))
         .andReturn();
   }
 }

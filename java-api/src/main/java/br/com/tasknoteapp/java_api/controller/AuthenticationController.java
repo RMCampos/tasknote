@@ -55,7 +55,7 @@ public class AuthenticationController {
       })
   public ResponseEntity<JwtAuthenticationResponse> signUp(
       @RequestBody @Valid LoginRequest loginRequest) {
-    String token = authService.create(loginRequest);
+    String token = authService.signUpNewUser(loginRequest);
     return ResponseEntity.status(HttpStatus.CREATED).body(new JwtAuthenticationResponse(token));
   }
 
@@ -86,7 +86,7 @@ public class AuthenticationController {
             content = @Content(schema = @Schema(implementation = Void.class)))
       })
   public JwtAuthenticationResponse signIn(@RequestBody @Valid LoginRequest loginRequest) {
-    String token = authService.signin(loginRequest);
+    String token = authService.signInUser(loginRequest);
     return new JwtAuthenticationResponse(token);
-  }  
+  }
 }

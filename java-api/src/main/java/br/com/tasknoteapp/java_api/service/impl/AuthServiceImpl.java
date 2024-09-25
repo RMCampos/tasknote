@@ -46,8 +46,8 @@ class AuthServiceImpl implements AuthService {
    * @return Token
    */
   @Override
-  public String create(LoginRequest login) {
-    log.info("Creating user! {}", login.email());
+  public String signUpNewUser(LoginRequest login) {
+    log.info("Signing up new user! {}", login.email());
 
     if (findByEmail(login.email()).isPresent()) {
       throw new UserAlreadyExistsException();
@@ -105,7 +105,7 @@ class AuthServiceImpl implements AuthService {
    * @return Token
    */
   @Override
-  public String signin(LoginRequest login) {
+  public String signInUser(LoginRequest login) {
     log.info("Signing in user! {}", login.email());
 
     Optional<UserEntity> user = findByEmail(login.email());
