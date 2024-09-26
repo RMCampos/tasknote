@@ -42,7 +42,7 @@
 
   handle /env.js {
 		header Content-Type "text/javascript"
-		respond `window.config = {"BUILD":"{$BUILD}"};`
+		respond `window.config = {"BUILD":"{$BUILD}","VITE_BACKEND_SERVER":"{$VITE_BACKEND_SERVER}"};`
 	}
 
   file_server
