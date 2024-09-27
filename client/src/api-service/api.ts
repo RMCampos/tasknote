@@ -1,4 +1,5 @@
 import { API_TOKEN } from '../app-constants/app-constants';
+import { CsrfToken } from '../types/CsrfToken';
 
 /**
  * Retrieves the API token from local storage.
@@ -8,6 +9,16 @@ import { API_TOKEN } from '../app-constants/app-constants';
 function getToken(): string {
   const tokenState = localStorage.getItem(API_TOKEN);
   return tokenState ?? '';
+}
+
+function getHeaders(csrf?: CsrfToken): Headers {
+  const headers: Headers = new Headers();
+  headers.append('Content-Type', 'application/json');
+  headers.append('Authorization', `Bearer ${getToken()}`);
+  if (csrf) {
+    headers.append('X-CSRF-TOKEN', csrf.token);
+  }
+  return headers;
 }
 
 /**
@@ -44,14 +55,38 @@ const api = {
     return false;
   },
 
+  getCSRF: async (url: string) => {
+    const csrfReq = await fetch(url, {
+      method: 'GET',
+      mode: 'cors',
+      headers: getHeaders()
+    });
+    if (csrfReq.ok) {
+      const data = await csrfReq.json();
+      return data;
+    }
+    handleError(csrfReq.status);
+    return false;
+  },
+
   postJSON: async (url: string, payload: object) => {
+    let token = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('XSRF-TOKEN='))
+        ?.split('=')[1];
+
+    if (!token) token = '';
+    console.log("sending token", token);
+
     const response = await fetch(url, {
       method: 'POST',
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${getToken()}`
+        Authorization: `Bearer ${getToken()}`,
+        'X-CSRF-TOKEN': token
       },
+      credentials: 'include',
       body: JSON.stringify(payload)
     });
     if (response.ok) {

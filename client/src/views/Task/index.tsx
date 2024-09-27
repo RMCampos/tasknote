@@ -7,6 +7,7 @@ import { TaskResponse } from '../../types/TaskResponse';
 import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
 import './style.css';
+import { CsrfToken } from '../../types/CsrfToken';
 
 /**
  *
@@ -27,12 +28,21 @@ function Task(): JSX.Element {
     }
   };
 
+  const getCsrf = async () => {
+    try {
+      const token: CsrfToken = await api.getCSRF(ApiConfig.csrfTokenUrl);
+      return token;
+    } catch (e) {
+      handleError(e);
+    }
+  };
+
   const loadTasks = async () => {
-    const tasksFetched: TaskResponse[] | Error = await api.getJSON(ApiConfig.tasksUrl);
-    if (tasksFetched instanceof Error) {
-      handleError(tasksFetched);
-    } else {
+    try {
+      const tasksFetched: TaskResponse[] = await api.getJSON(ApiConfig.tasksUrl);
       setTasks(tasksFetched);
+    } catch (e) {
+      handleError(e);
     }
   };
 
@@ -41,6 +51,11 @@ function Task(): JSX.Element {
       description: desc,
       urls: url ? [url] : []
     };
+    // const csrf: CsrfToken | undefined = await getCsrf();
+    // if (!csrf) {
+    //   handleError('Unable to get server resources!');
+    //   return false;
+    // }
     try {
       await api.postJSON(ApiConfig.tasksUrl, payload);
       loadTasks();
