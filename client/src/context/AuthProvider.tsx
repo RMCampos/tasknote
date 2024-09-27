@@ -29,7 +29,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
       return bearerToken;
     } catch (e) {
       if (e instanceof Error) {
-        if (e.message !== 'No saved token!' && e.message != 'Forbidden! Access denied') {
+        if (e.message !== 'No saved token!' && e.message !== 'Forbidden! Access denied') {
           console.warn(e.message);
         }
       } else if (e) {
@@ -85,7 +85,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
       if (e instanceof Error) {
         return Promise.reject(new Error(e.message));
       }
-      return Promise.reject("Unknown error!");
+      return Promise.reject(new Error('Unknown error!'));
     }
   };
 
