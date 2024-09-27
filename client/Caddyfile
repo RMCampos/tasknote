@@ -25,7 +25,7 @@
     Strict-Transport-Security "max-age=31536000"
     Content-Security-Policy "
         base-uri 'self';
-        connect-src 'self';
+        connect-src 'self' {$VITE_BACKEND_SERVER};
         default-src 'self';
         font-src https://cdn.jsdelivr.net/npm/ 'self';
         frame-src 'self';
@@ -42,7 +42,7 @@
 
   handle /env.js {
 		header Content-Type "text/javascript"
-		respond `window.config = {"BUILD":"{$BUILD}","VITE_BACKEND_SERVER":"{$VITE_BACKEND_SERVER}"};`
+		respond `window.config = {"VITE_BUILD":"{$VITE_BUILD}","VITE_BACKEND_SERVER":"{$VITE_BACKEND_SERVER}"};`
 	}
 
   file_server

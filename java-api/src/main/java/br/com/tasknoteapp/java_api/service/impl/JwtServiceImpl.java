@@ -3,10 +3,13 @@ package br.com.tasknoteapp.java_api.service.impl;
 import br.com.tasknoteapp.java_api.service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import javax.crypto.SecretKey;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,7 +32,10 @@ class JwtServiceImpl implements JwtService {
   @Override
   public LocalDateTime extractExpiration(String token) {
     Date date = extractClaim(token, Claims::getExpiration);
-    return date.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime();
+    if (!Objects.isNull(date)) {
+      return date.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime();
+    }
+    return null;
   }
 
   @Override
@@ -51,21 +57,33 @@ class JwtServiceImpl implements JwtService {
 
   @Override
   public boolean isTokenExpired(String token) {
-    return extractExpiration(token).isBefore(LocalDateTime.now());
+    LocalDateTime expiration = extractExpiration(token);
+    if (expiration != null) {
+      return expiration.isBefore(LocalDateTime.now());
+    }
+    return true;
   }
 
   @Override
   public boolean validateTokenAndUser(String token, UserDetails user) {
     final String email = user.getUsername();
-    return !isTokenExpired(token) && getEmailFromToken(token).equals(email);
+    return !isTokenExpired(token) && email.equals(getEmailFromToken(token));
   }
 
   private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-    final Claims claims = extractAllClaims(token);
-    return claimsResolver.apply(claims);
+    final Optional<Claims> claims = extractAllClaims(token);
+    if (claims.isPresent()) {
+      return claimsResolver.apply(claims.get());
+    }
+    return null;
   }
 
-  private Claims extractAllClaims(String token) {
-    return Jwts.parser().verifyWith(KEY).build().parseSignedClaims(token).getPayload();
+  private Optional<Claims> extractAllClaims(String token) {
+    try {
+      return Optional.of(
+          Jwts.parser().verifyWith(KEY).build().parseSignedClaims(token).getPayload());
+    } catch (MalformedJwtException me) {
+      return Optional.empty();
+    }
   }
 }

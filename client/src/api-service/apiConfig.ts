@@ -4,9 +4,9 @@ const server = env.VITE_BACKEND_SERVER;
 
 const ApiConfig = {
 
-  signInUrl: `${server}/auth/signin`,
+  signInUrl: `${server}/auth/sign-in`,
 
-  registerUrl: `${server}/auth/signup`,
+  registerUrl: `${server}/auth/sign-up`,
 
   refreshTokenUrl: `${server}/rest/user-sessions/refresh`,
 

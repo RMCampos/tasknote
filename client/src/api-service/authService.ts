@@ -35,6 +35,8 @@ async function registerUser(email: string, password: string): Promise<SigninResp
   } catch (error) {
     if (typeof error === 'string') {
       throw new Error(error as string);
+    } else if (error instanceof Error) {
+      throw error;
     }
   }
   throw new Error('Unknown error');
@@ -76,6 +78,8 @@ async function authenticateUser(email: string, password: string): Promise<Signin
   } catch (error) {
     if (typeof error === 'string') {
       throw new Error(error as string);
+    } else if (error instanceof Error) {
+      throw error;
     }
   }
   throw new Error('Unknown error');
