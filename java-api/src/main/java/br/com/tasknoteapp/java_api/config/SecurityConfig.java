@@ -40,7 +40,7 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.cors(Customizer.withDefaults())
-        .csrf(Customizer.withDefaults())
+        .csrf(custom -> custom.ignoringRequestMatchers("/auth/**"))
         .authorizeHttpRequests(
             request ->
                 request
