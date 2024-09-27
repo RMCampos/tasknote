@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
 
-  @Value("${br.com.tasknote.java-api.version}")
+  @Value("${br.com.tasknote.server.version}")
   private String nrSparBackendVersion;
 
   /**

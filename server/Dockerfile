@@ -21,7 +21,7 @@ ENV BUILD_NUMBER=${BUILD_NUMBER}
 
 # Copy
 WORKDIR /app
-COPY --from=build /app/target/java-api ./java-api
+COPY --from=build /app/target/tasknote-api ./tasknote-api
 
 # User, port and health check
 USER 1001
@@ -29,4 +29,4 @@ EXPOSE ${PORT}
 HEALTHCHECK CMD timeout 10s bash -c 'true > /dev/tcp/127.0.0.1/8585'
 
 # Startup
-ENTRYPOINT ["/app/java-api", "-Dspring.profiles.active=prod"]
+ENTRYPOINT ["/app/tasknote-api", "-Dspring.profiles.active=prod"]

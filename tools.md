@@ -60,8 +60,8 @@ docker run -d --rm \
   -e POSTGRES_USER=tasknoteuser \
   -e POSTGRES_PASSWORD=default \
   -e POSTGRES_PORT=5435 \
-  --name java-api \
-  ghcr.io/ricardo-campos-org/react-typescript-todolist/java-api:50
+  --name server \
+  ghcr.io/ricardo-campos-org/react-typescript-todolist/server:50
 ```
 or
 ```sh

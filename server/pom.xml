@@ -10,9 +10,9 @@
   </parent>
   
   <groupId>br.com.tasknoteapp</groupId>
-  <artifactId>java-api</artifactId>
+  <artifactId>server</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>java-api</name>
+  <name>tasknote-api</name>
   <description>Java backend REST API to serve TaskNote frontend client</description>
   
   <!-- URL -->
@@ -184,7 +184,7 @@
   </dependencies>
 
   <build>
-    <finalName>java-api</finalName>
+    <finalName>tasknote-api</finalName>
 
     <plugins>
       <plugin>

@@ -71,10 +71,10 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Build with Maven
-        run: cd java-api && ./mvnw --no-transfer-progress clean compile -DskipTests
+        run: cd server && ./mvnw --no-transfer-progress clean compile -DskipTests
 
       - name: Google Checkstyle
-        run: cd java-api && ./mvnw --no-transfer-progress checkstyle:checkstyle -Dskip.checkstyle=false
+        run: cd server && ./mvnw --no-transfer-progress checkstyle:checkstyle -Dskip.checkstyle=false
 
       #- name: All Tests
-      #  run: cd java-api && ./mvnw --no-transfer-progress clean verify -P tests --file pom.xml
+      #  run: cd server && ./mvnw --no-transfer-progress clean verify -P tests --file pom.xml
