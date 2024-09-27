@@ -5,6 +5,7 @@ import {
 import { env } from '../../env';
 import AuthContext from '../../context/AuthContext';
 import './style.css';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * Footer component.
@@ -17,8 +18,14 @@ import './style.css';
  */
 function Footer(): JSX.Element {
   const { signOut, user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const build = env.VITE_BUILD;
   const currentYear = new Date().getFullYear();
+
+  const goOut = () => {
+    signOut();
+    navigate('/');
+  };
 
   return (
     <footer className="footer">
@@ -38,7 +45,7 @@ function Footer(): JSX.Element {
             {user?.email}
           </Col>
           <Col xs={12} sm={4} className="text-center text-sm-end">
-            <Button type="button" variant="link" onClick={signOut} className="logout-button">
+            <Button type="button" variant="link" onClick={() => goOut()} className="logout-button">
               Logout
             </Button>
           </Col>

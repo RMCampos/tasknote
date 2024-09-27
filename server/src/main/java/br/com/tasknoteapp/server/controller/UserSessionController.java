@@ -8,12 +8,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,31 +49,5 @@ public class UserSessionController {
   public JwtAuthenticationResponse refresh() {
     String token = authService.refreshCurrentUserToken();
     return new JwtAuthenticationResponse(token);
-  }
-
-  /**
-   * Gets the CSRF token.
-   *
-   * @param token The token injected by Spring Security
-   * @return The token
-   */
-  @GetMapping(path = "/csrf", produces = "application/json")
-  @Operation(
-      summary = "Gets the CSRF token",
-      description = "Gets the CSRF token to be used for requests",
-      responses = {
-        @ApiResponse(responseCode = "200", description = "Token successfully retrieved"),
-        @ApiResponse(
-            responseCode = "403",
-            description = "Forbidden. Access Denied",
-            content = @Content(schema = @Schema(implementation = Void.class))),
-        @ApiResponse(
-            responseCode = "404",
-            description = "User not found",
-            content = @Content(schema = @Schema(implementation = Void.class)))
-      })
-  public CsrfToken getCsrfToken(CsrfToken token) {
-    log.info("Getting CSRF token {}", token);
-    return token;
   }
 }

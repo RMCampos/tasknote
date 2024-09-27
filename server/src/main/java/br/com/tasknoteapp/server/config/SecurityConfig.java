@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 /** This class contains security configurations. */
 @Configuration
@@ -44,22 +45,24 @@ public class SecurityConfig {
             custom ->
                 custom
                     .ignoringRequestMatchers("/auth/**")
-                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                    .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
         .authorizeHttpRequests(
             request ->
                 request
+                    .requestMatchers(HttpMethod.OPTIONS, "/**")
+                    .permitAll()
                     .requestMatchers("/auth/**")
                     .permitAll()
                     .requestMatchers("/rest/**")
                     .authenticated()
-                    .requestMatchers(HttpMethod.OPTIONS, "/**")
-                    .permitAll()
                     .anyRequest()
                     .permitAll())
         .httpBasic(AbstractHttpConfigurer::disable)
         .formLogin(AbstractHttpConfigurer::disable)
-        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         .authenticationProvider(authenticationProvider());
+
+    http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }

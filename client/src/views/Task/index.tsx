@@ -7,7 +7,6 @@ import { TaskResponse } from '../../types/TaskResponse';
 import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
 import './style.css';
-import { CsrfToken } from '../../types/CsrfToken';
 
 /**
  *
@@ -17,6 +16,7 @@ function Task(): JSX.Element {
   const [formInvalid, setFormInvalid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [tasks, setTasks] = useState<TaskResponse[]>([]);
+  const [csrfToken, setCsrfToken] = useState<string>('');
 
   const handleError = (e: unknown): void => {
     if (typeof e === 'string') {
@@ -25,15 +25,6 @@ function Task(): JSX.Element {
     } else if (e instanceof Error) {
       setErrorMessage(e.message);
       setFormInvalid(true);
-    }
-  };
-
-  const getCsrf = async () => {
-    try {
-      const token: CsrfToken = await api.getCSRF(ApiConfig.csrfTokenUrl);
-      return token;
-    } catch (e) {
-      handleError(e);
     }
   };
 
@@ -46,16 +37,24 @@ function Task(): JSX.Element {
     }
   };
 
+  const getCsrfToken = async (): Promise<void> => {
+    try {
+      const response = await api.getJSON(ApiConfig.csrfTokenUrl);
+      console.log('response token obj', response);
+      console.log('response token value', response.token);
+      console.log('response date', new Date());
+      setCsrfToken(response.token);
+    } catch (e) {
+      handleError(e)
+    }
+  };
+
   const addTask = async (desc: string, url?: string): Promise<boolean> => {
     const payload: TaskNoteRequest = {
       description: desc,
       urls: url ? [url] : []
     };
-    // const csrf: CsrfToken | undefined = await getCsrf();
-    // if (!csrf) {
-    //   handleError('Unable to get server resources!');
-    //   return false;
-    // }
+
     try {
       await api.postJSON(ApiConfig.tasksUrl, payload);
       loadTasks();
@@ -109,6 +108,7 @@ function Task(): JSX.Element {
 
   useEffect(() => {
     loadTasks();
+    // getCsrfToken();
   }, []);
 
   return (

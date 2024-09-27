@@ -23,6 +23,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
   const [intervalInstance, setIntervalInstance] = useState<NodeJS.Timeout | null>(null);
 
   const fetchCurrentSession = async (pathname: string): Promise<SigninResponse | undefined> => {
+    const token = localStorage.getItem(API_TOKEN);
+    if (!token) {
+      return undefined;
+    }
     try {
       const bearerToken: SigninResponse = await api.getJSON(ApiConfig.refreshTokenUrl);
       setSigned(true);
@@ -105,7 +109,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     }
   };
 
-  const signOut = async (): Promise<void> => {
+  const signOut = (): void => {
     logoutUser();
     setSigned(false);
     setUser(undefined);
