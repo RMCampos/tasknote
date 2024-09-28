@@ -16,7 +16,6 @@ function Task(): JSX.Element {
   const [formInvalid, setFormInvalid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [tasks, setTasks] = useState<TaskResponse[]>([]);
-  const [csrfToken, setCsrfToken] = useState<string>('');
 
   const handleError = (e: unknown): void => {
     if (typeof e === 'string') {
@@ -34,18 +33,6 @@ function Task(): JSX.Element {
       setTasks(tasksFetched);
     } catch (e) {
       handleError(e);
-    }
-  };
-
-  const getCsrfToken = async (): Promise<void> => {
-    try {
-      const response = await api.getJSON(ApiConfig.csrfTokenUrl);
-      console.log('response token obj', response);
-      console.log('response token value', response.token);
-      console.log('response date', new Date());
-      setCsrfToken(response.token);
-    } catch (e) {
-      handleError(e)
     }
   };
 

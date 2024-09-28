@@ -10,18 +10,25 @@ function getToken(): string {
   return tokenState ?? '';
 }
 
+/**
+ * Retrieves all the headers for the app.
+ *
+ * @returns {Headers} the headers.
+ */
 function getHeaders(): Headers {
-  const csrfToken = document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN='))?.split('=')[1];
+  const csrfToken = document.cookie.split('; ').find((row: string) => row.startsWith('XSRF-TOKEN='))?.split('=')[1];
 
   return new Headers({
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${getToken()}`,
+    Authorization: `Bearer ${getToken()}`,
     'X-XSRF-TOKEN': csrfToken || ''
   });
 }
 
 /**
+ * Handle errors for the AJAX HTTPS requests.
  *
+ * @param {number} httpStatusCode The HTTP response status code.
  */
 function handleError(httpStatusCode: number) {
   if (httpStatusCode === 400) {
@@ -92,7 +99,7 @@ const api = {
       method: 'DELETE',
       mode: 'cors',
       credentials: 'include',
-      headers: getHeaders(),
+      headers: getHeaders()
     });
     if (response.status === 204) {
       return true;

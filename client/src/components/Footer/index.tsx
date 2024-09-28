@@ -2,10 +2,10 @@ import React, { useContext } from 'react';
 import {
   Button, Col, Container, Row
 } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import { env } from '../../env';
 import AuthContext from '../../context/AuthContext';
 import './style.css';
-import { useNavigate } from 'react-router-dom';
 
 /**
  * Footer component.
