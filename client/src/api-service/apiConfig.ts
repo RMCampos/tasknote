@@ -10,6 +10,8 @@ const ApiConfig = {
 
   refreshTokenUrl: `${server}/rest/user-sessions/refresh`,
 
+  csrfTokenUrl: `${server}/rest/user-sessions/csrf`,
+
   tasksUrl: `${server}/rest/tasks`,
 
   homeUrl: `${server}/rest/home`,

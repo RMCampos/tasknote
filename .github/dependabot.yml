@@ -5,7 +5,7 @@ updates:
     schedule:
       interval: "weekly"
   - package-ecosystem: "maven"
-    directory: "/java-api"
+    directory: "/server"
     schedule:
       interval: "weekly"
   - package-ecosystem: "github-actions"

@@ -16,6 +16,7 @@ async function registerUser(email: string, password: string): Promise<SigninResp
     const response = await fetch(ApiConfig.registerUrl, {
       method: 'PUT',
       mode: 'cors',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -56,6 +57,7 @@ async function authenticateUser(email: string, password: string): Promise<Signin
     const response = await fetch(ApiConfig.signInUrl, {
       method: 'POST',
       mode: 'cors',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },

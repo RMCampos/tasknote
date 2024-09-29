@@ -28,11 +28,11 @@ function Task(): JSX.Element {
   };
 
   const loadTasks = async () => {
-    const tasksFetched: TaskResponse[] | Error = await api.getJSON(ApiConfig.tasksUrl);
-    if (tasksFetched instanceof Error) {
-      handleError(tasksFetched);
-    } else {
+    try {
+      const tasksFetched: TaskResponse[] = await api.getJSON(ApiConfig.tasksUrl);
       setTasks(tasksFetched);
+    } catch (e) {
+      handleError(e);
     }
   };
 
@@ -41,6 +41,7 @@ function Task(): JSX.Element {
       description: desc,
       urls: url ? [url] : []
     };
+
     try {
       await api.postJSON(ApiConfig.tasksUrl, payload);
       loadTasks();
@@ -94,6 +95,7 @@ function Task(): JSX.Element {
 
   useEffect(() => {
     loadTasks();
+    // getCsrfToken();
   }, []);
 
   return (
