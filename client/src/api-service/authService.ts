@@ -16,6 +16,7 @@ async function registerUser(email: string, password: string): Promise<SigninResp
     const response = await fetch(ApiConfig.registerUrl, {
       method: 'PUT',
       mode: 'cors',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -35,6 +36,8 @@ async function registerUser(email: string, password: string): Promise<SigninResp
   } catch (error) {
     if (typeof error === 'string') {
       throw new Error(error as string);
+    } else if (error instanceof Error) {
+      throw error;
     }
   }
   throw new Error('Unknown error');
@@ -54,6 +57,7 @@ async function authenticateUser(email: string, password: string): Promise<Signin
     const response = await fetch(ApiConfig.signInUrl, {
       method: 'POST',
       mode: 'cors',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -76,6 +80,8 @@ async function authenticateUser(email: string, password: string): Promise<Signin
   } catch (error) {
     if (typeof error === 'string') {
       throw new Error(error as string);
+    } else if (error instanceof Error) {
+      throw error;
     }
   }
   throw new Error('Unknown error');

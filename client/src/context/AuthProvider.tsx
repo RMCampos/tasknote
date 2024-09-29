@@ -23,13 +23,17 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
   const [intervalInstance, setIntervalInstance] = useState<NodeJS.Timeout | null>(null);
 
   const fetchCurrentSession = async (pathname: string): Promise<SigninResponse | undefined> => {
+    const token = localStorage.getItem(API_TOKEN);
+    if (!token) {
+      return undefined;
+    }
     try {
       const bearerToken: SigninResponse = await api.getJSON(ApiConfig.refreshTokenUrl);
       setSigned(true);
       return bearerToken;
     } catch (e) {
       if (e instanceof Error) {
-        if (e.message !== 'No saved token!') {
+        if (e.message !== 'No saved token!' && e.message !== 'Forbidden! Access denied') {
           console.warn(e.message);
         }
       } else if (e) {
@@ -82,7 +86,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
       updateUserSession(currentUser, registerResponse.token);
       return Promise.resolve('OK');
     } catch (e) {
-      return Promise.reject(e);
+      if (e instanceof Error) {
+        return Promise.reject(new Error(e.message));
+      }
+      return Promise.reject(new Error('Unknown error!'));
     }
   };
 
@@ -102,7 +109,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     }
   };
 
-  const signOut = async (): Promise<void> => {
+  const signOut = (): void => {
     logoutUser();
     setSigned(false);
     setUser(undefined);
