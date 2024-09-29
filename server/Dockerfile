@@ -21,7 +21,7 @@ ENV BUILD_NUMBER=${BUILD_NUMBER}
 
 # Copy
 WORKDIR /app
-COPY --from=build /app/target/tasknote-api ./tasknote-api
+COPY --from=build /app/target/server ./tasknote-api
 
 # User, port and health check
 USER 1001

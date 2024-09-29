@@ -38,7 +38,16 @@ import org.springframework.context.annotation.ImportRuntimeHints;
   UserResponse.class,
   io.jsonwebtoken.Claims.class,
   io.jsonwebtoken.Jwts.class,
+  io.jsonwebtoken.Jwts.SIG.class,
+  io.jsonwebtoken.Jwts.ENC.class,
+  io.jsonwebtoken.Jwts.KEY.class,
   io.jsonwebtoken.impl.security.StandardSecureDigestAlgorithms.class,
+  io.jsonwebtoken.impl.security.StandardKeyOperations.class,
+  io.jsonwebtoken.impl.security.StandardEncryptionAlgorithms.class,
+  io.jsonwebtoken.impl.security.StandardKeyAlgorithms.class,
+  io.jsonwebtoken.impl.io.StandardCompressionAlgorithms.class,
+  io.jsonwebtoken.impl.DefaultClaimsBuilder.class,
+  io.jsonwebtoken.impl.DefaultJwtParserBuilder.class,
 })
 @ImportRuntimeHints(value = {HttpServletRequestRuntimeHint.class})
 public class CloudNativeConfig {}

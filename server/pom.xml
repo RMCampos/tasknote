@@ -42,6 +42,7 @@
     <jacoco.output.data>${project.build.directory}/coverage-reports</jacoco.output.data>
     <timestamp>${maven.build.timestamp}</timestamp>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
+    <hibernate.version>6.5.2.Final</hibernate.version>
   </properties>
 
   <!-- Profiles -->
@@ -184,8 +185,6 @@
   </dependencies>
 
   <build>
-    <finalName>tasknote-api</finalName>
-
     <plugins>
       <plugin>
         <groupId>org.hibernate.orm.tooling</groupId>
@@ -204,10 +203,6 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.graalvm.buildtools</groupId>
-        <artifactId>native-maven-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.springframework.boot</groupId>
@@ -443,6 +438,8 @@
         </executions>
       </plugin>
     </plugins>
+
+    <finalName>tasknote-api</finalName>
   </build>
 
 </project>
