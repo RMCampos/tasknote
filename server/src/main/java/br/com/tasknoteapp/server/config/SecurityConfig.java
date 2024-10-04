@@ -44,7 +44,7 @@ public class SecurityConfig {
         .csrf(
             custom ->
                 custom
-                    .ignoringRequestMatchers("/auth/**")
+                    .ignoringRequestMatchers("/server/auth/**")
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                     .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
         .authorizeHttpRequests(
@@ -52,9 +52,9 @@ public class SecurityConfig {
                 request
                     .requestMatchers(HttpMethod.OPTIONS, "/**")
                     .permitAll()
-                    .requestMatchers("/auth/**")
+                    .requestMatchers("/server/auth/**")
                     .permitAll()
-                    .requestMatchers("/rest/**")
+                    .requestMatchers("/server/rest/**")
                     .authenticated()
                     .anyRequest()
                     .permitAll())
