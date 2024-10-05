@@ -88,3 +88,16 @@ docker compose --file docker-compose.prod.yml up -d db
 
 - Get container IP
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' db
+
+# Manual Client build & deploy
+
+```sh
+export VERSION=
+export IP=
+
+npm ci --ignore-scripts --no-update-notifier --omit=dev
+export VITE_BACKEND_SERVER=/server
+npm run build
+zip -r client_$VERSION.zip dist/
+scp client_86.zip root@$IP:/root/
+```

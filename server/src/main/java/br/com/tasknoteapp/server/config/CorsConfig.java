@@ -18,7 +18,7 @@ public class CorsConfig implements WebMvcConfigurer {
 
   /**
    * Add CORS mappings configuration.
-   * 
+   *
    * @param registry CorsRegistry instance.
    */
   public void addCorsMappings(@NonNull CorsRegistry registry) {
@@ -29,7 +29,14 @@ public class CorsConfig implements WebMvcConfigurer {
           .addMapping("/**")
           .allowedOrigins(allowedOrigins)
           .allowCredentials(true)
-          .allowedHeaders("X-XSRF-TOKEN", "Content-Type", "Accept", "Authorization", "X-Frame-Options", "X-XSS-Protection", "Content-Security-Policy")
+          .allowedHeaders(
+              "X-XSRF-TOKEN",
+              "Content-Type",
+              "Accept",
+              "Authorization",
+              "X-Frame-Options",
+              "X-XSS-Protection",
+              "Content-Security-Policy")
           .allowedMethods("GET", "PUT", "POST", "DELETE", "OPTIONS", "HEAD", "PATCH");
     }
   }

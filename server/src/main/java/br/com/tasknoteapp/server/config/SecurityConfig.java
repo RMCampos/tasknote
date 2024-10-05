@@ -52,9 +52,9 @@ public class SecurityConfig {
                 request
                     .requestMatchers(HttpMethod.OPTIONS, "/**")
                     .permitAll()
-                    .requestMatchers("/auth/**")
+                    .requestMatchers("/server/auth/**", "/auth/**")
                     .permitAll()
-                    .requestMatchers("/rest/**")
+                    .requestMatchers("/server/rest/**", "/rest/**")
                     .authenticated()
                     .anyRequest()
                     .permitAll())
