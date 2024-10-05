@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +31,9 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.security.web.csrf.CsrfTokenRequestHandler;
+import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /** This class contains security configurations. */
@@ -57,7 +61,8 @@ public class SecurityConfig {
                 custom
                     .ignoringRequestMatchers("/auth/**")
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                    .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
+                    .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler()))
+        .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
         .authorizeHttpRequests(
             request ->
                 request
@@ -74,8 +79,6 @@ public class SecurityConfig {
         .authenticationProvider(authenticationProvider());
 
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-    http.addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class);
 
     return http.build();
   }
@@ -98,6 +101,39 @@ public class SecurityConfig {
       throws Exception {
     return config.getAuthenticationManager();
   }
+}
+
+final class SpaCsrfTokenRequestHandler extends CsrfTokenRequestAttributeHandler {
+	private final CsrfTokenRequestHandler delegate = new XorCsrfTokenRequestAttributeHandler();
+
+	@Override
+	public void handle(HttpServletRequest request, HttpServletResponse response, Supplier<CsrfToken> csrfToken) {
+		/*
+		 * Always use XorCsrfTokenRequestAttributeHandler to provide BREACH protection of
+		 * the CsrfToken when it is rendered in the response body.
+		 */
+		this.delegate.handle(request, response, csrfToken);
+	}
+
+	@Override
+	public String resolveCsrfTokenValue(HttpServletRequest request, CsrfToken csrfToken) {
+		/*
+		 * If the request contains a request header, use CsrfTokenRequestAttributeHandler
+		 * to resolve the CsrfToken. This applies when a single-page application includes
+		 * the header value automatically, which was obtained via a cookie containing the
+		 * raw CsrfToken.
+		 */
+		if (StringUtils.hasText(request.getHeader(csrfToken.getHeaderName()))) {
+			return super.resolveCsrfTokenValue(request, csrfToken);
+		}
+		/*
+		 * In all other cases (e.g. if the request contains a request parameter), use
+		 * XorCsrfTokenRequestAttributeHandler to resolve the CsrfToken. This applies
+		 * when a server-side rendered form includes the _csrf request parameter as a
+		 * hidden input.
+		 */
+		return this.delegate.resolveCsrfTokenValue(request, csrfToken);
+	}
 }
 
 final class CsrfCookieFilter extends OncePerRequestFilter {
