@@ -1,6 +1,7 @@
 type SummaryResponse = {
   pendingTaskCount: number,
-  doneTaskCount: number
+  doneTaskCount: number,
+  notesCount: number
 }
 
 export type { SummaryResponse };

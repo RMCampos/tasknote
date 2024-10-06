@@ -31,11 +31,13 @@ class HomeServiceImpl implements HomeService {
   public SummaryResponse getSummary() {
     log.info("Getting summary");
     List<TaskResponse> tasks = taskService.getAllTasks();
+    List<NoteResponse> notes = noteService.getAllNotes();
 
     long doneCount = tasks.stream().filter(t -> t.done() == true).count();
     long undoneCount = tasks.stream().filter(t -> t.done() == false).count();
+    int taskCount = notes.size();
 
-    return new SummaryResponse((int) undoneCount, (int) doneCount);
+    return new SummaryResponse((int) undoneCount, (int) doneCount, taskCount);
   }
 
   /**

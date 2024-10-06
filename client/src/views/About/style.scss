@@ -1,0 +1,47 @@
+.about-page {
+  .card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+
+    h2 {
+      font-size: 1.75rem;
+      font-weight: 600;
+    }
+
+    p, ul {
+      font-size: 1rem;
+      color: #333;
+    }
+
+    ul {
+      list-style-type: disc;
+      padding-left: 1.5rem;
+    }
+
+    a {
+      color: $primary-color;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    .card {
+      padding: 20px;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+    }
+
+    p, ul {
+      font-size: 0.95rem;
+    }
+  }
+}
