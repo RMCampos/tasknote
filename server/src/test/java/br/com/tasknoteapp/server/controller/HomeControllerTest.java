@@ -35,7 +35,7 @@ class HomeControllerTest {
   @DisplayName("Get summary happy path should succeed")
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
   void getSummary_happyPath_shouldSucceed() throws Exception {
-    SummaryResponse response = new SummaryResponse(0, 6);
+    SummaryResponse response = new SummaryResponse(0, 6, 2);
 
     when(homeService.getSummary()).thenReturn(response);
 
@@ -48,13 +48,14 @@ class HomeControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.pendingTaskCount").value(response.pendingTaskCount()))
         .andExpect(jsonPath("$.doneTaskCount").value(response.doneTaskCount()))
+        .andExpect(jsonPath("$.notesCount").value(response.notesCount()))
         .andReturn();
   }
 
   @Test
   @DisplayName("Get summary user not authorized should fail")
   void getSummary_userNotAuthorized_shouldFail() throws Exception {
-    SummaryResponse response = new SummaryResponse(0, 6);
+    SummaryResponse response = new SummaryResponse(0, 6, 2);
 
     when(homeService.getSummary()).thenReturn(response);
 
