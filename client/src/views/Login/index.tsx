@@ -112,13 +112,13 @@ function Login(): JSX.Element {
 
               <div className="text-center mt-3">
                 Don&apos;t have an account yet?&nbsp;
-                <Link to={"/register"} className="text-decoration-none">
+                <Link to="/register" className="text-decoration-none">
                   Register here
                 </Link>
               </div>
 
               <div className="text-center mt-3">
-                <Link to={"/"} className="text-decoration-none">
+                <Link to="/" className="text-decoration-none">
                   Back to home
                 </Link>
               </div>

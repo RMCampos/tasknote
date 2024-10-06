@@ -1,19 +1,21 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import authContextMock from '../__mocks__/authContextMock';
 import Footer from '../../components/Footer';
 import AuthContext from '../../context/AuthContext';
 
-// Mock necessary dependencies
-vi.mock('../../env', () => ({
-  env: {
-    VITE_BUILD: 'test-build',
-  },
-}));
-
 describe('Footer component test', () => {
+  beforeAll(() => {
+    //import.meta.env.VITE_BUILD = ;
+    vi.stubEnv('VITE_BUILD', 'test-build');
+  });
+
+  afterAll(() => {
+    vi.unstubAllEnvs();
+  });
+
   it('should renders the footer with current year and build version', () => {
     render(
       <BrowserRouter>
@@ -63,8 +65,12 @@ describe('Footer component test', () => {
         </AuthContext.Provider>
       </BrowserRouter>,
     );
+
     const logoutButton = getByText('Logout');
-    logoutButton.click();
-    expect(signOutMock).toHaveBeenCalledTimes(1);
+
+    act(() => {
+      logoutButton.click();
+      expect(signOutMock).toHaveBeenCalledTimes(1);
+    });
   });
 });

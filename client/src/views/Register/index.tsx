@@ -111,13 +111,13 @@ function Register(): JSX.Element {
 
               <div className="text-center mt-3">
                 Already have an account?&nbsp;
-                <Link to={"/login"} className="text-decoration-none">
+                <Link to="/login" className="text-decoration-none">
                   Go to Login
                 </Link>
               </div>
 
               <div className="text-center mt-3">
-                <Link to={"/"} className="text-decoration-none">
+                <Link to="/" className="text-decoration-none">
                   Back to home
                 </Link>
               </div>
