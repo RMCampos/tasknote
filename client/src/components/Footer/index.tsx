@@ -3,7 +3,6 @@ import {
   Button, Col, Container, Row
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { env } from '../../env';
 import AuthContext from '../../context/AuthContext';
 import './style.css';
 
@@ -19,7 +18,7 @@ import './style.css';
 function Footer(): JSX.Element {
   const { signOut, user } = useContext(AuthContext);
   const navigate = useNavigate();
-  const build = env.VITE_BUILD;
+  const build = import.meta.env.VITE_BUILD;
   const currentYear = new Date().getFullYear();
 
   const goOut = () => {

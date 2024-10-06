@@ -4,7 +4,7 @@ import React, {
 import {
   Alert, Button, Card, Col, Container, Form, Row
 } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
 
 /**
@@ -45,6 +45,7 @@ function Register(): JSX.Element {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       setFormInvalid(true);
+      setErrorMessage('Please fill in your username and password!');
       return;
     }
 
@@ -65,12 +66,12 @@ function Register(): JSX.Element {
   useEffect(() => {}, [formInvalid]);
 
   return (
-    <Container className="vh-100 d-flex justify-content-center align-items-center">
+    <Container fluid className="login-page">
       <Row className="justify-content-center w-100">
         <Col xs={12} md={6} lg={4}>
           <Card>
             <Card.Body className="p-4">
-              <h2 className="text-center mb-4">Create account</h2>
+              <h2 className="text-center">Create account</h2>
 
               {formInvalid ? (
                 <Alert variant="danger">
@@ -80,12 +81,12 @@ function Register(): JSX.Element {
 
               <Form noValidate validated={validated} onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
-                  <Form.Label>Email address</Form.Label>
+                  <Form.Label>Email</Form.Label>
                   <Form.Control
                     required
                     type="email"
                     name="email"
-                    placeholder="Enter email"
+                    placeholder="Type your email here"
                   />
                 </Form.Group>
 
@@ -95,7 +96,7 @@ function Register(): JSX.Element {
                     required
                     type="password"
                     name="password"
-                    placeholder="Password"
+                    placeholder="Type your password here"
                   />
                 </Form.Group>
 
@@ -104,25 +105,21 @@ function Register(): JSX.Element {
                   type="submit"
                   className="w-100"
                 >
-                  Login
+                  Sign-up and register
                 </Button>
               </Form>
 
               <div className="text-center mt-3">
                 Already have an account?&nbsp;
-                <a href="/login" className="text-decoration-none">
-                  Login
-                </a>
-                &nbsp;or&nbsp;
-                <a href="/" className="text-decoration-none">
-                  Reset
-                </a>
+                <Link to={"/login"} className="text-decoration-none">
+                  Go to Login
+                </Link>
               </div>
 
               <div className="text-center mt-3">
-                <a href="/" className="text-decoration-none">
+                <Link to={"/"} className="text-decoration-none">
                   Back to home
-                </a>
+                </Link>
               </div>
             </Card.Body>
           </Card>
