@@ -8,7 +8,31 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # JOB to run change detection
+  changes:
+    name: Check changes
+    runs-on: ubuntu-latest
+    # Required permissions
+    permissions:
+      pull-requests: read
+    # Set job outputs to values from filter step
+    outputs:
+      server: ${{ steps.filter.outputs.server }}
+      client: ${{ steps.filter.outputs.client }}
+    steps:
+      # For pull requests it's not necessary to checkout the code
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            server:
+              - 'server/**'
+            client:
+              - 'client/**'
+
   client-code-checks:
+    needs: changes
+    if: ${{ needs.changes.outputs.client == 'true' }}
     name: Client Code Checks
     runs-on: ubuntu-latest
     steps:
@@ -45,8 +69,7 @@ jobs:
   client-docker-build:
     name: Build Client Docker image
     runs-on: ubuntu-latest
-    needs:
-      - client-code-checks
+    needs:client-code-checks
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
@@ -70,6 +93,8 @@ jobs:
           cache-to: type=gha,mode=max
 
   java-code-checks:
+    needs: changes
+    if: ${{ needs.changes.outputs.server == 'true' }}
     name: Server Code Checks
     runs-on: ubuntu-latest
     steps:
@@ -105,8 +130,7 @@ jobs:
   java-docker-build:
     name: Build Java Docker image
     runs-on: ubuntu-latest
-    needs:
-      - java-code-checks
+    needs: java-code-checks
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3

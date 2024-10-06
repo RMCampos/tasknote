@@ -45,7 +45,6 @@ function handleError(httpStatusCode: number) {
 
 const api = {
   getJSON: async (url: string) => {
-    console.log(`getJSON=${url}`);
     const response = await fetch(url, {
       method: 'GET',
       mode: 'cors',
@@ -64,7 +63,6 @@ const api = {
   },
 
   postJSON: async (url: string, payload: object) => {
-    console.log(`postJSON=${url}`);
     const response = await fetch(url, {
       method: 'POST',
       mode: 'cors',
