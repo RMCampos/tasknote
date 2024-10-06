@@ -1,11 +1,16 @@
-//$theme-colors: (
-//  'info': tomato,
-//  'danger': teal,
-//  'primary': green,
-//);
+$theme-colors: (
+  'info': tomato,
+  'danger': teal,
+  'primary': #61cd8d,
+);
 
 @import '~bootstrap/scss/bootstrap';
 
-.bg-body-secondary {
-  background-color: red;
+$primary-color: #61cd8d;
+$light-bg: #f8f9fa;
+$dark-text: #343a40;
+
+body {
+  background-color: $light-bg;
 }
+

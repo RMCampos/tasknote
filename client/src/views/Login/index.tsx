@@ -4,8 +4,9 @@ import React, {
 import {
   Alert, Button, Card, Col, Container, Form, Row
 } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
+import './styles.scss';
 
 /**
  * Login page component.
@@ -45,6 +46,7 @@ function Login(): JSX.Element {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       setFormInvalid(true);
+      setErrorMessage('Please fill in your username and password!');
       return;
     }
 
@@ -65,12 +67,12 @@ function Login(): JSX.Element {
   useEffect(() => {}, [formInvalid]);
 
   return (
-    <Container className="vh-100 d-flex justify-content-center align-items-center">
+    <Container fluid className="login-page">
       <Row className="justify-content-center w-100">
         <Col xs={12} md={6} lg={4}>
           <Card>
             <Card.Body className="p-4">
-              <h2 className="text-center mb-4">Login</h2>
+              <h2 className="text-center">Login</h2>
 
               {formInvalid ? (
                 <Alert variant="danger">
@@ -80,12 +82,12 @@ function Login(): JSX.Element {
 
               <Form noValidate validated={validated} onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
-                  <Form.Label>Email address</Form.Label>
+                  <Form.Label>Email</Form.Label>
                   <Form.Control
                     required
                     type="email"
                     name="email"
-                    placeholder="Enter email"
+                    placeholder="Type your email here"
                   />
                 </Form.Group>
 
@@ -95,7 +97,7 @@ function Login(): JSX.Element {
                     required
                     type="password"
                     name="password"
-                    placeholder="Password"
+                    placeholder="Type your password here"
                   />
                 </Form.Group>
 
@@ -109,16 +111,16 @@ function Login(): JSX.Element {
               </Form>
 
               <div className="text-center mt-3">
-                Don&apos;t have an account?&nbsp;
-                <a href="/register" className="text-decoration-none">
-                  Register
-                </a>
+                Don&apos;t have an account yet?&nbsp;
+                <Link to={"/register"} className="text-decoration-none">
+                  Register here
+                </Link>
               </div>
 
               <div className="text-center mt-3">
-                <a href="/" className="text-decoration-none">
+                <Link to={"/"} className="text-decoration-none">
                   Back to home
-                </a>
+                </Link>
               </div>
             </Card.Body>
           </Card>

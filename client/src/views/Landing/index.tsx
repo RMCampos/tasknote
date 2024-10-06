@@ -1,8 +1,8 @@
 import React, { useCallback, useContext, useEffect } from 'react';
 import { Button, Container } from 'react-bootstrap';
-import './styles.scss';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
+import './styles.scss';
 
 /**
  * Landing page component.
@@ -45,10 +45,10 @@ function Landing(): JSX.Element {
   }, []);
 
   return (
-    <Container fluid className="vh-100 d-flex justify-content-center align-items-center">
-      <div className="text-center">
-        <h1 className="display-4 fw-bold">Welcome to TaskNote App</h1>
-        <p className="lead mb-4">
+    <Container fluid className="vh-100 d-flex justify-content-center align-items-center landing-page">
+      <div>
+        <h1 className="display-4">Welcome to TaskNote</h1>
+        <p className="lead">
           Your best friend to keep up with notes and tasks!
         </p>
 
@@ -71,7 +71,6 @@ function Landing(): JSX.Element {
         </Button>
       </div>
     </Container>
-
   );
 }
 
