@@ -1,3 +1,4 @@
 package br.com.tasknoteapp.server.response;
 
-public record SummaryResponse(Integer pendingTaskCount, Integer doneTaskCount) {}
+public record SummaryResponse(
+    Integer pendingTaskCount, Integer doneTaskCount, Integer notesCount) {}

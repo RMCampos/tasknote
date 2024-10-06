@@ -29,7 +29,7 @@ describe('Footer component test', () => {
 
     const footerText = screen.getByTestId('footer-text');
     expect(footerText).toBeDefined();
-    expect(footerText.innerHTML).toBe(`TaskNote App ©${currentYear} (test-build)`);
+    expect(footerText.innerHTML).toBe(`TaskNote App © ${currentYear} (Build test-build)`);
   });
 
   it('should renders the user email when logged in', () => {

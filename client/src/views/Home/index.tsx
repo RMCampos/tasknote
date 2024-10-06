@@ -34,7 +34,7 @@ function Home(): JSX.Element {
 
   const getSummary = async () => {
     try {
-      const response = await api.getJSON(`${ApiConfig.homeUrl}/summary`);
+      const response: SummaryResponse = await api.getJSON(`${ApiConfig.homeUrl}/summary`);
       setSummary(response);
     } catch (e) {
       handleError(e);
@@ -93,6 +93,10 @@ function Home(): JSX.Element {
                 {summary?.pendingTaskCount && summary?.pendingTaskCount > 0
                   ? 'Pending Tasks'
                   : 'No pending tasks!'}
+                <br />
+                {summary?.doneTaskCount && summary?.doneTaskCount > 0
+                  ? ` ${summary?.doneTaskCount} done tasks!`
+                  : 'No done tasks!'}
               </Card.Text>
               <Button
                 variant="primary"
@@ -107,14 +111,16 @@ function Home(): JSX.Element {
 
         <Col xs={12} md={6}>
           <Card className="text-center h-100">
-            <Card.Header className="bg-success text-white">
+            <Card.Header className="bg-primary text-white">
               Notes Summary
             </Card.Header>
             <Card.Body className="d-flex flex-column align-items-center justify-content-center">
-              <Card.Title className="display-4">10</Card.Title>
+              <Card.Title className="display-4">
+                {summary?.notesCount}
+              </Card.Title>
               <Card.Text>Notes</Card.Text>
               <Button
-                variant="success"
+                variant="primary"
                 type="button"
                 onClick={() => navigate('/notes')}
               >

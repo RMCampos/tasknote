@@ -10,8 +10,7 @@ import './style.css';
  * Footer component.
  *
  * This component provides the footer section of the application,
- * providing navigation to logout.
- * It also includes the build version.
+ * including logout functionality and version information.
  *
  * @returns {JSX.Element} The Footer component.
  */
@@ -30,21 +29,30 @@ function Footer(): JSX.Element {
     <footer className="footer">
       <Container>
         <Row className="align-items-center">
-          <Col xs={12} sm={4} className="text-center text-sm-start">
+          <Col xs={12} sm={4} className="text-center text-md-start">
             <span data-testid="footer-text">
               TaskNote App &copy;
+              {' '}
               {currentYear}
               {' '}
-              (
+              (Build
+              {' '}
               {build}
               )
             </span>
           </Col>
-          <Col xs={12} sm={4} className="text-center text-sm-end">
+
+          <Col xs={12} sm={4} className="text-center my-2 my-md-0">
             {user?.email}
           </Col>
-          <Col xs={12} sm={4} className="text-center text-sm-end">
-            <Button type="button" variant="link" onClick={() => goOut()} className="logout-button">
+
+          <Col xs={12} sm={4} className="text-center text-md-end">
+            <Button
+              type="button"
+              variant="link"
+              onClick={() => goOut()}
+              className="logout-button"
+            >
               Logout
             </Button>
           </Col>
