@@ -88,6 +88,12 @@ jobs:
         with:
           files: client/dist/
           dest: client_${{ github.event.number }}.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: client_${{ github.event.number }}.zip
+          path: client_${{ github.event.number }}.zip
+          retention-days: 10
+          overwrite: true
 
   client-docker-build:
     name: Build Client Docker image
