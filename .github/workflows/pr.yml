@@ -86,7 +86,7 @@ jobs:
       - uses: vimtor/action-zip@v1.2
         name: Zip it
         with:
-          files: dist/
+          files: client/dist/
           dest: client_${{ github.event.number }}.zip
 
   client-docker-build:
