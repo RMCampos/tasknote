@@ -48,14 +48,20 @@ class TaskServiceImpl implements TaskService {
     List<TaskEntity> tasks = taskRepository.findAllByUser_id(user.getId());
     log.info("{} tasks found!", tasks.size());
 
-    Locale defaultLocale = Locale.getDefault();
-    log.info("Default locale: {}", defaultLocale);
+    Locale localeForLangEnUs = Locale.forLanguageTag("en-US");
+    log.info("localeForLangEnUs - with dash: {}", localeForLangEnUs);
 
-    if (defaultLocale == null) {
-      log.info("default locale is null! Getting english");
-      defaultLocale = Locale.ENGLISH;
+    if (localeForLangEnUs == null) {
+      log.info("localeForLangEnUs is null! Getting english with underscore");
+      localeForLangEnUs = Locale.forLanguageTag("en_US");
     }
-    PrettyTime time = new PrettyTime(defaultLocale);
+
+    if (localeForLangEnUs == null) {
+      log.info("localeForLangEnUs is null! Getting english with en");
+      localeForLangEnUs = Locale.forLanguageTag("en");
+    }
+
+    PrettyTime time = new PrettyTime(localeForLangEnUs);
     return tasks.stream().map((TaskEntity tr) -> TaskResponse.fromEntity(tr, time)).toList();
   }
 
