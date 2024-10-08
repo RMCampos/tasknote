@@ -38,7 +38,12 @@ function Task(): JSX.Element {
   const loadTasks = async () => {
     try {
       const tasksFetched: TaskResponse[] = await api.getJSON(ApiConfig.tasksUrl);
-      tasksFetched.sort((t1, t2) => t1.done === t2.done? 0 : t1.done? 1 : -1);
+      tasksFetched.sort((t1, t2) => {
+        if (t1.done === t2.done) {
+          return 0;
+        }
+        return t1.done ? 1 : -1;
+      });
       setTasks(tasksFetched);
     } catch (e) {
       handleError(e);
@@ -105,10 +110,10 @@ function Task(): JSX.Element {
     } else if (action === 'edit') {
       const urls: TaskUrlResponse[] = [];
       if (taskUrlId) {
-        urls.push({url: '', id: taskUrlId});
+        urls.push({ url: '', id: taskUrlId });
       }
       if (taskUrl) {
-        urls.push({url: taskUrl, id: null});
+        urls.push({ url: taskUrl, id: null });
       }
 
       const payload: TaskResponse = {
@@ -116,7 +121,7 @@ function Task(): JSX.Element {
         description: taskDescription,
         done: taskDone,
         lastUpdate: '',
-        urls: urls
+        urls
       };
 
       const edited: boolean = await submitEditTask(payload);
@@ -141,17 +146,17 @@ function Task(): JSX.Element {
   };
 
   const editTask = async (task: TaskResponse) => {
-    setTaskId(task.id)
+    setTaskId(task.id);
     setTaskDescription(task.description);
-    setTaskUrl(task.urls.length? task.urls[0].url : '');
-    setTaskUrlId(task.urls.length? task.urls[0].id || 0 : 0);
+    setTaskUrl(task.urls.length ? task.urls[0].url : '');
+    setTaskUrlId(task.urls.length ? task.urls[0].id || 0 : 0);
     setTaskDone(task.done);
     setAction('edit');
   };
 
-  const deleteTask = async (taskId: number) => {
+  const deleteTask = async (taskIdParam: number) => {
     try {
-      await api.deleteNoContent(`${ApiConfig.tasksUrl}/${taskId}`);
+      await api.deleteNoContent(`${ApiConfig.tasksUrl}/${taskIdParam}`);
       loadTasks();
     } catch (e) {
       handleError(e);
