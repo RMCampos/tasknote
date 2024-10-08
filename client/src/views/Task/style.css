@@ -5,3 +5,12 @@
 .text-done .btn.btn-link {
   color: #ccc!important;
 }
+
+.time-ago {
+  font-size: 0.775em;
+  color: #868181;
+}
+
+.btn-action {
+  margin-right: 0.5rem;
+}

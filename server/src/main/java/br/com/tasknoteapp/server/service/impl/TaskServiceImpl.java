@@ -14,12 +14,15 @@ import br.com.tasknoteapp.server.service.AuthService;
 import br.com.tasknoteapp.server.service.TaskService;
 import br.com.tasknoteapp.server.util.AuthUtil;
 import jakarta.transaction.Transactional;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.ocpsoft.prettytime.PrettyTime;
 import org.springframework.stereotype.Service;
 
 /** This class contains the implementation for the Task Service class. */
@@ -45,7 +48,8 @@ class TaskServiceImpl implements TaskService {
     List<TaskEntity> tasks = taskRepository.findAllByUser_id(user.getId());
     log.info("{} tasks found!", tasks.size());
 
-    return tasks.stream().map(TaskResponse::fromEntity).toList();
+    PrettyTime time = new PrettyTime();
+    return tasks.stream().map((TaskEntity tr) -> TaskResponse.fromEntity(tr, time)).toList();
   }
 
   @Override
@@ -58,6 +62,7 @@ class TaskServiceImpl implements TaskService {
     task.setDescription(taskRequest.description());
     task.setDone(false);
     task.setUser(user);
+    task.setLastUpdate(LocalDateTime.now());
     TaskEntity created = taskRepository.save(task);
 
     if (!Objects.isNull(taskRequest.urls()) && !taskRequest.urls().isEmpty()) {
@@ -89,6 +94,8 @@ class TaskServiceImpl implements TaskService {
       taskEntity.setDone(patch.done());
     }
 
+    taskEntity.setLastUpdate(LocalDateTime.now());
+
     if (!Objects.isNull(patch.urls())) {
       List<Long> urlIds =
           patch.urls().stream().filter(p -> p.id() != null).map(TaskUrlPatchRequest::id).toList();
@@ -110,7 +117,7 @@ class TaskServiceImpl implements TaskService {
 
     log.info("Task patched! Id {}", patchedTask.getId());
 
-    return TaskResponse.fromEntity(patchedTask);
+    return TaskResponse.fromEntity(patchedTask, null);
   }
 
   @Override
@@ -148,7 +155,8 @@ class TaskServiceImpl implements TaskService {
         taskRepository.findAllBySearchTerm(searchTerm.toUpperCase(), user.getId());
     log.info("{} tasks found!", tasks.size());
 
-    return tasks.stream().map(TaskResponse::fromEntity).toList();
+    PrettyTime time = new PrettyTime();
+    return tasks.stream().map((TaskEntity tr) -> TaskResponse.fromEntity(tr, time)).toList();
   }
 
   private UserEntity getCurrentUser() {
