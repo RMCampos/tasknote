@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -48,19 +49,28 @@ class TaskServiceImpl implements TaskService {
     List<TaskEntity> tasks = taskRepository.findAllByUser_id(user.getId());
     log.info("{} tasks found!", tasks.size());
 
-    Locale localeForLangEnUs = Locale.forLanguageTag("en-US");
-    log.info("localeForLangEnUs - with dash: {}", localeForLangEnUs);
-
-    if (localeForLangEnUs == null) {
-      log.info("localeForLangEnUs is null! Getting english with underscore");
-      localeForLangEnUs = Locale.forLanguageTag("en_US");
+    try {
+      log.info("Trying PrettyTime with 'en-US'");
+      new PrettyTime(Locale.forLanguageTag("en-US"));
+    } catch (MissingResourceException e) {
+      log.error("Not found PrettyTime with 'en-US'");
     }
 
-    if (localeForLangEnUs == null) {
-      log.info("localeForLangEnUs is null! Getting english with en");
-      localeForLangEnUs = Locale.forLanguageTag("en");
+    try {
+      log.info("Trying PrettyTime with 'en_US'");
+      new PrettyTime(Locale.forLanguageTag("en_US"));
+    } catch (MissingResourceException e) {
+      log.error("Not found PrettyTime with 'en_US'");
     }
 
+    try {
+      log.info("Trying PrettyTime with 'en'");
+      new PrettyTime(Locale.forLanguageTag("en"));
+    } catch (MissingResourceException e) {
+      log.error("Not found PrettyTime with 'en'");
+    }
+
+    Locale localeForLangEnUs = Locale.forLanguageTag("en");
     PrettyTime time = new PrettyTime(localeForLangEnUs);
     return tasks.stream().map((TaskEntity tr) -> TaskResponse.fromEntity(tr, time)).toList();
   }
