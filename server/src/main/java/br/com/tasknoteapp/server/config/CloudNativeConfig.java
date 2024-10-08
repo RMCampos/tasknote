@@ -49,6 +49,7 @@ import org.springframework.context.annotation.ImportRuntimeHints;
   io.jsonwebtoken.impl.DefaultClaimsBuilder.class,
   io.jsonwebtoken.impl.DefaultJwtParserBuilder.class,
   org.ocpsoft.prettytime.PrettyTime.class,
+  org.ocpsoft.prettytime.i18n.Resources.class,
 })
 @ImportRuntimeHints(value = {HttpServletRequestRuntimeHint.class})
 public class CloudNativeConfig {}
