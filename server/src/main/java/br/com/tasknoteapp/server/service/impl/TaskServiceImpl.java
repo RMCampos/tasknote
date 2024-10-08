@@ -14,10 +14,10 @@ import br.com.tasknoteapp.server.service.AuthService;
 import br.com.tasknoteapp.server.service.TaskService;
 import br.com.tasknoteapp.server.util.AuthUtil;
 import jakarta.transaction.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -48,7 +48,14 @@ class TaskServiceImpl implements TaskService {
     List<TaskEntity> tasks = taskRepository.findAllByUser_id(user.getId());
     log.info("{} tasks found!", tasks.size());
 
-    PrettyTime time = new PrettyTime();
+    Locale defaultLocale = Locale.getDefault();
+    log.info("Default locale: {}", defaultLocale);
+
+    if (defaultLocale == null) {
+      log.info("default locale is null! Getting english");
+      defaultLocale = Locale.ENGLISH;
+    }
+    PrettyTime time = new PrettyTime(defaultLocale);
     return tasks.stream().map((TaskEntity tr) -> TaskResponse.fromEntity(tr, time)).toList();
   }
 
