@@ -61,6 +61,7 @@ function Task(): JSX.Element {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       setFormInvalid(true);
+      setErrorMessage('Please fill all fields');
       return;
     }
 

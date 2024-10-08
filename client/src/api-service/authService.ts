@@ -33,6 +33,10 @@ async function registerUser(email: string, password: string): Promise<SigninResp
     if (response.status === 409) {
       throw new Error('Email already exists!');
     }
+    if (response.status === 400) {
+      const data = await response.json();
+      throw new Error(data.message);
+    }
   } catch (error) {
     if (typeof error === 'string') {
       throw new Error(error as string);
