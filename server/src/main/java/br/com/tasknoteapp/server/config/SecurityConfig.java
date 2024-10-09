@@ -65,6 +65,11 @@ public class SecurityConfig {
     return new BCryptPasswordEncoder();
   }
 
+  /**
+   * Provides an AuthenticationProvider with user and password.
+   *
+   * @return AuthenticationProvider instance
+   */
   @Bean
   public AuthenticationProvider authenticationProvider() {
     DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -73,6 +78,13 @@ public class SecurityConfig {
     return authProvider;
   }
 
+  /**
+   * Provides an AuthenticationManager to manage authentication.
+   *
+   * @param config AuthenticationConfiguration instance
+   * @return AuthenticationManager instance
+   * @throws Exception if issues occur.
+   */
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
       throws Exception {

@@ -126,7 +126,7 @@ class AuthServiceImpl implements AuthService {
    * Get all registered users.
    *
    * @return List of UserEntity.
-   * @throws UserForbiddenException
+   * @throws UserForbiddenException when the user has no permission.
    */
   @Override
   public List<UserResponse> getAllUsers() {
@@ -136,7 +136,7 @@ class AuthServiceImpl implements AuthService {
 
     log.info("Getting all users to user {}", currentUser.getId());
 
-    if (!currentUser.getAdmin()) {
+    if (!currentUser.getAdmin() || !currentUser.getEmail().equals("ricardompcampos@gmail.com")) {
       log.info("User not allowed!");
       throw new UserForbiddenException();
     }

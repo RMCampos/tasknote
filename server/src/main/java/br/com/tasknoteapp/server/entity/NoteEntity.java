@@ -9,18 +9,19 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import java.util.List;
 
+/** This class represents a note in the database. */
 @Data
 @Entity
 @Table(name = "notes")
 @ToString
 @EqualsAndHashCode
 public class NoteEntity {
-  
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+/** This interface represents a note repository, for database access. */
 public interface NoteRepository extends JpaRepository<NoteEntity, Long> {
 
   List<NoteEntity> findAllByUser_id(Long userId);

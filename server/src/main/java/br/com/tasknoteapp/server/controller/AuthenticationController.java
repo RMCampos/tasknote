@@ -36,7 +36,7 @@ public class AuthenticationController {
    *
    * @param loginRequest User data with email and password.
    * @return JwtAuthenticationResponse containing user token
-   * @throws UserAlreadyExistsException
+   * @throws UserAlreadyExistsException when user already exists.
    */
   @PutMapping(path = "/sign-up", consumes = "application/json", produces = "application/json")
   @Operation(

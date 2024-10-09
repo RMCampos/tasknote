@@ -1,5 +1,6 @@
 package br.com.tasknoteapp.server.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -9,11 +10,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+/** This class represents a task in the database. */
 @Data
 @Entity
 @Table(name = "tasks")
@@ -35,4 +38,7 @@ public class TaskEntity {
 
   @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
   private List<TaskUrlEntity> urls;
+
+  @Column(name = "last_update")
+  private LocalDateTime lastUpdate;
 }

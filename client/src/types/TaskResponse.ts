@@ -1,5 +1,5 @@
 type TaskUrlResponse = {
-  id: number,
+  id: number | null,
   url: string
 }
 
@@ -7,6 +7,7 @@ type TaskResponse = {
   id: number,
   description: string,
   done: boolean,
+  lastUpdate: string,
   urls: TaskUrlResponse[]
 }
 

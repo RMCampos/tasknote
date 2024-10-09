@@ -19,10 +19,10 @@ import org.springframework.stereotype.Service;
 @Service
 class JwtServiceImpl implements JwtService {
 
-  private final long SECOND = 1000;
-  private final long MINUTE = SECOND * 60;
-  private final long EXPIRATION_TIME = MINUTE * 30;
-  private final SecretKey KEY = Jwts.SIG.HS256.key().build();
+  private static final long SECOND = 1000;
+  private static final long MINUTE = SECOND * 60;
+  private static final long EXPIRATION_TIME = MINUTE * 30;
+  private static final SecretKey KEY = Jwts.SIG.HS256.key().build();
 
   @Override
   public String getEmailFromToken(String token) {

@@ -2,6 +2,7 @@ package br.com.tasknoteapp.server.response;
 
 import br.com.tasknoteapp.server.entity.TaskEntity;
 import br.com.tasknoteapp.server.entity.TaskUrlEntity;
+import br.com.tasknoteapp.server.util.TimeAgoUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ public record TaskResponse(
     @Schema(description = "The id of the task", example = "1") Long id,
     @Schema(description = "The description of the task", example = "Task 1") String description,
     @Schema(description = "The done status of the task", example = "false") Boolean done,
+    @Schema(description = "When was the last update time of the task") String lastUpdate,
     @Schema(description = "The urls of the task, zero, one or more.", example = "[]")
         List<TaskUrlResponse> urls) {
 
@@ -34,7 +36,13 @@ public record TaskResponse(
       }
     }
 
+    String timeAgoFmt = TimeAgoUtil.format(entity.getLastUpdate());
+
     return new TaskResponse(
-        entity.getId(), entity.getDescription(), entity.getDone(), urlsResponse);
+        entity.getId(),
+        entity.getDescription(),
+        entity.getDone(),
+        timeAgoFmt,
+        urlsResponse);
   }
 }

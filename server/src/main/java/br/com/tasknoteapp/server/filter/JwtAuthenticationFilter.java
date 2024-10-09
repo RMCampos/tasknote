@@ -19,6 +19,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+/** This class represents an authentication filter do authenticate requests. */
 @Slf4j
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {

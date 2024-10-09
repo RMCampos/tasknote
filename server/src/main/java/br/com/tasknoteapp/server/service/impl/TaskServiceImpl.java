@@ -14,6 +14,7 @@ import br.com.tasknoteapp.server.service.AuthService;
 import br.com.tasknoteapp.server.service.TaskService;
 import br.com.tasknoteapp.server.util.AuthUtil;
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -45,7 +46,7 @@ class TaskServiceImpl implements TaskService {
     List<TaskEntity> tasks = taskRepository.findAllByUser_id(user.getId());
     log.info("{} tasks found!", tasks.size());
 
-    return tasks.stream().map(TaskResponse::fromEntity).toList();
+    return tasks.stream().map((TaskEntity tr) -> TaskResponse.fromEntity(tr)).toList();
   }
 
   @Override
@@ -58,6 +59,7 @@ class TaskServiceImpl implements TaskService {
     task.setDescription(taskRequest.description());
     task.setDone(false);
     task.setUser(user);
+    task.setLastUpdate(LocalDateTime.now());
     TaskEntity created = taskRepository.save(task);
 
     if (!Objects.isNull(taskRequest.urls()) && !taskRequest.urls().isEmpty()) {
@@ -88,6 +90,8 @@ class TaskServiceImpl implements TaskService {
     if (!Objects.isNull(patch.done())) {
       taskEntity.setDone(patch.done());
     }
+
+    taskEntity.setLastUpdate(LocalDateTime.now());
 
     if (!Objects.isNull(patch.urls())) {
       List<Long> urlIds =
@@ -148,7 +152,7 @@ class TaskServiceImpl implements TaskService {
         taskRepository.findAllBySearchTerm(searchTerm.toUpperCase(), user.getId());
     log.info("{} tasks found!", tasks.size());
 
-    return tasks.stream().map(TaskResponse::fromEntity).toList();
+    return tasks.stream().map((TaskEntity tr) -> TaskResponse.fromEntity(tr)).toList();
   }
 
   private UserEntity getCurrentUser() {

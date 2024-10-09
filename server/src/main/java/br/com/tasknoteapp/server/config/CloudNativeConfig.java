@@ -19,6 +19,7 @@ import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportRuntimeHints;
 
+/** This class contains configurations for the GraalVM Cloud Native image. */
 @Configuration
 @RegisterReflectionForBinding({
   LoginRequest.class,

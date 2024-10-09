@@ -73,7 +73,7 @@ class HomeControllerTest {
   @DisplayName("Search happy path should succeed")
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
   void search_happyPath_shouldSucceed() throws Exception {
-    TaskResponse task = new TaskResponse(1L, "Task 1", false, List.of());
+    TaskResponse task = new TaskResponse(1L, "Task 1", false, "now", List.of());
     NoteResponse note = new NoteResponse(1L, "Note 1", "Note desc", List.of());
     SearchResponse response = new SearchResponse(List.of(task), List.of(note));
 
