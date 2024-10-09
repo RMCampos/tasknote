@@ -1,16 +1,22 @@
 package br.com.tasknoteapp.server.service.impl;
 
 import br.com.tasknoteapp.server.entity.UserEntity;
+import br.com.tasknoteapp.server.entity.UserPwdLimitEntity;
 import br.com.tasknoteapp.server.exception.BadPasswordException;
+import br.com.tasknoteapp.server.exception.MaxLoginLimitAttemptException;
 import br.com.tasknoteapp.server.exception.UserAlreadyExistsException;
 import br.com.tasknoteapp.server.exception.UserForbiddenException;
 import br.com.tasknoteapp.server.exception.UserNotFoundException;
+import br.com.tasknoteapp.server.exception.WrongUserOrPasswordException;
+import br.com.tasknoteapp.server.repository.UserPwdLimitRepository;
 import br.com.tasknoteapp.server.repository.UserRepository;
 import br.com.tasknoteapp.server.request.LoginRequest;
 import br.com.tasknoteapp.server.response.UserResponse;
 import br.com.tasknoteapp.server.service.AuthService;
 import br.com.tasknoteapp.server.service.JwtService;
 import br.com.tasknoteapp.server.util.AuthUtil;
+import jakarta.transaction.Transactional;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +24,7 @@ import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -38,6 +45,8 @@ class AuthServiceImpl implements AuthService {
   private final AuthenticationManager authenticationManager;
 
   private final AuthUtil authUtil;
+
+  private final UserPwdLimitRepository userPwdLimitRepository;
 
   /**
    * Create a new user in the app.
@@ -105,21 +114,38 @@ class AuthServiceImpl implements AuthService {
    * @return Token
    */
   @Override
+  @Transactional
   public String signInUser(LoginRequest login) {
     log.info("Signing in user! {}", login.email());
 
     Optional<UserEntity> user = findByEmail(login.email());
     if (user.isEmpty()) {
-      throw new UserNotFoundException();
+      throw new WrongUserOrPasswordException();
     }
 
-    authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(login.email(), login.password()));
+    checkLoginAttemptLimit(user.get().getId());
 
-    String token = jwtService.generateToken(user.get().getEmail());
+    try {
+      authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(login.email(), login.password()));
 
-    log.info("User authenticated! Token {}", token);
-    return token;
+      String token = jwtService.generateToken(user.get().getEmail());
+
+      log.info("User authenticated! Token {}", token);
+
+      userPwdLimitRepository.deleteAllForUser(user.get().getId());
+      return token;
+    } catch (BadCredentialsException e) {
+      log.error("BadCredentialsException when logging in user {}", user.get().getId());
+
+      // store attempt
+      UserPwdLimitEntity pwdLimit = new UserPwdLimitEntity();
+      pwdLimit.setWhenHappened(LocalDateTime.now());
+      pwdLimit.setUser(user.get());
+      userPwdLimitRepository.save(pwdLimit);
+
+      return null;
+    }
   }
 
   /**
@@ -176,5 +202,20 @@ class AuthServiceImpl implements AuthService {
 
     log.info("User refreshed! Token {}", token);
     return token;
+  }
+
+  private void checkLoginAttemptLimit(Long userId) {
+    List<UserPwdLimitEntity> userPwdList = userPwdLimitRepository.findAllByUser_id(userId);
+
+    log.warn("Login count attempt for user {}: {}", userId, userPwdList.size());
+
+    // if it's more than 3 times in the last 10 minutes, raise timer of 3 hours.
+    if (userPwdList.size() >= 3) {
+      UserPwdLimitEntity first = userPwdList.get(0);
+      Duration duration = Duration.between(first.getWhenHappened(), LocalDateTime.now());
+      if (duration.toMinutes() <= 30L) {
+        throw new MaxLoginLimitAttemptException();
+      }
+    }
   }
 }

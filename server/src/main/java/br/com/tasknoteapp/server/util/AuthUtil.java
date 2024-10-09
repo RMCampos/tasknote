@@ -51,7 +51,13 @@ public class AuthUtil {
       return Optional.of("Password should have at least 1 number");
     }
 
-    int specialCount = len - plainPassword.replaceAll("[a-zA-Z0-9]", "").length();
+    int specialCount =
+        len
+            - plainPassword
+                .replaceAll("[A-Z]", "")
+                .replaceAll("[a-z]", "")
+                .replaceAll("[0-9]", "")
+                .length();
     if (specialCount < 1) {
       return Optional.of("Password should have at least 1 special character");
     }
