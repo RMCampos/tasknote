@@ -145,8 +145,7 @@ public class TaskController {
           @Valid
           TaskRequest taskRequest) {
     TaskEntity createdTask = taskService.createTask(taskRequest);
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .body(TaskResponse.fromEntity(createdTask, null));
+    return ResponseEntity.status(HttpStatus.CREATED).body(TaskResponse.fromEntity(createdTask));
   }
 
   /**

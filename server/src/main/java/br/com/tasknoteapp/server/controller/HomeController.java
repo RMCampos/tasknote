@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/** This class provides resources to handle home requests by the client. */
 @RestController
 @RequestMapping("/rest/home")
 @AllArgsConstructor
@@ -51,7 +52,7 @@ public class HomeController {
   }
 
   /**
-   * Search for tasks and notes
+   * Search for tasks and notes.
    *
    * @returns List of SearchResponse with found records.
    */

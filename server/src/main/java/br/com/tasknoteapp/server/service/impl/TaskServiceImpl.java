@@ -17,13 +17,10 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.ocpsoft.prettytime.PrettyTime;
 import org.springframework.stereotype.Service;
 
 /** This class contains the implementation for the Task Service class. */
@@ -49,30 +46,7 @@ class TaskServiceImpl implements TaskService {
     List<TaskEntity> tasks = taskRepository.findAllByUser_id(user.getId());
     log.info("{} tasks found!", tasks.size());
 
-    try {
-      log.info("Trying PrettyTime with 'en-US'");
-      new PrettyTime(Locale.forLanguageTag("en-US"));
-    } catch (MissingResourceException e) {
-      log.error("Not found PrettyTime with 'en-US'");
-    }
-
-    try {
-      log.info("Trying PrettyTime with 'en_US'");
-      new PrettyTime(Locale.forLanguageTag("en_US"));
-    } catch (MissingResourceException e) {
-      log.error("Not found PrettyTime with 'en_US'");
-    }
-
-    try {
-      log.info("Trying PrettyTime with 'en'");
-      new PrettyTime(Locale.forLanguageTag("en"));
-    } catch (MissingResourceException e) {
-      log.error("Not found PrettyTime with 'en'");
-    }
-
-    Locale localeForLangEnUs = Locale.forLanguageTag("en");
-    PrettyTime time = new PrettyTime(localeForLangEnUs);
-    return tasks.stream().map((TaskEntity tr) -> TaskResponse.fromEntity(tr, time)).toList();
+    return tasks.stream().map((TaskEntity tr) -> TaskResponse.fromEntity(tr)).toList();
   }
 
   @Override
@@ -140,7 +114,7 @@ class TaskServiceImpl implements TaskService {
 
     log.info("Task patched! Id {}", patchedTask.getId());
 
-    return TaskResponse.fromEntity(patchedTask, null);
+    return TaskResponse.fromEntity(patchedTask);
   }
 
   @Override
@@ -178,8 +152,7 @@ class TaskServiceImpl implements TaskService {
         taskRepository.findAllBySearchTerm(searchTerm.toUpperCase(), user.getId());
     log.info("{} tasks found!", tasks.size());
 
-    PrettyTime time = new PrettyTime();
-    return tasks.stream().map((TaskEntity tr) -> TaskResponse.fromEntity(tr, time)).toList();
+    return tasks.stream().map((TaskEntity tr) -> TaskResponse.fromEntity(tr)).toList();
   }
 
   private UserEntity getCurrentUser() {

@@ -2,12 +2,11 @@ package br.com.tasknoteapp.server.response;
 
 import br.com.tasknoteapp.server.entity.TaskEntity;
 import br.com.tasknoteapp.server.entity.TaskUrlEntity;
+import br.com.tasknoteapp.server.util.TimeAgoUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import org.ocpsoft.prettytime.PrettyTime;
 
 /** This record represents a task and its urls object to be returned. */
 @Schema(description = "This record represents a task and its urls object to be returned.")
@@ -25,7 +24,7 @@ public record TaskResponse(
    * @param entity The TaskEntity source data.
    * @return TaskResponse instance with all task data and urls, if any.
    */
-  public static TaskResponse fromEntity(TaskEntity entity, PrettyTime prettyTime) {
+  public static TaskResponse fromEntity(TaskEntity entity) {
     List<TaskUrlEntity> urls = entity.getUrls();
     List<TaskUrlResponse> urlsResponse = new ArrayList<>();
     if (Objects.isNull(urls)) {
@@ -37,11 +36,7 @@ public record TaskResponse(
       }
     }
 
-    if (Objects.isNull(prettyTime)) {
-      prettyTime = new PrettyTime();
-    }
-
-    String timeAgoFmt = prettyTime.format(entity.getLastUpdate());
+    String timeAgoFmt = TimeAgoUtil.format(entity.getLastUpdate());
 
     return new TaskResponse(
         entity.getId(),

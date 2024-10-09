@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+/** This class represents a note url in the database. */
 @Data
 @Entity
 @ToString

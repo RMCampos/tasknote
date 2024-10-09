@@ -19,6 +19,7 @@ import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportRuntimeHints;
 
+/** This class contains configurations for the GraalVM Cloud Native image. */
 @Configuration
 @RegisterReflectionForBinding({
   LoginRequest.class,
@@ -48,9 +49,6 @@ import org.springframework.context.annotation.ImportRuntimeHints;
   io.jsonwebtoken.impl.io.StandardCompressionAlgorithms.class,
   io.jsonwebtoken.impl.DefaultClaimsBuilder.class,
   io.jsonwebtoken.impl.DefaultJwtParserBuilder.class,
-  org.ocpsoft.prettytime.PrettyTime.class,
-  org.ocpsoft.prettytime.i18n.Resources.class,
-  org.ocpsoft.prettytime.i18n.Resources_en.class,
 })
 @ImportRuntimeHints(value = {HttpServletRequestRuntimeHint.class})
 public class CloudNativeConfig {}

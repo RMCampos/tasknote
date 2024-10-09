@@ -6,6 +6,7 @@ import br.com.tasknoteapp.server.request.NoteRequest;
 import br.com.tasknoteapp.server.response.NoteResponse;
 import java.util.List;
 
+/** This interface contains methods to handle notes. */
 public interface NoteService {
 
   public List<NoteResponse> getAllNotes();
