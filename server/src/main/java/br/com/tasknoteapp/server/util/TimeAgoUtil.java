@@ -3,6 +3,7 @@ package br.com.tasknoteapp.server.util;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.util.Objects;
 
 /** This class contains util methods to format local date time. */
 public class TimeAgoUtil {
@@ -14,6 +15,9 @@ public class TimeAgoUtil {
    * @return String with formatted time.
    */
   public static String format(LocalDateTime pastTime) {
+    if (Objects.isNull(pastTime)) {
+      return "Some time ago";
+    }
     LocalDateTime now = LocalDateTime.now();
     Period period = Period.between(pastTime.toLocalDate(), now.toLocalDate());
     Duration duration = Duration.between(pastTime, now);
