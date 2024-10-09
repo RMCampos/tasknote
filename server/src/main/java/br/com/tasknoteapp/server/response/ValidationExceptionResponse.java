@@ -1,16 +1,15 @@
 package br.com.tasknoteapp.server.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
-
+import lombok.Getter;
 import org.springframework.validation.FieldError;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-
+/** This class represents a validation error exception to be returned in the JSON format. */
 @Getter
 @Schema(description = "An object containing the error message and the invalid fields")
 public class ValidationExceptionResponse {
-  
+
   private static final String MESSAGE_TEMPLATE = "%d field(s) with validation problems!";
 
   @Schema(description = "The error message")
