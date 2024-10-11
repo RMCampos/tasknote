@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -205,15 +207,18 @@ class AuthServiceImpl implements AuthService {
   }
 
   private void checkLoginAttemptLimit(Long userId) {
-    List<UserPwdLimitEntity> userPwdList = userPwdLimitRepository.findAllByUser_id(userId);
+    Sort sort = Sort.by(Direction.DESC, "whenHappened");
+    List<UserPwdLimitEntity> userPwdList = userPwdLimitRepository.findAllByUser_id(userId, sort);
 
     log.warn("Login count attempt for user {}: {}", userId, userPwdList.size());
 
     // if it's more than 3 times in the last 10 minutes, raise timer of 3 hours.
     if (userPwdList.size() >= 3) {
-      UserPwdLimitEntity first = userPwdList.get(0);
-      Duration duration = Duration.between(first.getWhenHappened(), LocalDateTime.now());
-      if (duration.toMinutes() <= 30L) {
+      UserPwdLimitEntity mostRecent = userPwdList.get(0);
+      log.warn("Oldest: {}", mostRecent.getWhenHappened());
+      Duration duration = Duration.between(mostRecent.getWhenHappened(), LocalDateTime.now());
+      if (duration.toMinutes() <= 3L) {
+        log.warn("Wait more {}", (3L - duration.toMinutes()));
         throw new MaxLoginLimitAttemptException();
       }
     }

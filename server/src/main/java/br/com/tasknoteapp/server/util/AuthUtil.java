@@ -1,5 +1,7 @@
 package br.com.tasknoteapp.server.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -36,32 +38,34 @@ public class AuthUtil {
    * @return Optional.empty() if valid, Optional containing message otherwise
    */
   public Optional<String> validatePassword(String plainPassword) {
+    List<String> validations = new ArrayList<>();
+
     if (plainPassword.length() < 8) {
-      return Optional.of("Password should have at least 8 characters");
+      validations.add("at least 8 characters");
     }
 
     int len = plainPassword.length();
     int upperCount = len - plainPassword.replaceAll("[A-Z]", "").length();
     if (upperCount < 1) {
-      return Optional.of("Password should have at least 1 uppercase character");
+      validations.add("1 uppercase");
     }
 
     int numberCount = len - plainPassword.replaceAll("[0-9]", "").length();
     if (numberCount < 1) {
-      return Optional.of("Password should have at least 1 number");
+      validations.add("1 number");
     }
 
-    int specialCount =
-        len
-            - plainPassword
-                .replaceAll("[A-Z]", "")
-                .replaceAll("[a-z]", "")
-                .replaceAll("[0-9]", "")
-                .length();
+    int specialCount = plainPassword.replaceAll("[0-9A-Za-z]", "").length();
     if (specialCount < 1) {
-      return Optional.of("Password should have at least 1 special character");
+      validations.add("1 special character");
     }
 
-    return Optional.empty();
+    if (validations.isEmpty()) {
+      return Optional.empty();
+    }
+
+    String message =
+        String.format("Password must have at least %s", String.join(", ", validations));
+    return Optional.of(message);
   }
 }
