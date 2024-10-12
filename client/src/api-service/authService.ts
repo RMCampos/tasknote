@@ -30,12 +30,12 @@ async function registerUser(email: string, password: string): Promise<SigninResp
         token: data.token
       };
     }
-    if (response.status === 409) {
-      throw new Error('Email already exists!');
-    }
     if (response.status === 400) {
       const data = await response.json();
       throw new Error(data.message);
+    }
+    if (response.status === 409) {
+      throw new Error('Email already exists!');
     }
   } catch (error) {
     if (typeof error === 'string') {
@@ -76,9 +76,14 @@ async function authenticateUser(email: string, password: string): Promise<Signin
       };
     }
 
+    if (response.status === 400) {
+      const data = await response.json();
+      throw new Error(data.message);
+    }
     if (response.status === 403) {
       throw new Error('Wrong username or password!');
-    } else if (response.status === 404) {
+    }
+    if (response.status === 404) {
       throw new Error('Username not found!');
     }
   } catch (error) {

@@ -2,6 +2,7 @@ package br.com.tasknoteapp.server.controller;
 
 import br.com.tasknoteapp.server.exception.UserAlreadyExistsException;
 import br.com.tasknoteapp.server.exception.UserNotFoundException;
+import br.com.tasknoteapp.server.exception.WrongUserOrPasswordException;
 import br.com.tasknoteapp.server.request.LoginRequest;
 import br.com.tasknoteapp.server.response.JwtAuthenticationResponse;
 import br.com.tasknoteapp.server.service.AuthService;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -87,6 +89,9 @@ public class AuthenticationController {
       })
   public JwtAuthenticationResponse signIn(@RequestBody @Valid LoginRequest loginRequest) {
     String token = authService.signInUser(loginRequest);
+    if (Objects.isNull(token)) {
+      throw new WrongUserOrPasswordException();
+    }
     return new JwtAuthenticationResponse(token);
   }
 }
