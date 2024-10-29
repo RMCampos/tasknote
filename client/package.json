@@ -13,7 +13,6 @@
   "private": true,
   "dependencies": {
     "@popperjs/core": "^2.11.8",
-    "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^16.0.1",
     "@testing-library/user-event": "^14.5.2",
     "@types/jest": "^29.5.12",
@@ -60,21 +59,22 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^9.13.0",
+    "@testing-library/jest-dom": "^6.6.2",
     "@types/react": "^18.3.11",
     "@typescript-eslint/eslint-plugin": "^8.11.0",
     "@vitest/coverage-v8": "^2.1.1",
     "eslint": "^9.13.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-jsdoc": "^50.2.2",
+    "eslint-plugin-jsdoc": "^50.4.3",
     "eslint-plugin-n": "^17.11.1",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-promise": "^7.1.0",
     "eslint-plugin-react": "^7.36.1",
     "globals": "^15.11.0",
-    "jsdom": "^25.0.0",
+    "jsdom": "^25.0.1",
     "prettier": "^3.3.3",
-    "sass": "^1.80.3",
+    "sass": "^1.80.4",
     "source-map-support": "^0.5.21",
     "vitest": "^2.0.5"
   }
