@@ -3,10 +3,10 @@ import { Button, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import AuthContext from '../../context/AuthContext';
-import USER_LANG from '../../types/UserLangs';
 import { handleDefaultLang } from '../../lang-service/LangHandler';
 import { setDefaultLang } from '../../storage-service/storage';
 import './styles.scss';
+import { LangAvailable, languages } from '../../constants/languages_available';
 
 /**
  * Landing page component.
@@ -77,7 +77,7 @@ function Landing(): JSX.Element {
 
         <Button
           variant="outline-primary"
-          className="btn-lg"
+          className="btn-lg me-3"
           type="button"
           onClick={() => goTo('/register')}
         >
@@ -87,32 +87,17 @@ function Landing(): JSX.Element {
         <br />
 
         <div className="my-3">
-          <Button
-            type="button"
-            variant="outline-primary"
-            className="btn-sm me-3"
-            onClick={() => handleLanguage(USER_LANG.ENGLISH)}
-          >
-            {t('landing_btn_english')}
-          </Button>
-
-          <Button
-            type="button"
-            variant="outline-primary"
-            className="btn-sm me-3"
-            onClick={() => handleLanguage(USER_LANG.PORTUGUESE)}
-          >
-            {t('landing_btn_portuguese')}
-          </Button>
-
-          <Button
-            type="button"
-            variant="outline-primary"
-            className="btn-sm me-3"
-            onClick={() => handleLanguage(USER_LANG.SPANISH)}
-          >
-            {t('landing_btn_spanish')}
-          </Button>
+          {languages.map((lang: LangAvailable) => (
+            <Button
+              key={lang.key}
+              type="button"
+              variant="outline-primary"
+              className="btn-sm me-3"
+              onClick={() => handleLanguage(lang.lang)}
+            >
+              {t(lang.key)}
+            </Button>
+          ))}
         </div>
       </div>
     </Container>
