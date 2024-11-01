@@ -4,6 +4,7 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import { LinkContainer } from 'react-router-bootstrap';
 import Logo from '../../assets/logo2-450-450.png';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Header component.
@@ -14,6 +15,8 @@ import Logo from '../../assets/logo2-450-450.png';
  * @returns {JSX.Element} The Header component.
  */
 function Header(): JSX.Element {
+  const { t } = useTranslation();
+
   return (
     <header>
       <Navbar expand="lg" className="bg-body-secondary">
@@ -27,16 +30,16 @@ function Header(): JSX.Element {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
               <LinkContainer to="/home">
-                <Nav.Link>Home</Nav.Link>
+                <Nav.Link>{t('home_nav_home')}</Nav.Link>
               </LinkContainer>
               <LinkContainer to="/tasks">
-                <Nav.Link>Tasks</Nav.Link>
+                <Nav.Link>{t('home_nav_tasks')}</Nav.Link>
               </LinkContainer>
               <LinkContainer to="/notes">
-                <Nav.Link>Notes</Nav.Link>
+                <Nav.Link>{t('home_nav_notes')}</Nav.Link>
               </LinkContainer>
               <LinkContainer to="/about">
-                <Nav.Link>About</Nav.Link>
+                <Nav.Link>{t('home_nav_about')}</Nav.Link>
               </LinkContainer>
             </Nav>
           </Navbar.Collapse>

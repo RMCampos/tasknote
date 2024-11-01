@@ -11,8 +11,6 @@ services:
     volumes: 
       - "./client:/app"
     working_dir: /app
-    environment:
-      LOG_LEVEL: debug
     healthcheck:
       test: timeout 10s bash -c 'true > /dev/tcp/127.0.0.1/5000'
       interval: 1m30s
@@ -35,11 +33,10 @@ services:
       - "8585:8585"
       - "5005:5005"
     image: maven:3.9.9-eclipse-temurin-17
-    entrypoint: sh -c './encora-cert.sh'
+    entrypoint: './mvnw -ntp spring-boot:run -Dspring-boot.run.jvmArguments="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=*:5005" -Dmaven.plugin.validation=VERBOSE'
     working_dir: /app
     volumes:
       - "./server:/app"
-      - $HOME/zscaler-certs:/certs
     healthcheck:
       test: curl -f http://localhost:8585/actuator/health | grep '"status":"UP"'
       interval: 1m30s
@@ -66,20 +63,3 @@ services:
       timeout: 15s
       retries: 3
       start_period: 10s
-
-  caddy:
-    container_name: caddy
-    profiles: 
-      - "caddy"
-    build:
-      context: .
-      args:
-        BUILD: nightly
-    ports: 
-      - "80:5000"
-    volumes: 
-      - "./Caddyfile:/etc/caddy/Caddyfile"
-    environment:
-      LOG_LEVEL: debug
-    healthcheck:
-      test: timeout 10s bash -c 'true > /dev/tcp/127.0.0.1/3000'

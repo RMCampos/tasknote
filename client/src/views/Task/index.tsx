@@ -4,8 +4,10 @@ import {
 } from 'react-bootstrap';
 import TaskNoteRequest from '../../types/TaskNoteRequest';
 import { TaskResponse, TaskUrlResponse } from '../../types/TaskResponse';
+import { useTranslation } from 'react-i18next';
 import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
+import { translateMessage, translateTaskResponse } from '../../utils/TranslatorUtils';
 import './style.css';
 
 type TaskAction = 'add' | 'edit';
@@ -24,13 +26,15 @@ function Task(): JSX.Element {
   const [taskUrlId, setTaskUrlId] = useState<number>(0);
   const [taskDone, setTaskDone] = useState<boolean>(false);
   const [action, setAction] = useState<TaskAction>('add');
+  const { i18n, t } = useTranslation();
 
   const handleError = (e: unknown): void => {
     if (typeof e === 'string') {
-      setErrorMessage(e);
+      setErrorMessage(translateMessage(e, i18n.language));
       setFormInvalid(true);
-    } else if (e instanceof Error) {
-      setErrorMessage(e.message);
+    }
+    else if (e instanceof Error) {
+      setErrorMessage(translateMessage(e.message, i18n.language));
       setFormInvalid(true);
     }
   };
@@ -44,8 +48,9 @@ function Task(): JSX.Element {
         }
         return t1.done ? 1 : -1;
       });
-      setTasks(tasksFetched);
-    } catch (e) {
+      setTasks(translateTaskResponse(tasksFetched, i18n.language));
+    }
+    catch (e) {
       handleError(e);
     }
   };
@@ -60,7 +65,8 @@ function Task(): JSX.Element {
       await api.postJSON(ApiConfig.tasksUrl, payload);
       loadTasks();
       return true;
-    } catch (e) {
+    }
+    catch (e) {
       handleError(e);
     }
 
@@ -72,7 +78,8 @@ function Task(): JSX.Element {
       await api.patchJSON(`${ApiConfig.tasksUrl}/${payload.id}`, payload);
       loadTasks();
       return true;
-    } catch (e) {
+    }
+    catch (e) {
       handleError(e);
     }
     return false;
@@ -95,7 +102,7 @@ function Task(): JSX.Element {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       setFormInvalid(true);
-      setErrorMessage('Please fill all fields');
+      setErrorMessage(translateMessage('Please fill in all the fields', i18n.language));
       return;
     }
 
@@ -107,7 +114,8 @@ function Task(): JSX.Element {
         form.reset();
         resetInputs();
       }
-    } else if (action === 'edit') {
+    }
+    else if (action === 'edit') {
       const urls: TaskUrlResponse[] = [];
       if (taskUrlId) {
         urls.push({ url: '', id: taskUrlId });
@@ -140,7 +148,8 @@ function Task(): JSX.Element {
       };
       await api.patchJSON(`${ApiConfig.tasksUrl}/${task.id}`, updatedTask);
       loadTasks();
-    } catch (e) {
+    }
+    catch (e) {
       handleError(e);
     }
   };
@@ -158,7 +167,8 @@ function Task(): JSX.Element {
     try {
       await api.deleteNoContent(`${ApiConfig.tasksUrl}/${taskIdParam}`);
       loadTasks();
-    } catch (e) {
+    }
+    catch (e) {
       handleError(e);
     }
   };
@@ -173,22 +183,24 @@ function Task(): JSX.Element {
         <Col xs={12}>
           <Card>
             <Card.Body>
-              <Card.Title>Add task</Card.Title>
+              <Card.Title>{t('task_form_title')}</Card.Title>
 
-              {formInvalid ? (
-                <Alert variant="danger">
-                  { errorMessage }
-                </Alert>
-              ) : null}
+              {formInvalid
+                ? (
+                    <Alert variant="danger">
+                      { errorMessage }
+                    </Alert>
+                  )
+                : null}
 
               <Form noValidate validated={validated} onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
-                  <Form.Label>Description</Form.Label>
+                  <Form.Label>{t('task_form_desc_label')}</Form.Label>
                   <Form.Control
                     required
                     type="test"
                     name="description"
-                    placeholder="Enter description"
+                    placeholder={t('task_form_desc_placeholder')}
                     value={taskDescription}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setTaskDescription(e.target.value);
@@ -197,12 +209,12 @@ function Task(): JSX.Element {
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="input-url">
-                  <Form.Label>Additional URL</Form.Label>
+                  <Form.Label>{t('task_form_url_label')}</Form.Label>
                   <Form.Control
                     required={false}
                     type="text"
                     name="url"
-                    placeholder="Additional URL (Optional)"
+                    placeholder={t('task_form_url_placeholder')}
                     value={taskUrl}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setTaskUrl(e.target.value);
@@ -215,7 +227,7 @@ function Task(): JSX.Element {
                   type="submit"
                   className="w-100"
                 >
-                  Save
+                  {t('task_form_submit')}
                 </Button>
               </Form>
 
@@ -229,10 +241,10 @@ function Task(): JSX.Element {
             <thead>
               <tr>
                 <th scope="col" style={{ width: '5%' }}>#</th>
-                <th scope="col" style={{ width: '50%' }}>Description</th>
-                <th scope="col" style={{ width: '10%' }}>Done</th>
+                <th scope="col" style={{ width: '50%' }}>{t('task_table_description')}</th>
+                <th scope="col" style={{ width: '10%' }}>{t('task_table_done')}</th>
                 <th scope="col" style={{ width: '10%' }}>URL</th>
-                <th scope="col" style={{ width: '25%' }}>Actions</th>
+                <th scope="col" style={{ width: '25%' }}>{t('task_table_actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -244,11 +256,19 @@ function Task(): JSX.Element {
                     <br />
                     <small className={task.done ? '' : 'time-ago'}>{task.lastUpdate}</small>
                   </td>
-                  <td className={task.done ? 'text-done' : ''}>{task.done ? 'Yes' : 'No'}</td>
                   <td className={task.done ? 'text-done' : ''}>
-                    {task.urls.length > 0 ? (
-                      <a href={`${task.urls[0].url}`}>Link</a>
-                    ) : '-'}
+                    {
+                      task.done
+                        ? t('task_table_action_done_yes')
+                        : t('task_table_action_done_no')
+                    }
+                  </td>
+                  <td className={task.done ? 'text-done' : ''}>
+                    {task.urls.length > 0
+                      ? (
+                          <a href={`${task.urls[0].url}`}>Link</a>
+                        )
+                      : '-'}
                   </td>
                   <td className={task.done ? 'text-done' : ''}>
                     <Button
@@ -257,7 +277,7 @@ function Task(): JSX.Element {
                       onClick={() => markAsDone(task)}
                       className="btn-action"
                     >
-                      {task.done ? 'Undone' : 'Done'}
+                      {task.done ? t('task_table_action_undone') : t('task_table_action_done')}
                     </Button>
 
                     <Button
@@ -266,7 +286,7 @@ function Task(): JSX.Element {
                       onClick={() => editTask(task)}
                       className="btn-action"
                     >
-                      Edit
+                      {t('task_table_action_edit')}
                     </Button>
 
                     <Button
@@ -275,7 +295,7 @@ function Task(): JSX.Element {
                       onClick={() => deleteTask(task.id)}
                       className="btn-action"
                     >
-                      Delete
+                      {t('task_table_action_delete')}
                     </Button>
                   </td>
                 </tr>

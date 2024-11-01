@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import {
   Accordion, Alert, Button, Card, Col, Container, Form, Row
 } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import TaskNoteRequest from '../../types/TaskNoteRequest';
 import { NoteResponse } from '../../types/NoteResponse';
 import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
+import { translateMessage } from '../../utils/TranslatorUtils';
 import './style.css';
 
 type NoteAction = 'add' | 'edit';
@@ -22,13 +24,15 @@ function Note(): JSX.Element {
   const [noteTitle, setNoteTitle] = useState<string>('');
   const [noteDescription, setNoteDescription] = useState<string>('');
   const [action, setAction] = useState<NoteAction>('add');
+  const { i18n, t } = useTranslation();
 
   const handleError = (e: unknown): void => {
     if (typeof e === 'string') {
-      setErrorMessage(e);
+      setErrorMessage(translateMessage(e, i18n.language));
       setFormInvalid(true);
-    } else if (e instanceof Error) {
-      setErrorMessage(e.message);
+    }
+    else if (e instanceof Error) {
+      setErrorMessage(translateMessage(e.message, i18n.language));
       setFormInvalid(true);
     }
   };
@@ -37,7 +41,8 @@ function Note(): JSX.Element {
     try {
       const notesFetched: NoteResponse[] = await api.getJSON(ApiConfig.notesUrl);
       setNotes(notesFetched);
-    } catch (e) {
+    }
+    catch (e) {
       handleError(e);
     }
   };
@@ -47,7 +52,8 @@ function Note(): JSX.Element {
       await api.postJSON(ApiConfig.notesUrl, payload);
       loadNotes();
       return true;
-    } catch (e) {
+    }
+    catch (e) {
       handleError(e);
     }
 
@@ -59,7 +65,8 @@ function Note(): JSX.Element {
       await api.patchJSON(`${ApiConfig.notesUrl}/${payload.id}`, payload);
       loadNotes();
       return true;
-    } catch (e) {
+    }
+    catch (e) {
       handleError(e);
     }
     return false;
@@ -73,7 +80,7 @@ function Note(): JSX.Element {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       setFormInvalid(true);
-      setErrorMessage('Please fill all fields');
+      setErrorMessage(translateMessage('Please fill in all the fields', i18n.language));
       return;
     }
 
@@ -97,7 +104,8 @@ function Note(): JSX.Element {
         setNoteDescription('');
         setAction('add');
       }
-    } else if (action === 'edit') {
+    }
+    else if (action === 'edit') {
       const payload: NoteResponse = {
         id: noteId,
         title,
@@ -120,7 +128,8 @@ function Note(): JSX.Element {
     try {
       await api.deleteNoContent(`${ApiConfig.notesUrl}/${noteIdParam}`);
       loadNotes();
-    } catch (e) {
+    }
+    catch (e) {
       handleError(e);
     }
   };
@@ -142,17 +151,19 @@ function Note(): JSX.Element {
         <Col xs={12}>
           <Card>
             <Card.Body>
-              <Card.Title>Add note</Card.Title>
+              <Card.Title>{t('note_form_title')}</Card.Title>
 
-              {formInvalid ? (
-                <Alert variant="danger">
-                  { errorMessage }
-                </Alert>
-              ) : null}
+              {formInvalid
+                ? (
+                    <Alert variant="danger">
+                      { errorMessage }
+                    </Alert>
+                  )
+                : null}
 
               <Form noValidate validated={validated} onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="form_noteTitle">
-                  <Form.Label>Title</Form.Label>
+                  <Form.Label>{t('note_form_title_label')}</Form.Label>
                   <Form.Control
                     required
                     type="text"
@@ -161,18 +172,18 @@ function Note(): JSX.Element {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setNoteTitle(e.target.value);
                     }}
-                    placeholder="Enter the note title"
+                    placeholder={t('note_form_title_placeholder')}
                   />
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="form_noteDescription">
-                  <Form.Label>Note content</Form.Label>
+                  <Form.Label>{t('note_form_content_label')}</Form.Label>
                   <Form.Control
                     as="textarea"
                     required
                     rows={3}
                     name="note_description"
-                    placeholder="Enter the note content"
+                    placeholder={t('note_form_content_placeholder')}
                     value={noteDescription}
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                       setNoteDescription(e.target.value);
@@ -185,7 +196,7 @@ function Note(): JSX.Element {
                   type="submit"
                   className="w-100"
                 >
-                  Save note
+                  {t('note_form_submit')}
                 </Button>
               </Form>
 
@@ -214,7 +225,7 @@ function Note(): JSX.Element {
                     onClick={() => editNote(note)}
                     className="mt-3"
                   >
-                    Edit
+                    {t('note_table_btn_edit')}
                   </Button>
                   <Button
                     type="button"
@@ -222,7 +233,7 @@ function Note(): JSX.Element {
                     onClick={() => deleteNote(note.id)}
                     className="mt-3 mx-3"
                   >
-                    Delete
+                    {t('note_table_btn_delete')}
                   </Button>
                 </Accordion.Body>
               </Accordion.Item>

@@ -21,7 +21,9 @@ class JwtServiceImpl implements JwtService {
 
   private static final long SECOND = 1000;
   private static final long MINUTE = SECOND * 60;
-  private static final long EXPIRATION_TIME = MINUTE * 30;
+  private static final long HOUR = MINUTE * 60;
+  private static final long DAY = HOUR * 24;
+  private static final long EXPIRATION_TIME = DAY * 7;
   private static final SecretKey KEY = Jwts.SIG.HS256.key().build();
 
   @Override

@@ -5,10 +5,10 @@ import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import authContextMock from '../__mocks__/authContextMock';
 import Footer from '../../components/Footer';
 import AuthContext from '../../context/AuthContext';
+import '../../i18n';
 
 describe('Footer component test', () => {
   beforeAll(() => {
-    //import.meta.env.VITE_BUILD = ;
     vi.stubEnv('VITE_BUILD', 'test-build');
   });
 

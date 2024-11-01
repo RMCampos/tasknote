@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
 
   @Value("${br.com.tasknote.server.version}")
-  private String nrSparBackendVersion;
+  private String apiBuildInfo;
 
   /**
    * Gets the API OpenAPI config.
@@ -29,7 +29,7 @@ public class SwaggerConfig {
     Info info = new Info();
     info.setTitle("TaskNote API");
     info.setDescription("RESTful service API to serve the TaskNote client Web App.");
-    info.setVersion(nrSparBackendVersion);
+    info.setVersion(apiBuildInfo);
 
     Contact contact = new Contact();
     contact.setName("Ricardo Campos");

@@ -20,7 +20,7 @@ function getHeaders(): Headers {
 
   return new Headers({
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${getToken()}`,
+    'Authorization': `Bearer ${getToken()}`,
     'X-XSRF-TOKEN': csrfToken || ''
   });
 }
@@ -35,7 +35,7 @@ function handleError(httpStatusCode: number) {
     throw new Error('Wrong or missing information!');
   }
   if (httpStatusCode === 403) {
-    throw new Error('Forbidden! Access denied');
+    throw new Error('Forbidden! Access denied!');
   }
   if (httpStatusCode === 500) {
     throw new Error('Internal Server Error!');
@@ -51,7 +51,7 @@ const api = {
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${getToken()}`
+        'Authorization': `Bearer ${getToken()}`
       }
     });
     if (response.ok) {

@@ -14,7 +14,7 @@ All kind of tools and useful links and commands can be found here!
 Before building, you need define some env vars:
 
 ```bash
-export VERSION=<branch-name-and-PR-number>
+export VITE_BUILD=<branch-name-and-PR-number>
 ```
 
 Then you can call the install and build scripts (from the `client` folder):

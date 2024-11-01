@@ -5,28 +5,8 @@ import path from 'path';
 
 export default defineConfig(({ mode }: ConfigEnv) => {
   const config: UserConfig = {
-    define: {} as any,
-    plugins: [
-      react(),
-      {
-        name: 'build-html',
-        apply: 'build',
-        transformIndexHtml: (html) => {
-          return {
-            html,
-            tags: [
-              {
-                tag: 'script',
-                attrs: {
-                  src: '/env.js'
-                },
-                injectTo: 'head'
-              }
-            ]
-          }
-        }
-      }
-    ],
+    define: {},
+    plugins: [react()],
     build: {
       outDir: 'dist',
       sourcemap: true

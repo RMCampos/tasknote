@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect, vi } from 'vitest';
 import Header from '../../components/Header';
+import '../../i18n';
 
 describe('Header component test', () => {
   it('should renders the Header with all elements', () => {

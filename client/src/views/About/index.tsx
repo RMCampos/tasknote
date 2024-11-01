@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Card, Col, Container, Row
 } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 
 /**
  * About page component.
@@ -12,30 +13,23 @@ import {
  * @returns {JSX.Element} The About page component.
  */
 function About(): JSX.Element {
+  const { t } = useTranslation();
+
   return (
     <Container className="about-page my-5">
       <Row className="justify-content-center mb-4">
         <Col xs={12} md={10} lg={8}>
           <Card className="p-4 shadow-sm">
-            <h2 className="text-center mb-4">About TaskNote</h2>
-            <p>
-              TaskNote is your go-to application for managing tasks and notes in one convenient
-              place. Whether you&apos;re keeping track of daily to-dos or organizing notes from
-              important meetings, TaskNote helps you stay organized and productive.
-            </p>
-            <h4 className="mt-4">Features</h4>
+            <h2 className="text-center mb-4">{t('about_app_title')}</h2>
+            <p>{t('about_app_description')}</p>
+            <h4 className="mt-4">{t('about_app_features')}</h4>
             <ul>
-              <li>Quickly add and manage tasks and notes</li>
-              <li>Search and filter notes for easy access</li>
-              <li>Intuitive and clean user interface</li>
+              <li>{t('about_app_features_one')}</li>
+              <li>{t('about_app_features_two')}</li>
+              <li>{t('about_app_features_three')}</li>
             </ul>
-            <h4 className="mt-4">Help & How to Use</h4>
-            <p>
-              To get started, simply sign up or log in, and you&apos;ll have access to your
-              personalized dashboard. From there, you can create, edit, and delete tasks and notes,
-              and organize them however you like. Need assistance? Visit our Help page (in the
-              future) for tutorials and FAQs.
-            </p>
+            <h4 className="mt-4">{t('about_app_help_title')}</h4>
+            <p>{t('about_app_help_description')}</p>
           </Card>
         </Col>
       </Row>
@@ -43,19 +37,16 @@ function About(): JSX.Element {
       <Row className="justify-content-center mb-4">
         <Col xs={12} md={10} lg={8}>
           <Card className="p-4 shadow-sm">
-            <h2 className="text-center mb-4">About the Technology</h2>
-            <p>
-              TaskNote is built using modern web technologies that ensure speed, reliability, and
-              security.
-            </p>
+            <h2 className="text-center mb-4">{t('about_tech_title')}</h2>
+            <p>{t('about_tech_description')}</p>
             <ul>
-              <li>React with TypeScript for front-end development</li>
-              <li>Bootstrap 5 for responsive design and components</li>
-              <li>Spring Boot for backend services</li>
-              <li>PostgreSQL for database management</li>
-              <li>Docker for containerization and deployment</li>
-              <li>GitHub Actions for CI/CD, testing and linting enforcement</li>
-              <li>SonarCloud, and GitHub QL for security and improvements checks</li>
+              <li>{t('about_tech_list_one')}</li>
+              <li>{t('about_tech_list_two')}</li>
+              <li>{t('about_tech_list_three')}</li>
+              <li>{t('about_tech_list_four')}</li>
+              <li>{t('about_tech_list_five')}</li>
+              <li>{t('about_tech_list_six')}</li>
+              <li>{t('about_tech_list_seven')}</li>
             </ul>
           </Card>
         </Col>
@@ -64,16 +55,13 @@ function About(): JSX.Element {
       <Row className="justify-content-center">
         <Col xs={12} md={10} lg={8}>
           <Card className="p-4 shadow-sm">
-            <h2 className="text-center mb-4">About the Developer</h2>
+            <h2 className="text-center mb-4">{t('about_dev_title')}</h2>
             <p>
-              Hi! I&apos;m Ricardo, the developer of TaskNote. I&apos;m
-              passionate about building applications that make life easier
-              and more organized. You can reach out to me at
+              {t('about_dev_description')}
               <a href="mailto:ricardompcampos@gmail.com" className="text-decoration-none">
                 ricardompcampos@gmail.com
               </a>
-              {' '}
-              for any questions or feedback.
+              {t('about_dev_description_two')}
             </p>
           </Card>
         </Col>

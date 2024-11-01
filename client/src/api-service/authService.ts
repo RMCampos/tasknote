@@ -37,10 +37,12 @@ async function registerUser(email: string, password: string): Promise<SigninResp
     if (response.status === 409) {
       throw new Error('Email already exists!');
     }
-  } catch (error) {
+  }
+  catch (error) {
     if (typeof error === 'string') {
       throw new Error(error as string);
-    } else if (error instanceof Error) {
+    }
+    else if (error instanceof Error) {
       throw error;
     }
   }
@@ -81,15 +83,17 @@ async function authenticateUser(email: string, password: string): Promise<Signin
       throw new Error(data.message);
     }
     if (response.status === 403) {
-      throw new Error('Wrong username or password!');
+      throw new Error('Wrong user or password');
     }
     if (response.status === 404) {
-      throw new Error('Username not found!');
+      throw new Error('Wrong user or password');
     }
-  } catch (error) {
+  }
+  catch (error) {
     if (typeof error === 'string') {
       throw new Error(error as string);
-    } else if (error instanceof Error) {
+    }
+    else if (error instanceof Error) {
       throw error;
     }
   }

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, { useMemo, useState } from 'react';
 import { User } from '../types/User';
 import AuthContext, { AuthContextData } from './AuthContext';
@@ -31,12 +30,14 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
       const bearerToken: SigninResponse = await api.getJSON(ApiConfig.refreshTokenUrl);
       setSigned(true);
       return bearerToken;
-    } catch (e) {
+    }
+    catch (e) {
       if (e instanceof Error) {
         if (e.message !== 'No saved token!' && e.message !== 'Forbidden! Access denied') {
           console.warn(e.message);
         }
-      } else if (e) {
+      }
+      else if (e) {
         console.warn(e);
       }
       // Clear stored client id and name
@@ -85,7 +86,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
       setUser(currentUser);
       updateUserSession(currentUser, registerResponse.token);
       return Promise.resolve('OK');
-    } catch (e) {
+    }
+    catch (e) {
       if (e instanceof Error) {
         return Promise.reject(new Error(e.message));
       }
@@ -104,7 +106,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
       setUser(currentUser);
       updateUserSession(currentUser, registerResponse.token);
       return Promise.resolve('OK');
-    } catch (e) {
+    }
+    catch (e) {
       return Promise.reject(e);
     }
   };
@@ -141,7 +144,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
         .then(() => {
           console.log('User session successfully refreshed!');
         })
-        .catch((e) => console.error(e));
+        .catch(e => console.error(e));
     }, REFRESH_TIMER);
 
     setIntervalInstance(instance);

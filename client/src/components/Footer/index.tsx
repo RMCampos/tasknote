@@ -5,6 +5,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
 import './style.css';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Footer component.
@@ -16,6 +17,7 @@ import './style.css';
  */
 function Footer(): JSX.Element {
   const { signOut, user } = useContext(AuthContext);
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const build = import.meta.env.VITE_BUILD;
   const currentYear = new Date().getFullYear();
@@ -53,7 +55,7 @@ function Footer(): JSX.Element {
               onClick={() => goOut()}
               className="logout-button"
             >
-              Logout
+              {t('logout')}
             </Button>
           </Col>
         </Row>

@@ -1,3 +1,3 @@
 export type SigninResponse = {
-  token: string
-}
+  token: string;
+};

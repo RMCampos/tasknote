@@ -1,81 +1,62 @@
-import react from "eslint-plugin-react";
-import prettier from "eslint-plugin-prettier";
-import typescriptEslint from "@typescript-eslint/eslint-plugin";
-import globals from "globals";
-import tsParser from "@typescript-eslint/parser";
-import path from "node:path";
-import {fileURLToPath} from "node:url";
-import js from "@eslint/js";
-import {FlatCompat} from "@eslint/eslintrc";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
-});
+import globals from 'globals';
+import { fixupConfigRules } from '@eslint/compat';
+import jsLint from '@eslint/js';
+import tsLint from 'typescript-eslint';
+import pluginReactConfig from 'eslint-plugin-react/configs/recommended.js';
+import stylistic from '@stylistic/eslint-plugin';
 
 export default [
   {
-    ignores: [
-      "**/__test__/*",
-      "**/assets/*",
-      "**/*.scss",
-      "**/*.css",
-      "**/*.svg",
-    ],
+    files: ['**/*.{ts,tsx}']
   },
-  ...compat.extends(
-    "plugin:react/recommended",
-    "plugin:jsdoc/recommended",
-    "plugin:import/typescript",
-    "plugin:prettier/recommended",
-  ),
   {
-    plugins: {
-      react,
-      "@typescript-eslint": typescriptEslint,
-      prettier,
-    },
-
     languageOptions: {
-      globals: {
-        ...globals.browser,
-        JSX: true,
-        RequestInit: true,
-        BodyInit: true,
-        NodeJS: true,
-      },
-
-      parser: tsParser,
-      ecmaVersion: "latest",
-      sourceType: "module",
-
+      // common parser options, enable TypeScript and JSX
+      parser: '@typescript-eslint/parser',
       parserOptions: {
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
-    },
-
-    settings: {
-      "import/resolver": {
-        node: {
-          extensions: [".js", ".jsx", ".ts", ".tsx"],
-        },
-      },
-      react: {
-        pragma: "React",
-        fragment: "Fragment",
-        version: "18.3",
-      },
-    },
-
-    rules: {
-      "@typescript-eslint/triple-slash-reference": "off",
-      "react/jsx-uses-react": "error",
-      "react/jsx-uses-vars": "error",
-    },
+        sourceType: 'module'
+      }
+    }
   },
+  {
+    ignores: [
+      '**/__test__/*',
+      '**/assets/*',
+      '**/*.scss',
+      '**/*.css',
+      '**/*.svg'
+    ]
+  },
+  {
+    languageOptions: {
+      globals: { ...globals.browser, ...globals.node }
+    }
+  },
+  {
+    settings: {
+      'import/resolver': {
+        node: {
+          extensions: ['.js', '.jsx', ',ts', '.tsx']
+        }
+      },
+      'react': {
+        pragma: 'React',
+        fragment: 'Fragment',
+        version: '18.3'
+      }
+    }
+  },
+  // syntax rules
+  jsLint.configs.recommended,
+  ...tsLint.configs.recommended,
+  ...fixupConfigRules(pluginReactConfig),
+  // code style rules
+  stylistic.configs['disable-legacy'],
+  stylistic.configs.customize({
+    indent: 2,
+    quotes: 'single',
+    semi: true,
+    commaDangle: 'never',
+    jsx: true
+  })
 ];
