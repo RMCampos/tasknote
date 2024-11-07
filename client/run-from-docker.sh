@@ -1,7 +1,7 @@
 #!/bin/bash
 # Client - Front-end
 
-npm install
+npm ci
 if [ $? -eq 1 ]; then
   echo "Issues when installing dependencies. Please review.."
   exit 1
