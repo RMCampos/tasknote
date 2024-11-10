@@ -43,7 +43,7 @@ const App: React.FC = () => {
 
   const signedRouter: RouteObject[] = [
     {
-      path: '/', // ROUTES.ROOT='/'
+      path: '/',
       element: <ProtectedRoute />,
       children: [
         {
@@ -53,7 +53,7 @@ const App: React.FC = () => {
       ]
     },
     {
-      path: '*', // ROUTES.ALL_ROUTES='*'
+      path: '*',
       element: <NotFound />
     }
   ];

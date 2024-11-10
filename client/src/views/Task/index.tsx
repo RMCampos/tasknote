@@ -16,7 +16,7 @@ type TaskAction = 'add' | 'edit';
  *
  */
 function Task(): JSX.Element {
-  const [validated, setValidated] = useState<boolean>(true);
+  const [validated, setValidated] = useState<boolean>(false);
   const [formInvalid, setFormInvalid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [tasks, setTasks] = useState<TaskResponse[]>([]);
@@ -92,6 +92,8 @@ function Task(): JSX.Element {
     setTaskUrl('');
     setTaskUrlId(0);
     setAction('add');
+    setValidated(false);
+    setFormInvalid(false);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {

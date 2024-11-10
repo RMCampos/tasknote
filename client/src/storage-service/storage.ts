@@ -1,3 +1,5 @@
+import { API_TOKEN, REDIRECT_PATH, USER_DATA } from '../app-constants/app-constants';
+
 const langKey = 'TASKNOTE-LANG';
 
 /**
@@ -18,4 +20,14 @@ function getDefaultLang(): string {
   return localStorage.getItem(langKey) || 'en';
 }
 
-export { getDefaultLang, setDefaultLang };
+/**
+ * Clear all the storage for the current user.
+ */
+function clearStorage(): void {
+  localStorage.removeItem(langKey);
+  localStorage.removeItem(API_TOKEN);
+  localStorage.removeItem(REDIRECT_PATH);
+  localStorage.removeItem(USER_DATA);
+}
+
+export { getDefaultLang, setDefaultLang, clearStorage };

@@ -3,6 +3,7 @@ import {
   Card, Col, Container, Row
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import './style.scss';
 
 /**
  * About page component.

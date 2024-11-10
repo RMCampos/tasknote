@@ -26,7 +26,7 @@ import { translateMessage } from '../../utils/TranslatorUtils';
 function Home(): JSX.Element {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [summary, setSummary] = useState<SummaryResponse | undefined>();
-  const [validated, setValidated] = useState<boolean>(true);
+  const [validated, setValidated] = useState<boolean>(false);
   const [formInvalid, setFormInvalid] = useState<boolean>(false);
   const [searchResults, setSearchResults] = useState<HomeSearchResponse | null>(null);
   const navigate = useNavigate();

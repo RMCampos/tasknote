@@ -8,7 +8,7 @@ const ApiConfig = {
 
   refreshTokenUrl: `${server}/rest/user-sessions/refresh`,
 
-  csrfTokenUrl: `${server}/rest/user-sessions/csrf`,
+  deleteAccountUrl: `${server}/rest/user-sessions/delete-account`,
 
   tasksUrl: `${server}/rest/tasks`,
 

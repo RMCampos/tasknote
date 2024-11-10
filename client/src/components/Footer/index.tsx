@@ -45,7 +45,17 @@ function Footer(): JSX.Element {
           </Col>
 
           <Col xs={12} sm={4} className="text-center my-2 my-md-0">
-            {user?.email}
+            <Button
+              variant="link"
+              type="button"
+              onClick={() => navigate('/account')}
+              data-testid="footer-user-text"
+            >
+              {t('footer_my_account')}
+              (
+              {user?.email}
+              )
+            </Button>
           </Col>
 
           <Col xs={12} sm={4} className="text-center text-md-end">

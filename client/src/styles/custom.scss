@@ -14,3 +14,11 @@ body {
   background-color: $light-bg;
 }
 
+a, .btn-link {
+  color: $primary-color;
+  text-decoration: none;
+}
+
+a:hover, .btn-link:hover {
+  color: $primary-color;
+}

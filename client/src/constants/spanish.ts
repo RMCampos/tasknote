@@ -105,6 +105,25 @@ const esTranslations = {
     Puedes contactarme en `,
   about_dev_description_two: ' para cualquier duda o comentario.',
 
+  account_my_account_tittle: 'Mi Cuenta',
+  account_my_account_hello: '¡Hola! Aquí puedes gestionar tus preferencias.',
+  account_my_account_logged: 'Has iniciado sesión como: ',
+  account_app_lang_tittle: 'Idioma del App',
+  account_app_lang_description: 'Puedes elegir uno de estos idiomas:',
+  account_privacy_little: 'Su Privacidad es Importante',
+  account_privacy_text: `Nos comprometemos a proteger su privacidad y a brindarle
+    control total sobre sus datos. Puedes solicitar la eliminación completa de su
+    cuenta en cualquier momento. Una vez procesada, toda su información personal
+    será eliminada permanentemente de nuestros servidores.`,
+  account_privacy_delete_btn: 'Borrar todos mis datos',
+  account_delete_tittle: 'Estás a punto de eliminar tu cuenta!',
+  account_delete_description: `Esta acción no se puede deshacer. Si realmente desea
+    eliminar todos sus datos, haga clic en el botón que aparece a continuación. Si
+    no es así, cierre este mensaje y sus datos estarán seguros.`,
+  account_delete_btn: 'Sí, borra todo',
+
+  footer_my_account: 'Mi Cuenta ',
+
   logout: 'Cerrar sesión'
 };
 

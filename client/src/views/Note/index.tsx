@@ -16,7 +16,7 @@ type NoteAction = 'add' | 'edit';
  *
  */
 function Note(): JSX.Element {
-  const [validated, setValidated] = useState<boolean>(true);
+  const [validated, setValidated] = useState<boolean>(false);
   const [formInvalid, setFormInvalid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [notes, setNotes] = useState<NoteResponse[]>([]);
@@ -103,6 +103,8 @@ function Note(): JSX.Element {
         setNoteTitle('');
         setNoteDescription('');
         setAction('add');
+        setValidated(false);
+        setFormInvalid(false);
       }
     }
     else if (action === 'edit') {
@@ -120,6 +122,8 @@ function Note(): JSX.Element {
         setNoteTitle('');
         setNoteDescription('');
         setAction('add');
+        setValidated(false);
+        setFormInvalid(false);
       }
     }
   };

@@ -121,7 +121,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
       clearInterval(intervalInstance);
       setIntervalInstance(null);
     }
-    localStorage.clear();
+    localStorage.removeItem(API_TOKEN);
+    localStorage.removeItem(REDIRECT_PATH);
+    localStorage.removeItem(USER_DATA);
   };
 
   const refreshTokenPvt = async (): Promise<void> => {

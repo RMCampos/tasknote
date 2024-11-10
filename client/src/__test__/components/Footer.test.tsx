@@ -40,7 +40,7 @@ describe('Footer component test', () => {
       }
     };
 
-    const { getByText } = render(
+    render(
       <BrowserRouter>
         <AuthContext.Provider value={contextMockWithEmail}>
           <Footer />
@@ -48,7 +48,9 @@ describe('Footer component test', () => {
       </BrowserRouter>,
     );
 
-    expect(getByText(contextMockWithEmail.user.email)).toBeDefined();
+    const userAreaText = screen.getByTestId('footer-user-text');
+    expect(userAreaText).toBeDefined();
+    expect(userAreaText.innerHTML).toBe('My Account (test@example.com)');
   });
 
   it('calls signOut function when logout button is clicked', () => {

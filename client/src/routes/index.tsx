@@ -5,6 +5,7 @@ import Home from '../views/Home';
 import About from '../views/About';
 import Task from '../views/Task';
 import Note from '../views/Note';
+import Account from '../views/Account';
 
 const BrowserRoutes: RouteObject[] = [
   {
@@ -40,6 +41,10 @@ const BrowserRoutes: RouteObject[] = [
   {
     path: '/notes',
     element: <Note />
+  },
+  {
+    path: '/account',
+    element: <Account />
   }
 ];
 
