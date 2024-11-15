@@ -42,7 +42,7 @@
     <jacoco.output.data>${project.build.directory}/coverage-reports</jacoco.output.data>
     <timestamp>${maven.build.timestamp}</timestamp>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
-    <hibernate.version>6.5.3.Final</hibernate.version>
+    <hibernate.version>6.6.2.Final</hibernate.version>
   </properties>
 
   <!-- Profiles -->
@@ -415,7 +415,7 @@
           <dependency>
             <groupId>com.puppycrawl.tools</groupId>
             <artifactId>checkstyle</artifactId>
-            <version>10.20.0</version>
+            <version>10.20.1</version>
           </dependency>
         </dependencies>
         <configuration>
