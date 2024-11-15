@@ -15,22 +15,22 @@
     "@popperjs/core": "^2.11.8",
     "@testing-library/react": "^16.0.1",
     "@testing-library/user-event": "^14.5.2",
-    "@types/jest": "^29.5.13",
+    "@types/jest": "^29.5.14",
     "@types/node": "^22.7.6",
     "@types/react-dom": "^18.3.1",
     "@types/react-router-bootstrap": "^0.26.6",
     "@vitejs/plugin-react": "^4.3.2",
     "bootstrap": "^5.3.3",
-    "i18next": "^23.16.4",
+    "i18next": "^23.16.5",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.5",
     "react-bootstrap-icons": "^1.11.4",
     "react-dom": "^18.3.1",
     "react-i18next": "^15.0.3",
     "react-router-bootstrap": "^0.26.3",
-    "react-router-dom": "^6.27.0",
+    "react-router-dom": "^6.28.0",
     "typescript": "^5.6.3",
-    "vite": "^5.4.8"
+    "vite": "^5.4.11"
   },
   "scripts": {
     "start": "vite --host",
@@ -79,7 +79,7 @@
     "prettier": "^3.3.3",
     "sass": "^1.80.4",
     "source-map-support": "^0.5.21",
-    "typescript-eslint": "^8.12.2",
+    "typescript-eslint": "^8.14.0",
     "vitest": "^2.0.5"
   }
 }
