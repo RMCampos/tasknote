@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import {
   Button, Col, Container, Row
 } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
 import './style.css';
 import { useTranslation } from 'react-i18next';
@@ -45,17 +45,12 @@ function Footer(): JSX.Element {
           </Col>
 
           <Col xs={12} sm={4} className="text-center my-2 my-md-0">
-            <Button
-              variant="link"
-              type="button"
-              onClick={() => navigate('/account')}
-              data-testid="footer-user-text"
-            >
+            <Link to="/account" data-testid="footer-user-text">
               {t('footer_my_account')}
               (
               {user?.email}
               )
-            </Button>
+            </Link>
           </Col>
 
           <Col xs={12} sm={4} className="text-center text-md-end">

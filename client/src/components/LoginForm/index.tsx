@@ -83,7 +83,7 @@ function LoginForm({ prefix }: { prefix: string }): JSX.Element {
   }, [formInvalid]);
 
   return (
-    <Container fluid className="login-page">
+    <Container as="main" fluid className="login-page">
       <Row className="justify-content-center w-100">
         <Col xs={12} md={6} lg={4}>
           <Card>
