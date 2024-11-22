@@ -135,4 +135,30 @@ class AuthenticationControllerTest {
         .andExpect(jsonPath("$.token").value(token))
         .andReturn();
   }
+
+  @Test
+  @DisplayName("Sign in wrong password should fail")
+  void signIn_wrongPassword_shouldFail() throws Exception {
+    LoginRequest request = new LoginRequest("user@domain.com", "abcde123456");
+
+    when(authService.signInUser(request)).thenReturn(null);
+
+    String jsonString =
+        """
+        {
+          "email": "user@domain.com",
+          "password": "abcde123456"
+        }
+        """;
+
+    mockMvc
+        .perform(
+            post("/auth/sign-in")
+                .with(csrf().asHeader())
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+        .andExpect(status().isBadRequest())
+        .andReturn();
+  }
 }

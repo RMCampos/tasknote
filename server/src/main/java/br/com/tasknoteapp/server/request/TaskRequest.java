@@ -8,4 +8,6 @@ import java.util.List;
 @Schema(description = "Task request to be created.")
 public record TaskRequest(
     @Schema(description = "Task description.") @NotNull String description,
-    @Schema(description = "Task urls. Optional.") List<String> urls) {}
+    @Schema(description = "Task urls. Optional.") List<String> urls,
+    @Schema(description = "Due date. Optional.") String dueDate,
+    @Schema(description = "Define high priority. Optional.") Boolean highPriority) {}

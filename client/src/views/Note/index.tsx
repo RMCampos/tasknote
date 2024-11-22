@@ -24,6 +24,7 @@ function Note(): JSX.Element {
   const [noteTitle, setNoteTitle] = useState<string>('');
   const [noteDescription, setNoteDescription] = useState<string>('');
   const [action, setAction] = useState<NoteAction>('add');
+  const [textSizeLeft, setTextSizeLeft] = useState<number>(2000);
   const { i18n, t } = useTranslation();
 
   const handleError = (e: unknown): void => {
@@ -72,6 +73,17 @@ function Note(): JSX.Element {
     return false;
   };
 
+  const resetInputs = () => {
+    setNoteId(0);
+    setNoteTitle('');
+    setNoteDescription('');
+    setTextSizeLeft(2000);
+
+    setAction('add');
+    setValidated(false);
+    setFormInvalid(false);
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
     event.stopPropagation();
@@ -81,6 +93,12 @@ function Note(): JSX.Element {
     if (form.checkValidity() === false) {
       setFormInvalid(true);
       setErrorMessage(translateMessage('Please fill in all the fields', i18n.language));
+      return;
+    }
+
+    if (form.note_description.value.length > 2000) {
+      setFormInvalid(true);
+      setErrorMessage(translateMessage('The maximum text length is 2000', i18n.language));
       return;
     }
 
@@ -99,12 +117,7 @@ function Note(): JSX.Element {
       const added: boolean = await addNote(payload);
       if (added) {
         form.reset();
-        setNoteId(0);
-        setNoteTitle('');
-        setNoteDescription('');
-        setAction('add');
-        setValidated(false);
-        setFormInvalid(false);
+        resetInputs();
       }
     }
     else if (action === 'edit') {
@@ -118,12 +131,7 @@ function Note(): JSX.Element {
       const edited: boolean = await submitEditNote(payload);
       if (edited) {
         form.reset();
-        setNoteId(0);
-        setNoteTitle('');
-        setNoteDescription('');
-        setAction('add');
-        setValidated(false);
-        setFormInvalid(false);
+        resetInputs();
       }
     }
   };
@@ -180,25 +188,35 @@ function Note(): JSX.Element {
                   />
                 </Form.Group>
 
-                <Form.Group className="mb-3" controlId="form_noteDescription">
+                <Form.Group controlId="form_noteDescription">
                   <Form.Label>{t('note_form_content_label')}</Form.Label>
                   <Form.Control
                     as="textarea"
                     required
                     rows={3}
                     name="note_description"
+                    id="note_description"
+                    aria-describedby="noteDescriptionHelper"
                     placeholder={t('note_form_content_placeholder')}
                     value={noteDescription}
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                       setNoteDescription(e.target.value);
+                      setTextSizeLeft(2000 - e.target.value.length);
                     }}
                   />
                 </Form.Group>
+                <Form.Text id="noteDescriptionHelper" muted>
+                  The text area can have text length up to 2000. You still can type
+                  {' '}
+                  {textSizeLeft}
+                  {' '}
+                  characters.
+                </Form.Text>
 
                 <Button
                   variant="primary"
                   type="submit"
-                  className="w-100"
+                  className="w-100 mt-3"
                 >
                   {t('note_form_submit')}
                 </Button>

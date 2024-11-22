@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import LoginForm from '../../components/LoginForm';
 import '../../i18n';
 

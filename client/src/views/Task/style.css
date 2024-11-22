@@ -6,11 +6,48 @@
   color: #ccc!important;
 }
 
-.time-ago {
-  font-size: 0.775em;
+.btn-action {
+  margin-right: 0.5rem;
+}
+
+.priority-done {
+  font-size: 10px;
+  font-weight: 700;
+  background-color: #ccc;
+  padding: 3px 5px;
+  border-radius: 6px;
+  margin-right: 0.5rem;
+}
+
+.priority-normal {
+  font-size: 10px;
+  font-weight: 700;
+  background-color: lightgreen;
+  padding: 3px 5px;
+  border-radius: 6px;
+  margin-right: 0.5rem;
+}
+
+.priority-high {
+  font-size: 10px;
+  font-weight: 700;
+  background-color: lightcoral;
+  padding: 3px 5px;
+  border-radius: 6px;
+  margin-right: 0.5rem;
+}
+
+.task-pipe {
+  color: #868181;
+  margin: 0 0.5rem;
+}
+
+.task-last-update {
+  font-size: 11px;
   color: #868181;
 }
 
-.btn-action {
-  margin-right: 0.5rem;
+.task-icon {
+  margin-right: 1rem;
+  cursor: pointer;
 }

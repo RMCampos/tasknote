@@ -12,6 +12,8 @@ import br.com.tasknoteapp.server.request.TaskUrlPatchRequest;
 import br.com.tasknoteapp.server.response.TaskResponse;
 import br.com.tasknoteapp.server.util.AuthUtil;
 import jakarta.transaction.Transactional;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +69,10 @@ public class TaskService {
     task.setDone(false);
     task.setUser(user);
     task.setLastUpdate(LocalDateTime.now());
+    if (!Objects.isNull(taskRequest.dueDate())) {
+      task.setDueDate(LocalDate.parse(taskRequest.dueDate()));
+    }
+    task.setHighPriority(taskRequest.highPriority());
     TaskEntity created = taskRepository.save(task);
 
     if (!Objects.isNull(taskRequest.urls()) && !taskRequest.urls().isEmpty()) {
@@ -102,6 +108,14 @@ public class TaskService {
     }
     if (!Objects.isNull(patch.done())) {
       taskEntity.setDone(patch.done());
+    }
+    taskEntity.setDueDate(null);
+    if (!Objects.isNull(patch.dueDate())) {
+      taskEntity.setDueDate(LocalDate.parse(patch.dueDate()));
+    }
+    taskEntity.setHighPriority(false);
+    if (!Objects.isNull(patch.highPriority())) {
+      taskEntity.setHighPriority(patch.highPriority());
     }
 
     taskEntity.setLastUpdate(LocalDateTime.now());

@@ -5,14 +5,12 @@
 
 ## 📋 Table of Contents
 
-- [About the Project](#about-the-project)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+- [📝 About the Project](#-about-the-project)
+- [✨ Features](#-features)
+- [🚀 Tech Stack](#-tech-stack)
+- [🛠 Contributing](#-contributing)
+- [📞 Contact](#-contact)
+- [📄 License](#-license)
 
 ## 📝 About the Project
 
@@ -42,10 +40,11 @@ Then I decided keep going, found a host and a name. And that's it. Here we are!
 
 Please refer to the [CONTRIBUTING](CONTRIBUTING.md) file for more information about how to run this application from source, and/or how to contribute.
 
-## 📄 License
-
-Distributed under GPLv3 License. See `LICENSE` for more information.
 
 ## 📞 Contact
 
 Reach out on X [@XerifeRicWoody](https://twitter.com/XerifeRicWoody) or email me ricardocampos@gmail.com
+
+## 📄 License
+
+Distributed under GPLv3 License. See `LICENSE` for more information.

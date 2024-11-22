@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Data;
@@ -28,6 +29,7 @@ public class TaskEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(length = 2000)
   private String description;
 
   private Boolean done;
@@ -41,4 +43,10 @@ public class TaskEntity {
 
   @Column(name = "last_update")
   private LocalDateTime lastUpdate;
+
+  @Column(name = "due_date")
+  private LocalDate dueDate;
+
+  @Column(name = "high_priority")
+  private Boolean highPriority;
 }

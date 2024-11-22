@@ -11,6 +11,9 @@ import USER_LANG from '../types/UserLangs';
 function translateTaskResponse(tasks: TaskResponse[], target: string): TaskResponse[] {
   tasks.forEach((task: TaskResponse) => {
     task.lastUpdate = translateMessage(task.lastUpdate, target);
+    if (task.dueDateFmt) {
+      task.dueDateFmt = translateMessage(task.dueDateFmt, target);
+    }
   });
   return tasks;
 }
@@ -94,6 +97,49 @@ function translateMessage(message: string, target: string): string {
           ? `${numberValue} segundos atrás`
           : `Hace ${numberValue} segundos`;
       }
+      case 'Moments ago': {
+        return lang === USER_LANG.PORTUGUESE
+          ? 'Momentos atrás'
+          : 'Hace momentos';
+      }
+    }
+  }
+
+  if (message.includes(' left')) {
+    const firstSpace = message.indexOf(' ');
+    const numberValue = message.substring(0, firstSpace);
+    const textvalue = message.substring(firstSpace).trim();
+    switch (textvalue) {
+      case 'years left': {
+        return lang === USER_LANG.PORTUGUESE
+          ? `${numberValue} anos restantes`
+          : `Faltan ${numberValue} años`;
+      }
+      case 'year left': {
+        return lang === USER_LANG.PORTUGUESE
+          ? `${numberValue} ano restante`
+          : `Falta ${numberValue} año`;
+      }
+      case 'months left': {
+        return lang === USER_LANG.PORTUGUESE
+          ? `${numberValue} meses restantes`
+          : `Faltan ${numberValue} meses`;
+      }
+      case 'month left': {
+        return lang === USER_LANG.PORTUGUESE
+          ? `${numberValue} mês restante`
+          : `Falta ${numberValue} mes`;
+      }
+      case 'days left': {
+        return lang === USER_LANG.PORTUGUESE
+          ? `${numberValue} dias restantes`
+          : `Faltan ${numberValue} días`;
+      }
+      case 'day left': {
+        return lang === USER_LANG.PORTUGUESE
+          ? `${numberValue} dia restante`
+          : `Falta ${numberValue} día`;
+      }
     }
   }
 
@@ -147,6 +193,11 @@ function translateMessage(message: string, target: string): string {
       return lang === USER_LANG.PORTUGUESE
         ? 'Por favor, digite pelo menos 3 letras'
         : '¡Por favor, escriba al menos 3 caracteres';
+    }
+    case 'The maximum text length is 2000': {
+      return lang === USER_LANG.PORTUGUESE
+        ? 'O tamanho máximo do texto é 2000'
+        : 'La longitud máxima del texto es 2000';
     }
     case 'Unknown error': {
       return lang === USER_LANG.PORTUGUESE

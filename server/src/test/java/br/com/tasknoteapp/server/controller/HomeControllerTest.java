@@ -11,6 +11,7 @@ import br.com.tasknoteapp.server.response.SearchResponse;
 import br.com.tasknoteapp.server.response.SummaryResponse;
 import br.com.tasknoteapp.server.response.TaskResponse;
 import br.com.tasknoteapp.server.service.HomeService;
+import java.time.LocalDate;
 import java.util.List;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -73,7 +74,9 @@ class HomeControllerTest {
   @DisplayName("Search happy path should succeed")
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
   void search_happyPath_shouldSucceed() throws Exception {
-    TaskResponse task = new TaskResponse(1L, "Task 1", false, "now", List.of());
+    TaskResponse task =
+        new TaskResponse(
+            1L, "Task 1", false, true, LocalDate.now(), "2024-11-20", "now", List.of());
     NoteResponse note = new NoteResponse(1L, "Note 1", "Note desc", List.of());
     SearchResponse response = new SearchResponse(List.of(task), List.of(note));
 

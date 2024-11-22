@@ -1,7 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Alert, Button, Card, Col, Container, Form, Row, Table
+  Alert,
+  Button,
+  Card,
+  Col,
+  Container,
+  Form,
+  InputGroup,
+  Row
 } from 'react-bootstrap';
+import {
+  ArrowUpSquare,
+  ArrowUpSquareFill,
+  CalendarCheck,
+  CheckSquare,
+  PencilFill,
+  Square
+} from 'react-bootstrap-icons';
 import TaskNoteRequest from '../../types/TaskNoteRequest';
 import { TaskResponse, TaskUrlResponse } from '../../types/TaskResponse';
 import { useTranslation } from 'react-i18next';
@@ -26,6 +41,8 @@ function Task(): JSX.Element {
   const [taskUrlId, setTaskUrlId] = useState<number>(0);
   const [taskDone, setTaskDone] = useState<boolean>(false);
   const [action, setAction] = useState<TaskAction>('add');
+  const [dueDate, setDueDate] = useState<string>('');
+  const [highPriority, setHighPriority] = useState<boolean>(false);
   const { i18n, t } = useTranslation();
 
   const handleError = (e: unknown): void => {
@@ -55,12 +72,7 @@ function Task(): JSX.Element {
     }
   };
 
-  const addTask = async (desc: string, url?: string): Promise<boolean> => {
-    const payload: TaskNoteRequest = {
-      description: desc,
-      urls: url ? [url] : []
-    };
-
+  const addTask = async (payload: TaskNoteRequest): Promise<boolean> => {
     try {
       await api.postJSON(ApiConfig.tasksUrl, payload);
       loadTasks();
@@ -91,6 +103,9 @@ function Task(): JSX.Element {
     setTaskDone(false);
     setTaskUrl('');
     setTaskUrlId(0);
+    setDueDate('');
+    setHighPriority(false);
+
     setAction('add');
     setValidated(false);
     setFormInvalid(false);
@@ -111,7 +126,14 @@ function Task(): JSX.Element {
     setFormInvalid(false);
 
     if (action === 'add') {
-      const added: boolean = await addTask(form.description.value, form.url.value);
+      const addPayload: TaskNoteRequest = {
+        description: form.description.value.trim(),
+        urls: form.url.value ? [form.url.value] : [],
+        dueDate: form.dueDate.value ? form.dueDate.value : null,
+        highPriority: highPriority
+      };
+
+      const added: boolean = await addTask(addPayload);
       if (added) {
         form.reset();
         resetInputs();
@@ -126,15 +148,18 @@ function Task(): JSX.Element {
         urls.push({ url: taskUrl, id: null });
       }
 
-      const payload: TaskResponse = {
+      const editPayload: TaskResponse = {
         id: taskId,
-        description: taskDescription,
+        description: form.description.value.trim(),
         done: taskDone,
+        highPriority: highPriority,
+        dueDate: form.dueDate.value ? form.dueDate.value : null,
+        dueDateFmt: '',
         lastUpdate: '',
         urls
       };
 
-      const edited: boolean = await submitEditTask(payload);
+      const edited: boolean = await submitEditTask(editPayload);
       if (edited) {
         form.reset();
         resetInputs();
@@ -162,6 +187,8 @@ function Task(): JSX.Element {
     setTaskUrl(task.urls.length ? task.urls[0].url : '');
     setTaskUrlId(task.urls.length ? task.urls[0].id || 0 : 0);
     setTaskDone(task.done);
+    setDueDate(task.dueDate);
+    setHighPriority(task.highPriority);
     setAction('edit');
   };
 
@@ -181,6 +208,7 @@ function Task(): JSX.Element {
 
   return (
     <Container>
+      {/* Form to add, edit and save tasks */}
       <Row className="mt-3">
         <Col xs={12}>
           <Card>
@@ -196,114 +224,168 @@ function Task(): JSX.Element {
                 : null}
 
               <Form noValidate validated={validated} onSubmit={handleSubmit}>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                  <Form.Label>{t('task_form_desc_label')}</Form.Label>
-                  <Form.Control
-                    required
-                    type="test"
-                    name="description"
-                    placeholder={t('task_form_desc_placeholder')}
-                    value={taskDescription}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setTaskDescription(e.target.value);
-                    }}
-                  />
-                </Form.Group>
+                <Row>
+                  <Col xs={12} sm={6}>
+                    <Form.Group className="mb-3" controlId="task-form-description">
+                      <Form.Label>{t('task_form_desc_label')}</Form.Label>
+                      <InputGroup className="mb-3">
+                        <InputGroup.Text>
+                          <PencilFill />
+                        </InputGroup.Text>
+                        <Form.Control
+                          required
+                          type="text"
+                          name="description"
+                          placeholder={t('task_form_desc_placeholder')}
+                          value={taskDescription}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            setTaskDescription(e.target.value);
+                          }}
+                        />
+                      </InputGroup>
+                    </Form.Group>
+                  </Col>
 
-                <Form.Group className="mb-3" controlId="input-url">
-                  <Form.Label>{t('task_form_url_label')}</Form.Label>
-                  <Form.Control
-                    required={false}
-                    type="text"
-                    name="url"
-                    placeholder={t('task_form_url_placeholder')}
-                    value={taskUrl}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setTaskUrl(e.target.value);
-                    }}
-                  />
-                </Form.Group>
+                  <Col xs={12} sm={6}>
+                    <Form.Group className="mb-3" controlId="task-form-url">
+                      <Form.Label>{t('task_form_url_label')}</Form.Label>
+                      <InputGroup className="mb-3">
+                        <InputGroup.Text>@</InputGroup.Text>
+                        <Form.Control
+                          required={false}
+                          type="text"
+                          name="url"
+                          placeholder={t('task_form_url_placeholder')}
+                          value={taskUrl}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            setTaskUrl(e.target.value);
+                          }}
+                        />
+                      </InputGroup>
+                    </Form.Group>
+                  </Col>
+                </Row>
 
-                <Button
-                  variant="primary"
-                  type="submit"
-                  className="w-100"
-                >
+                <Row>
+                  <Col xs={12} sm={6}>
+                    <Form.Group className="mb-3" controlId="task-form-due-date">
+                      <Form.Label>{t('task_form_duedate_label')}</Form.Label>
+                      <InputGroup className="mb-3">
+                        <InputGroup.Text>
+                          <CalendarCheck />
+                        </InputGroup.Text>
+                        <Form.Control
+                          required={false}
+                          type="text"
+                          name="dueDate"
+                          placeholder={t('task_form_duedate_placeholder')}
+                          value={dueDate}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            setDueDate(e.target.value);
+                          }}
+                        />
+                      </InputGroup>
+                    </Form.Group>
+                  </Col>
+                </Row>
+
+                <Form.Check
+                  type="switch"
+                  id="high-priority-input"
+                  label="High priority"
+                  className="mb-3"
+                  name="highPriority"
+                  checked={highPriority}
+                  onChange={() => setHighPriority(!highPriority)}
+                />
+
+                <Button variant="primary" type="submit">
                   {t('task_form_submit')}
                 </Button>
               </Form>
-
             </Card.Body>
           </Card>
         </Col>
       </Row>
+      {/* Tasks added */}
       <Row className="mt-3">
         <Col xs={12}>
-          <Table striped bordered hover responsive>
-            <thead>
-              <tr>
-                <th scope="col" style={{ width: '5%' }}>#</th>
-                <th scope="col" style={{ width: '50%' }}>{t('task_table_description')}</th>
-                <th scope="col" style={{ width: '10%' }}>{t('task_table_done')}</th>
-                <th scope="col" style={{ width: '10%' }}>URL</th>
-                <th scope="col" style={{ width: '25%' }}>{t('task_table_actions')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tasks.map((task: TaskResponse) => (
-                <tr key={`task-${task.id}`}>
-                  <th scope="row" className={task.done ? 'text-done' : ''}>{task.id}</th>
-                  <td className={task.done ? 'text-done' : ''}>
-                    {task.description}
-                    <br />
-                    <small className={task.done ? '' : 'time-ago'}>{task.lastUpdate}</small>
-                  </td>
-                  <td className={task.done ? 'text-done' : ''}>
-                    {
-                      task.done
-                        ? t('task_table_action_done_yes')
-                        : t('task_table_action_done_no')
-                    }
-                  </td>
-                  <td className={task.done ? 'text-done' : ''}>
-                    {task.urls.length > 0
-                      ? (
-                          <a href={`${task.urls[0].url}`}>Link</a>
-                        )
-                      : '-'}
-                  </td>
-                  <td className={task.done ? 'text-done' : ''}>
+          {tasks.map((task: TaskResponse) => (
+            <Card key={task.id.toString()} className="my-2">
+              <Card.Body>
+                <Card.Title>
+                  {task.highPriority && (
+                    <>
+                      {task.done
+                        ? <ArrowUpSquareFill onClick={() => markAsDone(task)} className="task-icon" />
+                        : <ArrowUpSquare onClick={() => markAsDone(task)} className="task-icon" />}
+                      <span className={`${task.done ? '' : 'priority-high'}`}>
+                        {task.done ? '' : 'HIGH'}
+                      </span>
+                    </>
+                  )}
+                  {!task.highPriority && (
+                    <>
+                      {task.done
+                        ? <CheckSquare onClick={() => markAsDone(task)} className="task-icon" />
+                        : <Square onClick={() => markAsDone(task)} className="task-icon" />}
+                      <span className={`${task.done ? '' : 'priority-normal'}`}>
+                        {task.done ? '' : 'NORMAL'}
+                      </span>
+                    </>
+                  )}
+                  {task.done && (
+                    <span className="priority-done">DONE</span>
+                  )}
+                  {task.description}
+                </Card.Title>
+                <Row>
+                  <Col xs={6}>
+                    {task.dueDateFmt && (
+                      <>
+                        <span className="task-last-update">
+                          {task.dueDateFmt}
+                        </span>
+                        <span className="task-pipe">|</span>
+                      </>
+                    )}
+                    {task.urls.length > 0 && (
+                      <>
+                        <span className="task-last-update">
+                          <a href={task.urls[0].url}>URL</a>
+                        </span>
+                        <span className="task-pipe">|</span>
+                      </>
+                    )}
+                    <span className="task-last-update">{task.lastUpdate}</span>
+                  </Col>
+                  <Col xs={6} className="text-end">
+                    {!task.done && (
+                      <>
+                        <Button
+                          type="button"
+                          variant="link"
+                          onClick={() => editTask(task)}
+                          className=""
+                        >
+                          {t('task_table_action_edit')}
+                        </Button>
+                        <span className="task-pipe">|</span>
+                      </>
+                    )}
                     <Button
                       type="button"
-                      variant="primary"
-                      onClick={() => markAsDone(task)}
-                      className="btn-action"
-                    >
-                      {task.done ? t('task_table_action_undone') : t('task_table_action_done')}
-                    </Button>
-
-                    <Button
-                      type="button"
-                      variant="outline-primary"
-                      onClick={() => editTask(task)}
-                      className="btn-action"
-                    >
-                      {t('task_table_action_edit')}
-                    </Button>
-
-                    <Button
-                      type="button"
-                      variant="danger"
+                      variant="link"
                       onClick={() => deleteTask(task.id)}
                       className="btn-action"
                     >
                       {t('task_table_action_delete')}
                     </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          ))}
         </Col>
       </Row>
     </Container>
