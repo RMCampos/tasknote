@@ -46,16 +46,16 @@ Here are a few steps:
 
 ```bash
 export SERVER_IP=
-export SERVER_ADDRRESS=
+export SERVER_ADDRESS=
 
 npm ci --ignore-scripts --no-update-notifier --omit=dev
-export VITE_BACKEND_SERVER=$SERVER_ADDRRESS/server
+export VITE_BACKEND_SERVER=$SERVER_ADDRESS/server
 npm run build
 zip -r "client_$VERSION.zip" dist/
 scp "client_$VERSION.zip" root@$SERVER_IP:/root/
 ```
 
-## Runing with Docker
+## Running with Docker
 
 **DB:**
 
@@ -85,6 +85,8 @@ docker run -d --rm \
   -e CORS_ALLOWED_ORIGINS=$CORS_ALLOWED_ORIGINS \
   ghcr.io/ricardo-campos-org/react-typescript-todolist/server:<PR-Number>
 ```
+
+Build Cloud Native: `./mvnw -B package -Pnative -DskipTests`
 
 **Client:**
 

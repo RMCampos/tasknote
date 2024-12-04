@@ -3,6 +3,11 @@
 TARGET="$1"
 
 if [ "$TARGET" == "back" ]; then
+    if [ -f "server/.env" ]; then
+        echo "Env file in place. Leaving..."
+        exit 0
+    fi
+
     echo "Creating basic env file for database and back-end"
     cd server
 
@@ -13,7 +18,12 @@ if [ "$TARGET" == "back" ]; then
     echo "POSTGRES_PORT=5432" >> .env
     echo "SERVER_SERVLET_CONTEXT_PATH=/" >> .env
     echo "CORS_ALLOWED_ORIGINS=http://localhost:5000" >> .env
-if [ "$TARGET" == "front" ]; then
+elif [ "$TARGET" == "front" ]; then
+    if [ -f "client/.env" ]; then
+        echo "Env file in place. Leaving..."
+        exit 0
+    fi
+
     echo "Creating basic env file for the front-end app"
     cd client
 
@@ -22,4 +32,5 @@ if [ "$TARGET" == "front" ]; then
 else
     echo "Wrong parameter..."
 fi
+
 echo "Done!"
