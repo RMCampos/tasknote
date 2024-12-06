@@ -14,7 +14,7 @@ import { NoteResponse } from '../../types/NoteResponse';
 import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
 import { handleDefaultLang } from '../../lang-service/LangHandler';
-import { translateMessage } from '../../utils/TranslatorUtils';
+import { translateServerResponse } from '../../utils/TranslatorUtils';
 
 /**
  * Home page component.
@@ -34,10 +34,10 @@ function Home(): JSX.Element {
 
   const handleError = (e: unknown): void => {
     if (typeof e === 'string') {
-      setErrorMessage(translateMessage(e, i18n.language));
+      setErrorMessage(translateServerResponse(e, i18n.language));
     }
     else if (e instanceof Error) {
-      setErrorMessage(translateMessage(e.message, i18n.language));
+      setErrorMessage(translateServerResponse(e.message, i18n.language));
     }
   };
 
@@ -71,7 +71,7 @@ function Home(): JSX.Element {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       setFormInvalid(true);
-      setErrorMessage(translateMessage('Please type at least 3 characters', i18n.language));
+      setErrorMessage(translateServerResponse('Please type at least 3 characters', i18n.language));
       return;
     }
 

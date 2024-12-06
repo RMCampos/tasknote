@@ -3,6 +3,7 @@ import { initReactI18next } from 'react-i18next';
 import enTranslations from './constants/english';
 import esTranslations from './constants/spanish';
 import ptBrTranslations from './constants/portuguese';
+import ruTranslations from './constants/russian';
 
 i18n
   .use(initReactI18next)
@@ -21,6 +22,9 @@ i18n
       },
       pt_br: {
         translation: ptBrTranslations
+      },
+      ru: {
+        translation: ruTranslations
       }
     }
   });

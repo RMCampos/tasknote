@@ -3,9 +3,10 @@ const ptBrTranslations = {
   landing_subtitle: 'Seu melhor aliado para organizar tarefas e notas!',
   landing_btn_login: 'Entrar',
   landing_btn_register: 'Criar conta',
-  landing_btn_english: 'Inglês',
-  landing_btn_portuguese: 'Português',
-  landing_btn_spanish: 'Espahol',
+  landing_btn_english: 'English',
+  landing_btn_portuguese: 'Português do Brasil',
+  landing_btn_spanish: 'Español',
+  landing_btn_russian: 'Русский',
 
   login_title: 'Entrar',
   login_email_label: 'E-mail',

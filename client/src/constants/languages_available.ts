@@ -8,5 +8,6 @@ export interface LangAvailable {
 export const languages: LangAvailable[] = [
   { lang: USER_LANG.ENGLISH, key: 'landing_btn_english' },
   { lang: USER_LANG.PORTUGUESE, key: 'landing_btn_portuguese' },
-  { lang: USER_LANG.SPANISH, key: 'landing_btn_spanish' }
+  { lang: USER_LANG.SPANISH, key: 'landing_btn_spanish' },
+  { lang: USER_LANG.RUSSIAN, key: 'landing_btn_russian' }
 ];

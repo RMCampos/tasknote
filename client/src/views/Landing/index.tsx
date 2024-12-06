@@ -37,8 +37,9 @@ function Landing(): JSX.Element {
         <h1 className="display-1">{t('landing_title')}</h1>
         <h2>{t('landing_subtitle')}</h2>
 
-        <Link to="/login" className="login me-3">{t('landing_btn_login')}</Link>
-        <Link to="/register" className="login me-3">{t('landing_btn_register')}</Link>
+        <Link to="/login" className="login">{t('landing_btn_login')}</Link>
+        <br />
+        <Link to="/register" className="login">{t('landing_btn_register')}</Link>
 
         <aside>
           <h3>You can choose one of these languages</h3>
@@ -47,7 +48,7 @@ function Landing(): JSX.Element {
               key={lang.key}
               type="button"
               variant="outline-primary"
-              className="btn-sm me-3"
+              className="btn-sm me-3 mb-3"
               onClick={() => handleLanguage(lang.lang)}
             >
               {t(lang.key)}

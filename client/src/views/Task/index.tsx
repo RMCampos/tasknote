@@ -22,7 +22,7 @@ import { TaskResponse, TaskUrlResponse } from '../../types/TaskResponse';
 import { useTranslation } from 'react-i18next';
 import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
-import { translateMessage, translateTaskResponse } from '../../utils/TranslatorUtils';
+import { translateServerResponse, translateTaskResponse } from '../../utils/TranslatorUtils';
 import './style.css';
 
 type TaskAction = 'add' | 'edit';
@@ -47,11 +47,11 @@ function Task(): JSX.Element {
 
   const handleError = (e: unknown): void => {
     if (typeof e === 'string') {
-      setErrorMessage(translateMessage(e, i18n.language));
+      setErrorMessage(translateServerResponse(e, i18n.language));
       setFormInvalid(true);
     }
     else if (e instanceof Error) {
-      setErrorMessage(translateMessage(e.message, i18n.language));
+      setErrorMessage(translateServerResponse(e.message, i18n.language));
       setFormInvalid(true);
     }
   };
@@ -119,7 +119,7 @@ function Task(): JSX.Element {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       setFormInvalid(true);
-      setErrorMessage(translateMessage('Please fill in all the fields', i18n.language));
+      setErrorMessage(translateServerResponse('Please fill in all the fields', i18n.language));
       return;
     }
 

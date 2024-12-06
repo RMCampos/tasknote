@@ -3,9 +3,10 @@ const esTranslations = {
   landing_subtitle: '¡Tu mejor aliado para organizar tareas y notas!',
   landing_btn_login: 'Iniciar sesión',
   landing_btn_register: 'Crear cuenta',
-  landing_btn_english: 'Inglés',
-  landing_btn_portuguese: 'Portugués',
+  landing_btn_english: 'English',
+  landing_btn_portuguese: 'Português do Brasil',
   landing_btn_spanish: 'Español',
+  landing_btn_russian: 'Русский',
 
   login_title: 'Acceso',
   login_email_label: 'Correo electrónico',

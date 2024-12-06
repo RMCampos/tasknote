@@ -32,7 +32,7 @@ $dark-text: #343a40;
   }
 
   h2 {
-    font-size: 2.2rem;
+    font-size: 2rem;
     font-weight: 300;
     margin-bottom: 4.5rem;
     color: $dark-text;
@@ -47,25 +47,26 @@ $dark-text: #343a40;
   a.login {
     margin-top: 5rem;
     font-size: 2.5rem;
-    font-weight: 300;
-    padding: 0.75rem 1.5rem;
+    padding: 0.75rem 1rem;
+    color: darken($primary-color, 20%);
+    font-weight: 600;
   }
 
   a.login {
     &:hover {
-      color: darken($primary-color, 20%);
-      font-weight: 600;
+      font-size: 2.7rem;
+      color: darken($primary-color, 30%);
     }
   }
 
   aside {
-    margin-top: 10rem;
+    margin-top: 7rem;
   }
 
   .btn-outline-primary {
     color: $primary-color;
     border-color: $primary-color;
-    width: 6rem;
+    width: 9rem;
     &:hover {
       background-color: $primary-color;
       color: #fff;

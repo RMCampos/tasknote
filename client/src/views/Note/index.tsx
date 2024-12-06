@@ -7,7 +7,7 @@ import TaskNoteRequest from '../../types/TaskNoteRequest';
 import { NoteResponse } from '../../types/NoteResponse';
 import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
-import { translateMessage } from '../../utils/TranslatorUtils';
+import { translateServerResponse } from '../../utils/TranslatorUtils';
 import './style.css';
 
 type NoteAction = 'add' | 'edit';
@@ -29,11 +29,11 @@ function Note(): JSX.Element {
 
   const handleError = (e: unknown): void => {
     if (typeof e === 'string') {
-      setErrorMessage(translateMessage(e, i18n.language));
+      setErrorMessage(translateServerResponse(e, i18n.language));
       setFormInvalid(true);
     }
     else if (e instanceof Error) {
-      setErrorMessage(translateMessage(e.message, i18n.language));
+      setErrorMessage(translateServerResponse(e.message, i18n.language));
       setFormInvalid(true);
     }
   };
@@ -92,13 +92,13 @@ function Note(): JSX.Element {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       setFormInvalid(true);
-      setErrorMessage(translateMessage('Please fill in all the fields', i18n.language));
+      setErrorMessage(translateServerResponse('Please fill in all the fields', i18n.language));
       return;
     }
 
     if (form.note_description.value.length > 2000) {
       setFormInvalid(true);
-      setErrorMessage(translateMessage('The maximum text length is 2000', i18n.language));
+      setErrorMessage(translateServerResponse('The maximum text length is 2000', i18n.language));
       return;
     }
 

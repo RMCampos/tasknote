@@ -16,7 +16,7 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import AuthContext from '../../context/AuthContext';
-import { translateMessage } from '../../utils/TranslatorUtils';
+import { translateServerResponse } from '../../utils/TranslatorUtils';
 import { handleDefaultLang } from '../../lang-service/LangHandler';
 
 /**
@@ -53,7 +53,7 @@ function LoginForm({ prefix }: { prefix: string }): JSX.Element {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       setFormInvalid(true);
-      setErrorMessage(translateMessage('Please fill in your username and password!', i18n.language));
+      setErrorMessage(translateServerResponse('Please fill in your username and password!', i18n.language));
       return;
     }
 
@@ -70,10 +70,10 @@ function LoginForm({ prefix }: { prefix: string }): JSX.Element {
     catch (e) {
       setFormInvalid(true);
       if (typeof e === 'string') {
-        setErrorMessage(translateMessage(e, i18n.language));
+        setErrorMessage(translateServerResponse(e, i18n.language));
       }
       else if (e instanceof Error) {
-        setErrorMessage(translateMessage(e.message, i18n.language));
+        setErrorMessage(translateServerResponse(e.message, i18n.language));
       }
     }
   };

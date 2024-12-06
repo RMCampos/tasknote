@@ -4,8 +4,9 @@ const enTranslations = {
   landing_btn_login: 'Login',
   landing_btn_register: 'Register',
   landing_btn_english: 'English',
-  landing_btn_portuguese: 'Portuguese',
-  landing_btn_spanish: 'Spanish',
+  landing_btn_portuguese: 'Português do Brasil',
+  landing_btn_spanish: 'Español',
+  landing_btn_russian: 'Русский',
 
   login_title: 'Login',
   login_email_label: 'Email',
