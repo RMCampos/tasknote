@@ -44,7 +44,6 @@ public class TaskService {
    */
   public List<TaskResponse> getAllTasks() {
     UserEntity user = getCurrentUser();
-
     log.info("Get all tasks to user {}", user.getId());
 
     List<TaskEntity> tasks = taskRepository.findAllByUser_id(user.getId());
@@ -177,7 +176,7 @@ public class TaskService {
    * Search for tasks in the database given a search term.
    *
    * @param searchTerm The term to be used for the search.
-   * @return {@link List} of {@link TaskResponse} with ound records or an empty list.
+   * @return {@link List} of {@link TaskResponse} with found records or an empty list.
    */
   public List<TaskResponse> searchTasks(String searchTerm) {
     UserEntity user = getCurrentUser();

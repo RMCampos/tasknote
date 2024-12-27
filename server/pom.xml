@@ -43,6 +43,8 @@
     <timestamp>${maven.build.timestamp}</timestamp>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
     <hibernate.version>6.6.2.Final</hibernate.version>
+    <sonar.organization>ricardo-campos-org</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
   </properties>
 
   <!-- Profiles -->
@@ -259,6 +261,7 @@
           <skip>${jacoco.skip}</skip>
           <excludes>
             <exclude>**/config/**</exclude>
+            <exclude>**/entity/**</exclude>
             <exclude>**/exception/**</exclude>
             <exclude>**/filter/**</exclude>
             <exclude>**/*$*Builder*</exclude>
@@ -350,7 +353,7 @@
                     <limit>
                       <counter>LINE</counter>
                       <value>COVEREDRATIO</value>
-                      <minimum>10%</minimum>
+                      <minimum>90%</minimum>
                     </limit>
                   </limits>
                 </rule>

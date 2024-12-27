@@ -114,6 +114,13 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
+      - name: Cache SonarQube Cloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
@@ -127,8 +134,17 @@ jobs:
       - name: Google Check-Style
         run: cd server && ./mvnw --no-transfer-progress checkstyle:checkstyle -Dskip.checkstyle=false
 
-      #- name: All Tests
-      #  run: cd server && ./mvnw --no-transfer-progress clean verify -P tests --file pom.xml
+      - name: Sonar Analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_SERVER }}
+        run: cd server && ./mvnw -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar 
+          -Dsonar.projectKey=ricardo-campos-org_react-typescript-todolist_server
+          -Dsonar.coverage.jacoco.xmlReportPaths=target/coverage-reports/merged-test-report/jacoco.xml
+          -Dsonar.exclusions=**/config/**,**/entity/**,**/exception/**,**/filter/**,**/**Builder*,**/RestExceptionEndpoint.*,**/JavaApiApiApplication.*
+
+      - name: All Tests
+        run: cd server && ./mvnw --no-transfer-progress clean verify -P tests --file pom.xml
 
   java-docker-build:
     name: Build Java Docker image

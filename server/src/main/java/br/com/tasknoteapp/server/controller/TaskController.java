@@ -48,7 +48,7 @@ public class TaskController {
       responses = {
         @ApiResponse(
             responseCode = "200",
-            description = "Tasks successfully retrieved",
+            description = "Return an array containing found Tasks, or empty array otherwise.",
             content =
                 @Content(
                     mediaType = "application/json",
@@ -91,7 +91,7 @@ public class TaskController {
             description = "Task not found",
             content = @Content(schema = @Schema(implementation = Void.class)))
       })
-  public ResponseEntity<TaskResponse> putTask(
+  public ResponseEntity<TaskResponse> patchTask(
       @Parameter(
               name = "id",
               in = ParameterIn.PATH,
@@ -172,7 +172,7 @@ public class TaskController {
             description = "Task not found",
             content = @Content(schema = @Schema(implementation = Void.class)))
       })
-  public ResponseEntity<Void> deleteTasks(
+  public ResponseEntity<Void> deleteTask(
       @Parameter(
               name = "id",
               in = ParameterIn.PATH,

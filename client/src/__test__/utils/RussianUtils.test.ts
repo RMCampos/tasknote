@@ -63,7 +63,7 @@ describe('Portuguese Utils unit tests', () => {
     expect(translateServerResponse(keys[2], 'ru'))
       .toBe('Неправильный пароль: Пароль должен содержать хотя бы 1 специальный символ.');
     expect(translateServerResponse(keys[3], 'ru'))
-      .toBe('Электронная почти уже используется!');
+      .toBe('Электронная почта уже используется!');
     expect(translateServerResponse(keys[4], 'ru'))
       .toBe('Доступ запрещен!');
     expect(translateServerResponse(keys[5], 'ru'))

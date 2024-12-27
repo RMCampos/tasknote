@@ -41,10 +41,6 @@ public class UserSessionController {
         @ApiResponse(
             responseCode = "403",
             description = "Forbidden. Access Denied",
-            content = @Content(schema = @Schema(implementation = Void.class))),
-        @ApiResponse(
-            responseCode = "404",
-            description = "User not found",
             content = @Content(schema = @Schema(implementation = Void.class)))
       })
   public JwtAuthenticationResponse refresh() {
@@ -65,10 +61,6 @@ public class UserSessionController {
         @ApiResponse(
             responseCode = "403",
             description = "Forbidden. Access Denied",
-            content = @Content(schema = @Schema(implementation = Void.class))),
-        @ApiResponse(
-            responseCode = "404",
-            description = "User not found",
             content = @Content(schema = @Schema(implementation = Void.class)))
       })
   public UserResponse deteleAccount() {

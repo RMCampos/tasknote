@@ -90,7 +90,7 @@ public class NoteController {
             description = "Note not found",
             content = @Content(schema = @Schema(implementation = Void.class)))
       })
-  public ResponseEntity<NoteResponse> putNote(
+  public ResponseEntity<NoteResponse> patchNote(
       @Parameter(
               name = "id",
               in = ParameterIn.PATH,
@@ -171,7 +171,7 @@ public class NoteController {
             description = "Note not found",
             content = @Content(schema = @Schema(implementation = Void.class)))
       })
-  public ResponseEntity<Void> deleteNotes(
+  public ResponseEntity<Void> deleteNote(
       @Parameter(
               name = "id",
               in = ParameterIn.PATH,

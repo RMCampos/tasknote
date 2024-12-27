@@ -145,37 +145,36 @@ public class AuthService {
   }
 
   /**
-   * Get all registered users.
+   * Get all registered users. Only allowed for admin users.
    *
    * @return List of UserEntity.
-   * @throws UserForbiddenException when the user has no permission.
+   * @throws UserForbiddenException when the user has no permissions.
    */
   public List<UserResponse> getAllUsers() {
     Optional<String> currentUserEmail = authUtil.getCurrentUserEmail();
-    String email = currentUserEmail.orElseThrow();
-    UserEntity currentUser = findByEmail(email).orElseThrow();
-
-    log.info("Getting all users to user {}", currentUser.getId());
-
-    if (!currentUser.getAdmin() || !currentUser.getEmail().equals("ricardompcampos@gmail.com")) {
-      log.info("User not allowed!");
+    if (currentUserEmail.isEmpty()) {
+      log.error("Unable to get current user from the request");
       throw new UserForbiddenException();
     }
 
-    List<UserEntity> users = userRepository.findAll();
-    List<UserResponse> usersResponse = new ArrayList<>();
-    for (UserEntity user : users) {
-      UserResponse userResponse =
-          new UserResponse(
-              user.getId(),
-              user.getEmail(),
-              user.getAdmin(),
-              user.getCreatedAt(),
-              user.getInactivatedAt());
-      usersResponse.add(userResponse);
+    Optional<UserEntity> currentUserOpt = findByEmail(currentUserEmail.get());
+    if (currentUserOpt.isEmpty()) {
+      log.error("Unable to find user by email with value: {}", currentUserEmail.get());
+      throw new UserForbiddenException();
     }
 
-    log.info("{} Users found!", usersResponse.size());
+    UserEntity currentUser = currentUserOpt.get();    
+    if (!currentUser.getAdmin()) {
+      log.warn("User {} not allowed to list users.", currentUser.getId());
+      throw new UserForbiddenException();
+    }
+    
+    log.info("Getting all users to user {}", currentUser.getId());
+
+    List<UserEntity> users = userRepository.findAll();
+    List<UserResponse> usersResponse = new ArrayList<>(users.size());
+    users.forEach((u) -> usersResponse.add(UserResponse.fromEntity(u)));
+    log.info("{} user(s) found!", usersResponse.size());
 
     return usersResponse;
   }
