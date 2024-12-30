@@ -5,8 +5,8 @@ import {
   Button, Card, Col, Container, Form, InputGroup, Row
 } from 'react-bootstrap';
 import './style.css';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { NavLink } from 'react-router';
 import { SummaryResponse } from '../../types/SummaryResponse';
 import { HomeSearchResponse } from '../../types/HomeSearchResponse';
 import { TaskResponse } from '../../types/TaskResponse';
@@ -29,7 +29,6 @@ function Home(): JSX.Element {
   const [validated, setValidated] = useState<boolean>(false);
   const [formInvalid, setFormInvalid] = useState<boolean>(false);
   const [searchResults, setSearchResults] = useState<HomeSearchResponse | null>(null);
-  const navigate = useNavigate();
   const { i18n, t } = useTranslation();
 
   const handleError = (e: unknown): void => {
@@ -110,13 +109,11 @@ function Home(): JSX.Element {
                   ? ` ${summary?.doneTaskCount} ${t('home_card_task_done')}`
                   : t('home_card_task_done_empty')}
               </Card.Text>
-              <Button
-                variant="primary"
-                type="button"
-                onClick={() => navigate('/tasks')}
-              >
-                {t('home_card_task_btn')}
-              </Button>
+              <NavLink to="/tasks">
+                <Button variant="primary" type="button">
+                  {t('home_card_task_btn')}
+                </Button>
+              </NavLink>
             </Card.Body>
           </Card>
         </Col>
@@ -131,13 +128,11 @@ function Home(): JSX.Element {
                 {summary?.notesCount}
               </Card.Title>
               <Card.Text>{t('home_card_note_count')}</Card.Text>
-              <Button
-                variant="primary"
-                type="button"
-                onClick={() => navigate('/notes')}
-              >
-                {t('home_card_note_btn')}
-              </Button>
+              <NavLink to="/tasks">
+                <Button variant="primary" type="button">
+                  {t('home_card_note_btn')}
+                </Button>
+              </NavLink>
             </Card.Body>
           </Card>
         </Col>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { act, render, screen } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router';
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import authContextMock from '../__mocks__/authContextMock';
 import Footer from '../../components/Footer';

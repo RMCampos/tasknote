@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import {
   createBrowserRouter, Navigate, RouteObject, RouterProvider
-} from 'react-router-dom';
+} from 'react-router';
 import AuthContext from './context/AuthContext';
 
 import BrowserRoutes from './routes';

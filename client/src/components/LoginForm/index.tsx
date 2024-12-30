@@ -13,7 +13,7 @@ import {
   Form,
   Row
 } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import AuthContext from '../../context/AuthContext';
 import { translateServerResponse } from '../../utils/TranslatorUtils';

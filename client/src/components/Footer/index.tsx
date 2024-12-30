@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import {
   Button, Col, Container, Row
 } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router';
 import AuthContext from '../../context/AuthContext';
 import './style.css';
 import { useTranslation } from 'react-i18next';
@@ -18,13 +18,12 @@ import { useTranslation } from 'react-i18next';
 function Footer(): JSX.Element {
   const { signOut, user } = useContext(AuthContext);
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const build = import.meta.env.VITE_BUILD;
   const currentYear = new Date().getFullYear();
 
   const goOut = () => {
     signOut();
-    navigate('/');
+    // navigate('/');
   };
 
   return (

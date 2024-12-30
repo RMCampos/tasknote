@@ -2,7 +2,6 @@ import React, { useContext, useState } from 'react';
 import { Alert, Button, Card, Col, Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FileText, Person, ShieldCheck } from 'react-bootstrap-icons';
-import { useNavigate } from 'react-router-dom';
 import { clearStorage, setDefaultLang } from '../../storage-service/storage';
 import AuthContext from '../../context/AuthContext';
 import { LangAvailable, languages } from '../../constants/languages_available';
@@ -19,7 +18,6 @@ import ApiConfig from '../../api-service/apiConfig';
 function Account(): JSX.Element {
   const { signOut, user } = useContext(AuthContext);
   const { i18n, t } = useTranslation();
-  const navigate = useNavigate();
   const [showAlert, setShowAlert] = useState<boolean>(false);
 
   const handleLanguage = (lang: string) => {
@@ -32,7 +30,7 @@ function Account(): JSX.Element {
     await api.postJSON(ApiConfig.deleteAccountUrl, {});
     signOut();
     clearStorage();
-    navigate('/');
+    // navigate('/');
   };
 
   return (

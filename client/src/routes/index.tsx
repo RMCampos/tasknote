@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, RouteObject } from 'react-router-dom';
+import { Navigate, RouteObject } from 'react-router';
 import getStoredPath from '../utils/PathUtils';
 import Home from '../views/Home';
 import About from '../views/About';
