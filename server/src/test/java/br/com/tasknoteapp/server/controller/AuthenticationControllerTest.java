@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import br.com.tasknoteapp.server.exception.UserAlreadyExistsException;
+import br.com.tasknoteapp.server.exception.EmailAlreadyExistsException;
 import br.com.tasknoteapp.server.request.LoginRequest;
 import br.com.tasknoteapp.server.service.AuthService;
 import org.junit.jupiter.api.DisplayName;
@@ -15,8 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
@@ -25,7 +25,7 @@ class AuthenticationControllerTest {
 
   @Autowired private MockMvc mockMvc;
 
-  @MockBean private AuthService authService;
+  @MockitoBean private AuthService authService;
 
   @Test
   @DisplayName("Sign up happy path should succeed")
@@ -83,16 +83,16 @@ class AuthenticationControllerTest {
   }
 
   @Test
-  @DisplayName("Sign up user already exists should fail")
+  @DisplayName("Sign up email already exists should fail")
   void signup_userAlreadyExists_shouldFail() throws Exception {
     LoginRequest request = new LoginRequest("user@domain.com", "abcde123456");
 
-    when(authService.signUpNewUser(request)).thenThrow(new UserAlreadyExistsException());
+    when(authService.signUpNewUser(request)).thenThrow(new EmailAlreadyExistsException());
 
     String jsonString =
         """
         {
-          "email": "user@domain..com",
+          "email": "user@domain.com",
           "password": "abcde123456"
         }
         """;
@@ -104,7 +104,7 @@ class AuthenticationControllerTest {
                 .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(jsonString))
-        .andExpect(status().isBadRequest())
+        .andExpect(status().isConflict())
         .andReturn();
   }
 
@@ -137,8 +137,8 @@ class AuthenticationControllerTest {
   }
 
   @Test
-  @DisplayName("Sign in wrong password should fail")
-  void signIn_wrongPassword_shouldFail() throws Exception {
+  @DisplayName("Sign in invalid credentials should fail")
+  void signIn_invalidCredentials_shouldFail() throws Exception {
     LoginRequest request = new LoginRequest("user@domain.com", "abcde123456");
 
     when(authService.signInUser(request)).thenReturn(null);
@@ -158,7 +158,7 @@ class AuthenticationControllerTest {
                 .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(jsonString))
-        .andExpect(status().isBadRequest())
+        .andExpect(status().isUnauthorized())
         .andReturn();
   }
 }

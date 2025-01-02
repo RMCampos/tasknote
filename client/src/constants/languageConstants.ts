@@ -70,6 +70,7 @@ export const serverResponsesTranslations: Record<string, string> = {
   EMAIL_EXISTS_pt_br: 'E-mail já cadastrado!',
   FORBIDDEN_pt_br: 'Proibido! Acesso negado',
   INTERNAL_ERROR_pt_br: 'Erro Interno do Servidor!',
+  INVALID_CREDENTIALS_pt_br: 'E-mail ou senha inválidos!',
   MAX_LOGIN_ATTEMPT_pt_br: 'Limite máximo de tentativas atingido. Por favor aguarde 30 minutos',
   FILL_ALL_FIELDS_pt_br: 'Por ravor, preencha todos os campos',
   FILL_USER_AND_PASS_pt_br: 'Por favor, informe seu e-mail e senha!',
@@ -77,7 +78,6 @@ export const serverResponsesTranslations: Record<string, string> = {
   MAX_TEXT_LENGTH_2000_pt_br: 'O tamanho máximo do texto é 2000',
   UNKNOWN_pt_br: 'Erro desconhecido',
   WRONG_OR_MISSING_INFO_pt_br: 'Informação errada ou incompleta!',
-  WRONG_USER_OR_PASS_pt_br: 'E-mail ou senha inválidos!',
 
   BAD_PASSWORD_3_es: 'Contraseña inválida: La contraseña debe tener al menos 8 caracteres, 1 mayúscula y 1 carácter especial',
   BAD_PASSWORD_2_es: 'Contraseña inválida: La contraseña debe tener al menos 1 mayúscula y 1 carácter especial',
@@ -85,6 +85,7 @@ export const serverResponsesTranslations: Record<string, string> = {
   EMAIL_EXISTS_es: '¡El correo ya está registrado!',
   FORBIDDEN_es: '¡Prohibido! Acceso denegado',
   INTERNAL_ERROR_es: '¡Error interno del servidor!',
+  INVALID_CREDENTIALS_es: '¡Usuario o contraseña incorrectos!',
   MAX_LOGIN_ATTEMPT_es: 'Has alcanzado el límite máximo de intentos de inicio de sesión. Por favor, espera 30 minutos',
   FILL_ALL_FIELDS_es: 'Por favor, completa todos los campos',
   FILL_USER_AND_PASS_es: '¡Por favor, ingresa tu nombre de usuario y contraseña!',
@@ -92,7 +93,6 @@ export const serverResponsesTranslations: Record<string, string> = {
   MAX_TEXT_LENGTH_2000_es: 'La longitud máxima del texto es 2000',
   UNKNOWN_es: 'Error desconocido',
   WRONG_OR_MISSING_INFO_es: '¡Información incorrecta o incompleta!',
-  WRONG_USER_OR_PASS_es: '¡Usuario o contraseña incorrectos!',
 
   BAD_PASSWORD_3_ru: 'Неправильный пароль: Пароль должен содержать не менее 8 символов, 1 заглавную букву, 1 специальный символ.',
   BAD_PASSWORD_2_ru: 'Неправильный пароль: Пароль должен содержать как минимум 1 заглавную букву и 1 специальный символ.',
@@ -100,12 +100,12 @@ export const serverResponsesTranslations: Record<string, string> = {
   EMAIL_EXISTS_ru: 'Электронная почта уже используется!',
   FORBIDDEN_ru: 'Доступ запрещен!',
   INTERNAL_ERROR_ru: 'Внутренняя ошибка сервера!',
+  INVALID_CREDENTIALS_ru: 'Неправильный пользователь или пароль',
   MAX_LOGIN_ATTEMPT_ru: 'Достигнут максимальный лимит попыток входа. Пожалуйста, подождите 30 минут',
   FILL_ALL_FIELDS_ru: 'Пожалуйста, заполните все поля',
   FILL_USER_AND_PASS_ru: 'Пожалуйста, введите свое имя пользователя и пароль!',
   FILL_AT_LEAST_3_ru: 'Пожалуйста, введите не менее 3 символов',
   MAX_TEXT_LENGTH_2000_ru: 'Максимальная длина текста — 2000 символов.',
   UNKNOWN_ru: 'Неизвестная ошибка',
-  WRONG_OR_MISSING_INFO_ru: 'Неверная или отсутствующая информация!',
-  WRONG_USER_OR_PASS_ru: 'Неправильный пользователь или пароль'
+  WRONG_OR_MISSING_INFO_ru: 'Неверная или отсутствующая информация!'
 };

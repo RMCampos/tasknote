@@ -35,7 +35,7 @@ jobs:
           projectBaseDir: client
           args: >
             -Dsonar.organization=ricardo-campos-org
-            -Dsonar.projectKey=ricardo-campos-org_react-typescript-todolist
+            -Dsonar.projectKey=ricardo-campos-org_react-typescript-todolist_client
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
             -Dsonar.typescript.tsconfigPaths=tsconfig.json
             -Dsonar.sources=src/
@@ -87,7 +87,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_SERVER }}
-        run: cd server && ./mvnw -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ricardo-campos-org_react-typescript-todolist_server
+        run: cd server && ./mvnw -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
           -Dsonar.projectKey=ricardo-campos-org_react-typescript-todolist_server
           -Dsonar.coverage.jacoco.xmlReportPaths=target/coverage-reports/merged-test-report/jacoco.xml
           -Dsonar.exclusions=**/config/**,**/entity/**,**/exception/**,**/filter/**,**/**Builder*,**/RestExceptionEndpoint.*,**/JavaApiApiApplication.*

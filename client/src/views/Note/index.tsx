@@ -195,7 +195,6 @@ function Note(): JSX.Element {
                     required
                     rows={3}
                     name="note_description"
-                    id="note_description"
                     aria-describedby="noteDescriptionHelper"
                     placeholder={t('note_form_content_placeholder')}
                     value={noteDescription}

@@ -2,11 +2,11 @@ import React, { useContext, useEffect } from 'react';
 import { Button, Container } from 'react-bootstrap';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import AuthContext from '../../context/AuthContext';
 import { handleDefaultLang } from '../../lang-service/LangHandler';
 import { setDefaultLang } from '../../storage-service/storage';
-import './styles.scss';
 import { LangAvailable, languages } from '../../constants/languages_available';
+import AuthContext from '../../context/AuthContext';
+import './styles.scss';
 
 /**
  * Landing page component.
@@ -21,7 +21,7 @@ function Landing(): JSX.Element {
   const { checkCurrentAuthUser } = useContext(AuthContext);
   const { i18n, t } = useTranslation();
 
-  const handleLanguage = (lang: string) => {
+  const handleLanguage = (lang: string): void => {
     i18n.changeLanguage(lang);
     setDefaultLang(lang);
   };

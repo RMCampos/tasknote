@@ -12,5 +12,5 @@ export const serverResponses: Record<string, string> = {
   'The maximum text length is 2000': 'MAX_TEXT_LENGTH_2000',
   'Unknown error': 'UNKNOWN',
   'Wrong or missing information!': 'WRONG_OR_MISSING_INFO',
-  'Wrong user or password': 'WRONG_USER_OR_PASS'
+  'Invalid credentials': 'INVALID_CREDENTIALS'
 };

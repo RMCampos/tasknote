@@ -90,6 +90,9 @@ function translateTimeMessage(message: string, target: string): string {
  * @returns The translated message.
  */
 function translateServerResponse(message: string, target: string): string {
+  if (target === USER_LANG.ENGLISH) {
+    return message;
+  }
   const serverResponseKeys: string[] = Object.keys(serverResponses);
   if (serverResponseKeys.includes(message)) {
     const value = serverResponses[message];

@@ -1,11 +1,14 @@
 import React, { useContext } from 'react';
 import {
-  Button, Col, Container, Row
+  Button,
+  Col,
+  Container,
+  Row
 } from 'react-bootstrap';
 import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import AuthContext from '../../context/AuthContext';
 import './style.css';
-import { useTranslation } from 'react-i18next';
 
 /**
  * Footer component.
@@ -23,7 +26,6 @@ function Footer(): JSX.Element {
 
   const goOut = () => {
     signOut();
-    // navigate('/');
   };
 
   return (

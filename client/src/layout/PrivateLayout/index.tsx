@@ -6,7 +6,7 @@ import Footer from '../../components/Footer';
 import './style.css';
 
 /**
- * Layout component.
+ * PrivateLayout component.
  *
  * This component provides the layout of the application,
  * including the outlet responsible for the main content.
@@ -14,18 +14,16 @@ import './style.css';
  *
  * @returns {JSX.Element} The Layout component.
  */
-function Layout(): JSX.Element {
+function PrivateLayout(): JSX.Element {
   return (
     <div className="page-container">
       <Header />
-
       <Container className="content-container">
         <Outlet />
       </Container>
-
       <Footer />
     </div>
   );
 }
 
-export default Layout;
+export default PrivateLayout;

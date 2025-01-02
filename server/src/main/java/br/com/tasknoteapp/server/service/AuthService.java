@@ -3,11 +3,11 @@ package br.com.tasknoteapp.server.service;
 import br.com.tasknoteapp.server.entity.UserEntity;
 import br.com.tasknoteapp.server.entity.UserPwdLimitEntity;
 import br.com.tasknoteapp.server.exception.BadPasswordException;
+import br.com.tasknoteapp.server.exception.EmailAlreadyExistsException;
+import br.com.tasknoteapp.server.exception.InvalidCredentialsException;
 import br.com.tasknoteapp.server.exception.MaxLoginLimitAttemptException;
-import br.com.tasknoteapp.server.exception.UserAlreadyExistsException;
 import br.com.tasknoteapp.server.exception.UserForbiddenException;
 import br.com.tasknoteapp.server.exception.UserNotFoundException;
-import br.com.tasknoteapp.server.exception.WrongUserOrPasswordException;
 import br.com.tasknoteapp.server.repository.UserPwdLimitRepository;
 import br.com.tasknoteapp.server.repository.UserRepository;
 import br.com.tasknoteapp.server.request.LoginRequest;
@@ -58,7 +58,7 @@ public class AuthService {
     log.info("Signing up new user! {}", login.email());
 
     if (findByEmail(login.email()).isPresent()) {
-      throw new UserAlreadyExistsException();
+      throw new EmailAlreadyExistsException();
     }
 
     Optional<String> passwordValidation = authUtil.validatePassword(login.password());
@@ -116,7 +116,7 @@ public class AuthService {
 
     Optional<UserEntity> user = findByEmail(login.email());
     if (user.isEmpty()) {
-      throw new WrongUserOrPasswordException();
+      throw new InvalidCredentialsException();
     }
 
     checkLoginAttemptLimit(user.get().getId());
@@ -163,12 +163,12 @@ public class AuthService {
       throw new UserForbiddenException();
     }
 
-    UserEntity currentUser = currentUserOpt.get();    
+    UserEntity currentUser = currentUserOpt.get();
     if (!currentUser.getAdmin()) {
       log.warn("User {} not allowed to list users.", currentUser.getId());
       throw new UserForbiddenException();
     }
-    
+
     log.info("Getting all users to user {}", currentUser.getId());
 
     List<UserEntity> users = userRepository.findAll();

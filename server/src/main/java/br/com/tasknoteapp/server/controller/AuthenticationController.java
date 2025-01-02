@@ -1,8 +1,8 @@
 package br.com.tasknoteapp.server.controller;
 
-import br.com.tasknoteapp.server.exception.UserAlreadyExistsException;
+import br.com.tasknoteapp.server.exception.InvalidCredentialsException;
+import br.com.tasknoteapp.server.exception.EmailAlreadyExistsException;
 import br.com.tasknoteapp.server.exception.UserNotFoundException;
-import br.com.tasknoteapp.server.exception.WrongUserOrPasswordException;
 import br.com.tasknoteapp.server.request.LoginRequest;
 import br.com.tasknoteapp.server.response.JwtAuthenticationResponse;
 import br.com.tasknoteapp.server.service.AuthService;
@@ -38,7 +38,7 @@ public class AuthenticationController {
    *
    * @param loginRequest User data with email and password.
    * @return JwtAuthenticationResponse containing user token
-   * @throws UserAlreadyExistsException when user already exists.
+   * @throws EmailAlreadyExistsException when the provide email is already in use.
    */
   @PutMapping(path = "/sign-up", consumes = "application/json", produces = "application/json")
   @Operation(
@@ -52,7 +52,7 @@ public class AuthenticationController {
             content = @Content(schema = @Schema(implementation = Void.class))),
         @ApiResponse(
             responseCode = "409",
-            description = "User already exists",
+            description = "Email already in use",
             content = @Content(schema = @Schema(implementation = Void.class)))
       })
   public ResponseEntity<JwtAuthenticationResponse> signUp(
@@ -66,7 +66,8 @@ public class AuthenticationController {
    *
    * @param loginRequest User data containing email and password.
    * @return JwtAuthenticationResponse with token created.
-   * @throws UserNotFoundException if user not found
+   * @throws UserNotFoundException if user not or InvalidCredentialsException if credentials are
+   *     invalid.
    */
   @PostMapping(path = "/sign-in", consumes = "application/json", produces = "application/json")
   @Operation(
@@ -79,8 +80,8 @@ public class AuthenticationController {
             description = "Wrong or missing information",
             content = @Content(schema = @Schema(implementation = Void.class))),
         @ApiResponse(
-            responseCode = "403",
-            description = "Forbidden. Access Denied",
+            responseCode = "401",
+            description = "Unauthorized. Invalid credentials",
             content = @Content(schema = @Schema(implementation = Void.class))),
         @ApiResponse(
             responseCode = "404",
@@ -90,7 +91,7 @@ public class AuthenticationController {
   public JwtAuthenticationResponse signIn(@RequestBody @Valid LoginRequest loginRequest) {
     String token = authService.signInUser(loginRequest);
     if (Objects.isNull(token)) {
-      throw new WrongUserOrPasswordException();
+      throw new InvalidCredentialsException();
     }
     return new JwtAuthenticationResponse(token);
   }

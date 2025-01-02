@@ -5,10 +5,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 /** This class represents a User Not Found request. */
-@ResponseStatus(code = HttpStatus.BAD_REQUEST)
-public class WrongUserOrPasswordException extends ResponseStatusException {
+@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
+public class InvalidCredentialsException extends ResponseStatusException {
 
-  public WrongUserOrPasswordException() {
-    super(HttpStatus.BAD_REQUEST, "Wrong user or password");
+  public InvalidCredentialsException() {
+    super(HttpStatus.UNAUTHORIZED, "Invalid credentials");
   }
 }

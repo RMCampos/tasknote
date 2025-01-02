@@ -3,11 +3,6 @@ import { User } from '../types/User';
 import AuthContext, { AuthContextData } from './AuthContext';
 import { API_TOKEN, REDIRECT_PATH, USER_DATA } from '../app-constants/app-constants';
 import { SigninResponse } from '../types/SigninResponse';
-import {
-  authenticateUser,
-  logoutUser,
-  registerUser
-} from '../api-service/authService';
 import api from '../api-service/api';
 import ApiConfig from '../api-service/apiConfig';
 
@@ -77,7 +72,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
 
   const register = async (email: string, password: string): Promise<string> => {
     try {
-      const registerResponse: SigninResponse = await registerUser(email, password);
+      const payload = { email, password };
+      const registerResponse: SigninResponse = await api.putJSON(ApiConfig.registerUrl, payload);
       const currentUser: User = {
         email
       };
@@ -89,7 +85,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     }
     catch (e) {
       if (e instanceof Error) {
-        return Promise.reject(new Error(e.message));
+        return Promise.reject(e);
       }
       return Promise.reject(new Error('Unknown error!'));
     }
@@ -97,7 +93,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
 
   const signIn = async (email: string, password: string): Promise<string> => {
     try {
-      const registerResponse: SigninResponse = await authenticateUser(email, password);
+      const payload = { email, password };
+      const registerResponse: SigninResponse = await api.postJSON(ApiConfig.signInUrl, payload);
       const currentUser: User = {
         email
       };
@@ -113,7 +110,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
   };
 
   const signOut = (): void => {
-    logoutUser();
     setSigned(false);
     setUser(undefined);
     setIsAdmin(false);

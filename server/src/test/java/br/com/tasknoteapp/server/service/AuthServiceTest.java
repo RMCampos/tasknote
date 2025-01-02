@@ -10,10 +10,10 @@ import br.com.tasknoteapp.server.entity.UserEntity;
 import br.com.tasknoteapp.server.entity.UserPwdLimitEntity;
 import br.com.tasknoteapp.server.exception.BadPasswordException;
 import br.com.tasknoteapp.server.exception.MaxLoginLimitAttemptException;
-import br.com.tasknoteapp.server.exception.UserAlreadyExistsException;
+import br.com.tasknoteapp.server.exception.EmailAlreadyExistsException;
 import br.com.tasknoteapp.server.exception.UserForbiddenException;
 import br.com.tasknoteapp.server.exception.UserNotFoundException;
-import br.com.tasknoteapp.server.exception.WrongUserOrPasswordException;
+import br.com.tasknoteapp.server.exception.InvalidCredentialsException;
 import br.com.tasknoteapp.server.repository.UserPwdLimitRepository;
 import br.com.tasknoteapp.server.repository.UserRepository;
 import br.com.tasknoteapp.server.request.LoginRequest;
@@ -96,7 +96,7 @@ class AuthServiceTest {
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(existing));
 
     Assertions.assertThrows(
-        UserAlreadyExistsException.class,
+        EmailAlreadyExistsException.class,
         () -> {
           authService.signUpNewUser(request);
         });
@@ -205,7 +205,7 @@ class AuthServiceTest {
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.empty());
 
     Assertions.assertThrows(
-        WrongUserOrPasswordException.class,
+        InvalidCredentialsException.class,
         () -> {
           authService.signInUser(request);
         });

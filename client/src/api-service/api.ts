@@ -15,15 +15,28 @@ function getToken(): string {
  *
  * @returns {Headers} the headers.
  */
-function getHeaders(): Headers {
-  const csrfToken = document.cookie.split('; ').find((row: string) => row.startsWith('XSRF-TOKEN='))?.split('=')[1];
+function getHeaders(addAuth: boolean = true): Headers {
+  const headers = new Headers();
+  headers.append('Content-Type', 'application/json');
 
-  return new Headers({
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${getToken()}`,
-    'X-XSRF-TOKEN': csrfToken || ''
-  });
+  if (addAuth) {
+    headers.append('Authorization', `Bearer ${getToken()}`);
+  }
+
+  return headers;
 }
+
+function getRequestInit(method: string, payload: object | undefined, addAuth: boolean = true): RequestInit {
+  const body: string | undefined = method !== 'GET' ? JSON.stringify(payload) : undefined;
+
+  return {
+    method: method,
+    mode: 'cors',
+    credentials: 'include',
+    headers: getHeaders(addAuth),
+    body
+  };
+};
 
 /**
  * Handle errors for the AJAX HTTPS requests.
@@ -31,81 +44,59 @@ function getHeaders(): Headers {
  * @param {number} httpStatusCode The HTTP response status code.
  */
 function handleError(httpStatusCode: number) {
-  if (httpStatusCode === 400) {
-    throw new Error('Wrong or missing information!');
-  }
-  if (httpStatusCode === 403) {
-    throw new Error('Forbidden! Access denied!');
-  }
+  console.log(`httpStatusCode: ${httpStatusCode}`);
   if (httpStatusCode === 500) {
     throw new Error('Internal Server Error!');
   }
   throw new Error('Unknown error');
 }
 
+async function handleResponse(response: Response) {
+  // Successful responses
+  if (response.ok && response.status !== 204) {
+    return await response.json();
+  }
+  else if (response.status === 204) {
+    return;
+  }
+
+  // Error responses
+  const contentType = response.headers.get('content-type');
+  if (contentType && contentType.includes('application/json')) {
+    const data = await response.json();
+    throw new Error(data.message);
+  }
+  handleError(response.status);
+}
+
+function isAddAuth(url: string): boolean {
+  return !url.includes('sign-in') && !url.includes('sign-up');
+}
+
 const api = {
   getJSON: async (url: string) => {
-    const response = await fetch(url, {
-      method: 'GET',
-      mode: 'cors',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${getToken()}`
-      }
-    });
-    if (response.ok) {
-      const data = await response.json();
-      return data;
-    }
-    handleError(response.status);
-    return false;
+    const response = await fetch(url, getRequestInit('GET', {}));
+    return handleResponse(response);
   },
 
   postJSON: async (url: string, payload: object) => {
-    const response = await fetch(url, {
-      method: 'POST',
-      mode: 'cors',
-      credentials: 'include',
-      headers: getHeaders(),
-      body: JSON.stringify(payload)
-    });
-    if (response.ok) {
-      const data = await response.json();
-      return data;
-    }
-    handleError(response.status);
-    return false;
+    const response = await fetch(url, getRequestInit('POST', payload, isAddAuth(url)));
+    return handleResponse(response);
   },
 
   patchJSON: async (url: string, payload: object) => {
-    const response = await fetch(url, {
-      method: 'PATCH',
-      mode: 'cors',
-      credentials: 'include',
-      headers: getHeaders(),
-      body: JSON.stringify(payload)
-    });
-    if (response.ok) {
-      const data = await response.json();
-      return data;
-    }
-    handleError(response.status);
-    return false;
+    const response = await fetch(url, getRequestInit('PATCH', payload));
+    return handleResponse(response);
+  },
+
+  putJSON: async (url: string, payload: object) => {
+    const response = await fetch(url, getRequestInit('PUT', payload, isAddAuth(url)));
+    return handleResponse(response);
   },
 
   deleteNoContent: async (url: string) => {
-    const response = await fetch(url, {
-      method: 'DELETE',
-      mode: 'cors',
-      credentials: 'include',
-      headers: getHeaders()
-    });
-    if (response.status === 204) {
-      return true;
-    }
-    handleError(response.status);
-    return false;
+    const response = await fetch(url, getRequestInit('DELETE', {}));
+    return handleResponse(response);
   }
 };
 

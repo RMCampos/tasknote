@@ -1,23 +1,34 @@
 import React, { useContext, useEffect } from 'react';
 import {
-  createBrowserRouter, Navigate, RouteObject, RouterProvider
+  createBrowserRouter,
+  Navigate,
+  RouteObject,
+  RouterProvider
 } from 'react-router';
 import AuthContext from './context/AuthContext';
-
 import BrowserRoutes from './routes';
 import ProtectedRoute from './routes/ProtectedRoute';
-import Layout from './layout/PrivateLayout';
-
+import PrivateLayout from './layout/PrivateLayout';
 import Landing from './views/Landing';
 import Login from './views/Login';
 import NotFound from './views/NotFound';
 import Register from './views/Register';
-
 import './styles/custom.scss';
 
-const App: React.FC = () => {
+/**
+ * The main application component that sets up routing based on the
+ * user's authentication status.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered component.
+ */
+function App(): JSX.Element {
   const { signed, checkCurrentAuthUser } = useContext(AuthContext);
 
+  /**
+   * Routes for users who are not signed in.
+   * @type {RouteObject[]}
+   */
   const notSignedRouter: RouteObject[] = [
     {
       path: '/',
@@ -41,13 +52,17 @@ const App: React.FC = () => {
     }
   ];
 
+  /**
+   * Routes for users who are signed in.
+   * @type {RouteObject[]}
+   */
   const signedRouter: RouteObject[] = [
     {
       path: '/',
       element: <ProtectedRoute />,
       children: [
         {
-          element: <Layout />,
+          element: <PrivateLayout />,
           children: BrowserRoutes
         }
       ]
@@ -58,6 +73,10 @@ const App: React.FC = () => {
     }
   ];
 
+  /**
+   * Determines the appropriate router based on the user's authentication status.
+   * @returns {Router} The configured router.
+   */
   const getBrowserRouter = () => {
     if (signed) {
       return createBrowserRouter(signedRouter);
