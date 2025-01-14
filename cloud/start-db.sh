@@ -10,4 +10,5 @@ docker run -d --rm \
   -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
   -e PGDATA=$PGDATA \
   -v ./data:/tmp \
+  -v /backups:/backups \
   postgres:15.8-bookworm
