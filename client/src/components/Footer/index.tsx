@@ -16,9 +16,9 @@ import './style.css';
  * This component provides the footer section of the application,
  * including logout functionality and version information.
  *
- * @returns {JSX.Element} The Footer component.
+ * @returns {React.ReactNode} The Footer component.
  */
-function Footer(): JSX.Element {
+function Footer(): React.ReactNode {
   const { signOut, user } = useContext(AuthContext);
   const { t } = useTranslation();
   const build = import.meta.env.VITE_BUILD;

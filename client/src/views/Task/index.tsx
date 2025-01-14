@@ -30,7 +30,7 @@ type TaskAction = 'add' | 'edit';
 /**
  *
  */
-function Task(): JSX.Element {
+function Task(): React.ReactNode {
   const [validated, setValidated] = useState<boolean>(false);
   const [formInvalid, setFormInvalid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');

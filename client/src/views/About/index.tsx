@@ -11,9 +11,9 @@ import './style.scss';
  * This component displays information about the application,
  * the technology used, and the developer.
  *
- * @returns {JSX.Element} The About page component.
+ * @returns {React.ReactNode} The About page component.
  */
-function About(): JSX.Element {
+function About(): React.ReactNode {
   const { t } = useTranslation();
 
   return (

@@ -20,9 +20,9 @@ import './styles/custom.scss';
  * user's authentication status.
  *
  * @component
- * @returns {JSX.Element} The rendered component.
+ * @returns {React.ReactNode} The rendered component.
  */
-function App(): JSX.Element {
+function App(): React.ReactNode {
   const { signed, checkCurrentAuthUser } = useContext(AuthContext);
 
   /**

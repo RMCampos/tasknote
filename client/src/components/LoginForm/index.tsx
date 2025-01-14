@@ -20,9 +20,9 @@ import { translateServerResponse } from '../../utils/TranslatorUtils';
 import { handleDefaultLang } from '../../lang-service/LangHandler';
 
 /**
- * @returns {JSX.Element} The form component for Login and Register pages.
+ * @returns {React.ReactNode} The form component for Login and Register pages.
  */
-function LoginForm({ prefix }: { prefix: string }): JSX.Element {
+function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
   const { signIn, register } = useContext(AuthContext);
   const { i18n, t } = useTranslation();
   const navigate = useNavigate();

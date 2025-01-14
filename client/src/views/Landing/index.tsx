@@ -15,9 +15,9 @@ import './styles.scss';
  * providing navigation to login or register.
  * It also checks for an existing user session.
  *
- * @returns {JSX.Element} The Landing page component.
+ * @returns {React.ReactNode} The Landing page component.
  */
-function Landing(): JSX.Element {
+function Landing(): React.ReactNode {
   const { checkCurrentAuthUser } = useContext(AuthContext);
   const { i18n, t } = useTranslation();
 

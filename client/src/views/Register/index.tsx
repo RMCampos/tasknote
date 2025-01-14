@@ -7,9 +7,9 @@ import LoginForm from '../../components/LoginForm';
  * This component displays the register page of the application,
  * providing navigation to login or back to home.
  *
- * @returns {JSX.Element} The Register page component.
+ * @returns {React.ReactNode} The Register page component.
  */
-function Register(): JSX.Element {
+function Register(): React.ReactNode {
   return <LoginForm prefix="register" />;
 }
 

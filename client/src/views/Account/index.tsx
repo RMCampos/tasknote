@@ -13,9 +13,9 @@ import ApiConfig from '../../api-service/apiConfig';
  *
  * This component displays information about the user's account.
  *
- * @returns {JSX.Element} The Account page component.
+ * @returns {React.ReactNode} The Account page component.
  */
-function Account(): JSX.Element {
+function Account(): React.ReactNode {
   const { signOut, user } = useContext(AuthContext);
   const { i18n, t } = useTranslation();
   const [showAlert, setShowAlert] = useState<boolean>(false);

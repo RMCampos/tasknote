@@ -21,9 +21,9 @@ import { translateServerResponse } from '../../utils/TranslatorUtils';
  *
  * This component displays the home page of the application,
  *
- * @returns {JSX.Element} The Home page component.
+ * @returns {React.ReactNode} The Home page component.
  */
-function Home(): JSX.Element {
+function Home(): React.ReactNode {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [summary, setSummary] = useState<SummaryResponse | undefined>();
   const [validated, setValidated] = useState<boolean>(false);

@@ -9,9 +9,9 @@ import AuthContext from '../../context/AuthContext';
  * If the user is signed in, the child routes are rendered.
  *
  * @component
- * @returns {JSX.Element} The rendered component.
+ * @returns {React.ReactNode} The rendered component.
  */
-function ProtectedRoute(): JSX.Element {
+function ProtectedRoute(): React.ReactNode {
   const { signed, signOut } = useContext(AuthContext);
 
   if (!signed) {

@@ -15,7 +15,7 @@ type NoteAction = 'add' | 'edit';
 /**
  *
  */
-function Note(): JSX.Element {
+function Note(): React.ReactNode {
   const [validated, setValidated] = useState<boolean>(false);
   const [formInvalid, setFormInvalid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');

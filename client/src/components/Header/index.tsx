@@ -12,9 +12,9 @@ import { useTranslation } from 'react-i18next';
  * This component provides the header section of the application,
  * providing navigation to home, tasks, notes, and about.
  *
- * @returns {JSX.Element} The Header component.
+ * @returns {React.ReactNode} The Header component.
  */
-function Header(): JSX.Element {
+function Header(): React.ReactNode {
   const { t } = useTranslation();
 
   return (

@@ -9,9 +9,9 @@ import {
  * This component displays the not found page of the application,
  * providing navigation to back to home.
  *
- * @returns {JSX.Element} The NotFound page component.
+ * @returns {React.ReactNode} The NotFound page component.
  */
-function NotFound(): JSX.Element {
+function NotFound(): React.ReactNode {
   return (
     <Container className="vh-100 d-flex justify-content-center align-items-center">
       <Row className="justify-content-center w-100">
