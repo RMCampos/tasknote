@@ -32,7 +32,7 @@ const enTranslations = {
   home_nav_tasks: 'Tasks',
   home_nav_notes: 'Notes',
   home_nav_about: 'About',
-  home_welcome_title: 'Welcome to your dashboard',
+  home_welcome_title: 'Hello, ',
   home_card_task_title: 'Tasks Summary',
   home_card_task_pending: 'Pending tasks',
   home_card_task_empty: 'No pending tasks',

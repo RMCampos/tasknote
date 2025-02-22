@@ -32,7 +32,7 @@ const ruTranslations = {
   home_nav_tasks: 'Задачи',
   home_nav_notes: 'Заметки',
   home_nav_about: 'О приложении',
-  home_welcome_title: 'Добро пожаловать в вашу панель управления',
+  home_welcome_title: 'Привет, ',
   home_card_task_title: 'Обзор задач',
   home_card_task_pending: 'Незавершённые задачи',
   home_card_task_empty: 'Нет незавершённых задач',

@@ -111,7 +111,8 @@ function Note(): React.ReactNode {
       const payload: TaskNoteRequest = {
         title,
         description,
-        urls: []
+        urls: [],
+        tag: ''
       };
 
       const added: boolean = await addNote(payload);
@@ -159,7 +160,7 @@ function Note(): React.ReactNode {
 
   return (
     <Container>
-      <Row className="mt-3">
+      <Row className="main-margin">
         <Col xs={12}>
           <Card>
             <Card.Body>

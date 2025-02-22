@@ -44,7 +44,6 @@ function getRequestInit(method: string, payload: object | undefined, addAuth: bo
  * @param {number} httpStatusCode The HTTP response status code.
  */
 function handleError(httpStatusCode: number) {
-  console.log(`httpStatusCode: ${httpStatusCode}`);
   if (httpStatusCode === 500) {
     throw new Error('Internal Server Error!');
   }
@@ -53,11 +52,12 @@ function handleError(httpStatusCode: number) {
 
 async function handleResponse(response: Response) {
   // Successful responses
-  if (response.ok && response.status !== 204) {
+  if (response.ok) {
+    const codesToIgnore: number[] = [204, 201];
+    if (codesToIgnore.includes(response.status)) {
+      return;
+    }
     return await response.json();
-  }
-  else if (response.status === 204) {
-    return;
   }
 
   // Error responses

@@ -2,17 +2,16 @@ package br.com.tasknoteapp.server.service;
 
 import br.com.tasknoteapp.server.entity.TaskEntity;
 import br.com.tasknoteapp.server.entity.TaskUrlEntity;
+import br.com.tasknoteapp.server.entity.TaskUrlEntityPk;
 import br.com.tasknoteapp.server.entity.UserEntity;
 import br.com.tasknoteapp.server.exception.TaskNotFoundException;
 import br.com.tasknoteapp.server.repository.TaskRepository;
 import br.com.tasknoteapp.server.repository.TaskUrlRepository;
 import br.com.tasknoteapp.server.request.TaskPatchRequest;
 import br.com.tasknoteapp.server.request.TaskRequest;
-import br.com.tasknoteapp.server.request.TaskUrlPatchRequest;
 import br.com.tasknoteapp.server.response.TaskResponse;
 import br.com.tasknoteapp.server.util.AuthUtil;
 import jakarta.transaction.Transactional;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -49,16 +48,36 @@ public class TaskService {
     List<TaskEntity> tasks = taskRepository.findAllByUser_id(user.getId());
     log.info("{} tasks found!", tasks.size());
 
-    return tasks.stream().map((TaskEntity tr) -> TaskResponse.fromEntity(tr)).toList();
+    return tasks.stream()
+        .map((TaskEntity tr) -> TaskResponse.fromEntity(tr, getAllNotesUrls(tr.getId())))
+        .toList();
+  }
+
+  /**
+   * Get a task by its id.
+   *
+   * @param taskId The task id in the database.
+   * @return {@link TaskResponse} with the found task or throw a {@link TaskNotFoundException}.
+   */
+  public TaskResponse getTaskById(Long taskId) {
+    UserEntity user = getCurrentUser();
+    log.info("Get task {} to user {}", taskId, user.getId());
+
+    Optional<TaskEntity> task = taskRepository.findById(taskId);
+    if (task.isEmpty()) {
+      throw new TaskNotFoundException();
+    }
+
+    log.info("Task found! Id {}", taskId);
+    return TaskResponse.fromEntity(task.get(), getAllNotesUrls(taskId));
   }
 
   /**
    * Create a task for the user in the database.
    *
    * @param taskRequest The {@link TaskRequest} containing all task data.
-   * @return {@link TaskEntity} created.
    */
-  public TaskEntity createTask(TaskRequest taskRequest) {
+  public void createTask(TaskRequest taskRequest) {
     UserEntity user = getCurrentUser();
 
     log.info("Creating task to user {}", user.getId());
@@ -72,15 +91,14 @@ public class TaskService {
       task.setDueDate(LocalDate.parse(taskRequest.dueDate()));
     }
     task.setHighPriority(taskRequest.highPriority());
+    task.setTag(taskRequest.tag().trim().toLowerCase());
     TaskEntity created = taskRepository.save(task);
 
     if (!Objects.isNull(taskRequest.urls()) && !taskRequest.urls().isEmpty()) {
-      List<TaskUrlEntity> urls = saveUrls(task, taskRequest.urls());
-      task.setUrls(urls);
+      saveUrls(task, taskRequest.urls());
     }
 
     log.info("Task created! Id {}", created.getId());
-    return created;
   }
 
   /**
@@ -116,31 +134,34 @@ public class TaskService {
     if (!Objects.isNull(patch.highPriority())) {
       taskEntity.setHighPriority(patch.highPriority());
     }
+    taskEntity.setTag(null);
+    if (!Objects.isNull(patch.tag())) {
+      taskEntity.setTag(patch.tag().trim().toLowerCase());
+    }
 
     taskEntity.setLastUpdate(LocalDateTime.now());
 
+    List<TaskUrlEntity> urlsToDelete = taskUrlRepository.findAllById_taskId(taskId);
+    if (!urlsToDelete.isEmpty()) {
+      taskUrlRepository.deleteAllById_taskId(taskId);
+      log.info("Deleted {} urls from task {}", urlsToDelete.size(), taskId);
+    } else {
+      log.info("No urls to delete for task {}", taskId);
+    }
+
     if (!Objects.isNull(patch.urls())) {
-      List<Long> urlIds =
-          patch.urls().stream().filter(p -> p.id() != null).map(TaskUrlPatchRequest::id).toList();
-      if (!urlIds.isEmpty()) {
-        taskUrlRepository.deleteAllByIdIn(urlIds);
-        log.info("Deleted {} urls from task {}", urlIds.size(), taskId);
-      } else {
-        log.info("No urls to patch for task {}", taskId);
-      }
-
-      List<String> urlsList =
-          patch.urls().stream().filter(p -> p.id() == null).map(TaskUrlPatchRequest::url).toList();
-      List<TaskUrlEntity> urls = saveUrls(taskEntity, urlsList);
-
-      taskEntity.setUrls(urls);
+      List<String> urlListToAdd =
+          patch.urls().stream().filter(u -> !u.isBlank()).map(String::trim).toList();
+      saveUrls(taskEntity, urlListToAdd);
+    } else {
+      log.info("No urls to add for task {}", taskId);
     }
 
     TaskEntity patchedTask = taskRepository.save(taskEntity);
 
     log.info("Task patched! Id {}", patchedTask.getId());
 
-    return TaskResponse.fromEntity(patchedTask);
+    return TaskResponse.fromEntity(patchedTask, getAllNotesUrls(taskId));
   }
 
   /**
@@ -159,10 +180,10 @@ public class TaskService {
       throw new TaskNotFoundException();
     }
 
-    List<TaskUrlEntity> urls = task.get().getUrls();
-    if (!urls.isEmpty()) {
-      taskUrlRepository.deleteAll(urls);
-      log.info("Deleted {} urls from task {}", urls.size(), taskId);
+    List<TaskUrlEntity> urlsToDelete = taskUrlRepository.findAllById_taskId(taskId);
+    if (!urlsToDelete.isEmpty()) {
+      taskUrlRepository.deleteAllById_taskId(taskId);
+      log.info("Deleted {} urls from task {}", urlsToDelete.size(), taskId);
     } else {
       log.info("No urls to delete for task {}", taskId);
     }
@@ -187,7 +208,9 @@ public class TaskService {
         taskRepository.findAllBySearchTerm(searchTerm.toUpperCase(), user.getId());
     log.info("{} tasks found!", tasks.size());
 
-    return tasks.stream().map((TaskEntity tr) -> TaskResponse.fromEntity(tr)).toList();
+    return tasks.stream()
+        .map((TaskEntity tr) -> TaskResponse.fromEntity(tr, getAllNotesUrls(tr.getId())))
+        .toList();
   }
 
   private UserEntity getCurrentUser() {
@@ -196,18 +219,21 @@ public class TaskService {
     return authService.findByEmail(email).orElseThrow();
   }
 
-  private List<TaskUrlEntity> saveUrls(TaskEntity taskEntity, List<String> urls) {
+  private List<String> getAllNotesUrls(Long noteId) {
+    List<TaskUrlEntity> urls = taskUrlRepository.findAllById_taskId(noteId);
+    return urls.stream().map(TaskUrlEntity::getId).map(TaskUrlEntityPk::getUrl).toList();
+  }
+
+  private void saveUrls(TaskEntity taskEntity, List<String> urls) {
     List<TaskUrlEntity> tasksUrl = new ArrayList<>();
     for (String url : urls) {
       TaskUrlEntity taskUrl = new TaskUrlEntity();
-      taskUrl.setUrl(url);
-      taskUrl.setTask(taskEntity);
+      TaskUrlEntityPk pk = new TaskUrlEntityPk(taskEntity.getId(), url);
+      taskUrl.setId(pk);
       tasksUrl.add(taskUrl);
     }
 
-    List<TaskUrlEntity> savedUrls = taskUrlRepository.saveAll(tasksUrl);
-    log.info("Saved {} urls to task {}", savedUrls.size(), taskEntity.getId());
-
-    return savedUrls;
+    taskUrlRepository.saveAll(tasksUrl);
+    log.info("Added {} urls from task {}", tasksUrl.size(), taskEntity.getId());
   }
 }

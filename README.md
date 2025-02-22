@@ -3,6 +3,12 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 ![Build Status](https://github.com/ricardo-campos-org/react-typescript-todolist/actions/workflows/main.yml/badge.svg)
 
+### TaskNote API
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ricardo-campos-org_react-typescript-todolist_server&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ricardo-campos-org_react-typescript-todolist_server)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=ricardo-campos-org_react-typescript-todolist_server&metric=coverage)](https://sonarcloud.io/summary/new_code?id=ricardo-campos-org_react-typescript-todolist_server)
+
+### TaskNote WebApp
+
 ## 📋 Table of Contents
 
 - [📝 About the Project](#-about-the-project)

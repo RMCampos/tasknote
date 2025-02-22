@@ -32,7 +32,7 @@ const ptBrTranslations = {
   home_nav_tasks: 'Tarefas',
   home_nav_notes: 'Notas',
   home_nav_about: 'Sobre',
-  home_welcome_title: 'Bem vindo ao seu painel',
+  home_welcome_title: 'Olá, ',
   home_card_task_title: 'Resumo de Tarefas',
   home_card_task_pending: 'Tarefa(s) pendente(s)',
   home_card_task_empty: 'Nenhuma tarefa pendente',

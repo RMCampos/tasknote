@@ -235,7 +235,7 @@
               <useSystemClassLoader>false</useSystemClassLoader>
               <skipTests>${skip.integration.tests}</skipTests>
               <includes>
-                <include>**/*IntegrationTest.java</include>
+                <include>**/*IntTest.java</include>
               </includes>
             </configuration>
           </execution>
@@ -249,7 +249,7 @@
           <argLine>@{argLine} -Xmx1024m</argLine>
           <skipTests>${skip.unit.tests}</skipTests>
           <excludes>
-            <exclude>**/*IntegrationTest.java</exclude>
+            <exclude>**/*IntTest.java</exclude>
           </excludes>
         </configuration>
       </plugin>

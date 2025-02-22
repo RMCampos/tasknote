@@ -1,6 +1,5 @@
 package br.com.tasknoteapp.server.controller;
 
-import br.com.tasknoteapp.server.entity.TaskEntity;
 import br.com.tasknoteapp.server.exception.TaskNotFoundException;
 import br.com.tasknoteapp.server.request.TaskPatchRequest;
 import br.com.tasknoteapp.server.request.TaskRequest;
@@ -60,6 +59,42 @@ public class TaskController {
       })
   public List<TaskResponse> getAllTasks() {
     return taskService.getAllTasks();
+  }
+
+  /**
+   * Get a task by its ID.
+   *
+   * @param id Task identification.
+   * @return TaskResponse with task data and its urls, if any.
+   * @throws TaskNotFoundException when task not found.
+   */
+  @GetMapping("/{id}")
+  @Operation(
+      summary = "Get a task by its ID",
+      description = "Get a task by its ID and its urls, if any.",
+      responses = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Return the found Task and its urls, if any."),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Forbidden. Access Denied",
+            content = @Content(schema = @Schema(implementation = Void.class))),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Task not found",
+            content = @Content(schema = @Schema(implementation = Void.class)))
+      })
+  public TaskResponse getTaskById(
+    @Parameter(
+              name = "id",
+              in = ParameterIn.PATH,
+              description = "Task id to be fetched.",
+              required = true,
+              schema = @Schema(type = "integer", format = "int64"))
+          @PathVariable
+          Long id) {
+    return taskService.getTaskById(id);
   }
 
   /**
@@ -127,7 +162,7 @@ public class TaskController {
             content =
                 @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = TaskResponse.class))),
+                    schema = @Schema(implementation = Void.class))),
         @ApiResponse(
             responseCode = "400",
             description = "Wrong or missing information",
@@ -144,8 +179,8 @@ public class TaskController {
           @RequestBody
           @Valid
           TaskRequest taskRequest) {
-    TaskEntity createdTask = taskService.createTask(taskRequest);
-    return ResponseEntity.status(HttpStatus.CREATED).body(TaskResponse.fromEntity(createdTask));
+    taskService.createTask(taskRequest);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   /**

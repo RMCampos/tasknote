@@ -43,7 +43,7 @@ class NoteControllerTest {
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
   void getAllNotes_notesFound_shouldSucceed() throws Exception {
     NoteUrlResponse noteUrl = new NoteUrlResponse(111L, "https://test.com");
-    NoteResponse note = new NoteResponse(111L, "title", "description", List.of(noteUrl));
+    NoteResponse note = new NoteResponse(111L, "title", "description", List.of(noteUrl), "tag");
 
     when(noteService.getAllNotes()).thenReturn(List.of(note));
 
@@ -100,7 +100,7 @@ class NoteControllerTest {
     NotePatchRequest patchRequest = new NotePatchRequest("New title", "New description", List.of());
 
     NoteResponse response =
-        new NoteResponse(noteId, patchRequest.title(), patchRequest.description(), List.of());
+        new NoteResponse(noteId, patchRequest.title(), patchRequest.description(), List.of(), "tag");
 
     when(noteService.patchNote(noteId, patchRequest)).thenReturn(response);
 

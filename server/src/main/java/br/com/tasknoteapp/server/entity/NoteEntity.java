@@ -1,5 +1,6 @@
 package br.com.tasknoteapp.server.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -36,4 +37,7 @@ public class NoteEntity {
 
   @OneToMany(mappedBy = "note", fetch = FetchType.LAZY)
   private List<NoteUrlEntity> urls;
+
+  @Column(name = "tag", nullable = true, length = 30)
+  private String tag;
 }

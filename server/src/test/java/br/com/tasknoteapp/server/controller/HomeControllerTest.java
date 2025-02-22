@@ -76,8 +76,8 @@ class HomeControllerTest {
   void search_happyPath_shouldSucceed() throws Exception {
     TaskResponse task =
         new TaskResponse(
-            1L, "Task 1", false, true, LocalDate.now(), "2024-11-20", "now", List.of());
-    NoteResponse note = new NoteResponse(1L, "Note 1", "Note desc", List.of());
+            1L, "Task 1", false, true, LocalDate.now(), "2024-11-20", "now", "tag", List.of());
+    NoteResponse note = new NoteResponse(1L, "Note 1", "Note desc", List.of(), "tag");
     SearchResponse response = new SearchResponse(List.of(task), List.of(note));
 
     when(homeService.search("term")).thenReturn(response);

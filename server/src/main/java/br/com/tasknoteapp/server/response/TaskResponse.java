@@ -1,13 +1,10 @@
 package br.com.tasknoteapp.server.response;
 
 import br.com.tasknoteapp.server.entity.TaskEntity;
-import br.com.tasknoteapp.server.entity.TaskUrlEntity;
 import br.com.tasknoteapp.server.util.TimeAgoUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /** This record represents a task and its urls object to be returned. */
 @Schema(description = "This record represents a task and its urls object to be returned.")
@@ -19,8 +16,9 @@ public record TaskResponse(
     @Schema(description = "Task due date, if any.", example = "true") LocalDate dueDate,
     @Schema(description = "Task due date, if any.", example = "true") String dueDateFmt,
     @Schema(description = "When was the last update time of the task") String lastUpdate,
+    @Schema(description = "Task tag, optional.") String tag,
     @Schema(description = "The urls of the task, zero, one or more.", example = "[]")
-        List<TaskUrlResponse> urls) {
+        List<String> urls) {
 
   /**
    * Creates a TaskResponse given a TaskEntity and its Urls.
@@ -28,18 +26,7 @@ public record TaskResponse(
    * @param entity The TaskEntity source data.
    * @return TaskResponse instance with all task data and urls, if any.
    */
-  public static TaskResponse fromEntity(TaskEntity entity) {
-    List<TaskUrlEntity> urls = entity.getUrls();
-    List<TaskUrlResponse> urlsResponse = new ArrayList<>();
-    if (Objects.isNull(urls)) {
-      urls = List.of();
-    } else {
-      for (TaskUrlEntity url : urls) {
-        TaskUrlResponse urlResponse = new TaskUrlResponse(url.getId(), url.getUrl());
-        urlsResponse.add(urlResponse);
-      }
-    }
-
+  public static TaskResponse fromEntity(TaskEntity entity, List<String> urls) {
     String timeAgoFmt = TimeAgoUtil.format(entity.getLastUpdate());
     String dueDateFmt = TimeAgoUtil.formatDueDate(entity.getDueDate());
 
@@ -51,6 +38,7 @@ public record TaskResponse(
         entity.getDueDate(),
         dueDateFmt,
         timeAgoFmt,
-        urlsResponse);
+        entity.getTag(),
+        urls);
   }
 }

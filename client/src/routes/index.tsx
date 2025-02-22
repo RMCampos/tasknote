@@ -4,6 +4,7 @@ import getStoredPath from '../utils/PathUtils';
 import Home from '../views/Home';
 import About from '../views/About';
 import Task from '../views/Task';
+import TaskAdd from '../views/TaskAdd';
 import Note from '../views/Note';
 import Account from '../views/Account';
 
@@ -37,6 +38,14 @@ const BrowserRoutes: RouteObject[] = [
   {
     path: '/tasks',
     element: <Task />
+  },
+  {
+    path: '/tasks/new',
+    element: <TaskAdd />
+  },
+  {
+    path: '/tasks/edit/:id',
+    element: <TaskAdd />
   },
   {
     path: '/notes',

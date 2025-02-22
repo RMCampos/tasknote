@@ -1,9 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router';
-import { Container } from 'react-bootstrap';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
 import './style.css';
+import Sidebar from '../../components/Sidebar';
 
 /**
  * PrivateLayout component.
@@ -17,11 +15,16 @@ import './style.css';
 function PrivateLayout(): React.ReactNode {
   return (
     <div className="page-container">
-      <Header />
-      <Container className="content-container">
+      <Sidebar />
+      <div
+        className="content"
+        style={{
+          marginLeft: '276px',
+          padding: '20px'
+        }}
+      >
         <Outlet />
-      </Container>
-      <Footer />
+      </div>
     </div>
   );
 }

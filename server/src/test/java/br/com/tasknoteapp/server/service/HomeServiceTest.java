@@ -30,12 +30,14 @@ class HomeServiceTest {
   void setUp() {
     homeService = new HomeService(taskService, noteService);
 
-    TaskResponse task1 = new TaskResponse(2L, "Task 1", false, false, null, null, null, List.of());
-    TaskResponse task2 = new TaskResponse(3L, "Task 2", false, false, null, null, null, List.of());
+    TaskResponse task1 =
+        new TaskResponse(2L, "Task 1", false, false, null, null, null, "tag", List.of());
+    TaskResponse task2 =
+        new TaskResponse(3L, "Task 2", false, false, null, null, null, "tag", List.of());
     tasks = List.of(task1, task2);
 
-    NoteResponse note1 = new NoteResponse(453L, "Note 1", "desc", List.of());
-    NoteResponse note2 = new NoteResponse(455L, "Note 2", "desc", List.of());
+    NoteResponse note1 = new NoteResponse(453L, "Note 1", "desc", List.of(), "tag");
+    NoteResponse note2 = new NoteResponse(455L, "Note 2", "desc", List.of(), "tag");
     notes = List.of(note1, note2);
   }
 

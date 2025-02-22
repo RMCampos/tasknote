@@ -13,3 +13,11 @@ window.matchMedia = window.matchMedia || function() {
       removeListener: function() {}
   };
 };
+
+class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+window.ResizeObserver = window.ResizeObserver || ResizeObserver;

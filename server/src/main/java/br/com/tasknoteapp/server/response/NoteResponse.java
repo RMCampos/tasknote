@@ -14,7 +14,8 @@ public record NoteResponse(
     @Schema(description = "The title of the note", example = "Note 1") String title,
     @Schema(description = "The description of the note", example = "Note desc") String description,
     @Schema(description = "The urls of the task, zero, one or more.", example = "[]")
-        List<NoteUrlResponse> urls) {
+        List<NoteUrlResponse> urls,
+    @Schema(description = "Task tag, optional.") String tag) {
 
   /**
    * Creates a NoteResponse given a NoteEntity and its Urls.
@@ -35,6 +36,6 @@ public record NoteResponse(
     }
 
     return new NoteResponse(
-        entity.getId(), entity.getTitle(), entity.getDescription(), urlsResponse);
+        entity.getId(), entity.getTitle(), entity.getDescription(), urlsResponse, entity.getTag());
   }
 }

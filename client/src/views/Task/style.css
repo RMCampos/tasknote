@@ -51,3 +51,20 @@
   margin-right: 1rem;
   cursor: pointer;
 }
+
+/* New code */
+
+.task-card {
+  min-height: 11rem;
+  margin-bottom: 2rem;
+  padding: 0.5rem;
+}
+
+.dropdown-toggle::after {
+  display: none!important;
+}
+
+.task-card-footer {
+  background-color: #fff !important;
+  border-top: #fff !important;
+}

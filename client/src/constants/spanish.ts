@@ -32,7 +32,7 @@ const esTranslations = {
   home_nav_tasks: 'Tareas',
   home_nav_notes: 'Notas',
   home_nav_about: 'Acerca de',
-  home_welcome_title: 'Bienvenido a tu panel',
+  home_welcome_title: 'Hola, ',
   home_card_task_title: 'Resumen de Tareas',
   home_card_task_pending: 'Tarea(s) pendiente(s)',
   home_card_task_empty: 'No tienes tareas pendientes',

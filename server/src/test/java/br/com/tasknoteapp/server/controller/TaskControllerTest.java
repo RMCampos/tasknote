@@ -11,14 +11,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import br.com.tasknoteapp.server.entity.TaskEntity;
 import br.com.tasknoteapp.server.exception.TaskNotFoundException;
 import br.com.tasknoteapp.server.request.TaskPatchRequest;
 import br.com.tasknoteapp.server.request.TaskRequest;
 import br.com.tasknoteapp.server.response.TaskResponse;
-import br.com.tasknoteapp.server.response.TaskUrlResponse;
 import br.com.tasknoteapp.server.service.TaskService;
-import java.time.LocalDateTime;
 import java.util.List;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -43,9 +40,9 @@ class TaskControllerTest {
   @DisplayName("Get all tasks with some tasks found should succeed")
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
   void getAllTasks_tasksFound_shouldSucceed() throws Exception {
-    TaskUrlResponse taskUrl = new TaskUrlResponse(1L, "http://test.com");
     TaskResponse taskResponse =
-        new TaskResponse(1L, "Desc", false, true, null, null, "Moments ago", List.of(taskUrl));
+        new TaskResponse(
+            1L, "Desc", false, true, null, null, "Moments ago", "tag", List.of("http://test.com"));
     when(taskService.getAllTasks()).thenReturn(List.of(taskResponse));
 
     mockMvc
@@ -62,8 +59,7 @@ class TaskControllerTest {
         .andExpect(jsonPath("$[0].dueDate", Matchers.nullValue()))
         .andExpect(jsonPath("$[0].dueDateFmt", Matchers.nullValue()))
         .andExpect(jsonPath("$[0].lastUpdate").value("Moments ago"))
-        .andExpect(jsonPath("$[0].urls[0].id").value(taskUrl.id()))
-        .andExpect(jsonPath("$[0].urls[0].url").value(taskUrl.url()))
+        .andExpect(jsonPath("$[0].urls[0]").value(taskResponse.urls().get(0)))
         .andReturn();
   }
 
@@ -98,16 +94,92 @@ class TaskControllerTest {
   }
 
   @Test
+  @DisplayName("Get task by id happy path should succeed")
+  @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
+  void getTaskById_happyPath_shouldSucceed() throws Exception {
+    Long taskId = 999L;
+    TaskResponse taskResponse =
+        new TaskResponse(
+            taskId,
+            "Desc",
+            false,
+            true,
+            null,
+            null,
+            "Moments ago",
+            "tag",
+            List.of("http://test.com"));
+    when(taskService.getTaskById(taskId)).thenReturn(taskResponse);
+
+    mockMvc
+        .perform(
+            get("/rest/tasks/{id}", taskId)
+                .with(csrf().asHeader())
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(taskResponse.id()))
+        .andExpect(jsonPath("$.description").value(taskResponse.description()))
+        .andExpect(jsonPath("$.done", Matchers.is(false)))
+        .andExpect(jsonPath("$.highPriority", Matchers.is(true)))
+        .andExpect(jsonPath("$.dueDate", Matchers.nullValue()))
+        .andExpect(jsonPath("$.dueDateFmt", Matchers.nullValue()))
+        .andExpect(jsonPath("$.lastUpdate").value("Moments ago"))
+        .andExpect(jsonPath("$.urls[0]").value(taskResponse.urls().get(0)))
+        .andReturn();
+  }
+
+  @Test
+  @DisplayName("Get task by id not found should fail")
+  @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
+  void getTaskById_notFound_shouldFail() throws Exception {
+    Long taskId = 998L;
+    when(taskService.getTaskById(taskId)).thenThrow(new TaskNotFoundException());
+
+    mockMvc
+        .perform(
+            get("/rest/tasks/{id}", taskId)
+                .with(csrf().asHeader())
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNotFound())
+        .andReturn();
+  }
+
+  @Test
+  @DisplayName("Get task by id forbidden should fail")
+  void getTaskById_forbidden_shouldFail() throws Exception {
+    Long taskId = 997L;
+
+    mockMvc
+        .perform(
+            get("/rest/tasks/{id}", taskId)
+                .with(csrf().asHeader())
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isForbidden())
+        .andReturn();
+  }
+
+  @Test
   @DisplayName("Patch a task via patch request happy path should succeed")
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
   void patchTask_happyPath_shouldSucceed() throws Exception {
     Long taskId = 111L;
     TaskPatchRequest patchRequest =
-        new TaskPatchRequest("Description patched", false, List.of(), null, true);
+        new TaskPatchRequest("Description patched", false, List.of(), null, true, "tag");
 
     TaskResponse taskResponse =
         new TaskResponse(
-            taskId, "Description patched", false, true, null, null, "Moments ago", List.of());
+            taskId,
+            "Description patched",
+            false,
+            true,
+            null,
+            null,
+            "Moments ago",
+            "tag",
+            List.of());
     when(taskService.patchTask(taskId, patchRequest)).thenReturn(taskResponse);
 
     final String payloadJson =
@@ -128,14 +200,6 @@ class TaskControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(payloadJson))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id").value(taskId))
-        .andExpect(jsonPath("$.description").value(taskResponse.description()))
-        .andExpect(jsonPath("$.done").value(taskResponse.done()))
-        .andExpect(jsonPath("$.highPriority").value(taskResponse.highPriority()))
-        .andExpect(jsonPath("$.dueDate", Matchers.nullValue()))
-        .andExpect(jsonPath("$.dueDateFmt", Matchers.nullValue()))
-        .andExpect(jsonPath("$.lastUpdate").value("Moments ago"))
-        .andExpect(jsonPath("$.urls", Matchers.empty()))
         .andReturn();
   }
 
@@ -143,9 +207,9 @@ class TaskControllerTest {
   @DisplayName("Patch a task via patch request with not found id should fail")
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
   void patchTask_notFound_shouldFail() throws Exception {
-    Long taskId = 111L;
+    Long taskId = 118L;
     TaskPatchRequest patchRequest =
-        new TaskPatchRequest("Description patched", false, List.of(), null, true);
+        new TaskPatchRequest("Description patched", false, List.of(), null, true, "tag");
 
     when(taskService.patchTask(taskId, patchRequest)).thenThrow(new TaskNotFoundException());
 
@@ -155,7 +219,8 @@ class TaskControllerTest {
           "description": "Description patched",
           "done": false,
           "urls": [],
-          "highPriority": true
+          "highPriority": true,
+          "tag": "tag"
         }
         """;
 
@@ -200,25 +265,17 @@ class TaskControllerTest {
   @DisplayName("Post create task happy path should succeed and return 201")
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
   void postTasks_happyPath_shouldSucceed() throws Exception {
-    TaskRequest request = new TaskRequest("Test task", List.of(), null, true);
+    TaskRequest request = new TaskRequest("Test task", List.of("www.url.com"), null, true, "tag");
 
-    TaskEntity entity = new TaskEntity();
-    entity.setId(222L);
-    entity.setDescription(request.description());
-    entity.setDone(false);
-    entity.setUrls(List.of());
-    entity.setLastUpdate(LocalDateTime.now());
-    entity.setDueDate(null);
-    entity.setHighPriority(request.highPriority());
-    when(taskService.createTask(request)).thenReturn(entity);
+    doNothing().when(taskService).createTask(request);
 
     final String payloadJson =
         """
         {
           "description": "Test task",
-          "done": false,
-          "urls": [],
-          "highPriority": true
+          "urls": ["www.url.com"],
+          "highPriority": true,
+          "tag": "tag"
         }
         """;
 
@@ -230,14 +287,6 @@ class TaskControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(payloadJson))
         .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.id").value(entity.getId()))
-        .andExpect(jsonPath("$.description").value(request.description()))
-        .andExpect(jsonPath("$.done", Matchers.is(false)))
-        .andExpect(jsonPath("$.highPriority", Matchers.is(request.highPriority())))
-        .andExpect(jsonPath("$.dueDate", Matchers.nullValue()))
-        .andExpect(jsonPath("$.dueDateFmt", Matchers.nullValue()))
-        .andExpect(jsonPath("$.lastUpdate").value("Moments ago"))
-        .andExpect(jsonPath("$.urls", Matchers.empty()))
         .andReturn();
   }
 

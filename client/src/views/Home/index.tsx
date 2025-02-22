@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
+import { NavLink } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import {
   Accordion,
   Alert,
-  Button, Card, Col, Container, Form, InputGroup, Row
+  Button,
+  Card,
+  Col,
+  Container,
+  Form,
+  InputGroup,
+  Row
 } from 'react-bootstrap';
-import './style.css';
-import { useTranslation } from 'react-i18next';
-import { NavLink } from 'react-router';
-import { SummaryResponse } from '../../types/SummaryResponse';
+import { PlusCircleFill } from 'react-bootstrap-icons';
 import { HomeSearchResponse } from '../../types/HomeSearchResponse';
 import { TaskResponse } from '../../types/TaskResponse';
 import { NoteResponse } from '../../types/NoteResponse';
@@ -15,6 +20,9 @@ import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
 import { handleDefaultLang } from '../../lang-service/LangHandler';
 import { translateServerResponse } from '../../utils/TranslatorUtils';
+import CompletedTasks from '../../components/CompletedTasks';
+import TaskProgress from '../../components/TaskProgress';
+import './style.css';
 
 /**
  * Home page component.
@@ -25,10 +33,10 @@ import { translateServerResponse } from '../../utils/TranslatorUtils';
  */
 function Home(): React.ReactNode {
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [summary, setSummary] = useState<SummaryResponse | undefined>();
   const [validated, setValidated] = useState<boolean>(false);
   const [formInvalid, setFormInvalid] = useState<boolean>(false);
   const [searchResults, setSearchResults] = useState<HomeSearchResponse | null>(null);
+  const [name, setName] = useState<string>('Ricardo');
   const { i18n, t } = useTranslation();
 
   const handleError = (e: unknown): void => {
@@ -37,16 +45,6 @@ function Home(): React.ReactNode {
     }
     else if (e instanceof Error) {
       setErrorMessage(translateServerResponse(e.message, i18n.language));
-    }
-  };
-
-  const getSummary = async () => {
-    try {
-      const response: SummaryResponse = await api.getJSON(`${ApiConfig.homeUrl}/summary`);
-      setSummary(response);
-    }
-    catch (e) {
-      handleError(e);
     }
   };
 
@@ -82,59 +80,53 @@ function Home(): React.ReactNode {
   };
 
   useEffect(() => {
-    getSummary();
     handleDefaultLang();
+    setName('Ricardo');
   }, []);
 
   return (
     <Container>
-      <h1 className="mt-5 mb-4">{t('home_welcome_title')}</h1>
+      <h1 className="poppins-regular home-hello main-margin">
+        {t('home_welcome_title')}
+        <b>{name}</b>
+      </h1>
+      <p className="poppins-regular home-subtitle">
+        Welcome to TaskNote! Get ready to complete your pending tasks
+      </p>
+
+      <Row className="mb-3">
+        <Col xs={8}>
+          <h2 className="poppins-regular">Start Your Day, Be</h2>
+          <h2 className="poppins-bold home-productive">Productive</h2>
+        </Col>
+        <Col xs={4} className="text-end">
+          <NavLink to="/tasks/new">
+            <button
+              type="button"
+              className="home-new-item w-45 mb-2"
+            >
+              <PlusCircleFill size={25} />
+              Add note
+            </button>
+          </NavLink>
+          <NavLink to="/notes/new">
+            <button
+              type="button"
+              className="home-new-item w-45"
+            >
+              <PlusCircleFill size={25} />
+              Add task
+            </button>
+          </NavLink>
+        </Col>
+      </Row>
 
       <Row className="mb-4">
-        <Col xs={12} md={6}>
-          <Card className="text-center h-100">
-            <Card.Header className="bg-primary text-white">
-              {t('home_card_task_title')}
-            </Card.Header>
-            <Card.Body className="d-flex flex-column align-items-center justify-content-center">
-              <Card.Title className="display-4">
-                {summary?.pendingTaskCount || '0'}
-              </Card.Title>
-              <Card.Text>
-                {summary?.pendingTaskCount && summary?.pendingTaskCount > 0
-                  ? t('home_card_task_pending')
-                  : t('home_card_task_empty')}
-                <br />
-                {summary?.doneTaskCount && summary?.doneTaskCount > 0
-                  ? ` ${summary?.doneTaskCount} ${t('home_card_task_done')}`
-                  : t('home_card_task_done_empty')}
-              </Card.Text>
-              <NavLink to="/tasks">
-                <Button variant="primary" type="button">
-                  {t('home_card_task_btn')}
-                </Button>
-              </NavLink>
-            </Card.Body>
-          </Card>
+        <Col xs={12} lg={6} className="mb-4">
+          <CompletedTasks />
         </Col>
-
-        <Col xs={12} md={6}>
-          <Card className="text-center h-100">
-            <Card.Header className="bg-primary text-white">
-              {t('home_card_note_title')}
-            </Card.Header>
-            <Card.Body className="d-flex flex-column align-items-center justify-content-center">
-              <Card.Title className="display-4">
-                {summary?.notesCount}
-              </Card.Title>
-              <Card.Text>{t('home_card_note_count')}</Card.Text>
-              <NavLink to="/tasks">
-                <Button variant="primary" type="button">
-                  {t('home_card_note_btn')}
-                </Button>
-              </NavLink>
-            </Card.Body>
-          </Card>
+        <Col xs={12} lg={6}>
+          <TaskProgress />
         </Col>
       </Row>
 
@@ -188,7 +180,7 @@ function Home(): React.ReactNode {
                   <Accordion.Body>
                     {task.urls.length > 0
                       ? (
-                          <a href={`${task.urls[0].url}`}>{task.urls[0].url}</a>
+                          <a href={`${task.urls[0]}`}>{task.urls[0]}</a>
                         )
                       : 'No URL!'}
                   </Accordion.Body>
