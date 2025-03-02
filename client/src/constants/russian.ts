@@ -4,7 +4,7 @@ const ruTranslations = {
   landing_btn_login: 'Войти',
   landing_btn_register: 'Зарегистрироваться',
   landing_btn_english: 'English',
-  landing_btn_portuguese: 'Português do Brasil',
+  landing_btn_portuguese: 'Português (BR)',
   landing_btn_spanish: 'Español',
   landing_btn_russian: 'Русский',
 

@@ -4,7 +4,7 @@ const ptBrTranslations = {
   landing_btn_login: 'Entrar',
   landing_btn_register: 'Criar conta',
   landing_btn_english: 'English',
-  landing_btn_portuguese: 'Português do Brasil',
+  landing_btn_portuguese: 'Português (BR)',
   landing_btn_spanish: 'Español',
   landing_btn_russian: 'Русский',
 

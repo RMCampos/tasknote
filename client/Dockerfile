@@ -1,6 +1,6 @@
 # Build static files
 # Node Bullseye has npm
-FROM node:20.17-bullseye-slim AS build
+FROM node:22.14-bookworm-slim AS build
 ENV NODE_OPTIONS="--max-old-space-size=3072"
 
 # Build
@@ -18,8 +18,8 @@ FROM caddy:2.9.1-alpine
 RUN apk add --no-cache ca-certificates curl
 
 # Receive build number as argument, retain as environment variable
-ARG BUILD
-ENV BUILD=${BUILD}
+ARG VITE_BUILD
+ENV VITE_BUILD=${VITE_BUILD}
 
 # Copy files and run formatting
 COPY --from=build /app/dist/ /app/dist

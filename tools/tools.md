@@ -25,6 +25,11 @@ npm ci --ignore-scripts --no-update-notifier --omit=dev \
  && rm -rf node_modules
 ```
 
+If you want to build with Docker:
+```sh
+docker build -t client ./client
+```
+
 That's it!
 
 **Server - Backend REST API:**
@@ -60,23 +65,19 @@ scp "client_$VERSION.zip" root@$SERVER_IP:/root/
 **DB:**
 
 ```bash
-docker run -d --rm \
+docker run -d -p 5432:5432 --rm \
   --name db \
-  --network=host \
   -e POSTGRES_DB=$POSTGRES_DB \
   -e POSTGRES_USER=$POSTGRES_USER \
   -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
-  -e PGDATA=/tmp \
-  -v ./data:/tmp \
   postgres:15.8-bookworm
 ```
 
 **Server:**
 
 ```bash
-docker run -d --rm \
+docker run -d -p 8585:8585 --rm \
   --name server \
-  --network=host \
   -e POSTGRES_DB=$POSTGRES_DB \
   -e POSTGRES_USER=$POSTGRES_USER \
   -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
@@ -108,5 +109,21 @@ docker pull ghcr.io/ricardo-campos-org/react-typescript-todolist/client:50
 docker pull ghcr.io/ricardo-campos-org/react-typescript-todolist/server:50
 ```
 
+**Pushing images:**
+```sh
+docker push ghcr.io/ricardo-campos-org/react-typescript-todolist/server:316
+```
+
 - Get container IP
+
+```sh
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' db
+```
+
+- Get reason of health check failing on a container
+```sh
+docker inspect --format "{{json .State.Health}}" container_name_or_id | jq
+
+# Or to see it live
+while true; do clear; docker inspect --format "{{json .State.Health}}" server | jq; sleep 1; done
+```

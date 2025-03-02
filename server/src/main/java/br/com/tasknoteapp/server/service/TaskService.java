@@ -87,7 +87,7 @@ public class TaskService {
     task.setDone(false);
     task.setUser(user);
     task.setLastUpdate(LocalDateTime.now());
-    if (!Objects.isNull(taskRequest.dueDate())) {
+    if (!Objects.isNull(taskRequest.dueDate()) && !taskRequest.dueDate().isBlank()) {
       task.setDueDate(LocalDate.parse(taskRequest.dueDate()));
     }
     task.setHighPriority(taskRequest.highPriority());

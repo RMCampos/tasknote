@@ -4,7 +4,7 @@ const esTranslations = {
   landing_btn_login: 'Iniciar sesión',
   landing_btn_register: 'Crear cuenta',
   landing_btn_english: 'English',
-  landing_btn_portuguese: 'Português do Brasil',
+  landing_btn_portuguese: 'Português (BR)',
   landing_btn_spanish: 'Español',
   landing_btn_russian: 'Русский',
 

@@ -4,7 +4,7 @@
 ![Build Status](https://github.com/ricardo-campos-org/react-typescript-todolist/actions/workflows/main.yml/badge.svg)
 
 ### TaskNote API
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ricardo-campos-org_react-typescript-todolist_server&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ricardo-campos-org_react-typescript-todolist_server)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=br.com.tasknoteapp%3Aserver&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=br.com.tasknoteapp%3Aserver)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=ricardo-campos-org_react-typescript-todolist_server&metric=coverage)](https://sonarcloud.io/summary/new_code?id=ricardo-campos-org_react-typescript-todolist_server)
 
 ### TaskNote WebApp

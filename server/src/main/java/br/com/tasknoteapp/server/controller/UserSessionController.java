@@ -63,7 +63,7 @@ public class UserSessionController {
             description = "Forbidden. Access Denied",
             content = @Content(schema = @Schema(implementation = Void.class)))
       })
-  public UserResponse deteleAccount() {
+  public UserResponse deleteAccount() {
     return userSessionService.deleteCurrentUserAccount();
   }
 }

@@ -62,7 +62,7 @@ class UserSessionControllerTest {
   @Test
   @DisplayName("Delete account happy path should succeed")
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
-  void deteleAccount_happyPath_shouldSucceed() throws Exception {
+  void deleteAccount_happyPath_shouldSucceed() throws Exception {
     UserResponse response = new UserResponse(1L, "email@test.com", false, null, null);
     when(userSessionService.deleteCurrentUserAccount()).thenReturn(response);
 
@@ -78,7 +78,7 @@ class UserSessionControllerTest {
 
   @Test
   @DisplayName("Delete account with 403 forbidden request should fail")
-  void deteleAccount_forbidden_shouldFail() throws Exception {
+  void deleteAccount_forbidden_shouldFail() throws Exception {
     mockMvc
         .perform(
             post("/rest/user-sessions/delete-account")

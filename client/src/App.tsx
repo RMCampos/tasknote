@@ -48,7 +48,7 @@ function App(): React.ReactNode {
     },
     {
       path: '*',
-      element: <NotFound />
+      element: <Navigate to="/" replace />
     }
   ];
 

@@ -24,6 +24,7 @@ public class CorsConfig implements WebMvcConfigurer {
   public void addCorsMappings(@NonNull CorsRegistry registry) {
     if (allowedOrigins != null && allowedOrigins.length > 0) {
       log.info("CORS policy allowed origins: {}", Arrays.asList(allowedOrigins));
+      log.debug("CORS policy allowed origins in debug mode: {}", Arrays.asList(allowedOrigins));
 
       registry
           .addMapping("/**")

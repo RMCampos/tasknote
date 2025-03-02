@@ -4,12 +4,14 @@ import { NavLink } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import AuthContext from '../../context/AuthContext';
 import UserIcon from '../../assets/user.png';
+import NavButton from '../NavButton';
+import { env } from '../../env';
 import './style.css';
 
 function Sidebar(): React.ReactNode {
   const { signOut } = useContext(AuthContext);
   const { t } = useTranslation();
-  const build = import.meta.env.VITE_BUILD;
+  const build = env.VITE_BUILD;
   const [current, setCurrent] = useState<string>('/home');
 
   // Note: when selected, change class to plus-jakarta-sans-thin and add background
@@ -94,14 +96,14 @@ function Sidebar(): React.ReactNode {
             {t('home_nav_about')}
           </div>
         </NavLink>
-        <NavLink to="/logout" className="mb-2" onClick={() => goOut()}>
+        <NavButton className="mb-2" onClick={() => goOut()}>
           <div className="sidebar-nav">
             <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M11.4082 0.333374C14.3045 0.333374 16.6667 2.65504 16.6667 5.51337V11.1017H9.54461C9.0342 11.1017 8.63061 11.4984 8.63061 12C8.63061 12.49 9.0342 12.8984 9.54461 12.8984H16.6667V18.475C16.6667 21.3334 14.3045 23.6667 11.3845 23.6667H5.60372C2.69553 23.6667 0.333374 21.345 0.333374 18.4867V5.52504C0.333374 2.65504 2.70741 0.333374 5.61559 0.333374H11.4082ZM19.6303 7.97527C19.9803 7.61361 20.5519 7.61361 20.9019 7.96361L24.3086 11.3586C24.4836 11.5336 24.5769 11.7553 24.5769 12.0003C24.5769 12.2336 24.4836 12.4669 24.3086 12.6303L20.9019 16.0253C20.7269 16.2003 20.4936 16.2936 20.2719 16.2936C20.0386 16.2936 19.8053 16.2003 19.6303 16.0253C19.2803 15.6753 19.2803 15.1036 19.6303 14.7536L21.4969 12.8986H16.6669V11.1019H21.4969L19.6303 9.24694C19.2803 8.89694 19.2803 8.32527 19.6303 7.97527Z" fill="#FB1A41" />
             </svg>
             {t('logout')}
           </div>
-        </NavLink>
+        </NavButton>
       </Nav>
 
       {/* Footer at the bottom */}

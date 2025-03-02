@@ -1,5 +1,6 @@
 package br.com.tasknoteapp.server.service;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import br.com.tasknoteapp.server.entity.TaskEntity;
@@ -7,6 +8,7 @@ import br.com.tasknoteapp.server.entity.UserEntity;
 import br.com.tasknoteapp.server.exception.TaskNotFoundException;
 import br.com.tasknoteapp.server.repository.TaskRepository;
 import br.com.tasknoteapp.server.repository.TaskUrlRepository;
+import br.com.tasknoteapp.server.request.TaskRequest;
 import br.com.tasknoteapp.server.response.TaskResponse;
 import br.com.tasknoteapp.server.util.AuthUtil;
 import java.util.Optional;
@@ -83,8 +85,83 @@ class TaskServiceTest {
 
     when(taskRepository.findById(taskId)).thenReturn(Optional.empty());
 
-    Assertions.assertThrows(TaskNotFoundException.class, () -> {
-      taskService.getTaskById(taskId);
-    });
+    Assertions.assertThrows(
+        TaskNotFoundException.class,
+        () -> {
+          taskService.getTaskById(taskId);
+        });
+  }
+
+  @Test
+  @DisplayName("Create a task null dueDate should succeed")
+  void createTask_nullDueDate_shouldSucceed() {
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(USER_EMAIL));
+
+    UserEntity userEntity = new UserEntity();
+    userEntity.setId(USER_ID);
+    userEntity.setEmail(USER_EMAIL);
+    when(authService.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
+
+    TaskRequest request = new TaskRequest("Write unit tests", null, null, false, "development");
+
+    TaskEntity entity = new TaskEntity();
+    entity.setDescription(request.description());
+    entity.setHighPriority(request.highPriority());
+    entity.setTag(request.tag());
+    when(taskRepository.save(any())).thenReturn(new TaskEntity());
+
+    taskService.createTask(request);
+
+    Assertions.assertNotNull(entity);
+    Assertions.assertEquals("development", entity.getTag());
+  }
+
+  @Test
+  @DisplayName("Create a task blank dueDate should succeed")
+  void createTask_blankDueDate_shouldSucceed() {
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(USER_EMAIL));
+
+    UserEntity userEntity = new UserEntity();
+    userEntity.setId(USER_ID);
+    userEntity.setEmail(USER_EMAIL);
+    when(authService.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
+
+    TaskRequest request = new TaskRequest("Write unit tests", null, "", false, "development");
+
+    TaskEntity entity = new TaskEntity();
+    entity.setDescription(request.description());
+    entity.setHighPriority(request.highPriority());
+    entity.setTag(request.tag());
+    when(taskRepository.save(any())).thenReturn(new TaskEntity());
+
+    taskService.createTask(request);
+
+    Assertions.assertNotNull(entity);
+    Assertions.assertEquals("development", entity.getTag());
+  }
+
+  @Test
+  @DisplayName("Create a task full dueDate should succeed")
+  void createTask_fullDueDate_shouldSucceed() {
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(USER_EMAIL));
+
+    UserEntity userEntity = new UserEntity();
+    userEntity.setId(USER_ID);
+    userEntity.setEmail(USER_EMAIL);
+    when(authService.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
+
+    TaskRequest request =
+        new TaskRequest("Write unit tests", null, "2025-12-12", false, "development");
+
+    TaskEntity entity = new TaskEntity();
+    entity.setDescription(request.description());
+    entity.setHighPriority(request.highPriority());
+    entity.setTag(request.tag());
+    when(taskRepository.save(any())).thenReturn(new TaskEntity());
+
+    taskService.createTask(request);
+
+    Assertions.assertNotNull(entity);
+    Assertions.assertEquals("development", entity.getTag());
   }
 }
