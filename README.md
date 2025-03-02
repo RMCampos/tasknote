@@ -6,8 +6,16 @@
 ### TaskNote API
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=br.com.tasknoteapp%3Aserver&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=br.com.tasknoteapp%3Aserver)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=ricardo-campos-org_react-typescript-todolist_server&metric=coverage)](https://sonarcloud.io/summary/new_code?id=ricardo-campos-org_react-typescript-todolist_server)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=br.com.tasknoteapp%3Aserver&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=br.com.tasknoteapp%3Aserver)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=br.com.tasknoteapp%3Aserver&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=br.com.tasknoteapp%3Aserver)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=br.com.tasknoteapp%3Aserver&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=br.com.tasknoteapp%3Aserver)
 
 ### TaskNote WebApp
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ricardo-campos-org_react-typescript-todolist_client&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ricardo-campos-org_react-typescript-todolist_client)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=ricardo-campos-org_react-typescript-todolist_client&metric=coverage)](https://sonarcloud.io/summary/new_code?id=ricardo-campos-org_react-typescript-todolist_client)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=ricardo-campos-org_react-typescript-todolist_client&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=ricardo-campos-org_react-typescript-todolist_client)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=ricardo-campos-org_react-typescript-todolist_client&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=ricardo-campos-org_react-typescript-todolist_client)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=ricardo-campos-org_react-typescript-todolist_client&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=ricardo-campos-org_react-typescript-todolist_client)
 
 ## 📋 Table of Contents
 

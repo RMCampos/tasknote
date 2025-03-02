@@ -86,6 +86,10 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d-%H%M%S')" >> $GITHUB_OUTPUT
 
       - name: Build and push
         uses: docker/build-push-action@v6
@@ -93,7 +97,8 @@ jobs:
           push: true
           context: ./client
           tags: ghcr.io/ricardo-campos-org/react-typescript-todolist/client:${{ github.event.number }}
-          build-args: VITE_BUILD=${{ github.event.number }}
+          build-args: |
+            BUILD=v${{ github.event.number }}-${{ github.run_id }}-${{ steps.date.outputs.date }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -164,6 +169,10 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d-%H%M%S')" >> $GITHUB_OUTPUT
 
       - name: Build and push
         uses: docker/build-push-action@v6
@@ -171,6 +180,7 @@ jobs:
           push: true
           context: ./server
           tags: ghcr.io/ricardo-campos-org/react-typescript-todolist/server:${{ github.event.number }}
-          build-args: BUILD=${{ github.event.number }}
+          build-args: |
+            BUILD=v${{ github.event.number }}-${{ github.run_id }}-${{ steps.date.outputs.date }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

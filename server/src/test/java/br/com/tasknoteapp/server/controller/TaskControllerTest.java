@@ -267,7 +267,18 @@ class TaskControllerTest {
   void postTasks_happyPath_shouldSucceed() throws Exception {
     TaskRequest request = new TaskRequest("Test task", List.of("www.url.com"), null, true, "tag");
 
-    doNothing().when(taskService).createTask(request);
+    TaskResponse taskResponse =
+        new TaskResponse(
+            858L,
+            "Description patched",
+            false,
+            true,
+            null,
+            null,
+            "Moments ago",
+            "tag",
+            List.of());
+    when(taskService.createTask(request)).thenReturn(taskResponse);
 
     final String payloadJson =
         """

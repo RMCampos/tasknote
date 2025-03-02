@@ -27,7 +27,7 @@ npm ci --ignore-scripts --no-update-notifier --omit=dev \
 
 If you want to build with Docker:
 ```sh
-docker build -t client ./client
+docker build --build-arg VITE_BUILD="Development-$(date "+%Y-%m-%d %H:%M:%S")" -t client ./client
 ```
 
 That's it!
@@ -37,7 +37,7 @@ That's it!
 For the backend there's a Dockerfile ready, just run (from the project root):
 
 ```bash
-docker build -t server ./server
+docker build --build-arg BUILD="Development-$(date "+%Y-%m-%d %H:%M:%S")" -t server ./server
 ```
 
 That's it!

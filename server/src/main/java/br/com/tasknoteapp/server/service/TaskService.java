@@ -49,7 +49,7 @@ public class TaskService {
     log.info("{} tasks found!", tasks.size());
 
     return tasks.stream()
-        .map((TaskEntity tr) -> TaskResponse.fromEntity(tr, getAllNotesUrls(tr.getId())))
+        .map((TaskEntity tr) -> TaskResponse.fromEntity(tr, getAllTasksUrls(tr.getId())))
         .toList();
   }
 
@@ -69,7 +69,7 @@ public class TaskService {
     }
 
     log.info("Task found! Id {}", taskId);
-    return TaskResponse.fromEntity(task.get(), getAllNotesUrls(taskId));
+    return TaskResponse.fromEntity(task.get(), getAllTasksUrls(taskId));
   }
 
   /**
@@ -77,7 +77,7 @@ public class TaskService {
    *
    * @param taskRequest The {@link TaskRequest} containing all task data.
    */
-  public void createTask(TaskRequest taskRequest) {
+  public TaskResponse createTask(TaskRequest taskRequest) {
     UserEntity user = getCurrentUser();
 
     log.info("Creating task to user {}", user.getId());
@@ -99,6 +99,7 @@ public class TaskService {
     }
 
     log.info("Task created! Id {}", created.getId());
+    return TaskResponse.fromEntity(created, getAllTasksUrls(created.getId()));
   }
 
   /**
@@ -161,7 +162,7 @@ public class TaskService {
 
     log.info("Task patched! Id {}", patchedTask.getId());
 
-    return TaskResponse.fromEntity(patchedTask, getAllNotesUrls(taskId));
+    return TaskResponse.fromEntity(patchedTask, getAllTasksUrls(taskId));
   }
 
   /**
@@ -209,7 +210,7 @@ public class TaskService {
     log.info("{} tasks found!", tasks.size());
 
     return tasks.stream()
-        .map((TaskEntity tr) -> TaskResponse.fromEntity(tr, getAllNotesUrls(tr.getId())))
+        .map((TaskEntity tr) -> TaskResponse.fromEntity(tr, getAllTasksUrls(tr.getId())))
         .toList();
   }
 
@@ -219,8 +220,8 @@ public class TaskService {
     return authService.findByEmail(email).orElseThrow();
   }
 
-  private List<String> getAllNotesUrls(Long noteId) {
-    List<TaskUrlEntity> urls = taskUrlRepository.findAllById_taskId(noteId);
+  private List<String> getAllTasksUrls(Long taskId) {
+    List<TaskUrlEntity> urls = taskUrlRepository.findAllById_taskId(taskId);
     return urls.stream().map(TaskUrlEntity::getId).map(TaskUrlEntityPk::getUrl).toList();
   }
 

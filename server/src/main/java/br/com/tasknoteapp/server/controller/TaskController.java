@@ -162,7 +162,7 @@ public class TaskController {
             content =
                 @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = Void.class))),
+                    schema = @Schema(implementation = TaskResponse.class))),
         @ApiResponse(
             responseCode = "400",
             description = "Wrong or missing information",
@@ -179,8 +179,8 @@ public class TaskController {
           @RequestBody
           @Valid
           TaskRequest taskRequest) {
-    taskService.createTask(taskRequest);
-    return ResponseEntity.status(HttpStatus.CREATED).build();
+    TaskResponse response = taskService.createTask(taskRequest);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
   /**

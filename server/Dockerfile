@@ -22,6 +22,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 COPY --from=build /app/target/server ./tasknote-api
 
+ARG BUILD
+ENV BUILD=${BUILD}
+
 # User, port and health check
 USER 1001
 EXPOSE ${PORT}
