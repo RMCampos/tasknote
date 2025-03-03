@@ -23,7 +23,17 @@ WORKDIR /app
 COPY --from=build /app/target/server ./tasknote-api
 
 ARG BUILD
+ARG SOURCE_PR
 ENV BUILD=${BUILD}
+ENV SOURCE_PR=${SOURCE_PR}
+
+# Add metadata to the final image
+LABEL org.opencontainers.image.authors="Ricardo Campos <ricardompcampos@gmail.com>" \
+      org.opencontainers.image.vendor="Ricardo Campos Org" \
+      org.opencontainers.image.title="TaskNoteApp server" \
+      org.opencontainers.image.description="Spring Cloud Native REST API service" \
+      org.opencontainers.image.version="${SOURCE_PR}" \
+      org.opencontainers.image.source="https://github.com/ricardo-campos-org/react-typescript-todolist"
 
 # User, port and health check
 USER 1001

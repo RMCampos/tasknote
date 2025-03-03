@@ -26,8 +26,12 @@ npm ci --ignore-scripts --no-update-notifier --omit=dev \
 ```
 
 If you want to build with Docker:
-```sh
-docker build --build-arg VITE_BUILD="Development-$(date "+%Y-%m-%d %H:%M:%S")" -t client ./client
+```bash
+docker build --no-cache \
+ --build-arg VITE_BUILD="v999-$(date '+%Y-%m-%d-%H%M%S')" \
+ --build-arg SOURCE_PR="v999-123456789-$(date '+%Y-%m-%d-%H%M%S')" \
+ -t client:candidate \
+ ./client
 ```
 
 That's it!
@@ -37,7 +41,11 @@ That's it!
 For the backend there's a Dockerfile ready, just run (from the project root):
 
 ```bash
-docker build --build-arg BUILD="Development-$(date "+%Y-%m-%d %H:%M:%S")" -t server ./server
+docker build --no-cache \
+ --build-arg BUILD="v999-$(date '+%Y-%m-%d-%H%M%S')" \
+ --build-arg SOURCE_PR="v999-123456789-$(date '+%Y-%m-%d-%H%M%S')" \
+ -t server:candidate \
+ ./server
 ```
 
 That's it!
@@ -126,4 +134,9 @@ docker inspect --format "{{json .State.Health}}" container_name_or_id | jq
 
 # Or to see it live
 while true; do clear; docker inspect --format "{{json .State.Health}}" server | jq; sleep 1; done
+```
+
+- Extract Env value from docker image (without running)
+```bash
+docker inspect client:candidate | jq -r '.[0].Config.Env[] | select(startswith("SOURCE_PR="))' | sed -n 's/SOURCE_PR=\(v[0-9]*\).*/\1/p'
 ```

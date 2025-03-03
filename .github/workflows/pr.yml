@@ -96,9 +96,10 @@ jobs:
         with:
           push: true
           context: ./client
-          tags: ghcr.io/ricardo-campos-org/react-typescript-todolist/client:${{ github.event.number }}
+          tags: ghcr.io/ricardo-campos-org/react-typescript-todolist/client:candidate
           build-args: |
-            BUILD=v${{ github.event.number }}-${{ github.run_id }}-${{ steps.date.outputs.date }}
+            VITE_BUILD=v${{ github.event.number }}-${{ steps.date.outputs.date }}
+            SOURCE_PR=v${{ github.event.number }}-${{ github.run_id }}-${{ steps.date.outputs.date }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -179,8 +180,9 @@ jobs:
         with:
           push: true
           context: ./server
-          tags: ghcr.io/ricardo-campos-org/react-typescript-todolist/server:${{ github.event.number }}
+          tags: ghcr.io/ricardo-campos-org/react-typescript-todolist/server:candidate
           build-args: |
-            BUILD=v${{ github.event.number }}-${{ github.run_id }}-${{ steps.date.outputs.date }}
+            BUILD=v${{ github.event.number }}-${{ steps.date.outputs.date }}
+            SOURCE_PR=v${{ github.event.number }}-${{ github.run_id }}-${{ steps.date.outputs.date }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

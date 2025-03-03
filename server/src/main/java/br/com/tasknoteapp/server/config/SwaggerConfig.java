@@ -28,7 +28,7 @@ public class SwaggerConfig {
   public OpenAPI apiConfig() {
     Info info = new Info();
     info.setTitle("TaskNote API");
-    info.setDescription("RESTful service API to serve the TaskNote client Web App.");
+    info.setDescription("RESTful service API for the web client");
     info.setVersion(apiBuildInfo);
 
     Contact contact = new Contact();

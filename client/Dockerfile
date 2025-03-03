@@ -19,7 +19,17 @@ RUN apk add --no-cache ca-certificates curl
 
 # Receive build number as argument, retain as environment variable
 ARG VITE_BUILD
+ARG SOURCE_PR
 ENV VITE_BUILD=${VITE_BUILD}
+ENV SOURCE_PR=${SOURCE_PR}
+
+# Add metadata to the final image
+LABEL org.opencontainers.image.authors="Ricardo Campos <ricardompcampos@gmail.com>" \
+      org.opencontainers.image.vendor="Ricardo Campos Org" \
+      org.opencontainers.image.title="TaskNoteApp client" \
+      org.opencontainers.image.description="React Web app application" \
+      org.opencontainers.image.version="${SOURCE_PR}" \
+      org.opencontainers.image.source="https://github.com/ricardo-campos-org/react-typescript-todolist"
 
 # Copy files and run formatting
 COPY --from=build /app/dist/ /app/dist

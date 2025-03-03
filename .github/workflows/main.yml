@@ -94,3 +94,34 @@ jobs:
           cd server
           ./mvnw -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=br.com.tasknoteapp:server -Dsonar.coverage.jacoco.xmlReportPaths=target/coverage-reports/merged-test-report/jacoco.xml -Dsonar.exclusions=**/config/**,**/entity/**,**/exception/**,**/filter/**,**/**Builder*,**/RestExceptionEndpoint.*,**/JavaApiApiApplication.*
 
+  image-promotion:
+    name: Docker image promotion
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image:
+          - service: server
+          - service: client
+    steps:
+      - uses: docker/login-action@v3
+        name: Login to GitHub Container Registry
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull image with source tag
+        run: docker pull ghcr.io/ricardo-campos-org/react-typescript-todolist/${{ matrix.image.service }}:candidate
+
+      - name: Extract PR number using docker inspect
+        id: inspect
+        run: |
+          SOURCE_PR=$(docker inspect ghcr.io/ricardo-campos-org/react-typescript-todolist/${{ matrix.image.service }}:candidate | jq -r '.[0].Config.Env[] | select(startswith("SOURCE_PR="))' | sed -n 's/SOURCE_PR=\(v[0-9]*\).*/\1/p')
+          echo "SOURCE_PR=$SOURCE_PR" >> $GITHUB_ENV
+          echo "source_pr=$SOURCE_PR" >> $GITHUB_OUTPUT
+
+      - name: Re-tag the image
+        run: docker tag ghcr.io/ricardo-campos-org/react-typescript-todolist/${{ matrix.image.service }}:candidate ghcr.io/ricardo-campos-org/react-typescript-todolist/${{ matrix.image.service }}:prod-${{ steps.inspect.outputs.source_pr }}
+
+      - name: Push new tag
+        run: docker push ghcr.io/ricardo-campos-org/react-typescript-todolist/${{ matrix.image.service }}:prod-${{ steps.inspect.outputs.source_pr }}

@@ -11,7 +11,7 @@ import './style.css';
 function Sidebar(): React.ReactNode {
   const { signOut } = useContext(AuthContext);
   const { t } = useTranslation();
-  const build = env.VITE_BUILD;
+  const build = `Build: ${env.VITE_BUILD}`;
   const [current, setCurrent] = useState<string>('/home');
 
   // Note: when selected, change class to plus-jakarta-sans-thin and add background
