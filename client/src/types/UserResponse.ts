@@ -1,8 +1,7 @@
-export type SigninResponse = {
+export type UserResponse = {
   userId: number;
-  name: string;
+  name: string | null;
   email: string;
   admin: boolean;
   createdAt: Date;
-  token: string;
 };

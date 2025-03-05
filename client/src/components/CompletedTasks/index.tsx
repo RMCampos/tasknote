@@ -13,7 +13,7 @@ type Series = {
 };
 const data: Series[] = [
   {
-    label: 'Commpleted tasks',
+    label: 'Completed tasks',
     data: [
       {
         date: 'S', // Sunday

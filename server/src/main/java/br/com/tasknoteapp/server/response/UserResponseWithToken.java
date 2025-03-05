@@ -5,8 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 
 /** This record represents a User Response object. */
-@Schema(description = "This record represents a User Response object.")
-public record UserResponse(
+@Schema(description = "This record represents a User Response with token object.")
+public record UserResponseWithToken(
     @Schema(description = "The id of the user", example = "1") Long userId,
     @Schema(description = "The name of the user", example = "John") String name,
     @Schema(description = "The email of the user", example = "user@domain.com") String email,
@@ -16,21 +16,24 @@ public record UserResponse(
     @Schema(
             description = "The inactivated date and time of the user",
             example = "2023-01-01T00:00:00")
-        LocalDateTime inactivatedAt) {
+        LocalDateTime inactivatedAt,
+    @Schema(description = "The token created upon login") String token) {
 
   /**
-   * Create a {@link UserResponse} instance from a {@link UserEntity}.
+   * Create a {@link UserResponseWithToken} instance from a {@link UserEntity}.
    *
    * @param user The user entity instance with user info to be used as source.
+   * @param token The token created upon registration or login.
    * @return UserResponse instance.
    */
-  public static UserResponse fromEntity(UserEntity user) {
-    return new UserResponse(
+  public static UserResponseWithToken fromEntity(UserEntity user, String token) {
+    return new UserResponseWithToken(
         user.getId(),
         user.getName(),
         user.getEmail(),
         user.getAdmin(),
         user.getCreatedAt(),
-        user.getInactivatedAt());
+        user.getInactivatedAt(),
+        token);
   }
 }

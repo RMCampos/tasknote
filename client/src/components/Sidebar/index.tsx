@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Nav } from 'react-bootstrap';
 import { NavLink } from 'react-router';
 import { useTranslation } from 'react-i18next';
@@ -8,18 +8,32 @@ import NavButton from '../NavButton';
 import { env } from '../../env';
 import './style.css';
 
+/**
+ * Sidebar component renders the sidebar navigation menu.
+ *
+ * @returns {React.ReactNode} The rendered Sidebar component.
+ */
 function Sidebar(): React.ReactNode {
-  const { signOut } = useContext(AuthContext);
+  const { signOut, user } = useContext(AuthContext);
   const { t } = useTranslation();
   const build = `Build: ${env.VITE_BUILD}`;
   const [current, setCurrent] = useState<string>('/home');
 
   // Note: when selected, change class to plus-jakarta-sans-thin and add background
 
-  const goOut = () => {
+  /**
+   * Handles the sign-out action.
+   */
+  const goOut = (): void => {
     signOut();
   };
 
+  /**
+   * Gets the color for the selected navigation link.
+   *
+   * @param {string} path - The path of the navigation link.
+   * @returns {string} The color for the selected navigation link.
+   */
   const getSelectedColor = (path: string): string => {
     if (path === current) {
       return '#4CD964';
@@ -27,15 +41,22 @@ function Sidebar(): React.ReactNode {
     return '#6A8996';
   };
 
+  /**
+   * Handles the navigation link click event.
+   *
+   * @param {string} menu - The menu path.
+   */
   const navLinkClicked = (menu: string): void => {
     setCurrent(menu);
   };
+
+  useEffect(() => {}, [user]);
 
   return (
     <div className="d-flex flex-column vh-100 bg-light sidebar">
       <div className="sidebar-header plus-jakarta-sans-bold">
         <img width="45" src={UserIcon} alt="User icon" />
-        <span>Ricardo Campos</span>
+        <span>{user?.name ? user?.name : 'User'}</span>
       </div>
 
       <div className="header-spacer"></div>

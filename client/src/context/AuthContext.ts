@@ -1,14 +1,15 @@
 import { createContext } from 'react';
-import { User } from '../types/User';
+import { UserResponse } from '../types/UserResponse';
 
 export interface AuthContextData {
   signed: boolean;
-  user: User | undefined;
+  user: UserResponse | undefined;
   checkCurrentAuthUser: (pathname: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<string>;
   signOut: () => void;
   register: (email: string, password: string) => Promise<string>;
   isAdmin: boolean;
+  updateUser: (userUpdated: UserResponse) => void;
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);

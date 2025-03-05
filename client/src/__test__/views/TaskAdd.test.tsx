@@ -28,12 +28,19 @@ vi.mock('react-i18next', () => ({
 
 const authContextMock = {
   signed: true,
-  user: { email: 'test@example.com' },
+  user: {
+    userId: 1,
+    name: 'Ricardo',
+    email: 'test@example.com',
+    admin: false,
+    createdAt: new Date()
+  },
   checkCurrentAuthUser: vi.fn(),
   signIn: vi.fn(),
   signOut: vi.fn(),
   register: vi.fn(),
-  isAdmin: false
+  isAdmin: false,
+  updateUser: vi.fn(),
 };
 
 describe('TaskAdd Component', () => {

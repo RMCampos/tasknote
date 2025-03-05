@@ -63,7 +63,7 @@ class UserSessionControllerTest {
   @DisplayName("Delete account happy path should succeed")
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
   void deleteAccount_happyPath_shouldSucceed() throws Exception {
-    UserResponse response = new UserResponse(1L, "email@test.com", false, null, null);
+    UserResponse response = new UserResponse(1L, "John", "email@test.com", false, null, null);
     when(userSessionService.deleteCurrentUserAccount()).thenReturn(response);
 
     mockMvc

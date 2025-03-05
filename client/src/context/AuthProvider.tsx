@@ -1,10 +1,10 @@
 import React, { useMemo, useState } from 'react';
-import { User } from '../types/User';
 import AuthContext, { AuthContextData } from './AuthContext';
 import { API_TOKEN, REDIRECT_PATH, USER_DATA } from '../app-constants/app-constants';
 import { SigninResponse } from '../types/SigninResponse';
 import api from '../api-service/api';
 import ApiConfig from '../api-service/apiConfig';
+import { UserResponse } from '../types/UserResponse';
 
 interface Props {
   children: React.ReactNode;
@@ -12,7 +12,7 @@ interface Props {
 
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Props) => {
   const [signed, setSigned] = useState<boolean>(false);
-  const [user, setUser] = useState<User | undefined>();
+  const [user, setUser] = useState<UserResponse | undefined>();
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [intervalInstance, setIntervalInstance] = useState<NodeJS.Timeout | null>(null);
 
@@ -44,7 +44,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     return undefined;
   };
 
-  const updateUserSession = (userPriv: User | null, bearerToken: string): User => {
+  const updateUserSession = (userPriv: UserResponse | null, bearerToken: string): UserResponse | null => {
     if (userPriv) {
       localStorage.setItem(USER_DATA, JSON.stringify(userPriv));
     }
@@ -59,14 +59,16 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
       return JSON.parse(savedUser);
     }
 
-    return { email: 'undefined' };
+    return null;
   };
 
   const checkCurrentAuthUser = async (pathname: string): Promise<void> => {
     const bearerToken: SigninResponse | undefined = await fetchCurrentSession(pathname);
     if (bearerToken && bearerToken.token) {
       const userLocal = updateUserSession(null, bearerToken.token);
-      setUser(userLocal);
+      if (userLocal) {
+        setUser(userLocal);
+      }
     }
   };
 
@@ -74,8 +76,12 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     try {
       const payload = { email, password };
       const registerResponse: SigninResponse = await api.putJSON(ApiConfig.registerUrl, payload);
-      const currentUser: User = {
-        email
+      const currentUser: UserResponse = {
+        userId: registerResponse.userId,
+        name: registerResponse.name,
+        email: registerResponse.email,
+        admin: registerResponse.admin,
+        createdAt: new Date(registerResponse.createdAt)
       };
 
       setSigned(true);
@@ -95,8 +101,12 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     try {
       const payload = { email, password };
       const registerResponse: SigninResponse = await api.postJSON(ApiConfig.signInUrl, payload);
-      const currentUser: User = {
-        email
+      const currentUser: UserResponse = {
+        userId: registerResponse.userId,
+        name: registerResponse.name,
+        email: registerResponse.email,
+        admin: registerResponse.admin,
+        createdAt: new Date(registerResponse.createdAt)
       };
 
       setSigned(true);
@@ -126,7 +136,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     const bearerToken: SigninResponse | undefined = await fetchCurrentSession('/');
     if (bearerToken) {
       const userLocal = updateUserSession(null, bearerToken.token);
-      setUser(userLocal);
+      if (userLocal) {
+        setUser(userLocal);
+      }
     }
     return Promise.resolve();
   };
@@ -148,6 +160,11 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     setIntervalInstance(instance);
   }
 
+  const updateUser = (userUpdated: UserResponse): void => {
+    setUser(userUpdated);
+    localStorage.setItem(USER_DATA, JSON.stringify(userUpdated));
+  };
+
   const contextValue: AuthContextData = useMemo(() => ({
     signed,
     user,
@@ -155,8 +172,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     signIn,
     signOut,
     register,
-    isAdmin
-  }), [signed, user, checkCurrentAuthUser, signIn, signOut, register, isAdmin]);
+    isAdmin,
+    updateUser
+  }), [signed, user, checkCurrentAuthUser, signIn, signOut, register, isAdmin, updateUser]);
 
   return (
     <AuthContext.Provider value={contextValue}>

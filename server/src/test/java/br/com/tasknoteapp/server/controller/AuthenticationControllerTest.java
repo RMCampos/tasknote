@@ -9,7 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import br.com.tasknoteapp.server.exception.EmailAlreadyExistsException;
 import br.com.tasknoteapp.server.request.LoginRequest;
+import br.com.tasknoteapp.server.response.UserResponseWithToken;
 import br.com.tasknoteapp.server.service.AuthService;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,10 @@ class AuthenticationControllerTest {
     LoginRequest request = new LoginRequest("user@domain.com", "abcde123456");
     final String token = "xaxbxcxdx1x2x3A@";
 
-    when(authService.signUpNewUser(request)).thenReturn(token);
+    UserResponseWithToken response =
+        new UserResponseWithToken(
+            123L, null, request.email(), false, LocalDateTime.now(), null, token);
+    when(authService.signUpNewUser(request)).thenReturn(response);
 
     String jsonString =
         """
@@ -51,6 +56,9 @@ class AuthenticationControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(jsonString))
         .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.userId").value(response.userId()))
+        .andExpect(jsonPath("$.email").value(response.email()))
+        .andExpect(jsonPath("$.admin").value(response.admin()))
         .andExpect(jsonPath("$.token").value(token))
         .andReturn();
   }
@@ -61,7 +69,10 @@ class AuthenticationControllerTest {
     LoginRequest request = new LoginRequest("user@domain..com", "abcde123456");
     final String token = "xaxbxcxdx1x2x3@A";
 
-    when(authService.signUpNewUser(request)).thenReturn(token);
+    UserResponseWithToken response =
+        new UserResponseWithToken(
+            123L, null, request.email(), false, LocalDateTime.now(), null, token);
+    when(authService.signUpNewUser(request)).thenReturn(response);
 
     String jsonString =
         """
@@ -114,7 +125,10 @@ class AuthenticationControllerTest {
     LoginRequest request = new LoginRequest("user@domain.com", "abcde123456");
     final String token = "xaxbxcxdx1x2x3A@";
 
-    when(authService.signInUser(request)).thenReturn(token);
+    UserResponseWithToken response =
+        new UserResponseWithToken(
+            123L, null, request.email(), false, LocalDateTime.now(), null, token);
+    when(authService.signInUser(request)).thenReturn(response);
 
     String jsonString =
         """
@@ -132,6 +146,9 @@ class AuthenticationControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(jsonString))
         .andExpect(status().isOk())
+        .andExpect(jsonPath("$.userId").value(response.userId()))
+        .andExpect(jsonPath("$.email").value(response.email()))
+        .andExpect(jsonPath("$.admin").value(response.admin()))
         .andExpect(jsonPath("$.token").value(token))
         .andReturn();
   }

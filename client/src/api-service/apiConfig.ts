@@ -16,8 +16,9 @@ const ApiConfig = {
 
   homeUrl: `${server}/rest/home`,
 
-  notesUrl: `${server}/rest/notes`
+  notesUrl: `${server}/rest/notes`,
 
+  userUrl: `${server}/rest/users`
 };
 
 export default ApiConfig;

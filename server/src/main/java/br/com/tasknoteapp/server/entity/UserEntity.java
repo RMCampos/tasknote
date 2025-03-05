@@ -39,6 +39,9 @@ public class UserEntity implements UserDetails {
   @Column(name = "inactivated_at", nullable = true)
   private LocalDateTime inactivatedAt;
 
+  @Column(name = "name", length = 20)
+  private String name;
+
   @OneToMany(mappedBy = "user")
   private List<TaskEntity> tasks;
 

@@ -4,7 +4,7 @@ import br.com.tasknoteapp.server.exception.InvalidCredentialsException;
 import br.com.tasknoteapp.server.exception.EmailAlreadyExistsException;
 import br.com.tasknoteapp.server.exception.UserNotFoundException;
 import br.com.tasknoteapp.server.request.LoginRequest;
-import br.com.tasknoteapp.server.response.JwtAuthenticationResponse;
+import br.com.tasknoteapp.server.response.UserResponseWithToken;
 import br.com.tasknoteapp.server.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -55,10 +55,10 @@ public class AuthenticationController {
             description = "Email already in use",
             content = @Content(schema = @Schema(implementation = Void.class)))
       })
-  public ResponseEntity<JwtAuthenticationResponse> signUp(
+  public ResponseEntity<UserResponseWithToken> signUp(
       @RequestBody @Valid LoginRequest loginRequest) {
-    String token = authService.signUpNewUser(loginRequest);
-    return ResponseEntity.status(HttpStatus.CREATED).body(new JwtAuthenticationResponse(token));
+      UserResponseWithToken response = authService.signUpNewUser(loginRequest);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
   /**
@@ -88,11 +88,11 @@ public class AuthenticationController {
             description = "User not found",
             content = @Content(schema = @Schema(implementation = Void.class)))
       })
-  public JwtAuthenticationResponse signIn(@RequestBody @Valid LoginRequest loginRequest) {
-    String token = authService.signInUser(loginRequest);
-    if (Objects.isNull(token)) {
+  public ResponseEntity<UserResponseWithToken> signIn(@RequestBody @Valid LoginRequest loginRequest) {
+    UserResponseWithToken response = authService.signInUser(loginRequest);
+    if (Objects.isNull(response)) {
       throw new InvalidCredentialsException();
     }
-    return new JwtAuthenticationResponse(token);
+    return ResponseEntity.ok().body(response);
   }
 }

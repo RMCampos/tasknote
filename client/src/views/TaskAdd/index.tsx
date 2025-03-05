@@ -6,10 +6,8 @@ import {
   Col,
   Container,
   Form,
-  InputGroup,
   Row
 } from 'react-bootstrap';
-import { CalendarCheck, Hash, PencilFill } from 'react-bootstrap-icons';
 import { useNavigate, useParams } from 'react-router';
 import TaskNoteRequest from '../../types/TaskNoteRequest';
 import { TaskResponse } from '../../types/TaskResponse';
@@ -17,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
 import { translateServerResponse } from '../../utils/TranslatorUtils';
+import FormInput from '../../components/FormInput';
 
 type TaskAction = 'add' | 'edit';
 
@@ -214,94 +213,61 @@ function TaskAdd(): React.ReactNode {
                 : null}
 
               <Form noValidate validated={validated} onSubmit={handleSubmit}>
-                <Row>
-                  <Col xs={9}>
-                    <Form.Group className="mb-3" controlId="task-form-description">
-                      <Form.Label>{t('task_form_desc_label')}</Form.Label>
-                      <InputGroup className="mb-3">
-                        <InputGroup.Text>
-                          <PencilFill />
-                        </InputGroup.Text>
-                        <Form.Control
-                          required
-                          type="text"
-                          name="description"
-                          placeholder={t('task_form_desc_placeholder')}
-                          value={taskDescription}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            setTaskDescription(e.target.value);
-                          }}
-                        />
-                      </InputGroup>
-                    </Form.Group>
-                  </Col>
-                </Row>
+                {/* Description */}
+                <FormInput
+                  labelText={t('task_form_desc_label')}
+                  iconName="PencilFill"
+                  required={true}
+                  type="text"
+                  name="description"
+                  placeholder={t('task_form_desc_placeholder')}
+                  value={taskDescription}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setTaskDescription(e.target.value);
+                  }}
+                />
 
-                <Row>
-                  <Col xs={9}>
-                    <Form.Group className="mb-3" controlId="task-form-url">
-                      <Form.Label>{t('task_form_url_label')}</Form.Label>
-                      <InputGroup className="mb-3">
-                        <InputGroup.Text>@</InputGroup.Text>
-                        <Form.Control
-                          required={false}
-                          type="text"
-                          name="url"
-                          placeholder={t('task_form_url_placeholder')}
-                          value={taskUrl}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            setTaskUrl(e.target.value);
-                          }}
-                        />
-                      </InputGroup>
-                    </Form.Group>
-                  </Col>
-                </Row>
+                {/* Task URL */}
+                <FormInput
+                  labelText={t('task_form_url_label')}
+                  iconName="At"
+                  required={false}
+                  type="text"
+                  name="url"
+                  placeholder={t('task_form_url_placeholder')}
+                  value={taskUrl}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setTaskUrl(e.target.value);
+                  }}
+                />
 
-                <Row>
-                  <Col xs={6}>
-                    <Form.Group className="mb-3" controlId="task-form-due-date">
-                      <Form.Label>{t('task_form_duedate_label')}</Form.Label>
-                      <InputGroup className="mb-3">
-                        <InputGroup.Text>
-                          <CalendarCheck />
-                        </InputGroup.Text>
-                        <Form.Control
-                          required={false}
-                          type="text"
-                          name="dueDate"
-                          placeholder={t('task_form_duedate_placeholder')}
-                          value={dueDate}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            setDueDate(e.target.value);
-                          }}
-                        />
-                      </InputGroup>
-                    </Form.Group>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col sm={6}>
-                    <Form.Group className="mb-3" controlId="task-form-tag">
-                      <Form.Label>Tag</Form.Label>
-                      <InputGroup className="mb-3">
-                        <InputGroup.Text>
-                          <Hash />
-                        </InputGroup.Text>
-                        <Form.Control
-                          required={false}
-                          type="text"
-                          name="tag"
-                          placeholder="my-tag"
-                          value={tag}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            setTag(e.target.value);
-                          }}
-                        />
-                      </InputGroup>
-                    </Form.Group>
-                  </Col>
-                </Row>
+                {/* Due date */}
+                <FormInput
+                  labelText={t('task_form_duedate_label')}
+                  iconName="CalendarCheck"
+                  required={false}
+                  type="text"
+                  name="dueDate"
+                  placeholder={t('task_form_duedate_placeholder')}
+                  value={dueDate}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setDueDate(e.target.value);
+                  }}
+                />
+
+                {/* Tag */}
+                <FormInput
+                  labelText="Tag"
+                  iconName="Hash"
+                  required={false}
+                  type="text"
+                  name="tag"
+                  placeholder="my-tag"
+                  value={tag}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setTag(e.target.value);
+                  }}
+                />
 
                 <Form.Check
                   type="switch"

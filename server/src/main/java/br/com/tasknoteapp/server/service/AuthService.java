@@ -11,13 +11,16 @@ import br.com.tasknoteapp.server.exception.UserNotFoundException;
 import br.com.tasknoteapp.server.repository.UserPwdLimitRepository;
 import br.com.tasknoteapp.server.repository.UserRepository;
 import br.com.tasknoteapp.server.request.LoginRequest;
+import br.com.tasknoteapp.server.request.UserPatchRequest;
 import br.com.tasknoteapp.server.response.UserResponse;
+import br.com.tasknoteapp.server.response.UserResponseWithToken;
 import br.com.tasknoteapp.server.util.AuthUtil;
 import jakarta.transaction.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +57,7 @@ public class AuthService {
    * @param login User details with email and password.
    * @return Token
    */
-  public String signUpNewUser(LoginRequest login) {
+  public UserResponseWithToken signUpNewUser(LoginRequest login) {
     log.info("Signing up new user! {}", login.email());
 
     if (findByEmail(login.email()).isPresent()) {
@@ -76,7 +79,7 @@ public class AuthService {
     String token = jwtService.generateToken(user.getEmail());
 
     log.info("User created! Token {}", token);
-    return token;
+    return UserResponseWithToken.fromEntity(user, token);
   }
 
   /**
@@ -111,7 +114,7 @@ public class AuthService {
    * @return Token
    */
   @Transactional
-  public String signInUser(LoginRequest login) {
+  public UserResponseWithToken signInUser(LoginRequest login) {
     log.info("Signing in user! {}", login.email());
 
     Optional<UserEntity> user = findByEmail(login.email());
@@ -130,7 +133,7 @@ public class AuthService {
       log.info("User authenticated! Token {}", token);
 
       userPwdLimitRepository.deleteAllForUser(user.get().getId());
-      return token;
+      return UserResponseWithToken.fromEntity(user.get(), token);
     } catch (BadCredentialsException e) {
       log.error("BadCredentialsException when logging in user {}", user.get().getId());
 
@@ -213,12 +216,46 @@ public class AuthService {
     userPwdLimitRepository.deleteAllForUser(currentUser.getId());
     userRepository.delete(currentUser);
 
-    return new UserResponse(
-        currentUser.getId(),
-        currentUser.getEmail(),
-        currentUser.getAdmin(),
-        currentUser.getCreatedAt(),
-        currentUser.getInactivatedAt());
+    return UserResponse.fromEntity(currentUser);
+  }
+
+  @Transactional
+  public UserResponse patchUserInfo(UserPatchRequest patchRequest) {
+    Optional<String> currentUserEmail = authUtil.getCurrentUserEmail();
+    String email = currentUserEmail.orElseThrow();
+    UserEntity currentUser = findByEmail(email).orElseThrow();
+    boolean shouldUpdate = false;
+
+    if (!Objects.isNull(patchRequest.name()) && !patchRequest.name().isBlank()) {
+      currentUser.setName(patchRequest.name().trim());
+      shouldUpdate = true;
+    }
+    if (!Objects.isNull(patchRequest.email()) && !patchRequest.email().isBlank()) {
+      currentUser.setEmail(patchRequest.email().trim());
+      shouldUpdate = true;
+    }
+
+    boolean updatePassword =
+        !Objects.isNull(patchRequest.password())
+            && !patchRequest.password().isBlank()
+            && !Objects.isNull(patchRequest.passwordAgain())
+            && !patchRequest.passwordAgain().isBlank();
+
+    if (updatePassword) {
+      Optional<String> passwordValidation = authUtil.validatePassword(patchRequest.password());
+      if (passwordValidation.isPresent()) {
+        throw new BadPasswordException(passwordValidation.get());
+      }
+
+      currentUser.setPassword(passwordEncoder.encode(patchRequest.password()));
+      shouldUpdate = true;
+    }
+
+    if (shouldUpdate) {
+      userRepository.save(currentUser);
+    }
+
+    return UserResponse.fromEntity(currentUser);
   }
 
   private void checkLoginAttemptLimit(Long userId) {

@@ -9,15 +9,17 @@ import static org.mockito.Mockito.when;
 import br.com.tasknoteapp.server.entity.UserEntity;
 import br.com.tasknoteapp.server.entity.UserPwdLimitEntity;
 import br.com.tasknoteapp.server.exception.BadPasswordException;
-import br.com.tasknoteapp.server.exception.MaxLoginLimitAttemptException;
 import br.com.tasknoteapp.server.exception.EmailAlreadyExistsException;
+import br.com.tasknoteapp.server.exception.InvalidCredentialsException;
+import br.com.tasknoteapp.server.exception.MaxLoginLimitAttemptException;
 import br.com.tasknoteapp.server.exception.UserForbiddenException;
 import br.com.tasknoteapp.server.exception.UserNotFoundException;
-import br.com.tasknoteapp.server.exception.InvalidCredentialsException;
 import br.com.tasknoteapp.server.repository.UserPwdLimitRepository;
 import br.com.tasknoteapp.server.repository.UserRepository;
 import br.com.tasknoteapp.server.request.LoginRequest;
+import br.com.tasknoteapp.server.request.UserPatchRequest;
 import br.com.tasknoteapp.server.response.UserResponse;
+import br.com.tasknoteapp.server.response.UserResponseWithToken;
 import br.com.tasknoteapp.server.util.AuthUtil;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -80,11 +82,12 @@ class AuthServiceTest {
     when(userRepository.save(any())).thenReturn(entity);
     when(jwtService.generateToken(request.email())).thenReturn("a1b2c3");
 
-    String token = authService.signUpNewUser(request);
+    UserResponseWithToken token = authService.signUpNewUser(request);
 
     Assertions.assertNotNull(token);
-    Assertions.assertFalse(token.isBlank());
-    Assertions.assertEquals("a1b2c3", token);
+    Assertions.assertFalse(token.token().isBlank());
+    Assertions.assertEquals("a1b2c3", token.token());
+    Assertions.assertEquals(entity.getEmail(), token.email());
   }
 
   @Test
@@ -191,10 +194,10 @@ class AuthServiceTest {
 
     doNothing().when(userPwdLimitRepository).deleteAllForUser(existing.getId());
 
-    String token = authService.signInUser(request);
+    UserResponseWithToken token = authService.signInUser(request);
 
     Assertions.assertNotNull(token);
-    Assertions.assertEquals("a1b2c3", token);
+    Assertions.assertEquals("a1b2c3", token.token());
   }
 
   @Test
@@ -248,7 +251,7 @@ class AuthServiceTest {
     when(userPwdLimitRepository.findAllByUser_id(existing.getId(), sort)).thenReturn(List.of());
     when(authenticationManager.authenticate(any())).thenThrow(new BadCredentialsException("Wrong"));
 
-    String token = authService.signInUser(request);
+    UserResponseWithToken token = authService.signInUser(request);
 
     Assertions.assertNull(token);
     verify(userPwdLimitRepository, times(1)).save(any());
@@ -285,9 +288,11 @@ class AuthServiceTest {
   void getAllUsers_noCurrentUser_shouldFail() {
     when(authUtil.getCurrentUserEmail()).thenReturn(Optional.empty());
 
-    Assertions.assertThrows(UserForbiddenException.class, () -> {
-      authService.getAllUsers();
-    });
+    Assertions.assertThrows(
+        UserForbiddenException.class,
+        () -> {
+          authService.getAllUsers();
+        });
   }
 
   @Test
@@ -297,9 +302,11 @@ class AuthServiceTest {
     when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(email));
     when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
-    Assertions.assertThrows(UserForbiddenException.class, () -> {
-      authService.getAllUsers();
-    });
+    Assertions.assertThrows(
+        UserForbiddenException.class,
+        () -> {
+          authService.getAllUsers();
+        });
   }
 
   @Test
@@ -314,9 +321,11 @@ class AuthServiceTest {
     existing.setAdmin(false);
     when(userRepository.findByEmail(email)).thenReturn(Optional.of(existing));
 
-    Assertions.assertThrows(UserForbiddenException.class, () -> {
-      authService.getAllUsers();
-    });
+    Assertions.assertThrows(
+        UserForbiddenException.class,
+        () -> {
+          authService.getAllUsers();
+        });
   }
 
   @Test
@@ -355,5 +364,55 @@ class AuthServiceTest {
     UserResponse response = authService.deleteUserAccount();
 
     Assertions.assertNotNull(response);
+  }
+
+  @Test
+  @DisplayName("Patch user info patch user name and email should succeed")
+  void pathUserInfo_nameAndEmail_shouldSucceed() {
+    String email = "user@domain.com";
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(email));
+
+    UserEntity existing = new UserEntity();
+    existing.setId(919L);
+    existing.setName(null);
+    existing.setEmail(email);
+    existing.setAdmin(false);
+    when(userRepository.findByEmail(email)).thenReturn(Optional.of(existing));
+
+    when(userRepository.save(any())).thenReturn(existing);
+
+    UserPatchRequest patchRequest = new UserPatchRequest("Kong", "newemail@domain.com", null, null);
+    UserResponse response = authService.patchUserInfo(patchRequest);
+
+    Assertions.assertNotNull(response);
+    Assertions.assertEquals("Kong", response.name());
+    Assertions.assertEquals("newemail@domain.com", response.email());
+  }
+
+  @Test
+  @DisplayName("Patch user info patch user password should succeed")
+  void pathUserInfo_password_shouldSucceed() {
+    String email = "user@domain.com";
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(email));
+
+    UserEntity existing = new UserEntity();
+    existing.setId(919L);
+    existing.setName(null);
+    existing.setEmail(email);
+    existing.setAdmin(false);
+    when(userRepository.findByEmail(email)).thenReturn(Optional.of(existing));
+
+    when(userRepository.save(any())).thenReturn(existing);
+    
+    String newPassword = "TestHackedPw@difficult!#:)";
+    UserPatchRequest patchRequest = new UserPatchRequest("Kong", "newemail@domain.com", newPassword, newPassword);
+    
+    when(authUtil.validatePassword(patchRequest.password())).thenReturn(Optional.empty());
+    
+    UserResponse response = authService.patchUserInfo(patchRequest);
+
+    Assertions.assertNotNull(response);
+    Assertions.assertEquals("Kong", response.name());
+    Assertions.assertEquals("newemail@domain.com", response.email());
   }
 }

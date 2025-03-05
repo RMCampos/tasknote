@@ -122,7 +122,7 @@ public class TaskService {
 
     TaskEntity taskEntity = task.get();
     if (!Objects.isNull(patch.description()) && !patch.description().isBlank()) {
-      taskEntity.setDescription(patch.description());
+      taskEntity.setDescription(patch.description().trim());
     }
     if (!Objects.isNull(patch.done())) {
       taskEntity.setDone(patch.done());

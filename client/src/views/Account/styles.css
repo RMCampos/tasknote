@@ -1,0 +1,14 @@
+.user-info-card {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+
+  .title {
+    font-size: 16px;
+  }
+
+  .description {
+    font-size: 12px;
+    color: #6a8996;
+  }
+}

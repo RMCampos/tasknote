@@ -9,12 +9,19 @@ import i18n from '../../i18n';
 
 const authContextMock = {
   signed: true,
-  user: undefined,
+  user: {
+    userId: 1,
+    name: 'Ricardo',
+    email: 'ricardo@campos.com',
+    admin: false,
+    createdAt: new Date()
+  },
   checkCurrentAuthUser: vi.fn(),
   signIn: vi.fn(),
   signOut: vi.fn(),
   register: vi.fn(),
-  isAdmin: false
+  isAdmin: false,
+  updateUser: vi.fn(),
 };
 
 describe('Sidebar Component', () => {
@@ -32,7 +39,7 @@ describe('Sidebar Component', () => {
 
   it('should render the Sidebar component', () => {
     const { getByText } = renderSidebar();
-    expect(getByText('Ricardo Campos')).toBeDefined();
+    expect(getByText('Ricardo')).toBeDefined();
     expect(getByText('Main Menu')).toBeDefined();
     expect(getByText('Preferences')).toBeDefined();
   });

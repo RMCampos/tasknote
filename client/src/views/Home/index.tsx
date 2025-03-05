@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { NavLink } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
@@ -22,6 +22,7 @@ import { handleDefaultLang } from '../../lang-service/LangHandler';
 import { translateServerResponse } from '../../utils/TranslatorUtils';
 import CompletedTasks from '../../components/CompletedTasks';
 import TaskProgress from '../../components/TaskProgress';
+import AuthContext from '../../context/AuthContext';
 import './style.css';
 
 /**
@@ -32,13 +33,19 @@ import './style.css';
  * @returns {React.ReactNode} The Home page component.
  */
 function Home(): React.ReactNode {
+  const { user } = useContext(AuthContext);
+  const { i18n, t } = useTranslation();
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [validated, setValidated] = useState<boolean>(false);
   const [formInvalid, setFormInvalid] = useState<boolean>(false);
   const [searchResults, setSearchResults] = useState<HomeSearchResponse | null>(null);
-  const [name, setName] = useState<string>('Ricardo');
-  const { i18n, t } = useTranslation();
+  const [name, setName] = useState<string>(user?.name ? user?.name : 'User');
 
+  /**
+   * Handles the error by setting the error message.
+   *
+   * @param {unknown} e - The error to handle.
+   */
   const handleError = (e: unknown): void => {
     if (typeof e === 'string') {
       setErrorMessage(translateServerResponse(e, i18n.language));
@@ -48,6 +55,12 @@ function Home(): React.ReactNode {
     }
   };
 
+  /**
+   * Searches for a term.
+   *
+   * @param {string}
+   * @returns {Promise<boolean>} Whether the search was successful.
+   */
   const searchTerm = async (term: string): Promise<boolean> => {
     try {
       const response: HomeSearchResponse = await api.getJSON(`${ApiConfig.homeUrl}/search?term=${term}`);
@@ -60,6 +73,11 @@ function Home(): React.ReactNode {
     return false;
   };
 
+  /**
+   * Handles the search form submission.
+   *
+   * @param {React.FormEvent<HTMLFormElement>} event - The form submission event.
+   */
   const handleSearch = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
     event.stopPropagation();
@@ -81,8 +99,8 @@ function Home(): React.ReactNode {
 
   useEffect(() => {
     handleDefaultLang();
-    setName('Ricardo');
-  }, []);
+    setName(user?.name ? user?.name : 'User');
+  }, [user]);
 
   return (
     <Container>
