@@ -47,15 +47,15 @@ class UserSessionControllerTest {
   }
 
   @Test
-  @DisplayName("Refresh with 403 forbidden request should fail")
-  void refresh_forbidden_shouldFail() throws Exception {
+  @DisplayName("Refresh with 401 unauthorized request should fail")
+  void refresh_unauthorized_shouldFail() throws Exception {
     mockMvc
         .perform(
             get("/rest/user-sessions/refresh")
                 .with(csrf().asHeader())
                 .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isForbidden())
+        .andExpect(status().isUnauthorized())
         .andReturn();
   }
 
@@ -77,15 +77,15 @@ class UserSessionControllerTest {
   }
 
   @Test
-  @DisplayName("Delete account with 403 forbidden request should fail")
-  void deleteAccount_forbidden_shouldFail() throws Exception {
+  @DisplayName("Delete account with 401 unauthorized request should fail")
+  void deleteAccount_unauthorized_shouldFail() throws Exception {
     mockMvc
         .perform(
             post("/rest/user-sessions/delete-account")
                 .with(csrf().asHeader())
                 .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isForbidden())
+        .andExpect(status().isUnauthorized())
         .andReturn();
   }
 }

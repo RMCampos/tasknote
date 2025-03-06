@@ -289,7 +289,7 @@ class AuthServiceTest {
     when(authUtil.getCurrentUserEmail()).thenReturn(Optional.empty());
 
     Assertions.assertThrows(
-        UserForbiddenException.class,
+        UserNotFoundException.class,
         () -> {
           authService.getAllUsers();
         });
@@ -303,7 +303,7 @@ class AuthServiceTest {
     when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
     Assertions.assertThrows(
-        UserForbiddenException.class,
+        UserNotFoundException.class,
         () -> {
           authService.getAllUsers();
         });
@@ -403,12 +403,13 @@ class AuthServiceTest {
     when(userRepository.findByEmail(email)).thenReturn(Optional.of(existing));
 
     when(userRepository.save(any())).thenReturn(existing);
-    
+
     String newPassword = "TestHackedPw@difficult!#:)";
-    UserPatchRequest patchRequest = new UserPatchRequest("Kong", "newemail@domain.com", newPassword, newPassword);
-    
+    UserPatchRequest patchRequest =
+        new UserPatchRequest("Kong", "newemail@domain.com", newPassword, newPassword);
+
     when(authUtil.validatePassword(patchRequest.password())).thenReturn(Optional.empty());
-    
+
     UserResponse response = authService.patchUserInfo(patchRequest);
 
     Assertions.assertNotNull(response);

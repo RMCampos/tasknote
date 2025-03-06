@@ -2,6 +2,7 @@ package br.com.tasknoteapp.server.controller;
 
 import br.com.tasknoteapp.server.response.SearchResponse;
 import br.com.tasknoteapp.server.response.SummaryResponse;
+import br.com.tasknoteapp.server.response.TasksChartResponse;
 import br.com.tasknoteapp.server.service.HomeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,8 +45,8 @@ public class HomeController {
                     mediaType = "application/json",
                     schema = @Schema(implementation = SummaryResponse.class))),
         @ApiResponse(
-            responseCode = "403",
-            description = "Forbidden. Access Denied",
+            responseCode = "401",
+            description = "Unauthorized. Access Denied",
             content = @Content(schema = @Schema(implementation = Void.class))),
       })
   public SummaryResponse getSummary() {
@@ -69,8 +71,8 @@ public class HomeController {
                     mediaType = "application/json",
                     schema = @Schema(implementation = SearchResponse.class, type = "array"))),
         @ApiResponse(
-            responseCode = "403",
-            description = "Forbidden. Access Denied",
+            responseCode = "401",
+            description = "Unauthorized. Access Denied",
             content = @Content(schema = @Schema(implementation = Void.class)))
       })
   public SearchResponse search(
@@ -83,5 +85,25 @@ public class HomeController {
           @RequestParam(value = "term", required = false)
           String term) {
     return homeService.search(term);
+  }
+
+  /**
+   * Get the data for the completed tasks chart.
+   *
+   * @return List of TasksChartResponse with the data.
+   */
+  @GetMapping("/completed-tasks-chart")
+  @Operation(
+      summary = "Get completed tasks chart",
+      description = "Get the data for the completed tasks chart.",
+      responses = {
+        @ApiResponse(responseCode = "200", description = "Data successfully retrieved"),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized. Access Denied",
+            content = @Content(schema = @Schema(implementation = Void.class)))
+      })
+  public List<TasksChartResponse> getTasksChart() {
+    return homeService.getTasksChartData();
   }
 }

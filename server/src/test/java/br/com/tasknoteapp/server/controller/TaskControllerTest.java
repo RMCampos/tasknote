@@ -81,15 +81,15 @@ class TaskControllerTest {
   }
 
   @Test
-  @DisplayName("Get all tasks with 403 forbidden request should fail")
-  void getAllTasks_forbidden_shouldFail() throws Exception {
+  @DisplayName("Get all tasks with 401 unauthorized request should fail")
+  void getAllTasks_unauthorized_shouldFail() throws Exception {
     mockMvc
         .perform(
             get("/rest/tasks")
                 .with(csrf().asHeader())
                 .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isForbidden())
+        .andExpect(status().isUnauthorized())
         .andReturn();
   }
 
@@ -147,8 +147,8 @@ class TaskControllerTest {
   }
 
   @Test
-  @DisplayName("Get task by id forbidden should fail")
-  void getTaskById_forbidden_shouldFail() throws Exception {
+  @DisplayName("Get task by id unauthorized should fail")
+  void getTaskById_unauthorized_shouldFail() throws Exception {
     Long taskId = 997L;
 
     mockMvc
@@ -157,7 +157,7 @@ class TaskControllerTest {
                 .with(csrf().asHeader())
                 .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isForbidden())
+        .andExpect(status().isUnauthorized())
         .andReturn();
   }
 
@@ -236,8 +236,8 @@ class TaskControllerTest {
   }
 
   @Test
-  @DisplayName("Patch a task via patch request with 403 forbidden exception")
-  void patchTask_forbidden_shouldFail() throws Exception {
+  @DisplayName("Patch a task via patch request with 401 unauthorized exception")
+  void patchTask_unauthorized_shouldFail() throws Exception {
     Long taskId = 111L;
 
     final String payloadJson =
@@ -257,7 +257,7 @@ class TaskControllerTest {
                 .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(payloadJson))
-        .andExpect(status().isForbidden())
+        .andExpect(status().isUnauthorized())
         .andReturn();
   }
 
@@ -269,15 +269,7 @@ class TaskControllerTest {
 
     TaskResponse taskResponse =
         new TaskResponse(
-            858L,
-            "Description patched",
-            false,
-            true,
-            null,
-            null,
-            "Moments ago",
-            "tag",
-            List.of());
+            858L, "Description patched", false, true, null, null, "Moments ago", "tag", List.of());
     when(taskService.createTask(request)).thenReturn(taskResponse);
 
     final String payloadJson =
@@ -324,12 +316,12 @@ class TaskControllerTest {
   }
 
   @Test
-  @DisplayName("Post create task with 403 forbidden request should fail")
-  void postTasks_forbidden_shouldFail() throws Exception {
+  @DisplayName("Post create task with 401 unauthorized request should fail")
+  void postTasks_unauthorized_shouldFail() throws Exception {
     final String payloadJson =
         """
         {
-          "description": "Forbidden"
+          "description": "Any description here"
         }
         """;
 
@@ -340,7 +332,7 @@ class TaskControllerTest {
                 .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(payloadJson))
-        .andExpect(status().isForbidden())
+        .andExpect(status().isUnauthorized())
         .andReturn();
   }
 
@@ -363,8 +355,8 @@ class TaskControllerTest {
   }
 
   @Test
-  @DisplayName("Delete task with 403 request forbidden should fail")
-  void deleteTask_forbidden_shouldFail() throws Exception {
+  @DisplayName("Delete task with 401 unauthorized request should fail")
+  void deleteTask_unauthorized_shouldFail() throws Exception {
     final Long taskId = 533L;
 
     mockMvc
@@ -373,7 +365,7 @@ class TaskControllerTest {
                 .with(csrf().asHeader())
                 .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isForbidden())
+        .andExpect(status().isUnauthorized())
         .andReturn();
   }
 

@@ -10,8 +10,10 @@ import br.com.tasknoteapp.server.response.NoteResponse;
 import br.com.tasknoteapp.server.response.SearchResponse;
 import br.com.tasknoteapp.server.response.SummaryResponse;
 import br.com.tasknoteapp.server.response.TaskResponse;
+import br.com.tasknoteapp.server.response.TasksChartResponse;
 import br.com.tasknoteapp.server.service.HomeService;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -66,7 +68,7 @@ class HomeControllerTest {
                 .with(csrf().asHeader())
                 .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isForbidden())
+        .andExpect(status().isUnauthorized())
         .andReturn();
   }
 
@@ -99,6 +101,42 @@ class HomeControllerTest {
         .andExpect(jsonPath("$.notes[0].title").value(note.title()))
         .andExpect(jsonPath("$.notes[0].description").value(note.description()))
         .andExpect(jsonPath("$.notes[0].urls", Matchers.empty()))
+        .andReturn();
+  }
+
+  @Test
+  @DisplayName("Get tasks chart data with happy path should succeed")
+  @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
+  void getTasksChart_happyPath_shouldSucceed() throws Exception {
+    TasksChartResponse responseOne = new TasksChartResponse(LocalDateTime.now(), "Thu", 1);
+    TasksChartResponse responseTwo = new TasksChartResponse(LocalDateTime.now(), "Fri", 2);
+
+    when(homeService.getTasksChartData()).thenReturn(List.of(responseOne, responseTwo));
+
+    mockMvc
+        .perform(
+            get("/rest/home/completed-tasks-chart")
+                .with(csrf().asHeader())
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].day").value("Thu"))
+        .andExpect(jsonPath("$[0].count").value(1))
+        .andExpect(jsonPath("$[1].day").value("Fri"))
+        .andExpect(jsonPath("$[1].count").value(2))
+        .andReturn();
+  }
+
+  @Test
+  @DisplayName("Get tasks chart data user not authorized should fail")
+  void getTasksChart_userNotAuthorized_shouldFail() throws Exception {
+    mockMvc
+        .perform(
+            get("/rest/home/completed-tasks-chart")
+                .with(csrf().asHeader())
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isUnauthorized())
         .andReturn();
   }
 }

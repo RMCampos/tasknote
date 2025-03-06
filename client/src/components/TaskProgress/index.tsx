@@ -1,8 +1,43 @@
-import React from 'react';
-import './style.css';
+import React, { useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
+import { SummaryResponse } from '../../types/SummaryResponse';
+import api from '../../api-service/api';
+import ApiConfig from '../../api-service/apiConfig';
+import './style.css';
 
+/**
+ * Task progress component.
+ *
+ * This component displays the progress of tasks.
+ *
+ * @returns {React.ReactNode} The task progress component.
+ */
 function TaskProgress(): React.ReactNode {
+  const [completedTasks, setCompletedTasks] = useState<number>(0);
+  const [pendingTasks, setPendingTasks] = useState<number>(0);
+  const [totalTasks, setTotalTasks] = useState<number>();
+
+  /**
+   * Fetches the tasks progress.
+   */
+  const fetchTasksProgress = async (): Promise<void> => {
+    try {
+      const response: SummaryResponse = await api.getJSON(`${ApiConfig.homeUrl}/summary`);
+      const { doneTaskCount } = response;
+      const { pendingTaskCount } = response;
+      setCompletedTasks(doneTaskCount);
+      setPendingTasks(pendingTaskCount);
+      setTotalTasks(doneTaskCount + pendingTaskCount);
+    }
+    catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    fetchTasksProgress();
+  }, []);
+
   return (
     <div className="completed-tasks">
       <Row>
@@ -36,7 +71,7 @@ function TaskProgress(): React.ReactNode {
             </svg>
 
             <div>Total</div>
-            <div>2</div>
+            <div>{totalTasks}</div>
           </div>
         </Col>
         <Col className="chart-container text-center">
@@ -60,7 +95,7 @@ function TaskProgress(): React.ReactNode {
               </defs>
             </svg>
             <div>Pending</div>
-            <div>4</div>
+            <div>{pendingTasks}</div>
           </div>
         </Col>
         <Col className="chart-container text-center">
@@ -73,7 +108,7 @@ function TaskProgress(): React.ReactNode {
             </svg>
 
             <div>Completed</div>
-            <div>6</div>
+            <div>{completedTasks}</div>
           </div>
         </Col>
       </Row>

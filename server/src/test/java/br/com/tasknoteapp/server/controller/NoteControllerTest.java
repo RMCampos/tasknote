@@ -80,15 +80,15 @@ class NoteControllerTest {
   }
 
   @Test
-  @DisplayName("Get all notes with 403 forbidden request should fail")
-  void getAllNotes_forbidden_shouldFail() throws Exception {
+  @DisplayName("Get all notes with 401 unauthorized request should fail")
+  void getAllNotes_unauthorized_shouldFail() throws Exception {
     mockMvc
         .perform(
             get("/rest/notes")
                 .with(csrf().asHeader())
                 .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isForbidden())
+        .andExpect(status().isUnauthorized())
         .andReturn();
   }
 
@@ -158,8 +158,8 @@ class NoteControllerTest {
   }
 
   @Test
-  @DisplayName("Patch a note via patch request with 403 forbidden exception should fail")
-  void patchNote_forbidden_shouldFail() throws Exception {
+  @DisplayName("Patch a note via patch request with 401 unauthorized exception should fail")
+  void patchNote_unauthorized_shouldFail() throws Exception {
     Long noteId = 123L;
 
     final String payloadJson =
@@ -178,7 +178,7 @@ class NoteControllerTest {
                 .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(payloadJson))
-        .andExpect(status().isForbidden())
+        .andExpect(status().isUnauthorized())
         .andReturn();
   }
 
@@ -242,12 +242,12 @@ class NoteControllerTest {
   }
 
   @Test
-  @DisplayName("Post create note with 403 forbidden request should fail")
-  void postNotes_forbidden_shouldFail() throws Exception {
+  @DisplayName("Post create note with 401 unauthorized request should fail")
+  void postNotes_unauthorized_shouldFail() throws Exception {
     final String payloadJson =
         """
         {
-          "description": "Forbidden"
+          "description": "Any description here"
         }
         """;
 
@@ -258,7 +258,7 @@ class NoteControllerTest {
                 .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(payloadJson))
-        .andExpect(status().isForbidden())
+        .andExpect(status().isUnauthorized())
         .andReturn();
   }
 
@@ -281,8 +281,8 @@ class NoteControllerTest {
   }
 
   @Test
-  @DisplayName("Delete note with 403 request forbidden should fail")
-  void deleteNote_forbidden_shouldFail() throws Exception {
+  @DisplayName("Delete note with 401 unauthorized should fail")
+  void deleteNote_unauthorized_shouldFail() throws Exception {
     final Long noteId = 453L;
 
     mockMvc
@@ -291,7 +291,7 @@ class NoteControllerTest {
                 .with(csrf().asHeader())
                 .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isForbidden())
+        .andExpect(status().isUnauthorized())
         .andReturn();
   }
 

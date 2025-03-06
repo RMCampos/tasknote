@@ -1,14 +1,24 @@
 package br.com.tasknoteapp.server.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import br.com.tasknoteapp.server.entity.UserEntity;
+import br.com.tasknoteapp.server.entity.UserTasksDone;
+import br.com.tasknoteapp.server.entity.UserTasksDonePk;
+import br.com.tasknoteapp.server.repository.UserTasksDoneRepository;
 import br.com.tasknoteapp.server.response.NoteResponse;
 import br.com.tasknoteapp.server.response.SearchResponse;
 import br.com.tasknoteapp.server.response.SummaryResponse;
 import br.com.tasknoteapp.server.response.TaskResponse;
+import br.com.tasknoteapp.server.response.TasksChartResponse;
+import br.com.tasknoteapp.server.util.AuthUtil;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -21,6 +31,12 @@ class HomeServiceTest {
 
   @Mock private NoteService noteService;
 
+  @Mock private UserTasksDoneRepository userTasksDoneRepository;
+
+  @Mock private AuthUtil authUtil;
+
+  @Mock private AuthService authService;
+
   private HomeService homeService;
 
   private List<TaskResponse> tasks;
@@ -28,7 +44,8 @@ class HomeServiceTest {
 
   @BeforeEach
   void setUp() {
-    homeService = new HomeService(taskService, noteService);
+    homeService =
+        new HomeService(taskService, noteService, userTasksDoneRepository, authUtil, authService);
 
     TaskResponse task1 =
         new TaskResponse(2L, "Task 1", false, false, null, null, null, "tag", List.of());
@@ -48,9 +65,9 @@ class HomeServiceTest {
 
     SummaryResponse summary = homeService.getSummary();
 
-    assertEquals(2, summary.pendingTaskCount());
-    assertEquals(0, summary.doneTaskCount());
-    assertEquals(2, summary.notesCount());
+    Assertions.assertEquals(2, summary.pendingTaskCount());
+    Assertions.assertEquals(0, summary.doneTaskCount());
+    Assertions.assertEquals(2, summary.notesCount());
   }
 
   @Test
@@ -61,7 +78,61 @@ class HomeServiceTest {
 
     SearchResponse searchResponse = homeService.search(term);
 
-    assertEquals(0, searchResponse.tasks().size());
-    assertEquals(2, searchResponse.notes().size());
+    Assertions.assertEquals(0, searchResponse.tasks().size());
+    Assertions.assertEquals(2, searchResponse.notes().size());
+  }
+
+  @Test
+  @DisplayName("Get tasks chart data happy path should succeed")
+  void getTasksChartData_happyPath_shouldSucceed() {
+    Long userId = 1L;
+    Long taskId = 2L;
+    String userEmail = "user@domain.com";
+    LocalDateTime now = LocalDateTime.now();
+    String firstDay = now.getDayOfWeek().toString().substring(0, 3);
+
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(userEmail));
+
+    UserEntity userEntity = new UserEntity();
+    userEntity.setId(userId);
+    userEntity.setEmail(userEmail);
+    when(authService.findByEmail(userEmail)).thenReturn(Optional.of(userEntity));
+
+    UserTasksDone userTasksDone = new UserTasksDone();
+    userTasksDone.setId(new UserTasksDonePk(userId, taskId));
+    userTasksDone.setDoneDate(now);
+    when(userTasksDoneRepository.findAllByDoneDateAfterAndId_userId(any(), any()))
+        .thenReturn(List.of(userTasksDone));
+
+    List<TasksChartResponse> chartData = homeService.getTasksChartData();
+
+    Assertions.assertNotNull(chartData);
+    Assertions.assertEquals(7, chartData.size());
+    Assertions.assertEquals(firstDay, chartData.get(0).day());
+  }
+
+  @Test
+  @DisplayName("Get tasks chart data empty data should succeed")
+  void getTasksChartData_emptyData_shouldSucceed() {
+    Long userId = 1L;
+    String userEmail = "user@domain.com";
+    LocalDateTime now = LocalDateTime.now();
+    String firstDay = now.getDayOfWeek().toString().substring(0, 3);
+
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(userEmail));
+
+    UserEntity userEntity = new UserEntity();
+    userEntity.setId(userId);
+    userEntity.setEmail(userEmail);
+    when(authService.findByEmail(userEmail)).thenReturn(Optional.of(userEntity));
+
+    when(userTasksDoneRepository.findAllByDoneDateAfterAndId_userId(any(), any()))
+        .thenReturn(List.of());
+
+    List<TasksChartResponse> chartData = homeService.getTasksChartData();
+
+    Assertions.assertNotNull(chartData);
+    Assertions.assertEquals(7, chartData.size());
+    Assertions.assertEquals(firstDay, chartData.get(0).day());
   }
 }

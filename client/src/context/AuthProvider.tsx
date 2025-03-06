@@ -28,6 +28,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     }
     catch (e) {
       if (e instanceof Error) {
+        // FIXME here
         if (e.message !== 'No saved token!' && e.message !== 'Forbidden! Access denied') {
           console.warn(e.message);
         }

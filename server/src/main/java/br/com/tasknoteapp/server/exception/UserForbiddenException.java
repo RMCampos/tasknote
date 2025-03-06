@@ -9,6 +9,6 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserForbiddenException extends ResponseStatusException {
 
   public UserForbiddenException() {
-    super(HttpStatus.FORBIDDEN, "User not authorized");
+    super(HttpStatus.FORBIDDEN, "Forbidden content for this User.");
   }
 }

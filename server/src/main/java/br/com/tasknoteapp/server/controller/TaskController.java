@@ -53,8 +53,8 @@ public class TaskController {
                     mediaType = "application/json",
                     schema = @Schema(implementation = TaskResponse.class, type = "array"))),
         @ApiResponse(
-            responseCode = "403",
-            description = "Forbidden. Access Denied",
+            responseCode = "401",
+            description = "Unauthorized. Access Denied",
             content = @Content(schema = @Schema(implementation = Void.class)))
       })
   public List<TaskResponse> getAllTasks() {
@@ -77,8 +77,8 @@ public class TaskController {
             responseCode = "200",
             description = "Return the found Task and its urls, if any."),
         @ApiResponse(
-            responseCode = "403",
-            description = "Forbidden. Access Denied",
+            responseCode = "401",
+            description = "Unauthorized. Access Denied",
             content = @Content(schema = @Schema(implementation = Void.class))),
         @ApiResponse(
             responseCode = "404",
@@ -118,8 +118,8 @@ public class TaskController {
                     mediaType = "application/json",
                     schema = @Schema(implementation = TaskResponse.class))),
         @ApiResponse(
-            responseCode = "403",
-            description = "Forbidden. Access Denied",
+            responseCode = "401",
+            description = "Unauthorized. Access Denied",
             content = @Content(schema = @Schema(implementation = Void.class))),
         @ApiResponse(
             responseCode = "404",
@@ -168,8 +168,8 @@ public class TaskController {
             description = "Wrong or missing information",
             content = @Content(schema = @Schema(implementation = Void.class))),
         @ApiResponse(
-            responseCode = "403",
-            description = "Forbidden. Access Denied",
+            responseCode = "401",
+            description = "Unauthorized. Access Denied",
             content = @Content(schema = @Schema(implementation = Void.class))),
       })
   public ResponseEntity<TaskResponse> postTasks(
@@ -199,8 +199,8 @@ public class TaskController {
             description = "Task successfully deleted",
             content = @Content(schema = @Schema(implementation = Void.class))),
         @ApiResponse(
-            responseCode = "403",
-            description = "Forbidden. Access Denied",
+            responseCode = "401",
+            description = "Unauthorized. Access Denied",
             content = @Content(schema = @Schema(implementation = Void.class))),
         @ApiResponse(
             responseCode = "404",

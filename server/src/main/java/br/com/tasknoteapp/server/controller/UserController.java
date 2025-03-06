@@ -45,8 +45,8 @@ public class UserController {
                     mediaType = "application/json",
                     schema = @Schema(implementation = UserResponse.class, type = "array"))),
         @ApiResponse(
-            responseCode = "403",
-            description = "Forbidden. Access Denied",
+            responseCode = "401",
+            description = "Unauthorized. Access Denied",
             content = @Content(schema = @Schema(implementation = Void.class))),
       })
   public List<UserResponse> getAllUsers() {
@@ -66,8 +66,8 @@ public class UserController {
                     mediaType = "application/json",
                     schema = @Schema(implementation = UserResponse.class))),
         @ApiResponse(
-            responseCode = "403",
-            description = "Forbidden. Access Denied",
+            responseCode = "401",
+            description = "Unauthorized. Access Denied",
             content = @Content(schema = @Schema(implementation = Void.class))),
         @ApiResponse(
             responseCode = "404",

@@ -39,8 +39,8 @@ public class UserSessionController {
       responses = {
         @ApiResponse(responseCode = "200", description = "Session successfully refreshed"),
         @ApiResponse(
-            responseCode = "403",
-            description = "Forbidden. Access Denied",
+            responseCode = "401",
+            description = "Unauthorized. Access Denied",
             content = @Content(schema = @Schema(implementation = Void.class)))
       })
   public JwtAuthenticationResponse refresh() {
@@ -59,8 +59,8 @@ public class UserSessionController {
       responses = {
         @ApiResponse(responseCode = "200", description = "Account successfully deleted"),
         @ApiResponse(
-            responseCode = "403",
-            description = "Forbidden. Access Denied",
+            responseCode = "401",
+            description = "Unauthorized. Access Denied",
             content = @Content(schema = @Schema(implementation = Void.class)))
       })
   public UserResponse deleteAccount() {

@@ -157,13 +157,13 @@ public class AuthService {
     Optional<String> currentUserEmail = authUtil.getCurrentUserEmail();
     if (currentUserEmail.isEmpty()) {
       log.error("Unable to get current user from the request");
-      throw new UserForbiddenException();
+      throw new UserNotFoundException();
     }
 
     Optional<UserEntity> currentUserOpt = findByEmail(currentUserEmail.get());
     if (currentUserOpt.isEmpty()) {
       log.error("Unable to find user by email with value: {}", currentUserEmail.get());
-      throw new UserForbiddenException();
+      throw new UserNotFoundException();
     }
 
     UserEntity currentUser = currentUserOpt.get();

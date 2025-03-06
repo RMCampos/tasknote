@@ -36,34 +36,58 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
     final String authorizationHeader = request.getHeader("Authorization");
 
-    if (Objects.isNull(authorizationHeader) || authorizationHeader.isBlank()) {
+    // Skip authentication for paths that don't require it
+    String requestPath = request.getServletPath();
+    if (requestPath.startsWith("/auth/") || !requestPath.startsWith("/rest/")) {
       filterChain.doFilter(request, response);
       return;
     }
 
-    String jwtToken = authorizationHeader;
-    if (authorizationHeader.startsWith("Bearer ")) {
-      jwtToken = authorizationHeader.substring(7);
+    // For protected paths, require valid authentication
+    if (Objects.isNull(authorizationHeader) || authorizationHeader.isBlank()) {
+      SecurityContextHolder.clearContext();
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      response.getWriter().write("Unauthorized: Missing authentication token");
+      return;
     }
-    String email = jwtService.getEmailFromToken(jwtToken);
 
-    if (!Objects.isNull(email)
-        && Objects.isNull(SecurityContextHolder.getContext().getAuthentication())) {
+    try {
+      String jwtToken = authorizationHeader;
+      
+      if (authorizationHeader.startsWith("Bearer ")) {
+        jwtToken = authorizationHeader.substring(7);
+      }
+      
+      String email = jwtService.getEmailFromToken(jwtToken);
+
+      if (Objects.isNull(email)) {
+        throw new ServletException("Invalid token: email not found");
+      }
+
       UserDetails user = userService.userDetailsService().loadUserByUsername(email);
 
-      if (jwtService.validateTokenAndUser(jwtToken, user)) {
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-
-        UsernamePasswordAuthenticationToken authToken =
-            new UsernamePasswordAuthenticationToken(
-                user.getUsername(), user.getPassword(), user.getAuthorities());
-
-        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        context.setAuthentication(authToken);
-        SecurityContextHolder.setContext(context);
+      if (!jwtService.validateTokenAndUser(jwtToken, user)) {
+        throw new ServletException("Invalid token for user");
       }
-    }
 
-    filterChain.doFilter(request, response);
+      SecurityContext context = SecurityContextHolder.createEmptyContext();
+
+      UsernamePasswordAuthenticationToken authToken =
+          new UsernamePasswordAuthenticationToken(
+              user.getUsername(), user.getPassword(), user.getAuthorities());
+
+      authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+      context.setAuthentication(authToken);
+      SecurityContextHolder.setContext(context);
+
+      filterChain.doFilter(request, response);
+    }
+    catch (Exception e) {
+      log.error("Error authenticating user", e);
+      SecurityContextHolder.clearContext();
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      response.getWriter().write("Unauthorized: " + e.getMessage());
+      return;
+    }
   }
 }

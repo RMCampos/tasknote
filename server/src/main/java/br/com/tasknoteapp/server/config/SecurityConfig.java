@@ -2,6 +2,7 @@ package br.com.tasknoteapp.server.config;
 
 import br.com.tasknoteapp.server.filter.JwtAuthenticationFilter;
 import br.com.tasknoteapp.server.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,6 +54,13 @@ public class SecurityConfig {
                     .permitAll())
         .httpBasic(AbstractHttpConfigurer::disable)
         .formLogin(AbstractHttpConfigurer::disable)
+        .exceptionHandling(
+            exceptionHandling ->
+                exceptionHandling.authenticationEntryPoint(
+                    (request, response, authException) -> {
+                      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                      response.getWriter().write("Unauthorized: " + authException.getMessage());
+                    }))
         .authenticationProvider(authenticationProvider());
 
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

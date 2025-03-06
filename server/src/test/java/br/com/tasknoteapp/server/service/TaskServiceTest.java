@@ -10,9 +10,11 @@ import br.com.tasknoteapp.server.entity.TaskEntity;
 import br.com.tasknoteapp.server.entity.TaskUrlEntity;
 import br.com.tasknoteapp.server.entity.TaskUrlEntityPk;
 import br.com.tasknoteapp.server.entity.UserEntity;
+import br.com.tasknoteapp.server.entity.UserTasksDonePk;
 import br.com.tasknoteapp.server.exception.TaskNotFoundException;
 import br.com.tasknoteapp.server.repository.TaskRepository;
 import br.com.tasknoteapp.server.repository.TaskUrlRepository;
+import br.com.tasknoteapp.server.repository.UserTasksDoneRepository;
 import br.com.tasknoteapp.server.request.TaskPatchRequest;
 import br.com.tasknoteapp.server.request.TaskRequest;
 import br.com.tasknoteapp.server.response.TaskResponse;
@@ -38,6 +40,8 @@ class TaskServiceTest {
 
   @Mock TaskUrlRepository taskUrlRepository;
 
+  @Mock UserTasksDoneRepository userTasksDoneRepository;
+
   private static final Long USER_ID = 123L;
 
   private static final String USER_EMAIL = "test@domain.com";
@@ -46,7 +50,9 @@ class TaskServiceTest {
 
   @BeforeEach
   void setup() {
-    taskService = new TaskService(taskRepository, authService, authUtil, taskUrlRepository);
+    taskService =
+        new TaskService(
+            taskRepository, authService, authUtil, taskUrlRepository, userTasksDoneRepository);
   }
 
   @Test
@@ -345,6 +351,7 @@ class TaskServiceTest {
     taskEntity.setId(taskId);
     taskEntity.setDescription("Test task");
     taskEntity.setHighPriority(true);
+    taskEntity.setDone(false);
     taskEntity.setTag("test");
     taskEntity.setUser(userEntity);
     when(taskRepository.findById(taskId)).thenReturn(Optional.of(taskEntity));
@@ -354,8 +361,12 @@ class TaskServiceTest {
     TaskEntity entity = new TaskEntity();
     entity.setDescription("Updated description");
     entity.setHighPriority(false);
+    entity.setDone(false);
     entity.setTag(taskEntity.getTag());
     when(taskRepository.save(any())).thenReturn(entity);
+
+    UserTasksDonePk pk = new UserTasksDonePk(USER_ID, taskId);
+    when(userTasksDoneRepository.findById(pk)).thenReturn(Optional.empty());
 
     TaskPatchRequest patch =
         new TaskPatchRequest("Updated description", null, null, null, false, null);

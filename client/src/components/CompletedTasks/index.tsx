@@ -1,59 +1,48 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { AxisOptions, Chart } from 'react-charts';
+import { TasksChartResponse } from '../../types/TasksChartResponse';
+import api from '../../api-service/api';
+import ApiConfig from '../../api-service/apiConfig';
 import './style.css';
 
-type DailyStars = {
-  date: string;
-  stars: number;
-};
 type Series = {
   label: string;
-  data: DailyStars[];
+  data: TasksChartResponse[];
 };
-const data: Series[] = [
-  {
-    label: 'Completed tasks',
-    data: [
-      {
-        date: 'S', // Sunday
-        stars: 3
-      },
-      {
-        date: 'M', // Monday
-        stars: 5
-      },
-      {
-        date: 'T', // Tuesday
-        stars: 2
-      },
-      {
-        date: 'W', // Wednesday
-        stars: 4
-      },
-      {
-        date: 'T', // Thursday
-        stars: 8
-      },
-      {
-        date: 'F', // Friday
-        stars: 6
-      },
-      {
-        date: 'S', // Saturday
-        stars: 4
-      }
-    ]
-  }
-];
 
 function CompletedTasks(): React.ReactNode {
-  const primaryAxis = React.useMemo((): AxisOptions<DailyStars> => ({
-    getValue: datum => datum.date
+  const [data, setData] = useState<Series[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const primaryAxis = useMemo((): AxisOptions<TasksChartResponse> => ({
+    getValue: datum => datum.day
   }), []);
-  const secondaryAxes = React.useMemo((): AxisOptions<DailyStars>[] => [{
-    getValue: datum => datum.stars
+
+  const secondaryAxes = useMemo((): AxisOptions<TasksChartResponse>[] => [{
+    getValue: datum => datum.count
   }], []);
+
+  const getChartData = async (): Promise<void> => {
+    try {
+      const response: TasksChartResponse[] = await api.getJSON(`${ApiConfig.homeUrl}/completed-tasks-chart`);
+      const chartData: Series[] = [{
+        label: 'Completed Tasks',
+        data: response
+      }];
+      setData(chartData);
+    }
+    catch (error) {
+      console.error('Error fetching chart data:', error);
+    }
+    finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getChartData();
+  }, []);
 
   return (
     <div className="completed-tasks">
@@ -75,7 +64,9 @@ function CompletedTasks(): React.ReactNode {
       </Row>
       <Row>
         <Col xs={12} className="chart-container">
-          <Chart options={{ data, primaryAxis, secondaryAxes }} />
+          {loading
+            ? <div>Loading...</div>
+            : <Chart options={{ data, primaryAxis, secondaryAxes }} />}
         </Col>
       </Row>
     </div>

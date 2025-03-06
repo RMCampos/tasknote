@@ -53,8 +53,8 @@ public class NoteController {
                     mediaType = "application/json",
                     schema = @Schema(implementation = NoteResponse.class, type = "array"))),
         @ApiResponse(
-            responseCode = "403",
-            description = "Forbidden. Access Denied",
+            responseCode = "401",
+            description = "Unauthorized. Access Denied",
             content = @Content(schema = @Schema(implementation = Void.class)))
       })
   public List<NoteResponse> getAllNotes() {
@@ -82,8 +82,8 @@ public class NoteController {
                     mediaType = "application/json",
                     schema = @Schema(implementation = NoteResponse.class))),
         @ApiResponse(
-            responseCode = "403",
-            description = "Forbidden. Access Denied",
+            responseCode = "401",
+            description = "Unauthorized. Access Denied",
             content = @Content(schema = @Schema(implementation = Void.class))),
         @ApiResponse(
             responseCode = "404",
@@ -132,8 +132,8 @@ public class NoteController {
             description = "Wrong or missing information",
             content = @Content(schema = @Schema(implementation = Void.class))),
         @ApiResponse(
-            responseCode = "403",
-            description = "Forbidden. Access Denied",
+            responseCode = "401",
+            description = "Unauthorized. Access Denied",
             content = @Content(schema = @Schema(implementation = Void.class))),
       })
   public ResponseEntity<NoteResponse> postNotes(
@@ -163,8 +163,8 @@ public class NoteController {
             description = "Note successfully deleted",
             content = @Content(schema = @Schema(implementation = Void.class))),
         @ApiResponse(
-            responseCode = "403",
-            description = "Forbidden. Access Denied",
+            responseCode = "401",
+            description = "Unauthorized. Access Denied",
             content = @Content(schema = @Schema(implementation = Void.class))),
         @ApiResponse(
             responseCode = "404",
