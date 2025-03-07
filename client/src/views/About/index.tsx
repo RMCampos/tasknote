@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  Card, Col, Container, Row
-} from 'react-bootstrap';
+import { Col, Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
 /**
@@ -16,10 +14,26 @@ function About(): React.ReactNode {
   const { t } = useTranslation();
 
   return (
-    <Container className="my-5">
+    <Container>
+      <h1 className="poppins-regular home-hello main-margin">
+        About
+        {' '}
+        <b>TaskNoteApp</b>
+      </h1>
+      <p className="poppins-regular home-subtitle">
+        Here you can find more information about this app and the developer
+      </p>
+
+      <Row className="mb-3">
+        <Col xs={12}>
+          <h2 className="poppins-regular">Tasks and notes made</h2>
+          <h2 className="poppins-bold home-productive">Easy</h2>
+        </Col>
+      </Row>
+
       <Row className="justify-content-center mb-4">
         <Col xs={12}>
-          <Card className="p-4 shadow-sm border-radius-30">
+          <div className="user-info-card">
             <h2 className="mb-4 poppins-bold about-title">{t('about_app_title')}</h2>
             <p className="poppins-medium">{t('about_app_description')}</p>
             <h4 className="mt-4 poppins-medium">{t('about_app_features')}</h4>
@@ -30,13 +44,13 @@ function About(): React.ReactNode {
             </ul>
             <h4 className="mt-4 poppins-medium">{t('about_app_help_title')}</h4>
             <p className="poppins-light">{t('about_app_help_description')}</p>
-          </Card>
+          </div>
         </Col>
       </Row>
 
       <Row className="justify-content-center">
         <Col xs={8}>
-          <Card className="p-4 shadow-sm border-radius-30 min-height-350">
+          <div className="user-info-card min-height-350">
             <h2 className="mb-4 poppins-bold about-title">{t('about_tech_title')}</h2>
             <p className="poppins-light">{t('about_tech_description')}</p>
             <ul className="poppins-light">
@@ -48,10 +62,10 @@ function About(): React.ReactNode {
               <li>{t('about_tech_list_six')}</li>
               <li>{t('about_tech_list_seven')}</li>
             </ul>
-          </Card>
+          </div>
         </Col>
         <Col xs={4}>
-          <Card className="p-4 shadow-sm border-radius-30 min-height-350">
+          <div className="user-info-card min-height-350">
             <h2 className="mb-4 poppins-bold about-title">{t('about_dev_title')}</h2>
             <p className="poppins-light">
               {t('about_dev_description')}
@@ -60,7 +74,7 @@ function About(): React.ReactNode {
               </a>
               {t('about_dev_description_two')}
             </p>
-          </Card>
+          </div>
         </Col>
       </Row>
     </Container>

@@ -50,6 +50,7 @@
   text-decoration: none;
   padding: 0.5rem 1rem;
   transition: background-color 0.2s ease;
+  border-radius: 4px;
 }
 
 .sidebar a:hover {

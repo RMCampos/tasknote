@@ -109,7 +109,7 @@ const enTranslations = {
   about_dev_description_two: ' for any questions or feedback.',
 
   account_my_account_tittle: 'My Account',
-  account_my_account_hello: 'Hello! This is where you can manage your preferences.',
+  account_my_account_hello: 'Hello! This is where you can manage your preferences',
   account_my_account_logged: 'You\'re logged in as: ',
   account_app_lang_tittle: 'App Language',
   account_app_lang_description: 'You can choose one of these languages:',

@@ -24,9 +24,9 @@
     color: #fff;
     width: 90px;
   }
-  .task-progress svg {
+  .task-progress img {
     margin-top: 1rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
   }
   .task-progress.total {
     background-color: #3563E9;
@@ -36,5 +36,11 @@
   }
   .task-progress.completed {
     background-color: #4CD964;
+  }
+  .tpg-text {
+    font-size: 12px;
+  }
+  .tpg-value {
+    font-size: 20px;
   }
 }
