@@ -44,7 +44,6 @@ function FormInput(props: React.PropsWithChildren<Props>): React.ReactNode {
     e.preventDefault();
     e.stopPropagation();
 
-    console.log('clicked to show password');
     setShowingPwd((prevValue: boolean) => !prevValue);
     setFormType((previous: string) => previous === 'text' ? 'password' : 'text');
   };
@@ -62,6 +61,12 @@ function FormInput(props: React.PropsWithChildren<Props>): React.ReactNode {
                 <a href="#" onClick={toggleShowPassword}>
                   {showingPwd ? ' (Hide)' : ' (Show)'}
                 </a>
+              </small>
+            )}
+            {props.name === 'tag' && (
+              <small className="text-muted">
+                {' '}
+                Comma or space separated
               </small>
             )}
           </Form.Label>

@@ -1,142 +1,75 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Accordion, Alert, Button, Card, Col, Container, Form, Row
+  Button,
+  Card,
+  Col,
+  Container,
+  Dropdown,
+  Form,
+  Row
 } from 'react-bootstrap';
+import { NavLink } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import TaskNoteRequest from '../../types/TaskNoteRequest';
 import { NoteResponse } from '../../types/NoteResponse';
 import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
 import { translateServerResponse } from '../../utils/TranslatorUtils';
+import { ThreeDotsVertical } from 'react-bootstrap-icons';
+import TaskUrl from '../../components/TaskUrl';
+import NoteTitle from '../../components/NoteTitle';
+import ModalMarkdown from '../../components/ModalMarkdown';
+import ContentHeader from '../../components/ContentHeader';
+import AlertError from '../../components/AlertError';
 import './style.css';
 
-type NoteAction = 'add' | 'edit';
-
 /**
+ * The Note component is a view that displays a list of notes.
  *
+ * @returns {React.ReactNode} The Task component
  */
 function Note(): React.ReactNode {
-  const [validated, setValidated] = useState<boolean>(false);
-  const [formInvalid, setFormInvalid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [notes, setNotes] = useState<NoteResponse[]>([]);
-  const [noteId, setNoteId] = useState<number>(0);
-  const [noteTitle, setNoteTitle] = useState<string>('');
-  const [noteDescription, setNoteDescription] = useState<string>('');
-  const [action, setAction] = useState<NoteAction>('add');
-  const [textSizeLeft, setTextSizeLeft] = useState<number>(2000);
+  const [savedNotes, setSavedNotes] = useState<NoteResponse[]>([]);
+  const [filterText, setFilterText] = useState<string>('');
+  const [showPreviewMd, setShowPreviewMd] = useState<boolean>(false);
+  const [modalTitle, setModalTitle] = useState<string>('');
+  const [modalContent, setModalContent] = useState<string>('');
   const { i18n, t } = useTranslation();
 
+  /**
+   * Handle errors from server requests and translate them if required.
+   *
+   * @param {unknown} e The error to be handled.
+   */
   const handleError = (e: unknown): void => {
     if (typeof e === 'string') {
       setErrorMessage(translateServerResponse(e, i18n.language));
-      setFormInvalid(true);
     }
     else if (e instanceof Error) {
       setErrorMessage(translateServerResponse(e.message, i18n.language));
-      setFormInvalid(true);
     }
   };
 
+  /**
+   * Load notes from the server.
+   */
   const loadNotes = async () => {
     try {
       const notesFetched: NoteResponse[] = await api.getJSON(ApiConfig.notesUrl);
-      setNotes(notesFetched);
+      setNotes([...notesFetched]);
+      setSavedNotes([...notesFetched]);
     }
     catch (e) {
       handleError(e);
     }
   };
 
-  const addNote = async (payload: TaskNoteRequest): Promise<boolean> => {
-    try {
-      await api.postJSON(ApiConfig.notesUrl, payload);
-      loadNotes();
-      return true;
-    }
-    catch (e) {
-      handleError(e);
-    }
-
-    return false;
-  };
-
-  const submitEditNote = async (payload: NoteResponse): Promise<boolean> => {
-    try {
-      await api.patchJSON(`${ApiConfig.notesUrl}/${payload.id}`, payload);
-      loadNotes();
-      return true;
-    }
-    catch (e) {
-      handleError(e);
-    }
-    return false;
-  };
-
-  const resetInputs = () => {
-    setNoteId(0);
-    setNoteTitle('');
-    setNoteDescription('');
-    setTextSizeLeft(2000);
-
-    setAction('add');
-    setValidated(false);
-    setFormInvalid(false);
-  };
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
-    event.preventDefault();
-    event.stopPropagation();
-    setValidated(true);
-
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      setFormInvalid(true);
-      setErrorMessage(translateServerResponse('Please fill in all the fields', i18n.language));
-      return;
-    }
-
-    if (form.note_description.value.length > 2000) {
-      setFormInvalid(true);
-      setErrorMessage(translateServerResponse('The maximum text length is 2000', i18n.language));
-      return;
-    }
-
-    setFormInvalid(false);
-
-    const title: string = form.note_title.value;
-    const description: string = form.note_description.value;
-
-    if (action === 'add') {
-      const payload: TaskNoteRequest = {
-        title,
-        description,
-        urls: [],
-        tag: ''
-      };
-
-      const added: boolean = await addNote(payload);
-      if (added) {
-        form.reset();
-        resetInputs();
-      }
-    }
-    else if (action === 'edit') {
-      const payload: NoteResponse = {
-        id: noteId,
-        title,
-        description,
-        urls: []
-      };
-
-      const edited: boolean = await submitEditNote(payload);
-      if (edited) {
-        form.reset();
-        resetInputs();
-      }
-    }
-  };
-
+  /**
+   * Delete a note.
+   *
+   * @param {number} noteIdParam The note ID to be deleted.
+   */
   const deleteNote = async (noteIdParam: number) => {
     try {
       await api.deleteNoContent(`${ApiConfig.notesUrl}/${noteIdParam}`);
@@ -147,12 +80,28 @@ function Note(): React.ReactNode {
     }
   };
 
-  const editNote = async (note: NoteResponse) => {
-    setNoteId(note.id);
-    setNoteTitle(note.title);
-    setNoteDescription(note.description);
-    setAction('edit');
+  /**
+   * Filter notes by a given text.
+   */
+  const filterNotes = (text: string): void => {
+    setFilterText(text);
+
+    if (!text) {
+      setNotes([...savedNotes]);
+      return;
+    }
+
+    const filteredTasks = savedNotes.filter((note: NoteResponse) => {
+      const anyTitleMatch = note.title.toLowerCase().includes(text.toLowerCase());
+      const anyContentMatch = note.description.toLowerCase().includes(text.toLowerCase());
+      const anyUrlMatch = note.url?.includes(text.toLowerCase());
+      return anyTitleMatch || anyContentMatch || anyUrlMatch;
+    });
+
+    setNotes([...filteredTasks]);
   };
+
+  const handleCloseModal = () => setShowPreviewMd(false);
 
   useEffect(() => {
     loadNotes();
@@ -160,112 +109,104 @@ function Note(): React.ReactNode {
 
   return (
     <Container>
-      <Row className="main-margin">
-        <Col xs={12}>
-          <Card>
-            <Card.Body>
-              <Card.Title>{t('note_form_title')}</Card.Title>
+      <ContentHeader
+        h1TextRegular="All"
+        h1TextBold="Notes"
+        subtitle="Save your notes in plain text or Markdown format"
+        h2BlackText="Create, Filter, and Easily Find"
+        h2GreenText="Them"
+      />
 
-              {formInvalid
-                ? (
-                    <Alert variant="danger">
-                      { errorMessage }
-                    </Alert>
-                  )
-                : null}
+      <AlertError errorMessage={errorMessage} />
 
-              <Form noValidate validated={validated} onSubmit={handleSubmit}>
-                <Form.Group className="mb-3" controlId="form_noteTitle">
-                  <Form.Label>{t('note_form_title_label')}</Form.Label>
-                  <Form.Control
-                    required
-                    type="text"
-                    name="note_title"
-                    value={noteTitle}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setNoteTitle(e.target.value);
-                    }}
-                    placeholder={t('note_form_title_placeholder')}
-                  />
-                </Form.Group>
-
-                <Form.Group controlId="form_noteDescription">
-                  <Form.Label>{t('note_form_content_label')}</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    required
-                    rows={3}
-                    name="note_description"
-                    aria-describedby="noteDescriptionHelper"
-                    placeholder={t('note_form_content_placeholder')}
-                    value={noteDescription}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                      setNoteDescription(e.target.value);
-                      setTextSizeLeft(2000 - e.target.value.length);
-                    }}
-                  />
-                </Form.Group>
-                <Form.Text id="noteDescriptionHelper" muted>
-                  The text area can have text length up to 2000. You still can type
-                  {' '}
-                  {textSizeLeft}
-                  {' '}
-                  characters.
-                </Form.Text>
-
-                <Button
-                  variant="primary"
-                  type="submit"
-                  className="w-100 mt-3"
-                >
-                  {t('note_form_submit')}
-                </Button>
-              </Form>
-
-            </Card.Body>
-          </Card>
+      <Row>
+        <Col xs={9}>
+          <Form.Control
+            type="text"
+            id="search_term"
+            size="lg"
+            name="search_term"
+            placeholder="Filter notes"
+            value={filterText}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => filterNotes(e.target.value)}
+          />
+        </Col>
+        <Col xs={3}>
+          <NavLink to="/notes/new">
+            <div className="d-grid gap-2">
+              <Button variant="primary" size="lg" type="button" className="d-grip">
+                Add note
+              </Button>
+            </div>
+          </NavLink>
         </Col>
       </Row>
+
       <Row className="mt-3">
-        <Col xs={12}>
-          <Accordion defaultActiveKey="0">
-            {notes.map((note: NoteResponse) => (
-              <Accordion.Item key={note.id.toString()} eventKey={note.id.toString()}>
-                <Accordion.Header>
-                  {note.title}
-                </Accordion.Header>
-                <Accordion.Body>
-                  <span className="span-line-break">
-                    { note.description }
-                  </span>
+        {notes.map((note: NoteResponse) => (
+          <Col xs={12} key={note.id.toString()}>
+            <Card key={note.id.toString()} className="task-card">
+              <Card.Body>
+                <Row>
+                  <Col xs={10}>
+                    <Card.Title>
+                      <NoteTitle title={note.title} />
+                    </Card.Title>
+                  </Col>
+                  <Col xs={2} className="text-end">
+                    <Dropdown>
+                      <Dropdown.Toggle variant="success" data-testid={`note-dropdown-menu-${note.id}`}>
+                        <ThreeDotsVertical />
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu>
+                        <NavLink to={`/notes/edit/${note.id}`}>
+                          <Dropdown.Item as="span">
+                            {t('task_table_action_edit')}
+                          </Dropdown.Item>
+                        </NavLink>
+                        <Dropdown.Item
+                          as="button"
+                          onClick={() => deleteNote(note.id)}
+                          data-testid={`note-dropdown-delete-item-${note.id}`}
+                        >
+                          {t('task_table_action_delete')}
+                        </Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  </Col>
+                </Row>
 
-                  <br />
-
-                  <Button
-                    type="button"
-                    variant="primary"
-                    onClick={() => editNote(note)}
-                    className="mt-3"
-                  >
-                    {t('note_table_btn_edit')}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="danger"
-                    onClick={() => deleteNote(note.id)}
-                    className="mt-3 mx-3"
-                  >
-                    {t('note_table_btn_delete')}
-                  </Button>
-                </Accordion.Body>
-              </Accordion.Item>
-            ))}
-          </Accordion>
-
-          {/* add pagination here */}
-
-        </Col>
+                {note.url && note.url.length > 0 && (
+                  <TaskUrl url={note.url} />
+                )}
+              </Card.Body>
+              <Card.Footer className="task-card-footer">
+                <a
+                  href="#"
+                  onClick={(e: React.MouseEvent<Element, MouseEvent>) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setModalTitle(note.title);
+                    setModalContent(note.description);
+                    setShowPreviewMd(true);
+                  }}
+                  data-testid={`preview-markdown-link-${note.id}`}
+                >
+                  {' '}
+                  Preview Markdown
+                </a>
+              </Card.Footer>
+            </Card>
+          </Col>
+        ))}
       </Row>
+
+      <ModalMarkdown
+        show={showPreviewMd}
+        onHide={handleCloseModal}
+        title={modalTitle}
+        markdownText={modalContent}
+      />
     </Container>
   );
 }

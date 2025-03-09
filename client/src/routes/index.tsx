@@ -7,6 +7,7 @@ import Task from '../views/Task';
 import TaskAdd from '../views/TaskAdd';
 import Note from '../views/Note';
 import Account from '../views/Account';
+import NoteAdd from '../views/NoteAdd';
 
 const BrowserRoutes: RouteObject[] = [
   {
@@ -50,6 +51,14 @@ const BrowserRoutes: RouteObject[] = [
   {
     path: '/notes',
     element: <Note />
+  },
+  {
+    path: '/notes/new',
+    element: <NoteAdd />
+  },
+  {
+    path: '/notes/edit/:id',
+    element: <NoteAdd />
   },
   {
     path: '/account',

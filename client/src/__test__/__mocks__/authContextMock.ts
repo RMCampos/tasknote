@@ -7,7 +7,8 @@ const authContextMock = {
   signIn: vi.fn(),
   signOut: vi.fn(),
   register: vi.fn(),
-  isAdmin: false
+  isAdmin: false,
+  updateUser: vi.fn()
 };
 
 export default authContextMock;

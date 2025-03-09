@@ -79,7 +79,7 @@ class HomeControllerTest {
     TaskResponse task =
         new TaskResponse(
             1L, "Task 1", false, true, LocalDate.now(), "2024-11-20", "now", "tag", List.of());
-    NoteResponse note = new NoteResponse(1L, "Note 1", "Note desc", List.of(), "tag");
+    NoteResponse note = new NoteResponse(1L, "Note 1", "Note desc", null, "tag");
     SearchResponse response = new SearchResponse(List.of(task), List.of(note));
 
     when(homeService.search("term")).thenReturn(response);
@@ -100,7 +100,7 @@ class HomeControllerTest {
         .andExpect(jsonPath("$.notes[0].id").value(note.id()))
         .andExpect(jsonPath("$.notes[0].title").value(note.title()))
         .andExpect(jsonPath("$.notes[0].description").value(note.description()))
-        .andExpect(jsonPath("$.notes[0].urls", Matchers.empty()))
+        .andExpect(jsonPath("$.notes[0].url", Matchers.nullValue()))
         .andReturn();
   }
 

@@ -43,7 +43,7 @@ class NoteControllerTest {
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
   void getAllNotes_notesFound_shouldSucceed() throws Exception {
     NoteUrlResponse noteUrl = new NoteUrlResponse(111L, "https://test.com");
-    NoteResponse note = new NoteResponse(111L, "title", "description", List.of(noteUrl), "tag");
+    NoteResponse note = new NoteResponse(111L, "title", "description", "https://test.com", "tag");
 
     when(noteService.getAllNotes()).thenReturn(List.of(note));
 
@@ -57,8 +57,7 @@ class NoteControllerTest {
         .andExpect(jsonPath("$[0].id").value(note.id()))
         .andExpect(jsonPath("$[0].title").value(note.title()))
         .andExpect(jsonPath("$[0].description").value(note.description()))
-        .andExpect(jsonPath("$[0].urls[0].id").value(noteUrl.id()))
-        .andExpect(jsonPath("$[0].urls[0].url").value(noteUrl.url()))
+        .andExpect(jsonPath("$[0].url").value(noteUrl.url()))
         .andReturn();
   }
 
@@ -97,10 +96,10 @@ class NoteControllerTest {
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
   void patchNote_happyPath_shouldSucceed() throws Exception {
     Long noteId = 123L;
-    NotePatchRequest patchRequest = new NotePatchRequest("New title", "New description", List.of());
+    NotePatchRequest patchRequest = new NotePatchRequest("New title", "New description", null);
 
     NoteResponse response =
-        new NoteResponse(noteId, patchRequest.title(), patchRequest.description(), List.of(), "tag");
+        new NoteResponse(noteId, patchRequest.title(), patchRequest.description(), null, "tag");
 
     when(noteService.patchNote(noteId, patchRequest)).thenReturn(response);
 
@@ -109,7 +108,7 @@ class NoteControllerTest {
         {
           "title": "New title",
           "description": "New description",
-          "urls": []
+          "url": null
         }
         """;
 
@@ -124,7 +123,7 @@ class NoteControllerTest {
         .andExpect(jsonPath("$.id").value(response.id()))
         .andExpect(jsonPath("$.title").value(response.title()))
         .andExpect(jsonPath("$.description").value(response.description()))
-        .andExpect(jsonPath("$.urls", Matchers.empty()))
+        .andExpect(jsonPath("$.url", Matchers.nullValue()))
         .andReturn();
   }
 
@@ -133,7 +132,7 @@ class NoteControllerTest {
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
   void patchNote_notFound_shouldFail() throws Exception {
     Long noteId = 123L;
-    NotePatchRequest patchRequest = new NotePatchRequest("New title", "New description", List.of());
+    NotePatchRequest patchRequest = new NotePatchRequest("New title", "New description", null);
 
     when(noteService.patchNote(noteId, patchRequest)).thenThrow(new NoteNotFoundException());
 
@@ -142,7 +141,7 @@ class NoteControllerTest {
         {
           "title": "New title",
           "description": "New description",
-          "urls": []
+          "url": null
         }
         """;
 
@@ -185,8 +184,8 @@ class NoteControllerTest {
   @Test
   @DisplayName("Post create note happy path should succeed and return 201")
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
-  void postNotes_happyPath_shoundSucceed() throws Exception {
-    NoteRequest request = new NoteRequest("Title", "Description", List.of());
+  void postNotes_happyPath_shouldSucceed() throws Exception {
+    NoteRequest request = new NoteRequest("Title", "Description", null);
 
     NoteEntity entity = new NoteEntity();
     entity.setId(1L);
@@ -200,7 +199,7 @@ class NoteControllerTest {
         {
           "title": "Title",
           "description": "Description",
-          "urls": []
+          "url": null
         }
         """;
 
@@ -215,7 +214,7 @@ class NoteControllerTest {
         .andExpect(jsonPath("$.id").value(entity.getId()))
         .andExpect(jsonPath("$.title").value(entity.getTitle()))
         .andExpect(jsonPath("$.description").value(entity.getDescription()))
-        .andExpect(jsonPath("$.urls", Matchers.empty()))
+        .andExpect(jsonPath("$.url", Matchers.nullValue()))
         .andReturn();
   }
 

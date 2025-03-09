@@ -109,10 +109,10 @@ const ptBrTranslations = {
     Você pode me contactar em `,
   about_dev_description_two: ' para qualquer dúvida ou comentário.',
 
-  account_my_account_tittle: 'Minha conta',
+  account_my_account_title: 'Minha conta',
   account_my_account_hello: 'Olá! Aqui é onde você pode gerenciar suas preferências.',
   account_my_account_logged: 'Você está logado como: ',
-  account_app_lang_tittle: 'Idioma do App',
+  account_app_lang_title: 'Idioma do App',
   account_app_lang_description: 'Você pode escolher um destes idiomas:',
   account_privacy_little: 'Sua Privacidade Importa',
   account_privacy_text: `Estamos comprometidos em proteger sua privacidade e te dar
@@ -120,7 +120,7 @@ const ptBrTranslations = {
     a qualquer hora. Uma vez processado, todos os seus dados pessoais serão excluídos
     permanentemente dos nossos servidores.`,
   account_privacy_delete_btn: 'Excluir minha conta',
-  account_delete_tittle: 'Você está prestes a deletar sua conta!',
+  account_delete_title: 'Você está prestes a deletar sua conta!',
   account_delete_description: `Esta ação não pode ser desfeita. Se você realmente
    quer deletar todos os seus dados, clique no botão abaixo. Caso contrário, feche
    esta mensagem e seus dados estarão seguros.`,

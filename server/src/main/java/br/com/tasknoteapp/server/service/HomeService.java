@@ -1,7 +1,9 @@
 package br.com.tasknoteapp.server.service;
 
+import br.com.tasknoteapp.server.entity.NotesCreatedEntity;
 import br.com.tasknoteapp.server.entity.UserEntity;
 import br.com.tasknoteapp.server.entity.UserTasksDone;
+import br.com.tasknoteapp.server.repository.NotesCreatedRepository;
 import br.com.tasknoteapp.server.repository.UserTasksDoneRepository;
 import br.com.tasknoteapp.server.response.NoteResponse;
 import br.com.tasknoteapp.server.response.SearchResponse;
@@ -37,6 +39,8 @@ public class HomeService {
 
   private final AuthService authService;
 
+  private final NotesCreatedRepository notesCreatedRepository;
+
   /**
    * Get summary for the home page.
    *
@@ -44,14 +48,24 @@ public class HomeService {
    */
   public SummaryResponse getSummary() {
     log.info("Getting summary");
+
+    Optional<String> currentUserEmail = authUtil.getCurrentUserEmail();
+    String email = currentUserEmail.orElseThrow();
+    UserEntity user = authService.findByEmail(email).orElseThrow();
+
+    // Pending tasks
     List<TaskResponse> tasks = taskService.getAllTasks();
-    List<NoteResponse> notes = noteService.getAllNotes();
-
-    long doneCount = tasks.stream().filter(t -> t.done() == true).count();
     long undoneCount = tasks.stream().filter(t -> t.done() == false).count();
-    int taskCount = notes.size();
 
-    return new SummaryResponse((int) undoneCount, (int) doneCount, taskCount);
+    // All notes created for the user (including deleted ones)
+    Optional<NotesCreatedEntity> userNotes = notesCreatedRepository.findById(user.getId());
+    int noteCount = userNotes.isPresent() ? userNotes.get().getCount() : 0;
+
+    // All completed tasks (including deleted ones)
+    List<UserTasksDone> doneTasks = userTasksDoneRepository.findAllById_userId(user.getId());
+    int doneCount = doneTasks.size();
+
+    return new SummaryResponse((int) undoneCount, doneCount, noteCount);
   }
 
   /**

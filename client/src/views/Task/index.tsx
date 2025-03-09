@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
-  Alert,
   Button,
   Card,
   Col,
@@ -21,6 +20,8 @@ import TaskUrl from '../../components/TaskUrl';
 import TaskTag from '../../components/TaskTag';
 import TaskTitle from '../../components/TaskTitle';
 import './style.css';
+import ContentHeader from '../../components/ContentHeader';
+import AlertError from '../../components/AlertError';
 
 /**
  * The Task component is a view that displays a list of tasks.
@@ -28,7 +29,6 @@ import './style.css';
  * @returns {React.ReactNode} The Task component
  */
 function Task(): React.ReactNode {
-  const [displayError, setDisplayError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [tasks, setTasks] = useState<TaskResponse[]>([]);
   const [savedTasks, setSavedTasks] = useState<TaskResponse[]>([]);
@@ -43,11 +43,9 @@ function Task(): React.ReactNode {
   const handleError = (e: unknown): void => {
     if (typeof e === 'string') {
       setErrorMessage(translateServerResponse(e, i18n.language));
-      setDisplayError(true);
     }
     else if (e instanceof Error) {
       setErrorMessage(translateServerResponse(e.message, i18n.language));
-      setDisplayError(true);
     }
   };
 
@@ -118,7 +116,10 @@ function Task(): React.ReactNode {
     }
 
     const filteredTasks = savedTasks.filter((task: TaskResponse) => {
-      return task.description.toLowerCase().includes(text.toLowerCase());
+      const shouldFilter = task.description.toLowerCase().includes(text.toLowerCase())
+        || task.tag.toLowerCase().includes(text.toLowerCase())
+        || task.urls.filter((url: string) => url.includes(text.toLowerCase())).length > 0;
+      return shouldFilter;
     });
 
     setTasks([...filteredTasks]);
@@ -130,18 +131,15 @@ function Task(): React.ReactNode {
 
   return (
     <Container>
-      {/* Tasks added */}
-      <Row className="main-margin">
-        <Col xs={12}>
-          {displayError
-            ? (
-                <Alert variant="danger">
-                  { errorMessage }
-                </Alert>
-              )
-            : null}
-        </Col>
-      </Row>
+      <ContentHeader
+        h1TextRegular="All"
+        h1TextBold="Tasks"
+        subtitle="Be on top of your TODO list"
+        h2BlackText="Create, Filter, and Easily Find"
+        h2GreenText="Them"
+      />
+
+      <AlertError errorMessage={errorMessage} />
 
       <Row>
         <Col xs={9}>

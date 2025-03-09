@@ -1,9 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { NavLink } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
   Accordion,
-  Alert,
   Button,
   Card,
   Col,
@@ -12,7 +10,6 @@ import {
   InputGroup,
   Row
 } from 'react-bootstrap';
-import { PlusCircleFill } from 'react-bootstrap-icons';
 import { HomeSearchResponse } from '../../types/HomeSearchResponse';
 import { TaskResponse } from '../../types/TaskResponse';
 import { NoteResponse } from '../../types/NoteResponse';
@@ -24,6 +21,8 @@ import CompletedTasks from '../../components/CompletedTasks';
 import TaskProgress from '../../components/TaskProgress';
 import AuthContext from '../../context/AuthContext';
 import './style.css';
+import ContentHeader from '../../components/ContentHeader';
+import AlertError from '../../components/AlertError';
 
 /**
  * Home page component.
@@ -37,7 +36,6 @@ function Home(): React.ReactNode {
   const { i18n, t } = useTranslation();
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [validated, setValidated] = useState<boolean>(false);
-  const [formInvalid, setFormInvalid] = useState<boolean>(false);
   const [searchResults, setSearchResults] = useState<HomeSearchResponse | null>(null);
   const [name, setName] = useState<string>(user?.name ? user?.name : 'User');
 
@@ -85,12 +83,10 @@ function Home(): React.ReactNode {
 
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
-      setFormInvalid(true);
       setErrorMessage(translateServerResponse('Please type at least 3 characters', i18n.language));
       return;
     }
 
-    setFormInvalid(false);
     const searched: boolean = await searchTerm(form.search_term.value);
     if (searched) {
       form.reset();
@@ -104,40 +100,14 @@ function Home(): React.ReactNode {
 
   return (
     <Container>
-      <h1 className="poppins-regular home-hello main-margin">
-        {t('home_welcome_title')}
-        <b>{name}</b>
-      </h1>
-      <p className="poppins-regular home-subtitle">
-        Welcome to TaskNote! Get ready to complete your pending tasks
-      </p>
-
-      <Row className="mb-3">
-        <Col xs={8}>
-          <h2 className="poppins-regular">Start Your Day, Be</h2>
-          <h2 className="poppins-bold home-productive">Productive</h2>
-        </Col>
-        <Col xs={4} className="text-end">
-          <NavLink to="/tasks/new">
-            <button
-              type="button"
-              className="home-new-item w-45 mb-2"
-            >
-              <PlusCircleFill size={25} />
-              Add note
-            </button>
-          </NavLink>
-          <NavLink to="/notes/new">
-            <button
-              type="button"
-              className="home-new-item w-45"
-            >
-              <PlusCircleFill size={25} />
-              Add task
-            </button>
-          </NavLink>
-        </Col>
-      </Row>
+      <ContentHeader
+        h1TextRegular={t('home_welcome_title')}
+        h1TextBold={name}
+        subtitle="Welcome to TaskNote! Get ready to complete your pending tasks"
+        h2BlackText="Start Your Day, Be"
+        h2GreenText="Productive"
+        isHomeComponent
+      />
 
       <Row className="mb-4">
         <Col xs={12} lg={6} className="mb-4">
@@ -154,13 +124,7 @@ function Home(): React.ReactNode {
             <Card.Body>
               <Card.Title>{t('home_card_search_label')}</Card.Title>
 
-              {formInvalid
-                ? (
-                    <Alert variant="danger">
-                      { errorMessage }
-                    </Alert>
-                  )
-                : null}
+              <AlertError errorMessage={errorMessage} />
 
               <Form noValidate validated={validated} onSubmit={handleSearch}>
                 <InputGroup className="mb-3">

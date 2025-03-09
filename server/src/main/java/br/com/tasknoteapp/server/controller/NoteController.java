@@ -1,6 +1,7 @@
 package br.com.tasknoteapp.server.controller;
 
 import br.com.tasknoteapp.server.entity.NoteEntity;
+import br.com.tasknoteapp.server.exception.NoteNotFoundException;
 import br.com.tasknoteapp.server.request.NotePatchRequest;
 import br.com.tasknoteapp.server.request.NoteRequest;
 import br.com.tasknoteapp.server.response.NoteResponse;
@@ -59,6 +60,42 @@ public class NoteController {
       })
   public List<NoteResponse> getAllNotes() {
     return noteService.getAllNotes();
+  }
+
+  /**
+   * Get a note by its ID.
+   *
+   * @param id Note identification.
+   * @return NoteResponse with note data and its urls, if any.
+   * @throws NoteNotFoundException when note not found.
+   */
+  @GetMapping("/{id}")
+  @Operation(
+      summary = "Get a note by its ID",
+      description = "Get a note by its ID and its urls, if any.",
+      responses = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Return the found Note and its urls, if any."),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized. Access Denied",
+            content = @Content(schema = @Schema(implementation = Void.class))),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Note not found",
+            content = @Content(schema = @Schema(implementation = Void.class)))
+      })
+  public NoteResponse getTaskById(
+      @Parameter(
+              name = "id",
+              in = ParameterIn.PATH,
+              description = "Note id to be fetched.",
+              required = true,
+              schema = @Schema(type = "integer", format = "int64"))
+          @PathVariable
+          Long id) {
+    return noteService.getNoteById(id);
   }
 
   /**

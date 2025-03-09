@@ -108,10 +108,10 @@ const ruTranslations = {
     организованной. Вы можете связаться со мной по адресу `,
   about_dev_description_two: ' для любых вопросов или отзывов.',
 
-  account_my_account_tittle: 'Мой аккаунт',
+  account_my_account_title: 'Мой аккаунт',
   account_my_account_hello: 'Привет! Здесь вы можете управлять своими предпочтениями.',
   account_my_account_logged: 'Вы вошли как:',
-  account_app_lang_tittle: 'Язык приложения',
+  account_app_lang_title: 'Язык приложения',
   account_app_lang_description: 'Вы можете выбрать один из этих языков:',
   account_privacy_little: 'Ваша конфиденциальность имеет значение',
   account_privacy_text: `Мы стремимся защищать вашу конфиденциальность и
@@ -119,7 +119,7 @@ const ruTranslations = {
     аккаунта в любое время. После обработки вся ваша личная информация будет
     навсегда удалена с наших серверов.`,
   account_privacy_delete_btn: 'Удалить все мои данные',
-  account_delete_tittle: 'Вы собираетесь удалить свой аккаунт!',
+  account_delete_title: 'Вы собираетесь удалить свой аккаунт!',
   account_delete_description: `Это действие нельзя отменить. Если вы действительно хотите
     удалить все свои данные, нажмите кнопку ниже. Если нет, закройте это сообщение, и ваши
     данные будут в безопасности.`,

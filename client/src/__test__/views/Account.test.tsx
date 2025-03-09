@@ -17,6 +17,7 @@ vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     i18n: {
       changeLanguage: changeLanguageMock,
+      language: 'en'
     },
     t: (key: string) => key,
   }),
@@ -73,7 +74,7 @@ describe('Account Component', () => {
     const { getByText } = renderAccount();
     const deleteButton = getByText('account_privacy_delete_btn');
     fireEvent.click(deleteButton);
-    expect(getByText('account_delete_tittle')).toBeDefined();
+    expect(getByText('account_delete_title')).toBeDefined();
   })
 
   it('should call deleteAccount API and signOut when delete is confirmed', async () => {
@@ -111,5 +112,15 @@ describe('Account Component', () => {
     });
 
     mockPatchJSON.mockRestore();
+  });
+
+  it('should render text based on new contentHeader component', () => {
+    const { getByText } = renderAccount();
+
+    expect(getByText('My')).toBeDefined();
+    expect(getByText('Account')).toBeDefined();
+    expect(getByText('account_my_account_hello')).toBeDefined();
+    expect(getByText('Update and Manage, Your')).toBeDefined();
+    expect(getByText('Data')).toBeDefined();
   });
 });

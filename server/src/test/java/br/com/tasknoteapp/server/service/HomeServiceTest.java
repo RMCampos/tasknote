@@ -3,9 +3,11 @@ package br.com.tasknoteapp.server.service;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import br.com.tasknoteapp.server.entity.NotesCreatedEntity;
 import br.com.tasknoteapp.server.entity.UserEntity;
 import br.com.tasknoteapp.server.entity.UserTasksDone;
 import br.com.tasknoteapp.server.entity.UserTasksDonePk;
+import br.com.tasknoteapp.server.repository.NotesCreatedRepository;
 import br.com.tasknoteapp.server.repository.UserTasksDoneRepository;
 import br.com.tasknoteapp.server.response.NoteResponse;
 import br.com.tasknoteapp.server.response.SearchResponse;
@@ -37,6 +39,8 @@ class HomeServiceTest {
 
   @Mock private AuthService authService;
 
+  @Mock private NotesCreatedRepository notesCreatedRepository;
+
   private HomeService homeService;
 
   private List<TaskResponse> tasks;
@@ -45,7 +49,13 @@ class HomeServiceTest {
   @BeforeEach
   void setUp() {
     homeService =
-        new HomeService(taskService, noteService, userTasksDoneRepository, authUtil, authService);
+        new HomeService(
+            taskService,
+            noteService,
+            userTasksDoneRepository,
+            authUtil,
+            authService,
+            notesCreatedRepository);
 
     TaskResponse task1 =
         new TaskResponse(2L, "Task 1", false, false, null, null, null, "tag", List.of());
@@ -53,15 +63,25 @@ class HomeServiceTest {
         new TaskResponse(3L, "Task 2", false, false, null, null, null, "tag", List.of());
     tasks = List.of(task1, task2);
 
-    NoteResponse note1 = new NoteResponse(453L, "Note 1", "desc", List.of(), "tag");
-    NoteResponse note2 = new NoteResponse(455L, "Note 2", "desc", List.of(), "tag");
+    NoteResponse note1 = new NoteResponse(453L, "Note 1", "desc", null, "tag");
+    NoteResponse note2 = new NoteResponse(455L, "Note 2", "desc", null, "tag");
     notes = List.of(note1, note2);
   }
 
   @Test
   void getSummary_shouldReturnSummaryResponse() {
+    String userEmail = "user@domain.com";
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(userEmail));
+
+    UserEntity userEntity = new UserEntity();
+    userEntity.setId(1L);
+    userEntity.setEmail(userEmail);
+    when(authService.findByEmail(userEmail)).thenReturn(Optional.of(userEntity));
+
     when(taskService.getAllTasks()).thenReturn(tasks);
-    when(noteService.getAllNotes()).thenReturn(notes);
+
+    NotesCreatedEntity notesCreated = new NotesCreatedEntity(userEntity.getId(), 2);
+    when(notesCreatedRepository.findById(userEntity.getId())).thenReturn(Optional.of(notesCreated));
 
     SummaryResponse summary = homeService.getSummary();
 

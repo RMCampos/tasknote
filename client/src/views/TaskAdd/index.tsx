@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Alert,
   Button,
   Card,
   Col,
@@ -16,6 +15,8 @@ import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
 import { translateServerResponse } from '../../utils/TranslatorUtils';
 import FormInput from '../../components/FormInput';
+import ContentHeader from '../../components/ContentHeader';
+import AlertError from '../../components/AlertError';
 
 type TaskAction = 'add' | 'edit';
 
@@ -26,7 +27,6 @@ type TaskAction = 'add' | 'edit';
  */
 function TaskAdd(): React.ReactNode {
   const [validated, setValidated] = useState<boolean>(false);
-  const [formInvalid, setFormInvalid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [taskId, setTaskId] = useState<number>(0);
   const [taskDescription, setTaskDescription] = useState<string>('');
@@ -48,11 +48,9 @@ function TaskAdd(): React.ReactNode {
   const handleError = (e: unknown): void => {
     if (typeof e === 'string') {
       setErrorMessage(translateServerResponse(e, i18n.language));
-      setFormInvalid(true);
     }
     else if (e instanceof Error) {
       setErrorMessage(translateServerResponse(e.message, i18n.language));
-      setFormInvalid(true);
     }
   };
 
@@ -105,7 +103,6 @@ function TaskAdd(): React.ReactNode {
 
     setAction('add');
     setValidated(false);
-    setFormInvalid(false);
   };
 
   /**
@@ -120,12 +117,9 @@ function TaskAdd(): React.ReactNode {
 
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
-      setFormInvalid(true);
       setErrorMessage(translateServerResponse('Please fill in all the fields', i18n.language));
       return;
     }
-
-    setFormInvalid(false);
 
     if (action === 'add') {
       const addPayload: TaskNoteRequest = {
@@ -197,22 +191,29 @@ function TaskAdd(): React.ReactNode {
 
   return (
     <Container>
+      <ContentHeader
+        h1TextRegular="All"
+        h1TextBold="Tasks"
+        subtitle="Be on top of your TODO list"
+        h2BlackText="Create, Filter, and Easily Find"
+        h2GreenText="Them"
+      />
+
       {/* Form to add, edit and save tasks */}
-      <Row className="mt-3">
+      <Row className="main-margin">
         <Col xs={12}>
           <Card>
             <Card.Body>
               <Card.Title>{t('task_form_title')}</Card.Title>
 
-              {formInvalid
-                ? (
-                    <Alert variant="danger" data-testid="add-task-error-message">
-                      { errorMessage }
-                    </Alert>
-                  )
-                : null}
+              <AlertError errorMessage={errorMessage} data-testid="add-task-error-message" />
 
-              <Form noValidate validated={validated} onSubmit={handleSubmit}>
+              <Form
+                noValidate
+                validated={validated}
+                onSubmit={handleSubmit}
+                autoComplete="off"
+              >
                 {/* Description */}
                 <FormInput
                   labelText={t('task_form_desc_label')}
@@ -257,7 +258,7 @@ function TaskAdd(): React.ReactNode {
 
                 {/* Tag */}
                 <FormInput
-                  labelText="Tag"
+                  labelText="Tags"
                   iconName="Hash"
                   required={false}
                   type="text"

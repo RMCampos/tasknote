@@ -8,9 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -29,14 +28,15 @@ public class NoteEntity {
 
   private String title;
 
+  @Column(columnDefinition = "TEXT")
   private String description;
 
   @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, updatable = false)
   @ManyToOne(fetch = FetchType.LAZY)
   private UserEntity user;
 
-  @OneToMany(mappedBy = "note", fetch = FetchType.LAZY)
-  private List<NoteUrlEntity> urls;
+  @OneToOne(mappedBy = "note", fetch = FetchType.LAZY)
+  private NoteUrlEntity noteUrl;
 
   @Column(name = "tag", nullable = true, length = 30)
   private String tag;

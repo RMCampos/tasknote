@@ -2,17 +2,18 @@ package br.com.tasknoteapp.server.service;
 
 import br.com.tasknoteapp.server.entity.NoteEntity;
 import br.com.tasknoteapp.server.entity.NoteUrlEntity;
+import br.com.tasknoteapp.server.entity.NotesCreatedEntity;
 import br.com.tasknoteapp.server.entity.UserEntity;
 import br.com.tasknoteapp.server.exception.NoteNotFoundException;
+import br.com.tasknoteapp.server.exception.TaskNotFoundException;
 import br.com.tasknoteapp.server.repository.NoteRepository;
 import br.com.tasknoteapp.server.repository.NoteUrlRepository;
+import br.com.tasknoteapp.server.repository.NotesCreatedRepository;
 import br.com.tasknoteapp.server.request.NotePatchRequest;
 import br.com.tasknoteapp.server.request.NoteRequest;
-import br.com.tasknoteapp.server.request.NoteUrlPatchRequest;
 import br.com.tasknoteapp.server.response.NoteResponse;
 import br.com.tasknoteapp.server.util.AuthUtil;
 import jakarta.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,6 +35,8 @@ public class NoteService {
 
   private final NoteUrlRepository noteUrlRepository;
 
+  private final NotesCreatedRepository notesCreatedRepository;
+
   /**
    * Get all notes for the current user.
    *
@@ -48,6 +51,25 @@ public class NoteService {
     log.info("{} notes found!", notes.size());
 
     return notes.stream().map(NoteResponse::fromEntity).toList();
+  }
+
+  /**
+   * Get a note by its id.
+   *
+   * @param noteId The task id in the database.
+   * @return {@link NoteResponse} with the found task or throw a {@link TaskNotFoundException}.
+   */
+  public NoteResponse getNoteById(Long noteId) {
+    UserEntity user = getCurrentUser();
+    log.info("Get note {} to user {}", noteId, user.getId());
+
+    Optional<NoteEntity> task = noteRepository.findById(noteId);
+    if (task.isEmpty()) {
+      throw new NoteNotFoundException();
+    }
+
+    log.info("Note found! Id {}", noteId);
+    return NoteResponse.fromEntity(task.get());
   }
 
   /**
@@ -67,10 +89,23 @@ public class NoteService {
     note.setUser(user);
     NoteEntity created = noteRepository.save(note);
 
-    if (!Objects.isNull(noteRequest.urls()) && !noteRequest.urls().isEmpty()) {
-      List<NoteUrlEntity> urls = saveUrls(note, noteRequest.urls());
-      note.setUrls(urls);
+    if (!Objects.isNull(noteRequest.url()) && !noteRequest.url().isEmpty()) {
+      NoteUrlEntity urlEntity = saveUrl(note, noteRequest.url());
+      note.setNoteUrl(urlEntity);
     }
+
+    Optional<NotesCreatedEntity> userNote = notesCreatedRepository.findById(user.getId());
+    NotesCreatedEntity userNoteEntity = null;
+    if (userNote.isPresent()) {
+      userNoteEntity = userNote.get();
+      userNoteEntity.setCount(userNoteEntity.getCount() + 1);
+    } else {
+      userNoteEntity = new NotesCreatedEntity();
+      userNoteEntity.setCount(1);
+      userNoteEntity.setUserId(user.getId());
+    }
+
+    notesCreatedRepository.save(userNoteEntity);
 
     log.info("Note created! Id {}", created.getId());
     return created;
@@ -102,21 +137,14 @@ public class NoteService {
       noteEntity.setDescription(patch.description());
     }
 
-    if (!Objects.isNull(patch.urls())) {
-      List<Long> urlIds =
-          patch.urls().stream().filter(p -> p.id() != null).map(NoteUrlPatchRequest::id).toList();
-      if (!urlIds.isEmpty()) {
-        noteUrlRepository.deleteAllByIdIn(urlIds);
-        log.info("Deleted {} urls from task {}", urlIds.size(), noteId);
-      } else {
-        log.info("No urls to patch for task {}", noteId);
-      }
+    noteUrlRepository.deleteByNote_id(noteId);
+    log.info("URL deleted from task {}", noteId);
 
-      List<String> urlsList =
-          patch.urls().stream().filter(p -> p.id() == null).map(NoteUrlPatchRequest::url).toList();
-      List<NoteUrlEntity> urls = saveUrls(noteEntity, urlsList);
-
-      noteEntity.setUrls(urls);
+    if (!Objects.isNull(patch.url()) && !patch.url().isBlank()) {
+      NoteUrlEntity urlEntity = saveUrl(noteEntity, patch.url());
+      noteEntity.setNoteUrl(urlEntity);
+    } else {
+      log.info("No urls to patch for task {}", noteId);
     }
 
     NoteEntity patchedNote = noteRepository.save(noteEntity);
@@ -142,10 +170,10 @@ public class NoteService {
       throw new NoteNotFoundException();
     }
 
-    List<NoteUrlEntity> urls = note.get().getUrls();
-    if (!urls.isEmpty()) {
-      noteUrlRepository.deleteAll(urls);
-      log.info("Deleted {} urls from task {}", urls.size(), noteId);
+    NoteUrlEntity noteUrl = note.get().getNoteUrl();
+    if (!Objects.isNull(noteUrl)) {
+      noteUrlRepository.delete(noteUrl);
+      log.info("URL Deleted from task {}", noteId);
     } else {
       log.info("No urls to delete for task {}", noteId);
     }
@@ -179,18 +207,14 @@ public class NoteService {
     return authService.findByEmail(email).orElseThrow();
   }
 
-  private List<NoteUrlEntity> saveUrls(NoteEntity noteEntity, List<String> urls) {
-    List<NoteUrlEntity> tasksUrl = new ArrayList<>();
-    for (String url : urls) {
-      NoteUrlEntity taskUrl = new NoteUrlEntity();
-      taskUrl.setUrl(url);
-      taskUrl.setNote(noteEntity);
-      tasksUrl.add(taskUrl);
-    }
+  private NoteUrlEntity saveUrl(NoteEntity noteEntity, String url) {
+    NoteUrlEntity taskUrl = new NoteUrlEntity();
+    taskUrl.setUrl(url);
+    taskUrl.setNote(noteEntity);
 
-    List<NoteUrlEntity> savedUrls = noteUrlRepository.saveAll(tasksUrl);
-    log.info("Saved {} urls to note {}", savedUrls.size(), noteEntity.getId());
+    NoteUrlEntity savedUrl = noteUrlRepository.save(taskUrl);
+    log.info("URL saved to note {}", noteEntity.getId());
 
-    return savedUrls;
+    return savedUrl;
   }
 }

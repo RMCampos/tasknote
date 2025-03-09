@@ -1,6 +1,7 @@
 import React from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import ContentHeader from '../../components/ContentHeader';
 
 /**
  * About page component.
@@ -15,21 +16,13 @@ function About(): React.ReactNode {
 
   return (
     <Container>
-      <h1 className="poppins-regular home-hello main-margin">
-        About
-        {' '}
-        <b>TaskNoteApp</b>
-      </h1>
-      <p className="poppins-regular home-subtitle">
-        Here you can find more information about this app and the developer
-      </p>
-
-      <Row className="mb-3">
-        <Col xs={12}>
-          <h2 className="poppins-regular">Tasks and notes made</h2>
-          <h2 className="poppins-bold home-productive">Easy</h2>
-        </Col>
-      </Row>
+      <ContentHeader
+        h1TextRegular="About the"
+        h1TextBold="TaskNote App"
+        subtitle="Find more information about us and the app"
+        h2BlackText="Tasks and notes made"
+        h2GreenText="Easy"
+      />
 
       <Row className="justify-content-center mb-4">
         <Col xs={12}>

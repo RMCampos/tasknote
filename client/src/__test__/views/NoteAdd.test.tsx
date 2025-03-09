@@ -1,14 +1,15 @@
 import React from 'react';
-import { render, fireEvent, waitFor, getByText } from '@testing-library/react';
+import { render, fireEvent, waitFor, getByText, getByTestId } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router';
 import { I18nextProvider } from 'react-i18next';
-import TaskAdd from '../../views/TaskAdd';
+import NoteAdd from '../../views/NoteAdd';
 import AuthContext from '../../context/AuthContext';
 import i18n from '../../i18n';
 import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
 import TaskNoteRequest from '../../types/TaskNoteRequest';
+import { NoteResponse } from '../../types/NoteResponse';
 
 vi.mock('../../api-service/api');
 
@@ -44,64 +45,63 @@ const authContextMock = {
   updateUser: vi.fn(),
 };
 
-describe('TaskAdd Component', () => {
-  const renderTaskAdd = () => {
+describe('NoteAdd Component', () => {
+  const renderNoteAdd = () => {
     return render(
       <MemoryRouter>
         <AuthContext.Provider value={authContextMock}>
           <I18nextProvider i18n={i18n}>
-            <TaskAdd />
+            <NoteAdd />
           </I18nextProvider>
         </AuthContext.Provider>
       </MemoryRouter>
     );
   };
 
-  it('should render the TaskAdd component', () => {
-    const { getByText } = renderTaskAdd();
-    expect(getByText('task_form_title')).toBeDefined();
-    expect(getByText('task_form_desc_label')).toBeDefined();
+  it('should render the NoteAdd component', () => {
+    const { getByText } = renderNoteAdd();
+    expect(getByText('note_form_title_label')).toBeDefined();
     expect(getByText('task_form_url_label')).toBeDefined();
-    expect(getByText('task_form_duedate_label')).toBeDefined();
-    expect(getByText('task_form_submit')).toBeDefined();
+    expect(getByText('note_form_content_label')).toBeDefined();
+    expect(getByText('note_form_submit')).toBeDefined();
   });
 
   it('should show error message when form is invalid', async () => {
-    const { getByText, getByRole } = renderTaskAdd();
-    const submitButton = getByRole('button', { name: 'task_form_submit' });
+    const { getByText, getByRole } = renderNoteAdd();
+    const submitButton = getByRole('button', { name: 'note_form_submit' });
     fireEvent.click(submitButton);
     await waitFor(() => {
       expect(getByText('Please fill in all the fields')).toBeDefined();
     });
   });
 
-  it('should add a new task when form is valid', async () => {
-    const { getByLabelText, getByRole } = renderTaskAdd();
-    const descriptionInput = getByLabelText('task_form_desc_label') as HTMLInputElement;
-    const submitButton = getByRole('button', { name: 'task_form_submit' });
+  it('should add a new note when form is valid', async () => {
+    const { getByLabelText, getByTestId, getByRole } = renderNoteAdd();
+    const descriptionInput = getByLabelText('note_form_title_label') as HTMLInputElement;
+    const noteContentInput = getByTestId('note-content-input-area') as HTMLAreaElement;
+    const submitButton = getByRole('button', { name: 'note_form_submit' });
 
-    fireEvent.change(descriptionInput, { target: { value: 'New Task' } });
-    expect(descriptionInput.value).toBe('New Task');
+    fireEvent.change(descriptionInput, { target: { value: 'New Note' } });
+    fireEvent.change(noteContentInput, { target: { value: 'Note content' } });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      const newTask: TaskNoteRequest = {
-        description: 'New Task',
-        dueDate: '',
-        highPriority: false,
-        tag: '',
-        urls: []
+      const newNote: NoteResponse = {
+        id: 0,
+        title: 'New Note',
+        description: 'Note content',
+        url: ''
       }
-      expect(api.postJSON).toHaveBeenCalledWith(ApiConfig.tasksUrl, newTask);
+      expect(api.postJSON).toHaveBeenCalledWith(ApiConfig.notesUrl, newNote);
     });
   });
 
   it('should render text based on new contentHeader component', () => {
-    const { getByText } = renderTaskAdd();
+    const { getByText } = renderNoteAdd();
 
     expect(getByText('All')).toBeDefined();
-    expect(getByText('Tasks')).toBeDefined();
-    expect(getByText('Be on top of your TODO list')).toBeDefined();
+    expect(getByText('Notes')).toBeDefined();
+    expect(getByText('Save your notes in plain text or Markdown format')).toBeDefined();
     expect(getByText('Create, Filter, and Easily Find')).toBeDefined();
     expect(getByText('Them')).toBeDefined();
   });

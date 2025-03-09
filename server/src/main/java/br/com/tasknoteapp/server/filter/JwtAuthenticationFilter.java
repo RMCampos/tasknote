@@ -51,43 +51,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       return;
     }
 
-    try {
-      String jwtToken = authorizationHeader;
-      
-      if (authorizationHeader.startsWith("Bearer ")) {
-        jwtToken = authorizationHeader.substring(7);
-      }
-      
-      String email = jwtService.getEmailFromToken(jwtToken);
-
-      if (Objects.isNull(email)) {
-        throw new ServletException("Invalid token: email not found");
-      }
-
-      UserDetails user = userService.userDetailsService().loadUserByUsername(email);
-
-      if (!jwtService.validateTokenAndUser(jwtToken, user)) {
-        throw new ServletException("Invalid token for user");
-      }
-
-      SecurityContext context = SecurityContextHolder.createEmptyContext();
-
-      UsernamePasswordAuthenticationToken authToken =
-          new UsernamePasswordAuthenticationToken(
-              user.getUsername(), user.getPassword(), user.getAuthorities());
-
-      authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-      context.setAuthentication(authToken);
-      SecurityContextHolder.setContext(context);
-
-      filterChain.doFilter(request, response);
+    String jwtToken = authorizationHeader;
+    
+    if (authorizationHeader.startsWith("Bearer ")) {
+      jwtToken = authorizationHeader.substring(7);
     }
-    catch (Exception e) {
-      log.error("Error authenticating user", e);
-      SecurityContextHolder.clearContext();
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      response.getWriter().write("Unauthorized: " + e.getMessage());
-      return;
+    
+    String email = jwtService.getEmailFromToken(jwtToken);
+
+    if (Objects.isNull(email)) {
+      throw new ServletException("Invalid token: email not found");
     }
+
+    UserDetails user = userService.userDetailsService().loadUserByUsername(email);
+
+    if (!jwtService.validateTokenAndUser(jwtToken, user)) {
+      throw new ServletException("Invalid token for user");
+    }
+
+    SecurityContext context = SecurityContextHolder.createEmptyContext();
+
+    UsernamePasswordAuthenticationToken authToken =
+        new UsernamePasswordAuthenticationToken(
+            user.getUsername(), user.getPassword(), user.getAuthorities());
+
+    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+    context.setAuthentication(authToken);
+    SecurityContextHolder.setContext(context);
+
+    filterChain.doFilter(request, response);
   }
 }
