@@ -8,7 +8,6 @@ import AuthContext from '../../context/AuthContext';
 import i18n from '../../i18n';
 import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
-import TaskNoteRequest from '../../types/TaskNoteRequest';
 import { NoteResponse } from '../../types/NoteResponse';
 
 vi.mock('../../api-service/api');
@@ -35,7 +34,8 @@ const authContextMock = {
     name: 'Ricardo',
     email: 'test@example.com',
     admin: false,
-    createdAt: new Date()
+    createdAt: new Date(),
+    gravatarImageUrl: 'http://url.com'
   },
   checkCurrentAuthUser: vi.fn(),
   signIn: vi.fn(),

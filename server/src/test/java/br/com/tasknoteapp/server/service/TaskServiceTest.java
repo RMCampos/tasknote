@@ -1,5 +1,11 @@
 package br.com.tasknoteapp.server.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
@@ -19,9 +25,10 @@ import br.com.tasknoteapp.server.request.TaskPatchRequest;
 import br.com.tasknoteapp.server.request.TaskRequest;
 import br.com.tasknoteapp.server.response.TaskResponse;
 import br.com.tasknoteapp.server.util.AuthUtil;
+import br.com.tasknoteapp.server.util.TimeAgoUtil;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -77,11 +84,11 @@ class TaskServiceTest {
 
     TaskResponse taskResponse = taskService.getTaskById(taskId);
 
-    Assertions.assertNotNull(taskResponse);
-    Assertions.assertEquals(taskEntity.getId(), taskResponse.id());
-    Assertions.assertEquals(taskEntity.getDescription(), taskResponse.description());
-    Assertions.assertEquals(taskEntity.getHighPriority(), taskResponse.highPriority());
-    Assertions.assertEquals(taskEntity.getTag(), taskResponse.tag());
+    assertNotNull(taskResponse);
+    assertEquals(taskEntity.getId(), taskResponse.id());
+    assertEquals(taskEntity.getDescription(), taskResponse.description());
+    assertEquals(taskEntity.getHighPriority(), taskResponse.highPriority());
+    assertEquals(taskEntity.getTag(), taskResponse.tag());
   }
 
   @Test
@@ -98,11 +105,7 @@ class TaskServiceTest {
 
     when(taskRepository.findById(taskId)).thenReturn(Optional.empty());
 
-    Assertions.assertThrows(
-        TaskNotFoundException.class,
-        () -> {
-          taskService.getTaskById(taskId);
-        });
+    assertThrows(TaskNotFoundException.class, () -> taskService.getTaskById(taskId));
   }
 
   @Test
@@ -125,8 +128,8 @@ class TaskServiceTest {
 
     taskService.createTask(request);
 
-    Assertions.assertNotNull(entity);
-    Assertions.assertEquals("development", entity.getTag());
+    assertNotNull(entity);
+    assertEquals("development", entity.getTag());
   }
 
   @Test
@@ -149,8 +152,8 @@ class TaskServiceTest {
 
     taskService.createTask(request);
 
-    Assertions.assertNotNull(entity);
-    Assertions.assertEquals("development", entity.getTag());
+    assertNotNull(entity);
+    assertEquals("development", entity.getTag());
   }
 
   @Test
@@ -174,8 +177,8 @@ class TaskServiceTest {
 
     taskService.createTask(request);
 
-    Assertions.assertNotNull(entity);
-    Assertions.assertEquals("development", entity.getTag());
+    assertNotNull(entity);
+    assertEquals("development", entity.getTag());
   }
 
   @Test
@@ -200,8 +203,8 @@ class TaskServiceTest {
 
     TaskResponse response = taskService.createTask(request);
 
-    Assertions.assertNotNull(response);
-    Assertions.assertTrue(response.urls().isEmpty());
+    assertNotNull(response);
+    assertTrue(response.urls().isEmpty());
   }
 
   @Test
@@ -226,8 +229,8 @@ class TaskServiceTest {
 
     TaskResponse response = taskService.createTask(request);
 
-    Assertions.assertNotNull(response);
-    Assertions.assertTrue(response.urls().isEmpty());
+    assertNotNull(response);
+    assertTrue(response.urls().isEmpty());
   }
 
   @Test
@@ -257,9 +260,9 @@ class TaskServiceTest {
 
     TaskResponse response = taskService.createTask(request);
 
-    Assertions.assertNotNull(response);
-    Assertions.assertFalse(response.urls().isEmpty());
-    Assertions.assertEquals("debian.org", response.urls().get(0));
+    assertNotNull(response);
+    assertFalse(response.urls().isEmpty());
+    assertEquals("debian.org", response.urls().get(0));
   }
 
   @Test
@@ -280,9 +283,9 @@ class TaskServiceTest {
 
     List<TaskResponse> responses = taskService.getAllTasks();
 
-    Assertions.assertFalse(responses.isEmpty());
-    Assertions.assertEquals(1, responses.size());
-    Assertions.assertEquals(entity.getTag(), responses.get(0).tag());
+    assertFalse(responses.isEmpty());
+    assertEquals(1, responses.size());
+    assertEquals(entity.getTag(), responses.get(0).tag());
   }
 
   @Test
@@ -328,11 +331,7 @@ class TaskServiceTest {
 
     when(taskRepository.findById(taskId)).thenReturn(Optional.empty());
 
-    Assertions.assertThrows(
-        TaskNotFoundException.class,
-        () -> {
-          taskService.deleteTask(taskId);
-        });
+    assertThrows(TaskNotFoundException.class, () -> taskService.deleteTask(taskId));
   }
 
   @Test
@@ -358,22 +357,156 @@ class TaskServiceTest {
 
     when(taskUrlRepository.findAllById_taskId(taskId)).thenReturn(List.of());
 
-    TaskEntity entity = new TaskEntity();
-    entity.setDescription("Updated description");
-    entity.setHighPriority(false);
-    entity.setDone(false);
-    entity.setTag(taskEntity.getTag());
-    when(taskRepository.save(any())).thenReturn(entity);
+    String dueDate = "2026-12-31";
+    String timeLeft = TimeAgoUtil.formatDueDate(LocalDate.parse(dueDate));
+
+    TaskEntity savedTask = new TaskEntity();
+    savedTask.setDescription("Test task updated");
+    savedTask.setHighPriority(false);
+    savedTask.setDueDate(LocalDate.parse(dueDate));
+    savedTask.setDone(true);
+    savedTask.setTag(taskEntity.getTag());
+    when(taskRepository.save(any())).thenReturn(savedTask);
 
     UserTasksDonePk pk = new UserTasksDonePk(USER_ID, taskId);
     when(userTasksDoneRepository.findById(pk)).thenReturn(Optional.empty());
 
     TaskPatchRequest patch =
-        new TaskPatchRequest("Updated description", null, null, null, false, null);
+        new TaskPatchRequest("Test task updated", true, null, dueDate, false, "test");
     TaskResponse patched = taskService.patchTask(taskId, patch);
 
-    Assertions.assertNotNull(patched);
-    Assertions.assertEquals("Updated description", patched.description());
-    Assertions.assertFalse(patched.highPriority());
+    assertNotNull(patched);
+    assertEquals("Test task updated", patched.description());
+    assertTrue(patched.done());
+    assertEquals(timeLeft, patched.dueDateFmt());
+    assertFalse(patched.highPriority());
+    assertEquals("test", patched.tag());
+    assertTrue(patched.urls().isEmpty());
+  }
+
+  @Test
+  @DisplayName("Patch a task with url it should succeed")
+  void patchTask_withUrl_shouldSucceed() {
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(USER_EMAIL));
+
+    UserEntity userEntity = new UserEntity();
+    userEntity.setId(USER_ID);
+    userEntity.setEmail(USER_EMAIL);
+    when(authService.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
+
+    Long taskId = 2525L;
+
+    TaskEntity taskEntity = new TaskEntity();
+    taskEntity.setId(taskId);
+    taskEntity.setDescription("Test task");
+    taskEntity.setHighPriority(true);
+    taskEntity.setDone(false);
+    taskEntity.setTag("test");
+    taskEntity.setUser(userEntity);
+    when(taskRepository.findById(taskId)).thenReturn(Optional.of(taskEntity));
+
+    TaskUrlEntity urlEntity = new TaskUrlEntity();
+    urlEntity.setId(new TaskUrlEntityPk(taskId, "www.url.com"));
+    when(taskUrlRepository.findAllById_taskId(taskId)).thenReturn(List.of(urlEntity));
+    doNothing().when(taskUrlRepository).deleteAllById_taskId(taskId);
+
+    String dueDate = "2026-12-31";
+    String timeLeft = TimeAgoUtil.formatDueDate(LocalDate.parse(dueDate));
+
+    TaskEntity savedTask = new TaskEntity();
+    savedTask.setDescription("Test task updated");
+    savedTask.setHighPriority(false);
+    savedTask.setDueDate(LocalDate.parse(dueDate));
+    savedTask.setDone(true);
+    savedTask.setTag(taskEntity.getTag());
+    when(taskRepository.save(any())).thenReturn(savedTask);
+
+    UserTasksDonePk pk = new UserTasksDonePk(USER_ID, taskId);
+    when(userTasksDoneRepository.findById(pk)).thenReturn(Optional.empty());
+
+    String url = "http://test.com";
+    TaskPatchRequest patch =
+        new TaskPatchRequest("Test task updated", true, List.of(url), dueDate, false, "test");
+    
+    when(taskUrlRepository.saveAll(any())).thenReturn(List.of());
+    TaskResponse patched = taskService.patchTask(taskId, patch);
+
+    assertNotNull(patched);
+    assertEquals("Test task updated", patched.description());
+    assertTrue(patched.done());
+    assertEquals(timeLeft, patched.dueDateFmt());
+    assertFalse(patched.highPriority());
+    assertEquals("test", patched.tag());
+    assertFalse(patched.urls().isEmpty());
+  }
+
+  @Test
+  @DisplayName("Patch a task with a not found task should fail")
+  void patchTask_taskNotFound_shouldFail() {
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(USER_EMAIL));
+
+    UserEntity userEntity = new UserEntity();
+    userEntity.setId(USER_ID);
+    userEntity.setEmail(USER_EMAIL);
+    when(authService.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
+
+    Long taskId = 2525L;
+
+    when(taskRepository.findById(taskId)).thenReturn(Optional.empty());
+
+    TaskPatchRequest patch =
+        new TaskPatchRequest("Test task updated", true, null, "2025-12-31", false, "test");
+
+    assertThrows(TaskNotFoundException.class, () -> taskService.patchTask(taskId, patch));
+  }
+
+  @Test
+  @DisplayName("Patch a task with a due date parse exception should fail")
+  void patchTask_dueDateParseException_shouldFail() {
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(USER_EMAIL));
+
+    UserEntity userEntity = new UserEntity();
+    userEntity.setId(USER_ID);
+    userEntity.setEmail(USER_EMAIL);
+    when(authService.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
+
+    Long taskId = 2525L;
+
+    TaskEntity taskEntity = new TaskEntity();
+    taskEntity.setId(taskId);
+    taskEntity.setDescription("Test task");
+    taskEntity.setHighPriority(true);
+    taskEntity.setDone(false);
+    taskEntity.setTag("test");
+    taskEntity.setUser(userEntity);
+    when(taskRepository.findById(taskId)).thenReturn(Optional.of(taskEntity));
+
+    when(taskUrlRepository.findAllById_taskId(taskId)).thenReturn(List.of());
+
+    TaskEntity savedTask = new TaskEntity();
+    savedTask.setDescription("Test task updated");
+    savedTask.setHighPriority(false);
+    savedTask.setDone(true);
+    savedTask.setTag(taskEntity.getTag());
+    when(taskRepository.save(any())).thenReturn(savedTask);
+
+    UserTasksDonePk pk = new UserTasksDonePk(USER_ID, taskId);
+    when(userTasksDoneRepository.findById(pk)).thenReturn(Optional.empty());
+
+    // wrong due date
+    String dueDate = "2026-31-31";
+
+    TaskPatchRequest patch =
+        new TaskPatchRequest("Test task updated", true, null, dueDate, false, "test");
+    TaskResponse patched = taskService.patchTask(taskId, patch);
+
+    assertNotNull(patched);
+    assertEquals("Test task updated", patched.description());
+    assertTrue(patched.done());
+    assertNull(patched.dueDate());
+    assertNull(patched.dueDateFmt());
+    assertFalse(patched.highPriority());
+    assertEquals("test", patched.tag());
+    assertTrue(patched.urls().isEmpty());
   }
 }

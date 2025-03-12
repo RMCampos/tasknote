@@ -283,6 +283,14 @@ function TaskAdd(): React.ReactNode {
                 <Button variant="primary" type="submit">
                   {t('task_form_submit')}
                 </Button>
+                <Button
+                  variant="outline-primary"
+                  type="button"
+                  className="ms-2"
+                  onClick={() => navigate('/tasks')}
+                >
+                  Cancel
+                </Button>
               </Form>
             </Card.Body>
           </Card>

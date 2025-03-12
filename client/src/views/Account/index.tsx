@@ -204,9 +204,10 @@ function Account(): React.ReactNode {
               If you want to display your picture, we support Gravatar.
               Please head to
               {' '}
-              <a href="#">Gravatar</a>
+              <a href="https://gravatar.com" target="_blank" rel="noreferrer">Gravatar</a>
               {' '}
-              to register or update your profile picture.
+              to register or update your profile picture. Once updated, please wait a few
+              minutes to see it here.
             </p>
           </div>
         </Col>

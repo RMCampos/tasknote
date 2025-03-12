@@ -4,4 +4,5 @@ export type UserResponse = {
   email: string;
   admin: boolean;
   createdAt: Date;
+  gravatarImageUrl: string;
 };

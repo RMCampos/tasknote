@@ -3,6 +3,7 @@ package br.com.tasknoteapp.server.response;
 import br.com.tasknoteapp.server.entity.UserEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /** This record represents a User Response object. */
 @Schema(description = "This record represents a User Response object.")
@@ -16,7 +17,8 @@ public record UserResponse(
     @Schema(
             description = "The inactivated date and time of the user",
             example = "2023-01-01T00:00:00")
-        LocalDateTime inactivatedAt) {
+        LocalDateTime inactivatedAt,
+    @Schema(description = "The gravatar image URL, if any") String gravatarImageUrl) {
 
   /**
    * Create a {@link UserResponse} instance from a {@link UserEntity}.
@@ -24,13 +26,14 @@ public record UserResponse(
    * @param user The user entity instance with user info to be used as source.
    * @return UserResponse instance.
    */
-  public static UserResponse fromEntity(UserEntity user) {
+  public static UserResponse fromEntity(UserEntity user, Optional<String> gravatarUrl) {
     return new UserResponse(
         user.getId(),
         user.getName(),
         user.getEmail(),
         user.getAdmin(),
         user.getCreatedAt(),
-        user.getInactivatedAt());
+        user.getInactivatedAt(),
+        gravatarUrl.orElse(null));
   }
 }

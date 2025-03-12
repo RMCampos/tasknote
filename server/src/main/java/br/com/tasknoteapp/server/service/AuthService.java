@@ -16,6 +16,9 @@ import br.com.tasknoteapp.server.response.UserResponse;
 import br.com.tasknoteapp.server.response.UserResponseWithToken;
 import br.com.tasknoteapp.server.util.AuthUtil;
 import jakarta.transaction.Transactional;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -79,7 +82,7 @@ public class AuthService {
     String token = jwtService.generateToken(user.getEmail());
 
     log.info("User created! Token {}", token);
-    return UserResponseWithToken.fromEntity(user, token);
+    return UserResponseWithToken.fromEntity(user, token, getGravatarImageUrl(login.email()));
   }
 
   /**
@@ -133,7 +136,8 @@ public class AuthService {
       log.info("User authenticated! Token {}", token);
 
       userPwdLimitRepository.deleteAllForUser(user.get().getId());
-      return UserResponseWithToken.fromEntity(user.get(), token);
+      return UserResponseWithToken.fromEntity(
+          user.get(), token, getGravatarImageUrl(login.email()));
     } catch (BadCredentialsException e) {
       log.error("BadCredentialsException when logging in user {}", user.get().getId());
 
@@ -176,7 +180,8 @@ public class AuthService {
 
     List<UserEntity> users = userRepository.findAll();
     List<UserResponse> usersResponse = new ArrayList<>(users.size());
-    users.forEach((u) -> usersResponse.add(UserResponse.fromEntity(u)));
+    users.forEach(
+        u -> usersResponse.add(UserResponse.fromEntity(u, getGravatarImageUrl(u.getEmail()))));
     log.info("{} user(s) found!", usersResponse.size());
 
     return usersResponse;
@@ -216,9 +221,15 @@ public class AuthService {
     userPwdLimitRepository.deleteAllForUser(currentUser.getId());
     userRepository.delete(currentUser);
 
-    return UserResponse.fromEntity(currentUser);
+    return UserResponse.fromEntity(currentUser, getGravatarImageUrl(email));
   }
 
+  /**
+   * Patches a user allowing him to update his information.
+   *
+   * @param patchRequest An instance of {@link UserPatchRequest} with the user data.
+   * @return UserResponse containing the updated info.
+   */
   @Transactional
   public UserResponse patchUserInfo(UserPatchRequest patchRequest) {
     Optional<String> currentUserEmail = authUtil.getCurrentUserEmail();
@@ -255,7 +266,31 @@ public class AuthService {
       userRepository.save(currentUser);
     }
 
-    return UserResponse.fromEntity(currentUser);
+    return UserResponse.fromEntity(currentUser, getGravatarImageUrl(email));
+  }
+
+  private Optional<String> getGravatarImageUrl(String email) {
+    email = email.toLowerCase().trim();
+    log.info("Current user email: {}", email);
+
+    try {
+      MessageDigest digest = MessageDigest.getInstance("SHA-256");
+      byte[] hashBytes = digest.digest(email.toLowerCase().getBytes(StandardCharsets.UTF_8));
+
+      StringBuilder hexString = new StringBuilder();
+      for (byte b : hashBytes) {
+        String hex = Integer.toHexString(0xff & b);
+        if (hex.length() == 1) {
+          hexString.append('0');
+        }
+        hexString.append(hex);
+      }
+      log.info("Email hashed: {}", hexString);
+      return Optional.of(hexString.toString());
+    } catch (NoSuchAlgorithmException | NullPointerException e) {
+      log.error("NoSuchAlgorithmException or NullPointerException", e.getMessage());
+    }
+    return Optional.empty();
   }
 
   private void checkLoginAttemptLimit(Long userId) {

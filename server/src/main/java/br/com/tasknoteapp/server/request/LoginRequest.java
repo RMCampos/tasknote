@@ -26,7 +26,7 @@ public class LoginRequest {
   String password;
 
   public String email() {
-    return email.toLowerCase();
+    return email.trim().toLowerCase();
   }
 
   public String password() {

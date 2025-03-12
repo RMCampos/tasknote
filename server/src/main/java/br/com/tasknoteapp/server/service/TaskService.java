@@ -17,6 +17,7 @@ import br.com.tasknoteapp.server.util.AuthUtil;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -132,10 +133,9 @@ public class TaskService {
     if (!Objects.isNull(patch.done())) {
       taskEntity.setDone(patch.done());
     }
-    taskEntity.setDueDate(null);
-    if (!Objects.isNull(patch.dueDate())) {
-      taskEntity.setDueDate(LocalDate.parse(patch.dueDate()));
-    }
+    
+    patchDueDate(taskEntity, patch);
+    
     taskEntity.setHighPriority(false);
     if (!Objects.isNull(patch.highPriority())) {
       taskEntity.setHighPriority(patch.highPriority());
@@ -147,21 +147,7 @@ public class TaskService {
 
     taskEntity.setLastUpdate(LocalDateTime.now());
 
-    List<TaskUrlEntity> urlsToDelete = taskUrlRepository.findAllById_taskId(taskId);
-    if (!urlsToDelete.isEmpty()) {
-      taskUrlRepository.deleteAllById_taskId(taskId);
-      log.info("Deleted {} urls from task {}", urlsToDelete.size(), taskId);
-    } else {
-      log.info("No urls to delete for task {}", taskId);
-    }
-
-    if (!Objects.isNull(patch.urls())) {
-      List<String> urlListToAdd =
-          patch.urls().stream().filter(u -> !u.isBlank()).map(String::trim).toList();
-      saveUrls(taskEntity, urlListToAdd);
-    } else {
-      log.info("No urls to add for task {}", taskId);
-    }
+    patchTaskUrl(taskEntity, patch);
 
     TaskEntity patchedTask = taskRepository.save(taskEntity);
 
@@ -257,5 +243,35 @@ public class TaskService {
 
     taskUrlRepository.saveAll(tasksUrl);
     log.info("Added {} urls from task {}", tasksUrl.size(), taskEntity.getId());
+  }
+
+  private void patchDueDate(TaskEntity taskEntity, TaskPatchRequest patch) {
+    taskEntity.setDueDate(null);
+    if (!Objects.isNull(patch.dueDate()) && !patch.description().isBlank()) {
+      try {
+        taskEntity.setDueDate(LocalDate.parse(patch.dueDate()));
+      } catch (DateTimeParseException e) {
+        log.error("Unable to parse the provided date: {}: {}", patch.dueDate(), e.getMessage(), e);
+      }
+    }
+  }
+
+  private void patchTaskUrl(TaskEntity taskEntity, TaskPatchRequest patch) {
+    Long taskId = taskEntity.getId();
+    List<TaskUrlEntity> urlsToDelete = taskUrlRepository.findAllById_taskId(taskId);
+    if (!urlsToDelete.isEmpty()) {
+      taskUrlRepository.deleteAllById_taskId(taskId);
+      log.info("Deleted {} urls from task {}", urlsToDelete.size(), taskId);
+    } else {
+      log.info("No urls to delete for task {}", taskId);
+    }
+
+    if (!Objects.isNull(patch.urls())) {
+      List<String> urlListToAdd =
+          patch.urls().stream().filter(u -> !u.isBlank()).map(String::trim).toList();
+      saveUrls(taskEntity, urlListToAdd);
+    } else {
+      log.info("No urls to add for task {}", taskId);
+    }
   }
 }

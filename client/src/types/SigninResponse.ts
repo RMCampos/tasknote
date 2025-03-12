@@ -5,4 +5,5 @@ export type SigninResponse = {
   admin: boolean;
   createdAt: Date;
   token: string;
+  gravatarImageUrl: string;
 };

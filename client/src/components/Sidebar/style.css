@@ -1,9 +1,12 @@
 .sidebar {
   width: 276px;
   background-color: #fff;
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
+  bottom: 0;
+  height: 100vh;
+  overflow-y: auto;
 }
 .sidebar-header {
   margin-left: 28px;
@@ -20,6 +23,8 @@
 }
 .sidebar-header img {
   margin-right: 1rem;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .sidebar-menu-header {

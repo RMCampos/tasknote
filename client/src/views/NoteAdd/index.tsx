@@ -267,9 +267,17 @@ function NoteAdd(): React.ReactNode {
                 <Button
                   variant="primary"
                   type="submit"
-                  className="w-100 mt-3"
+                  className="mt-3"
                 >
                   {t('note_form_submit')}
+                </Button>
+                <Button
+                  variant="outline-primary"
+                  type="button"
+                  className="ms-2 mt-3"
+                  onClick={() => navigate('/notes')}
+                >
+                  Cancel
                 </Button>
               </Form>
 

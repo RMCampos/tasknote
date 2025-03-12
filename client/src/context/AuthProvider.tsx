@@ -28,8 +28,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     }
     catch (e) {
       if (e instanceof Error) {
-        // FIXME here
-        if (e.message !== 'No saved token!' && e.message !== 'Forbidden! Access denied') {
+        if (e.message !== 'No saved token!') {
           console.warn(e.message);
         }
       }
@@ -82,7 +81,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
         name: registerResponse.name,
         email: registerResponse.email,
         admin: registerResponse.admin,
-        createdAt: new Date(registerResponse.createdAt)
+        createdAt: new Date(registerResponse.createdAt),
+        gravatarImageUrl: registerResponse.gravatarImageUrl
       };
 
       setSigned(true);
@@ -107,7 +107,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
         name: registerResponse.name,
         email: registerResponse.email,
         admin: registerResponse.admin,
-        createdAt: new Date(registerResponse.createdAt)
+        createdAt: new Date(registerResponse.createdAt),
+        gravatarImageUrl: registerResponse.gravatarImageUrl
       };
 
       setSigned(true);

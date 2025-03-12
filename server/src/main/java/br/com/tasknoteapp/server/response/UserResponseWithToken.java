@@ -3,6 +3,7 @@ package br.com.tasknoteapp.server.response;
 import br.com.tasknoteapp.server.entity.UserEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /** This record represents a User Response object. */
 @Schema(description = "This record represents a User Response with token object.")
@@ -17,6 +18,7 @@ public record UserResponseWithToken(
             description = "The inactivated date and time of the user",
             example = "2023-01-01T00:00:00")
         LocalDateTime inactivatedAt,
+    @Schema(description = "The gravatar image URL, if any") String gravatarImageUrl,
     @Schema(description = "The token created upon login") String token) {
 
   /**
@@ -26,7 +28,7 @@ public record UserResponseWithToken(
    * @param token The token created upon registration or login.
    * @return UserResponse instance.
    */
-  public static UserResponseWithToken fromEntity(UserEntity user, String token) {
+  public static UserResponseWithToken fromEntity(UserEntity user, String token, Optional<String> gravatarUrl) {
     return new UserResponseWithToken(
         user.getId(),
         user.getName(),
@@ -34,6 +36,7 @@ public record UserResponseWithToken(
         user.getAdmin(),
         user.getCreatedAt(),
         user.getInactivatedAt(),
+        gravatarUrl.orElse(null),
         token);
   }
 }

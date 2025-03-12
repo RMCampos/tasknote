@@ -34,7 +34,8 @@ const authContextMock = {
     name: 'Ricardo',
     email: 'test@example.com',
     admin: false,
-    createdAt: new Date()
+    createdAt: new Date(),
+    gravatarImageUrl: 'http://url.com'
   },
   checkCurrentAuthUser: vi.fn(),
   signIn: vi.fn(),
