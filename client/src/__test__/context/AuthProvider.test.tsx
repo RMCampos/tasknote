@@ -6,7 +6,6 @@ import userEvent from '@testing-library/user-event';
 import AuthProvider from '../../context/AuthProvider';
 import AuthContext, { AuthContextData } from '../../context/AuthContext';
 import api from '../../api-service/api';
-import ApiConfig from '../../api-service/apiConfig';
 import { API_TOKEN, USER_DATA } from '../../app-constants/app-constants';
 
 // Mock the API service methods.

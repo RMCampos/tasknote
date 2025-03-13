@@ -11,6 +11,7 @@ const tasks: TaskResponse[] = [
     dueDate: '',
     dueDateFmt: '',
     lastUpdate: 'Moments ago',
+    tag: 'test',
     urls: []
   }
 ];

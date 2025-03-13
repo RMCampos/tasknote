@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router';
 import { I18nextProvider } from 'react-i18next';
 import Sidebar from '../../components/Sidebar';
 import AuthContext from '../../context/AuthContext';
+import SidebarContext from '../../context/SidebarContext';
 import i18n from '../../i18n';
 
 const authContextMock = {
@@ -25,13 +26,20 @@ const authContextMock = {
   updateUser: vi.fn(),
 };
 
+const sidebarContextMock = {
+  currentPage: '/home',
+  setNewPage: vi.fn()
+};
+
 describe('Sidebar Component', () => {
   const renderSidebar = () => {
     return render(
       <MemoryRouter>
         <AuthContext.Provider value={authContextMock}>
           <I18nextProvider i18n={i18n}>
-            <Sidebar />
+            <SidebarContext.Provider value={sidebarContextMock}>
+              <Sidebar />
+            </SidebarContext.Provider>
           </I18nextProvider>
         </AuthContext.Provider>
       </MemoryRouter>

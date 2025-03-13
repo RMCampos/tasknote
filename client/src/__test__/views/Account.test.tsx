@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitFor, getByTestId } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router';
@@ -35,7 +35,8 @@ const authContextMock = {
     name: 'Ricardo',
     email: 'test@example.com',
     admin: false,
-    createdAt: new Date()
+    createdAt: new Date(),
+    gravatarImageUrl: 'http://image.com'
   },
   checkCurrentAuthUser: vi.fn(),
   signIn: vi.fn(),

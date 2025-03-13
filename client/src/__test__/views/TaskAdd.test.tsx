@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitFor, getByText } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router';
 import { I18nextProvider } from 'react-i18next';
@@ -100,8 +100,8 @@ describe('TaskAdd Component', () => {
   it('should render text based on new contentHeader component', () => {
     const { getByText } = renderTaskAdd();
 
-    expect(getByText('All')).toBeDefined();
-    expect(getByText('Tasks')).toBeDefined();
+    expect(getByText('Add')).toBeDefined();
+    expect(getByText('Task')).toBeDefined();
     expect(getByText('Be on top of your TODO list')).toBeDefined();
     expect(getByText('Create, Filter, and Easily Find')).toBeDefined();
     expect(getByText('Them')).toBeDefined();

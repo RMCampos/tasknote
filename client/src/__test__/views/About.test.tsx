@@ -1,5 +1,4 @@
 import React from 'react';
-// import { MemoryRouter } from 'react-router';
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import About from '../../views/About';

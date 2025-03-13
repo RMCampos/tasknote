@@ -26,7 +26,7 @@ function App(): React.ReactNode {
   const { signed, checkCurrentAuthUser } = useContext(AuthContext);
 
   /**
-   * Routes for users who are not signed in.
+   * Routes for the users who are not signed in.
    * @type {RouteObject[]}
    */
   const notSignedRouter: RouteObject[] = [

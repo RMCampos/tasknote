@@ -188,8 +188,8 @@ function NoteAdd(): React.ReactNode {
   return (
     <Container>
       <ContentHeader
-        h1TextRegular="All"
-        h1TextBold="Notes"
+        h1TextRegular="Add"
+        h1TextBold="Note"
         subtitle="Save your notes in plain text or Markdown format"
         h2BlackText="Create, Filter, and Easily Find"
         h2GreenText="Them"

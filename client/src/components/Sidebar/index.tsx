@@ -1,8 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Nav } from 'react-bootstrap';
 import { NavLink } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import AuthContext from '../../context/AuthContext';
+import SidebarContext from '../../context/SidebarContext';
 import NavButton from '../NavButton';
 import SidebarIcon from '../SidebarIcon';
 import { env } from '../../env';
@@ -15,27 +16,11 @@ import './style.css';
  */
 function Sidebar(): React.ReactNode {
   const { signOut, user } = useContext(AuthContext);
+  const { currentPage, setNewPage } = useContext(SidebarContext);
   const { t } = useTranslation();
   const build = `Build: ${env.VITE_BUILD}`;
-  const [current, setCurrent] = useState<string>('/home');
 
   // Note: when selected, change class to plus-jakarta-sans-thin and add background
-
-  /**
-   * Handles the sign-out action.
-   */
-  const goOut = (): void => {
-    signOut();
-  };
-
-  /**
-   * Handles the navigation link click event.
-   *
-   * @param {string} menu - The menu path.
-   */
-  const navLinkClicked = (menu: string): void => {
-    setCurrent(menu);
-  };
 
   useEffect(() => {}, [user]);
 
@@ -51,29 +36,29 @@ function Sidebar(): React.ReactNode {
       <div className="sidebar-menu-header plus-jakarta-sans-regular">Main Menu</div>
 
       <Nav className="flex-column p-3 plus-jakarta-sans-thin">
-        <NavLink to="/home" className="mb-2" onClick={() => navLinkClicked('/home')}>
-          <div className={`sidebar-nav ${current === '/home' ? 'selected' : ''}`}>
+        <NavLink to="/home" className="mb-2" onClick={() => setNewPage('/home')}>
+          <div className={`sidebar-nav ${currentPage === '/home' ? 'selected' : ''}`}>
             <SidebarIcon
               iconName="dashboard"
-              selected={current === '/home'}
+              selected={currentPage === '/home'}
             />
             Dashboard
           </div>
         </NavLink>
-        <NavLink to="/tasks" className="mb-2" onClick={() => navLinkClicked('/tasks')}>
-          <div className={`sidebar-nav ${current === '/tasks' ? 'selected' : ''}`}>
+        <NavLink to="/tasks" className="mb-2" onClick={() => setNewPage('/tasks')}>
+          <div className={`sidebar-nav ${currentPage.includes('/tasks') ? 'selected' : ''}`}>
             <SidebarIcon
               iconName="tasks"
-              selected={current === '/tasks'}
+              selected={currentPage.includes('/tasks')}
             />
             {t('home_nav_tasks')}
           </div>
         </NavLink>
-        <NavLink to="/notes" className="mb-2" onClick={() => navLinkClicked('/notes')}>
-          <div className={`sidebar-nav ${current === '/notes' ? 'selected' : ''}`}>
+        <NavLink to="/notes" className="mb-2" onClick={() => setNewPage('/notes')}>
+          <div className={`sidebar-nav ${currentPage.includes('/notes') ? 'selected' : ''}`}>
             <SidebarIcon
               iconName="notes"
-              selected={current === '/notes'}
+              selected={currentPage.includes('/notes')}
             />
             {t('home_nav_notes')}
           </div>
@@ -83,25 +68,25 @@ function Sidebar(): React.ReactNode {
       <div className="sidebar-menu-header plus-jakarta-sans-regular">Preferences</div>
 
       <Nav className="flex-column p-3 plus-jakarta-sans-thin">
-        <NavLink to="/account" className="mb-2" onClick={() => navLinkClicked('/account')}>
-          <div className={`sidebar-nav ${current === '/account' ? 'selected' : ''}`}>
+        <NavLink to="/account" className="mb-2" onClick={() => setNewPage('/account')}>
+          <div className={`sidebar-nav ${currentPage === '/account' ? 'selected' : ''}`}>
             <SidebarIcon
               iconName="account"
-              selected={current === '/account'}
+              selected={currentPage === '/account'}
             />
             {t('footer_my_account')}
           </div>
         </NavLink>
-        <NavLink to="/about" className="mb-2" onClick={() => navLinkClicked('/about')}>
-          <div className={`sidebar-nav ${current === '/about' ? 'selected' : ''}`}>
+        <NavLink to="/about" className="mb-2" onClick={() => setNewPage('/about')}>
+          <div className={`sidebar-nav ${currentPage === '/about' ? 'selected' : ''}`}>
             <SidebarIcon
               iconName="about"
-              selected={current === '/about'}
+              selected={currentPage === '/about'}
             />
             {t('home_nav_about')}
           </div>
         </NavLink>
-        <NavButton className="mb-2" onClick={() => goOut()}>
+        <NavButton className="mb-2" onClick={() => signOut()}>
           <div className="sidebar-nav">
             <SidebarIcon
               iconName="logout"

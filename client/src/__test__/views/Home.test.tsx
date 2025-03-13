@@ -1,8 +1,9 @@
 import React from 'react';
-// import { MemoryRouter } from 'react-router';
-import { render } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router';
+import { SummaryResponse } from '../../types/SummaryResponse';
+import api from '../../api-service/api';
 import Home from '../../views/Home';
 import '../../i18n';
 import AuthContext from '../../context/AuthContext';
@@ -21,30 +22,40 @@ const authContextMock = {
     name: 'Ricardo',
     email: 'ricardo@campos.com',
     admin: false,
-    createdAt: new Date()
+    createdAt: new Date(),
+    gravatarImageUrl: 'http://image.com'
   },
   checkCurrentAuthUser: vi.fn(),
   signIn: vi.fn(),
   signOut: vi.fn(),
   register: vi.fn(),
   isAdmin: false,
-  updateUser: vi.fn(),
+  updateUser: vi.fn()
 };
 
 describe('Renders the home view', () => {
-  it('should render text based on new contentHeader component', () => {
-    const { getByText } = render(
-      <MemoryRouter>
-        <AuthContext.Provider value={authContextMock}>
-          <Home />
-        </AuthContext.Provider>
-      </MemoryRouter>
-    );
+  it('should render text based on new contentHeader component', async () => {
+    const mockData: SummaryResponse = {
+      pendingTaskCount: 354,
+      doneTaskCount: 555,
+      notesCount: 2222
+    };
+    const mockedGetJSON = vi.spyOn(api, 'getJSON').mockResolvedValue(mockData);
 
-    expect(getByText('Hello,')).toBeDefined();
-    expect(getByText('Ricardo')).toBeDefined();
-    expect(getByText('Welcome to TaskNote! Get ready to complete your pending tasks')).toBeDefined();
-    expect(getByText('Start Your Day, Be')).toBeDefined();
-    expect(getByText('Productive')).toBeDefined();
+    await act(async () => {
+      render(
+        <MemoryRouter>
+          <AuthContext.Provider value={authContextMock}>
+            <Home />
+          </AuthContext.Provider>
+        </MemoryRouter>
+      );
+    });
+
+    expect(screen.getByText('Hello,')).toBeDefined();
+    expect(screen.getByText('Ricardo')).toBeDefined();
+    expect(screen.getByText('Welcome to TaskNote! Get ready to complete your pending tasks')).toBeDefined();
+    expect(screen.getByText('Start Your Day, Be')).toBeDefined();
+    expect(screen.getByText('Productive')).toBeDefined();
   });
 });

@@ -103,62 +103,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  client-dokploy:
-    name: Deploy Client Changes to Stage
-    runs-on: ubuntu-latest
-    needs: client-docker-build
-    if: github.event.pull_request.user.login == 'rmcampos' && github.event_name == 'pull_request'
-    env:
-      STAGE_DOMAIN: ${{ vars.STAGE_DOMAIN }}
-      API_KEY: ${{ secrets.DOKPLOY_API_KEY }}
-      APP_ID: ${{ secrets.STAGE_WEB_CLIENT_ID }}
-    steps:
-      - name: Pre-deployment check
-        run: |
-          if ! curl -s -f "${STAGE_DOMAIN}/"; then
-            echo "Stage environment is not healthy"
-          else
-            echo "Stage environment is healthy"
-          fi
-
-      - name: Trigger Dokploy Deployment
-        uses: nick-fields/retry@v3.0.2
-        with:
-          timeout_minutes: 2
-          max_attempts: 3
-          command: |
-            response=$(curl -X POST \
-              "${STAGE_DOMAIN}/api/application.deploy" \
-              --max-time 30 \
-              -H "accept: application/json" \
-              -H "x-api-key: ${API_KEY}" \
-              -H "Content-Type: application/json" \
-              -d "{\"json\":{\"applicationId\":\"${APP_ID}\"}}" \
-              -w "\n%{http_code}" \
-              -s)
-
-            status_code=$(echo "$response" | tail -n1)
-            body=$(echo "$response" | sed '$d')
-
-            echo "Status code: $status_code"
-            echo "Response body: $body"
-
-            if [ "$status_code" -ge 400 ]; then
-              echo "Deployment failed with status code $status_code"
-              exit 1
-            fi
-      - name: Verify deployment
-        run: |
-          # Wait for deployment to complete
-          sleep 30
-    
-          if ! curl -s -f "${STAGE_DOMAIN}/"; then
-            echo "Stage environment is not healthy"
-            exit 1
-          fi
-
-          echo "Health check passed."
-
   java-code-checks:
     needs: changes
     if: ${{ needs.changes.outputs.server == 'true' }}
@@ -243,65 +187,72 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  server-dokploy:
-    name: Deploy API Changes to Stage
+  stage-deployments:
+    name: Deploy Changes to Stage
     runs-on: ubuntu-latest
-    needs: client-docker-build
+    needs: [java-docker-build, client-docker-build]
     if: github.event.pull_request.user.login == 'rmcampos' && github.event_name == 'pull_request'
     env:
-      STAGE_DOMAIN: ${{ vars.STAGE_DOMAIN }}
-      STAGE_API_DOMAIN: ${{ vars.STAGE_API_DOMAIN }}
+      DEPLOY_DOMAIN: ${{ vars.DEPLOY_DOMAIN }}
       API_KEY: ${{ secrets.DOKPLOY_API_KEY }}
-      APP_ID: ${{ secrets.STAGE_API_CLIENT_ID }}
+      SERVER_APPID: ${{ secrets.STAGE_API_CLIENT_ID }}
+      CLIENT_APPID: ${{ secrets.STAGE_WEB_CLIENT_ID }}
+    strategy:
+      matrix:
+        name: [server, client]
+        include:
+          - name: server
+            health_check_url: "${{ vars.API_STAGE_URL }}/actuator/health"
+            app_id: ${SERVER_APPID}
+          - name: client
+            health_check_url: "${{ vars.CLIENT_STAGE_URL }}/"
+            app_id: ${CLIENT_APPID}
     steps:
       - name: Pre-deployment check
         run: |
-          response=$(curl -s "${STAGE_API_DOMAIN}/actuator/health")
-          status=$(echo "$response" | jq -r '.status')
-          if [ "$status" != "UP" ]; then
-            echo "Stage environment is not healthy. Status: $status"
+          if ! curl -s -f "${{ matrix.health_check_url }}"; then
+            echo "Stage environment is not healthy"
           else
-            echo "Stage environment is healthy!"
+            echo "Stage environment is healthy"
           fi
 
-      - name: Trigger Dokploy Deployment
+      - name: Trigger Deployment
         uses: nick-fields/retry@v3.0.2
         with:
           timeout_minutes: 2
           max_attempts: 3
           command: |
             response=$(curl -X POST \
-              "${STAGE_DOMAIN}/api/application.deploy" \
+              "${DEPLOY_DOMAIN}/api/application.deploy" \
               --max-time 30 \
               -H "accept: application/json" \
               -H "x-api-key: ${API_KEY}" \
               -H "Content-Type: application/json" \
-              -d "{\"json\":{\"applicationId\":\"${APP_ID}\"}}" \
+              -d "{\"applicationId\":\"${{ matrix.app_id }}\"}" \
               -w "\n%{http_code}" \
               -s)
 
             status_code=$(echo "$response" | tail -n1)
-            body=$(echo "$response" | sed '$d')
-
             echo "Status code: $status_code"
-            echo "Response body: $body"
 
             if [ "$status_code" -ge 400 ]; then
+              body=$(echo "$response" | sed '$d')
+              
               echo "Deployment failed with status code $status_code"
+              echo "Response body: $body"
               exit 1
+            else
+              echo "Deployment succeeded!"
             fi
+
       - name: Verify deployment
         run: |
           # Wait for deployment to complete
           sleep 30
     
-          response=$(curl -s "${STAGE_API_DOMAIN}/actuator/health")
-          status=$(echo "$response" | jq -r '.status')
-    
-          if [ "$status" != "UP" ]; then
-            echo "Stage environment is not healthy. Status: $status"
-            echo "Full response: $response"
+          if ! curl -s -f "${{ matrix.health_check_url }}"; then
+            echo "Stage environment is not healthy"
             exit 1
+          else
+            echo "Stage environment is healthy"
           fi
-
-          echo "Health check passed. Status: $status"

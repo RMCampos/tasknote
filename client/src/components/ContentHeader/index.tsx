@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { PlusCircleFill } from 'react-bootstrap-icons';
 import { NavLink } from 'react-router';
+import SidebarContext from '../../context/SidebarContext';
 
 type Props = {
   h1TextRegular: string;
@@ -24,6 +25,8 @@ type Props = {
  * @returns {React.ReactNode} The rendered ContentHeader component.
  */
 const ContentHeader: React.FC<Props> = (props: Props): React.ReactNode => {
+  const { setNewPage } = useContext(SidebarContext);
+
   return (
     <>
       <h1 className="poppins-regular home-hello main-margin">
@@ -47,22 +50,22 @@ const ContentHeader: React.FC<Props> = (props: Props): React.ReactNode => {
         </Col>
         {props.isHomeComponent && (
           <Col xs={4} className="text-end">
-            <NavLink to="/tasks/new">
+            <NavLink to="/tasks/new" onClick={() => setNewPage('/tasks/new')}>
               <button
                 type="button"
                 className="home-new-item w-45 mb-2"
               >
                 <PlusCircleFill size={25} />
-                Add note
+                Add task
               </button>
             </NavLink>
-            <NavLink to="/notes/new">
+            <NavLink to="/notes/new" onClick={() => setNewPage('/notes/new')}>
               <button
                 type="button"
                 className="home-new-item w-45"
               >
                 <PlusCircleFill size={25} />
-                Add task
+                Add note
               </button>
             </NavLink>
           </Col>

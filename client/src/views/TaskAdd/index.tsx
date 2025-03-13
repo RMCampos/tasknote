@@ -192,8 +192,8 @@ function TaskAdd(): React.ReactNode {
   return (
     <Container>
       <ContentHeader
-        h1TextRegular="All"
-        h1TextBold="Tasks"
+        h1TextRegular="Add"
+        h1TextBold="Task"
         subtitle="Be on top of your TODO list"
         h2BlackText="Create, Filter, and Easily Find"
         h2GreenText="Them"
