@@ -20,26 +20,32 @@ interface Props {
 function TaskTitle(props: React.PropsWithChildren<Props>): React.ReactNode {
   if (props.highPriority) {
     return (
-      <span className="task-title-icon">
+      <span className="task-title-icon" data-testid={`task-title-container-${props.title}`}>
         {props.done
           ? (
-              <Check2Circle />
+              <Check2Circle data-testid={`task-title-check-${props.title}`} />
             )
           : (
-              <Bell />
+              <Bell data-testid={`task-title-bell-${props.title}`} />
             )}
-        <span className={`${props.done ? 'text-strike' : ''} ms-2 poppins-semibold`}>
+        <span
+          className={`${props.done ? 'text-strike' : ''} ms-2 poppins-semibold`}
+          data-testid={`task-title-text-${props.title}`}
+        >
           {props.title}
         </span>
       </span>
     );
   }
   return (
-    <span className="task-title-icon">
+    <span className="task-title-icon" data-testid={`task-title-container-${props.title}`}>
       {props.done && (
-        <Check2Circle />
+        <Check2Circle data-testid={`task-title-check-${props.title}`} />
       )}
-      <span className={`${props.done ? 'ms-2 text-strike' : ''} poppins-semibold`}>
+      <span
+        className={`${props.done ? 'ms-2 text-strike' : ''} poppins-semibold`}
+        data-testid={`task-title-text-${props.title}`}
+      >
         {props.title}
       </span>
     </span>

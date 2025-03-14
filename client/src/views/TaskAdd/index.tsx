@@ -33,7 +33,7 @@ function TaskAdd(): React.ReactNode {
   const [taskUrl, setTaskUrl] = useState<string>('');
   const [taskDone, setTaskDone] = useState<boolean>(false);
   const [action, setAction] = useState<TaskAction>('add');
-  const [dueDate, setDueDate] = useState<string>('');
+  const [dueDate, setDueDate] = useState<Date | null>(null);
   const [highPriority, setHighPriority] = useState<boolean>(false);
   const [tag, setTag] = useState<string>('');
   const { i18n, t } = useTranslation();
@@ -97,7 +97,7 @@ function TaskAdd(): React.ReactNode {
     setTaskDescription('');
     setTaskDone(false);
     setTaskUrl('');
-    setDueDate('');
+    setDueDate(null);
     setHighPriority(false);
     setTag('');
 
@@ -121,11 +121,16 @@ function TaskAdd(): React.ReactNode {
       return;
     }
 
+    let dueDateFormatted: string = '';
+    if (dueDate) {
+      dueDateFormatted = dueDate.toISOString().substring(0, 10);
+    }
+
     if (action === 'add') {
       const addPayload: TaskNoteRequest = {
         description: taskDescription.trim(),
         highPriority: highPriority,
-        dueDate: dueDate || '',
+        dueDate: dueDateFormatted,
         tag: tag,
         urls: taskUrl ? [taskUrl] : []
       };
@@ -143,7 +148,7 @@ function TaskAdd(): React.ReactNode {
         description: taskDescription.trim(),
         done: taskDone,
         highPriority: highPriority,
-        dueDate: dueDate || '',
+        dueDate: dueDateFormatted,
         dueDateFmt: '',
         lastUpdate: '',
         tag: tag,
@@ -171,7 +176,7 @@ function TaskAdd(): React.ReactNode {
         setTaskUrl(taskToEdit.urls.length ? taskToEdit.urls[0] : '');
         setTaskDone(taskToEdit.done);
         if (taskToEdit.dueDateFmt) {
-          setDueDate(taskToEdit.dueDate);
+          setDueDate(new Date(taskToEdit.dueDate));
         }
         setHighPriority(taskToEdit.highPriority);
         if (taskToEdit.tag) {
@@ -247,12 +252,12 @@ function TaskAdd(): React.ReactNode {
                   labelText={t('task_form_duedate_label')}
                   iconName="CalendarCheck"
                   required={false}
-                  type="text"
+                  type="date"
                   name="dueDate"
                   placeholder={t('task_form_duedate_placeholder')}
-                  value={dueDate}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setDueDate(e.target.value);
+                  valueDate={dueDate}
+                  onChangeDate={(date: Date | null) => {
+                    setDueDate(date);
                   }}
                 />
 

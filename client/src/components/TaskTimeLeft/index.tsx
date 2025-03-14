@@ -1,28 +1,56 @@
 import React from 'react';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { CalendarCheck } from 'react-bootstrap-icons';
 
 interface Props {
   text: string;
   done: boolean;
+  tooltip: string;
 }
 
 /**
  * Renders the TaskTimeLeft component if the task is not done, displaying
  * a calendar icon and the time left for the task.
  *
- * @param {Props.done} props.done - Boolean value indicating if the task is done.
- * @param {Props.text} props.text - The time left for the task.
+ * @param {Props} props - Props for the TaskTimeLeft component.
+ * @param {string} props.text - The time left for the task.
+ * @param {boolean} props.done - Boolean value indicating if the task is done.
+ * @param {string} props.tooltip - The string representation of a Date instance.
  * @returns
  */
-function TaskTimeLeft(props: Props): React.ReactNode | null {
+function TaskTimeLeft(props: React.PropsWithChildren<Props>): React.ReactNode | null {
+  const tooltipDate = props.tooltip.length > 0
+    ? new Intl.DateTimeFormat('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric'
+      }).format(new Date(props.tooltip))
+    : '';
+
   return props.done
     ? null
     : (
         <div className="d-block">
           <CalendarCheck />
-          <span className="ms-2 poppins-regular">
-            {props.text}
-          </span>
+          {props.tooltip.length > 0 && (
+            <OverlayTrigger
+              placement="right"
+              overlay={(
+                <Tooltip id="tooltip-right">
+                  {tooltipDate}
+                </Tooltip>
+              )}
+            >
+              <span className="ms-2 poppins-regular">
+                {props.text}
+              </span>
+            </OverlayTrigger>
+          )}
+          {props.tooltip.length === 0 && (
+            <span className="ms-2 poppins-regular">
+              {props.text}
+            </span>
+          )}
         </div>
       );
 }

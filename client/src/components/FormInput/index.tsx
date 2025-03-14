@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Col, Form, InputGroup, Row } from 'react-bootstrap';
 import * as Icons from 'react-bootstrap-icons';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import './custom-datepicker.css';
+import { MiddlewareReturn } from '@floating-ui/core';
+import { MiddlewareState } from '@floating-ui/dom';
 
 type IconName = keyof typeof Icons;
 
@@ -11,8 +16,10 @@ interface Props {
   type?: string;
   name: string;
   placeholder?: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
+  valueDate?: Date | null;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChangeDate?: (date: Date | null) => void;
   data_testid?: string;
 }
 
@@ -74,15 +81,49 @@ function FormInput(props: React.PropsWithChildren<Props>): React.ReactNode {
             <InputGroup.Text>
               <Icon />
             </InputGroup.Text>
-            <Form.Control
-              required={props.required}
-              type={formType}
-              name={props.name}
-              placeholder={props.placeholder ? props.placeholder : ''}
-              value={props.value}
-              onChange={props.onChange}
-              data-testid={props.data_testid}
-            />
+            {props.type == 'date'
+              ? (
+                  <DatePicker
+                    selected={props?.valueDate}
+                    onChange={(date: Date | null) => {
+                      if (props.onChangeDate) {
+                        props.onChangeDate(date);
+                      }
+                    }}
+                    dateFormat="MMMM d, yyyy"
+                    className="form-control"
+                    id="date-input"
+                    popperPlacement="bottom"
+                    popperModifiers={[
+                      {
+                        name: 'preventOverflow',
+                        options: {
+                          enabled: true,
+                          boundariesElement: 'viewport'
+                        },
+                        fn: function (state: MiddlewareState): MiddlewareReturn | Promise<MiddlewareReturn> {
+                          return state;
+                        }
+                      }
+                    ]}
+                    // Mobile-friendly options
+                    withPortal
+                    showYearDropdown
+                    showMonthDropdown
+                    dropdownMode="select"
+                  />
+                )
+              : (
+                  <Form.Control
+                    required={props.required}
+                    type={formType}
+                    name={props.name}
+                    placeholder={props.placeholder ? props.placeholder : ''}
+                    value={props?.value}
+                    onChange={props.onChange}
+                    data-testid={props.data_testid}
+                  />
+                )}
           </InputGroup>
         </Form.Group>
       </Col>

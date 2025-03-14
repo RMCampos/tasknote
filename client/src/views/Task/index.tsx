@@ -19,9 +19,9 @@ import TaskTimeLeft from '../../components/TaskTimeLeft';
 import TaskUrl from '../../components/TaskUrl';
 import TaskTag from '../../components/TaskTag';
 import TaskTitle from '../../components/TaskTitle';
-import './style.css';
 import ContentHeader from '../../components/ContentHeader';
 import AlertError from '../../components/AlertError';
+import './style.css';
 
 /**
  * The Task component is a view that displays a list of tasks.
@@ -33,6 +33,7 @@ function Task(): React.ReactNode {
   const [tasks, setTasks] = useState<TaskResponse[]>([]);
   const [savedTasks, setSavedTasks] = useState<TaskResponse[]>([]);
   const [filterText, setFilterText] = useState<string>('');
+  const [selectedOption, setSelectedOption] = useState<string>('option1');
   const { i18n, t } = useTranslation();
 
   /**
@@ -64,6 +65,7 @@ function Task(): React.ReactNode {
       const translated = translateTaskResponse(tasksFetched, i18n.language);
       setSavedTasks([...translated]);
       setTasks([...translated]);
+      setSelectedOption('option1');
     }
     catch (e) {
       handleError(e);
@@ -107,22 +109,36 @@ function Task(): React.ReactNode {
   /**
    * Filter tasks by a given text.
    */
-  const filterTasks = (text: string): void => {
+  const filterTasks = (text: string, radioBtnFilter?: string): void => {
     setFilterText(text);
 
-    if (!text) {
+    if (!text && !radioBtnFilter) {
       setTasks([...savedTasks]);
       return;
     }
 
-    const filteredTasks = savedTasks.filter((task: TaskResponse) => {
+    let filteredTasks = savedTasks.filter((task: TaskResponse) => {
       const shouldFilter = task.description.toLowerCase().includes(text.toLowerCase())
         || task.tag.toLowerCase().includes(text.toLowerCase())
         || task.urls.filter((url: string) => url.includes(text.toLowerCase())).length > 0;
       return shouldFilter;
     });
 
+    const pending = radioBtnFilter === 'option2';
+    const completed = radioBtnFilter === 'option3';
+    if (pending) {
+      filteredTasks = filteredTasks.filter((task: TaskResponse) => !task.done);
+    }
+    else if (completed) {
+      filteredTasks = filteredTasks.filter((task: TaskResponse) => task.done);
+    }
+
     setTasks([...filteredTasks]);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setSelectedOption(e.target.value);
+    filterTasks(filterText, e.target.value);
   };
 
   useEffect(() => {
@@ -150,7 +166,7 @@ function Task(): React.ReactNode {
             name="search_term"
             placeholder="Filter tasks"
             value={filterText}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => filterTasks(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => filterTasks(e.target.value, selectedOption)}
           />
         </Col>
         <Col xs={3}>
@@ -161,6 +177,48 @@ function Task(): React.ReactNode {
               </Button>
             </div>
           </NavLink>
+        </Col>
+      </Row>
+
+      <Row>
+        <Col>
+          <Form className="mt-3 ms-1">
+            <div className="d-flex gap-3">
+              <Form.Check
+                inline
+                type="radio"
+                label="All tasks"
+                name="radioGroup"
+                id="radio1"
+                value="option1"
+                checked={selectedOption === 'option1'}
+                onChange={handleChange}
+                className="custom-radio-button"
+              />
+              <Form.Check
+                inline
+                type="radio"
+                label="Pending"
+                name="radioGroup"
+                id="radio2"
+                value="option2"
+                checked={selectedOption === 'option2'}
+                onChange={handleChange}
+                className="custom-radio-button"
+              />
+              <Form.Check
+                inline
+                type="radio"
+                label="Completed"
+                name="radioGroup"
+                id="radio3"
+                value="option3"
+                checked={selectedOption === 'option3'}
+                onChange={handleChange}
+                className="custom-radio-button"
+              />
+            </div>
+          </Form>
         </Col>
       </Row>
 
@@ -204,7 +262,11 @@ function Task(): React.ReactNode {
                 </Row>
 
                 {task.dueDateFmt && (
-                  <TaskTimeLeft text={task.dueDateFmt} done={task.done} />
+                  <TaskTimeLeft
+                    text={task.dueDateFmt}
+                    done={task.done}
+                    tooltip={task.dueDate}
+                  />
                 )}
                 {task.urls.length > 0 && (
                   <TaskUrl url={task.urls[0]} />

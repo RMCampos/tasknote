@@ -146,20 +146,26 @@ describe('AuthProvider', () => {
 
     vi.spyOn(api, 'putJSON').mockResolvedValue(fakeResponse);
 
-    const { getByTestId } = render(
-      <AuthProvider>
-        <ConsumerComponent />
-      </AuthProvider>
-    );
+    const user = userEvent.setup();
 
+    let getByTestIdFunction;
     await act(async () => {
-      userEvent.click(getByTestId('register'));
+      const { getByTestId } = render(
+        <AuthProvider>
+          <ConsumerComponent />
+        </AuthProvider>
+      );
+      getByTestIdFunction = getByTestId;
     });
 
+    await waitFor(() => expect(getByTestIdFunction('register')).toBeDefined());
+
+    await user.click(getByTestIdFunction('register'));
+
     await waitFor(() =>
-      expect(getByTestId('signed').textContent).toBe('true')
+      expect(getByTestIdFunction('signed').textContent).toBe('true')
     );
-    expect(getByTestId('user').textContent).toBe('New User');
+    expect(getByTestIdFunction('user').textContent).toBe('New User');
     expect(localStorage.getItem(API_TOKEN)).toBe('register-token');
     expect(localStorage.getItem(USER_DATA)).not.toBeNull();
   });
@@ -261,15 +267,22 @@ describe('AuthProvider', () => {
     // Store API_TOKEN so that fetchCurrentSession runs the refresh logic.
     localStorage.setItem(API_TOKEN, 'dummy');
 
-    const { getByTestId } = render(
-      <AuthProvider>
-        <ConsumerComponent />
-      </AuthProvider>
-    );
+    const user = userEvent.setup();
 
-    await waitFor(() => {
-      userEvent.click(getByTestId('checkCurrentAuthUser'));
+    let getByTestIdFunction;
+    await act(async () => {
+      const { getByTestId } = render(
+        <AuthProvider>
+          <ConsumerComponent />
+        </AuthProvider>
+      );
+      getByTestIdFunction = getByTestId;
     });
+
+    // Wait for any initial renders to complete
+    await waitFor(() => expect(getByTestIdFunction('checkCurrentAuthUser')).toBeDefined());
+
+    await user.click(getByTestIdFunction('checkCurrentAuthUser'));
 
     await waitFor(() =>
       expect(localStorage.getItem(API_TOKEN)).toBe('refresh-token')
