@@ -6,10 +6,9 @@ on:
     branches:
       - main
     paths:
-      - 'server/**'
-    paths-ignore:
-      - '**.md'
-      - '*.yml'
+      - 'server/**/*.java'
+      - 'server/**/*.xml'
+      - 'server/Dockerfile'
 
 jobs:
   java-code-checks:

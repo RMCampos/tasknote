@@ -6,10 +6,15 @@ on:
     branches:
       - main
     paths:
-      - 'client/**'
-    paths-ignore:
-      - '**.md'
-      - '*.yml'
+      - 'client/**/*.html'
+      - 'client/**/*.png'
+      - 'client/**/*.json'
+      - 'client/**/*.txt'
+      - 'client/**/*.ts'
+      - 'client/**/*.tsx'
+      - 'client/**/*.js'
+      - 'client/Dockerfile'
+      - 'client/Caddyfile'
 
 jobs:
   client-code-checks:
