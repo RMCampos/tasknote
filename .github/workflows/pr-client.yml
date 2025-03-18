@@ -91,9 +91,12 @@ jobs:
       API_KEY: ${{ secrets.DOKPLOY_API_KEY }}
       CLIENT_APPID: ${{ secrets.STAGE_WEB_CLIENT_ID }}
     steps:
+      - name: Checking cURL version
+        run: curl --version
+
       - name: Pre-deployment check
         run: |
-          if ! curl -s -f "${{ vars.CLIENT_STAGE_URL }}"; then
+          if ! curl -s -f "${{ vars.CLIENT_STAGE_URL }}" > /dev/null; then
             echo "Stage environment is not healthy"
           else
             echo "Stage environment is healthy"
@@ -118,22 +121,22 @@ jobs:
             status_code=$(echo "$response" | tail -n1)
             echo "Status code: $status_code"
 
-            if [ "$status_code" -ge 400 ]; then
+            if [ "$status_code" != "200" ]; then
               body=$(echo "$response" | sed '$d')
               
               echo "Deployment failed with status code $status_code"
-              echo "Response body: $body"
+              echo -e "Response body: $body"
               exit 1
             else
               echo "Deployment succeeded!"
             fi
 
-      - name: Verify deployment
+      - name: Verifying post deployment
         run: |
           # Wait for deployment to complete
-          sleep 30
+          sleep 15
     
-          if ! curl -s -f "${{ vars.CLIENT_STAGE_URL }}"; then
+          if ! curl -s -f "${{ vars.CLIENT_STAGE_URL }}" > /dev/null; then
             echo "Stage environment is not healthy"
             exit 1
           else

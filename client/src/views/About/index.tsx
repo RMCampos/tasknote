@@ -42,7 +42,7 @@ function About(): React.ReactNode {
       </Row>
 
       <Row className="justify-content-center">
-        <Col xs={8}>
+        <Col xs={12} md={8}>
           <div className="user-info-card min-height-350">
             <h2 className="mb-4 poppins-bold about-title">{t('about_tech_title')}</h2>
             <p className="poppins-light">{t('about_tech_description')}</p>
@@ -57,7 +57,7 @@ function About(): React.ReactNode {
             </ul>
           </div>
         </Col>
-        <Col xs={4}>
+        <Col sx={12} md={4} className="mt-4 mt-sm-0">
           <div className="user-info-card min-height-350">
             <h2 className="mb-4 poppins-bold about-title">{t('about_dev_title')}</h2>
             <p className="poppins-light">
@@ -66,6 +66,17 @@ function About(): React.ReactNode {
                 ricardompcampos@gmail.com
               </a>
               {t('about_dev_description_two')}
+            </p>
+            <p className="poppins-light">
+              You can also
+              {' '}
+              <a
+                href="https://buy-me-a-coffee-two-nu.vercel.app/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Buy me a coffee
+              </a>
             </p>
           </div>
         </Col>

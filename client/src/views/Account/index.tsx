@@ -128,7 +128,7 @@ function Account(): React.ReactNode {
       />
 
       <Row>
-        <Col xs={6}>
+        <Col xs={12} lg={6}>
           <div className="user-info-card">
             <div className="title">
               <Person />
@@ -211,7 +211,7 @@ function Account(): React.ReactNode {
             </p>
           </div>
         </Col>
-        <Col xs={6}>
+        <Col xs={12} lg={6} className="mt-4 mt-lg-0">
           <div className="user-info-card">
             <div className="title">
               <FileText />
@@ -226,7 +226,7 @@ function Account(): React.ReactNode {
                   key={lang.key}
                   type="button"
                   variant="outline-primary"
-                  className="btn-sm me-3"
+                  className="btn-sm me-3 mb-3 mb-sm-0"
                   onClick={() => handleLanguage(lang.lang)}
                   data-testid={`language-button-${lang.lang}`}
                 >

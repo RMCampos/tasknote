@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet } from 'react-router';
-import './style.css';
 import Sidebar from '../../components/Sidebar';
+import './style.css';
 
 /**
  * PrivateLayout component.
@@ -13,18 +13,14 @@ import Sidebar from '../../components/Sidebar';
  * @returns {React.ReactNode} The Layout component.
  */
 function PrivateLayout(): React.ReactNode {
+  const [isMobileOpen, setIsMobileOpen] = useState<boolean>(false);
+
   return (
     <div className="page-container">
-      <Sidebar />
-      <div
-        className="content"
-        style={{
-          marginLeft: '276px',
-          padding: '20px'
-        }}
-      >
+      <Sidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
+      <main className={`main-content ${isMobileOpen ? 'content-with-sidebar-mobile' : ''}`}>
         <Outlet />
-      </div>
+      </main>
     </div>
   );
 }

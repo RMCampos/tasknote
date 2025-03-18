@@ -120,7 +120,7 @@ function Note(): React.ReactNode {
       <AlertError errorMessage={errorMessage} />
 
       <Row>
-        <Col xs={9}>
+        <Col xs={12} sm={9}>
           <Form.Control
             type="text"
             id="search_term"
@@ -131,7 +131,7 @@ function Note(): React.ReactNode {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => filterNotes(e.target.value)}
           />
         </Col>
-        <Col xs={3}>
+        <Col xs={12} sm={3} className="mt-3 mt-sm-0">
           <NavLink to="/notes/new">
             <div className="d-grid gap-2">
               <Button variant="primary" size="lg" type="button" className="d-grip">

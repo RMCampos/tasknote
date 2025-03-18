@@ -40,7 +40,7 @@ const ContentHeader: React.FC<Props> = (props: Props): React.ReactNode => {
 
       <Row className="mb-3">
         {/* If it's not the home component, display full column */}
-        <Col xs={props.isHomeComponent ? 8 : 12}>
+        <Col xs={12} sm={props.isHomeComponent ? 8 : 12}>
           <h2 className="poppins-regular">
             {props.h2BlackText}
           </h2>
@@ -49,7 +49,7 @@ const ContentHeader: React.FC<Props> = (props: Props): React.ReactNode => {
           </h2>
         </Col>
         {props.isHomeComponent && (
-          <Col xs={4} className="text-end">
+          <Col xs={12} sm={4} className="text-sm-end">
             <NavLink to="/tasks/new" onClick={() => setNewPage('/tasks/new')}>
               <button
                 type="button"
@@ -62,7 +62,7 @@ const ContentHeader: React.FC<Props> = (props: Props): React.ReactNode => {
             <NavLink to="/notes/new" onClick={() => setNewPage('/notes/new')}>
               <button
                 type="button"
-                className="home-new-item w-45"
+                className="home-new-item w-45 ms-2"
               >
                 <PlusCircleFill size={25} />
                 Add note

@@ -7,7 +7,22 @@
   bottom: 0;
   height: 100vh;
   overflow-y: auto;
+  z-index: 2;
+  transition: transform 0.3s ease;
 }
+
+/* Mobile sidebar positioning - hidden by default */
+@media (max-width: 767.98px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  
+  /* When mobile sidebar is open */
+  .sidebar-mobile-open {
+    transform: translateX(0);
+  }
+}
+
 .sidebar-header {
   margin-left: 28px;
   margin-top: 145px;
@@ -15,6 +30,14 @@
   font-size: 17px;
   
 }
+
+/* Adjust header spacing on smaller screens */
+@media (max-width: 991.98px) {
+  .sidebar-header {
+    margin-top: 40px;
+  }
+}
+
 .header-spacer {
   margin-top: 1.8rem;
   margin-left: 1rem;

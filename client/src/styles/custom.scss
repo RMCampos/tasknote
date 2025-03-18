@@ -162,8 +162,18 @@ a:hover, .btn-link:hover {
   font-style: normal;
 }
 
-.main-margin {
-  margin-top: 2rem;
+/* On medium screens and larger */
+@media (min-width: 768px) {
+  .main-margin {
+    margin-top: 2rem;
+  }
+}
+
+/* On small screens, content takes full width by default */
+@media (max-width: 767.98px) {
+  .main-margin {
+    margin-top: 3rem;
+  }
 }
 
 .border-radius-30 {

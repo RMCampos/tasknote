@@ -48,10 +48,10 @@ function CompletedTasks(): React.ReactNode {
   return (
     <div className="completed-tasks">
       <Row>
-        <Col xs={1} sm={2} md={1}>
+        <Col xs={2} sm={2} md={1}>
           <img src={ChartIcon} alt="Chart Icon" />
         </Col>
-        <Col xs={11} sm={10} md={11}>
+        <Col xs={10} sm={10} md={11}>
           <div className="plus-jakarta-sans-semibold title">Completed Tasks</div>
           <span className="plus-jakarta-sans-regular description">Summary from the last 7 days</span>
         </Col>

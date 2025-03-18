@@ -1,9 +1,30 @@
 .page-container {
   display: flex;
-  flex-direction: column;
   min-height: 100vh; /* Ensure the container takes up full viewport height */
 }
 
-.content-container {
-  flex-grow: 1; /* Allow the content area to grow and fill the remaining space */
+.main-content {
+  flex: 1;
+  transition: margin-left 0.3s ease;
+  width: 100%;
 }
+
+/* On medium screens and larger, push content to make room for sidebar */
+@media (min-width: 768px) {
+  .main-content {
+    margin-left: 276px; /* Same as sidebar width */
+  }
+}
+
+/* On small screens, content takes full width by default */
+@media (max-width: 767.98px) {
+  .main-content {
+    margin-left: 0;
+  }
+  
+  /* When sidebar is open on mobile, optionally add some margin */
+  .content-with-sidebar-mobile {
+    margin-left: 0; /* You can adjust this if you want some content visible */
+  }
+}
+

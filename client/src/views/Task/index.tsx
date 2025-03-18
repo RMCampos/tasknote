@@ -158,7 +158,7 @@ function Task(): React.ReactNode {
       <AlertError errorMessage={errorMessage} />
 
       <Row>
-        <Col xs={9}>
+        <Col xs={12} sm={9}>
           <Form.Control
             type="text"
             id="search_term"
@@ -169,7 +169,7 @@ function Task(): React.ReactNode {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => filterTasks(e.target.value, selectedOption)}
           />
         </Col>
-        <Col xs={3}>
+        <Col xs={12} sm={3} className="mt-3 mt-sm-0">
           <NavLink to="/tasks/new">
             <div className="d-grid gap-2">
               <Button variant="primary" size="lg" type="button" className="d-grip">
@@ -187,7 +187,7 @@ function Task(): React.ReactNode {
               <Form.Check
                 inline
                 type="radio"
-                label="All tasks"
+                label="All"
                 name="radioGroup"
                 id="radio1"
                 value="option1"
