@@ -1,7 +1,5 @@
 #!/bin/bash
 
-TARGET="$1"
-
 if [ -z "${DEPLOY_DOMAIN}" ]; then
   echo "DEPLOY_DOMAIN not defined."
   exit 1

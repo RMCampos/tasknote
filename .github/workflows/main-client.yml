@@ -99,16 +99,16 @@ jobs:
           max_attempts: 3
           command: |
             response=$(curl -X POST \
-              "'${DEPLOY_DOMAIN}/api/application.saveDockerProvider'" \
+              "${DEPLOY_DOMAIN}/api/application.saveDockerProvider" \
               --max-time 30 \
               -H "accept: application/json" \
               -H "Content-Type: application/json" \
               -H "x-api-key: ${API_KEY}" \
               -d '{
-                "dockerImage": "ghcr.io/ricardo-campos-org/react-typescript-todolist/client:prod-${{ steps.inspect.outputs.source_pr }}",
-                "applicationId": "${CLIENT_APPID}",
-                "username": "${GHCR_USERNAME}",
-                "password": "${GHCR_PASSWORD}",
+                "dockerImage": "ghcr.io/ricardo-campos-org/react-typescript-todolist/client:prod-v359",
+                "applicationId": "'"${CLIENT_APPID}"'",
+                "username": "'"${GHCR_USERNAME}"'",
+                "password": "'"${GHCR_PASSWORD}"'",
                 "registryUrl": "ghcr.io"
                 }' \
               -w "\n%{http_code}" \
