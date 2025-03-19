@@ -1,7 +1,7 @@
 .completed-tasks {
   background-color: #fff;
   padding: 1rem;
-  border-radius: 10px;
+  border-radius: 4px;
 
   .title {
     font-size: 16px;
@@ -17,7 +17,7 @@
   }
 
   .task-progress {
-    border-radius: 10px;
+    border-radius: 4px;
     margin-top: 2rem;
     min-height: 160px;
     color: #fff;

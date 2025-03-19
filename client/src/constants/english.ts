@@ -112,7 +112,7 @@ const enTranslations = {
   account_my_account_hello: 'Hello! This is where you can manage your preferences',
   account_my_account_logged: 'You\'re logged in as: ',
   account_app_lang_title: 'App Language',
-  account_app_lang_description: 'You can choose one of these languages:',
+  account_app_lang_description: 'You can choose one the languages below',
   account_privacy_little: 'Your Privacy Matters',
   account_privacy_text: `We're committed to protecting your privacy and
     giving you full control over your data. You can request complete account

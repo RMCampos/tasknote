@@ -23,7 +23,7 @@ function TaskTag(props: React.PropsWithChildren<Props>): React.ReactNode {
       <Col className="d-inline-block text-muted card-tag poppins-regular">
         {tagText}
       </Col>
-      <Col className="d-inline-block card-tag ms-5 text-end poppins-regular">
+      <Col className="d-inline-block text-muted card-tag ms-5 text-end poppins-regular">
         {props.lastUpdate}
       </Col>
     </Row>

@@ -1,3 +1,5 @@
+@import '../../styles/theme.scss';
+
 .sidebar {
   width: 276px;
   background-color: #fff;
@@ -70,7 +72,7 @@
 }
 
 .sidebar-nav.selected {
-  color: #4CD964;
+  color: map-get($theme-colors, 'primary');
 }
 
 .sidebar a {
@@ -82,7 +84,7 @@
 }
 
 .sidebar a:hover {
-  background-color: #e9ecef;
+  background-color: #343a40;
   border-radius: 4px;
 }
 

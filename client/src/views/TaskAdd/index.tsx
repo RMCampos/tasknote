@@ -17,6 +17,7 @@ import { translateServerResponse } from '../../utils/TranslatorUtils';
 import FormInput from '../../components/FormInput';
 import ContentHeader from '../../components/ContentHeader';
 import AlertError from '../../components/AlertError';
+import { FloppyFill } from 'react-bootstrap-icons';
 
 type TaskAction = 'add' | 'edit';
 
@@ -285,12 +286,18 @@ function TaskAdd(): React.ReactNode {
                   onChange={() => setHighPriority(!highPriority)}
                 />
 
-                <Button variant="primary" type="submit">
+                <button
+                  type="submit"
+                  className="home-new-item task-note-btn mt-3"
+                >
+                  <FloppyFill size={25} />
                   {t('task_form_submit')}
-                </Button>
+                </button>
+
                 <Button
                   variant="outline-primary"
                   type="button"
+                  size="lg"
                   className="ms-2"
                   onClick={() => navigate('/tasks')}
                 >

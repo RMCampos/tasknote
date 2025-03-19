@@ -101,7 +101,7 @@ describe('Account Component', () => {
     fireEvent.change(getByTestId('account-password-one'), { target: { value: 'password123' } });
     fireEvent.change(getByLabelText(/Repeat password/i), { target: { value: 'password123' } });
 
-    fireEvent.click(getByText(/Save profile information/i));
+    fireEvent.click(getByText(/Save/i));
 
     await waitFor(() => {
       expect(mockPatchJSON).toHaveBeenCalledWith(expect.any(String), {

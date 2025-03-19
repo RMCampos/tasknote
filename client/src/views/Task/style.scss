@@ -1,3 +1,5 @@
+@import '../../styles/theme.scss';
+
 .text-done {
   color: #ccc!important;
 }
@@ -10,54 +12,33 @@
   margin-right: 0.5rem;
 }
 
-.priority-done {
-  font-size: 10px;
-  font-weight: 700;
-  background-color: #ccc;
-  padding: 3px 5px;
-  border-radius: 6px;
-  margin-right: 0.5rem;
-}
-
-.priority-normal {
-  font-size: 10px;
-  font-weight: 700;
-  background-color: lightgreen;
-  padding: 3px 5px;
-  border-radius: 6px;
-  margin-right: 0.5rem;
-}
-
-.priority-high {
-  font-size: 10px;
-  font-weight: 700;
-  background-color: lightcoral;
-  padding: 3px 5px;
-  border-radius: 6px;
-  margin-right: 0.5rem;
-}
-
-.task-pipe {
-  color: #868181;
-  margin: 0 0.5rem;
-}
-
-.task-last-update {
-  font-size: 11px;
-  color: #868181;
-}
-
-.task-icon {
-  margin-right: 1rem;
-  cursor: pointer;
-}
-
-/* New code */
-
 .task-card {
-  min-height: 11rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   padding: 0.5rem;
+}
+
+.normal-importance {
+  border-left: 5px solid map-get($theme-colors, 'primary') !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.high-importance {
+  border-left: 5px solid #FFD54F !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.high-importance:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-width: 20px 20px 0 0;
+  border-style: solid;
+  border-color: #FFD54F #ffffff;
+}
+
+.done-no-importance {
+  opacity: 0.7;
 }
 
 .dropdown-toggle::after {
@@ -74,7 +55,7 @@
 .radio-group-container {
   background-color: #f8f9fa;
   padding: 1.5rem;
-  border-radius: 8px;
+  border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   margin-bottom: 1.5rem;
 }
@@ -134,6 +115,12 @@
   background-color: rgba(13, 110, 253, 0.1);
   border-radius: 4px;
   display: inline-block;
+}
+
+.add-button svg {
+  margin-right: .5rem;
+  margin-left: -1rem;
+  margin-top: -3px;
 }
 
 /* Responsive adjustments */

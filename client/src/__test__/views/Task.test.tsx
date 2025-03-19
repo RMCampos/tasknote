@@ -81,18 +81,15 @@ describe('Renders the task view', () => {
     await waitFor(() => {
       // normal priority task
       expect(screen.getByText('Task_one')).toBeDefined();
-      expect(screen.queryByTestId('task-title-bell-Task_one')).toBeNull();
       expect(Array.from(screen.getByTestId('task-title-text-Task_one').classList).join(' ')).toBe('poppins-semibold');
       
       // high priority task
       expect(screen.getByText('Task_two')).toBeDefined();
-      expect(screen.getByTestId('task-title-bell-Task_two')).toBeDefined();
-      expect(Array.from(screen.getByTestId('task-title-text-Task_two').classList).join(' ')).toBe('ms-2 poppins-semibold');
+      expect(Array.from(screen.getByTestId('task-title-text-Task_two').classList).join(' ')).toBe('poppins-semibold');
 
       // done task
       expect(screen.getByText('Task_three')).toBeDefined();
-      expect(screen.getByTestId('task-title-check-Task_three')).toBeDefined();
-      expect(Array.from(screen.getByTestId('task-title-text-Task_three').classList).join(' ')).toBe('text-strike ms-2 poppins-semibold');
+      expect(Array.from(screen.getByTestId('task-title-text-Task_three').classList).join(' ')).toBe('ms-2 text-strike poppins-semibold');
     });
   });
 

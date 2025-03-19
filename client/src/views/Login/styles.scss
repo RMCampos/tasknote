@@ -1,6 +1,4 @@
-$primary-color: #61cd8d;
-$light-bg: #f8f9fa;
-$dark-text: #343a40;
+@import '../../styles/theme.scss';
 
 .login-page {
   display: flex;
@@ -25,7 +23,7 @@ $dark-text: #343a40;
     position: relative;
     z-index: 2;
     border: none;
-    border-radius: 8px;
+    border-radius: 4px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   }
 
@@ -37,19 +35,19 @@ $dark-text: #343a40;
   }
 
   .form-control {
-    border-radius: 5px;
+    border-radius: 4px;
   }
 
   .btn-primary {
-    background-color: $primary-color;
-    border-color: $primary-color;
+    background-color: map-get($theme-colors, 'primary');
+    border-color: map-get($theme-colors, 'primary');
     &:hover {
-      background-color: darken($primary-color, 10%);
+      background-color: darken(map-get($theme-colors, 'primary'), 10%);
     }
   }
 
   .text-center a {
-    color: $primary-color;
+    color: map-get($theme-colors, 'primary');
     &:hover {
       text-decoration: underline;
     }

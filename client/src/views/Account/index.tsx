@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Alert, Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { FileText, Person } from 'react-bootstrap-icons';
+import { ExclamationSquareFill, FileText, FloppyFill, Person, ShieldExclamation, TrashFill } from 'react-bootstrap-icons';
 import DOMPurify from 'dompurify';
 import { clearStorage, setDefaultLang } from '../../storage-service/storage';
 import AuthContext from '../../context/AuthContext';
@@ -195,9 +195,15 @@ function Account(): React.ReactNode {
                 }}
               />
 
-              <Button variant="primary" type="submit">
-                Save profile information
-              </Button>
+              <div className="d-grid">
+                <button
+                  type="submit"
+                  className="home-new-item task-note-btn"
+                >
+                  <FloppyFill size={25} />
+                  Save
+                </button>
+              </div>
             </Form>
             <hr />
             <p>
@@ -226,7 +232,7 @@ function Account(): React.ReactNode {
                   key={lang.key}
                   type="button"
                   variant="outline-primary"
-                  className="btn-sm me-3 mb-3 mb-sm-0"
+                  className="btn-sm me-3 mb-3 d-block"
                   onClick={() => handleLanguage(lang.lang)}
                   data-testid={`language-button-${lang.lang}`}
                 >
@@ -247,25 +253,25 @@ function Account(): React.ReactNode {
               ))}
             </div>
           </div>
-        </Col>
-      </Row>
 
-      <Row className="my-4">
-        <Col xs={12}>
-          <h3 className="poppins-regular">Your Privacy</h3>
-          <h4 className="poppins-bold home-productive">Matters</h4>
-        </Col>
-      </Row>
+          <div className="user-info-card mt-4">
+            <div className="title">
+              <ShieldExclamation />
+              {' '}
+              Your Privacy matters
+            </div>
+            <span className="description">
+              You decide when to delete your data
+            </span>
 
-      <Row>
-        <Col>
-          <div className="user-info-card">
-            <p>{t('account_privacy_text')}</p>
+            <p className="mt-4 mb-2">{t('account_privacy_text')}</p>
             <Button
               variant="danger"
               type="button"
               onClick={() => setShowAlert(true)}
+              className="text-white btn-icon-fix"
             >
+              <TrashFill />
               {t('account_privacy_delete_btn')}
             </Button>
 
@@ -273,7 +279,8 @@ function Account(): React.ReactNode {
               <Alert className="mt-3" variant="danger" onClose={() => setShowAlert(false)} dismissible>
                 <Alert.Heading>{t('account_delete_title')}</Alert.Heading>
                 <p>{t('account_delete_description')}</p>
-                <Button onClick={() => deleteAccount()} variant="outline-danger">
+                <Button onClick={() => deleteAccount()} variant="outline-danger" className="btn-icon-fix">
+                  <ExclamationSquareFill />
                   {t('account_delete_btn')}
                 </Button>
               </Alert>

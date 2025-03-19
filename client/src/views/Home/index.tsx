@@ -22,7 +22,6 @@ import TaskProgress from '../../components/TaskProgress';
 import AuthContext from '../../context/AuthContext';
 import ContentHeader from '../../components/ContentHeader';
 import AlertError from '../../components/AlertError';
-import './style.css';
 
 /**
  * Home page component.

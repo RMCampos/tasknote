@@ -138,6 +138,7 @@ public class NoteService {
     }
 
     noteUrlRepository.deleteByNote_id(noteId);
+    noteUrlRepository.flush();
     log.info("URL deleted from task {}", noteId);
 
     if (!Objects.isNull(patch.url()) && !patch.url().isBlank()) {
@@ -148,6 +149,7 @@ public class NoteService {
     }
 
     NoteEntity patchedNote = noteRepository.save(noteEntity);
+    noteRepository.flush();
 
     log.info("Note patched! Id {}", patchedNote.getId());
 
@@ -208,11 +210,11 @@ public class NoteService {
   }
 
   private NoteUrlEntity saveUrl(NoteEntity noteEntity, String url) {
-    NoteUrlEntity taskUrl = new NoteUrlEntity();
-    taskUrl.setUrl(url);
-    taskUrl.setNote(noteEntity);
+    NoteUrlEntity noteUrl = new NoteUrlEntity();
+    noteUrl.setUrl(url);
+    noteUrl.setNote(noteEntity);
 
-    NoteUrlEntity savedUrl = noteUrlRepository.save(taskUrl);
+    NoteUrlEntity savedUrl = noteUrlRepository.save(noteUrl);
     log.info("URL saved to note {}", noteEntity.getId());
 
     return savedUrl;

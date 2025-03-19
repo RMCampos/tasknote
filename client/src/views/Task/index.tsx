@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
-  Button,
   Card,
   Col,
   Container,
@@ -10,18 +9,17 @@ import {
   Form,
   Row
 } from 'react-bootstrap';
-import { ThreeDotsVertical } from 'react-bootstrap-icons';
+import { PlusCircleFill, ThreeDotsVertical } from 'react-bootstrap-icons';
 import { TaskResponse } from '../../types/TaskResponse';
 import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
 import { translateServerResponse, translateTaskResponse } from '../../utils/TranslatorUtils';
 import TaskTimeLeft from '../../components/TaskTimeLeft';
-import TaskUrl from '../../components/TaskUrl';
 import TaskTag from '../../components/TaskTag';
 import TaskTitle from '../../components/TaskTitle';
 import ContentHeader from '../../components/ContentHeader';
 import AlertError from '../../components/AlertError';
-import './style.css';
+import './style.scss';
 
 /**
  * The Task component is a view that displays a list of tasks.
@@ -141,6 +139,23 @@ function Task(): React.ReactNode {
     filterTasks(filterText, e.target.value);
   };
 
+  const getTaskClasses = (task: TaskResponse): string => {
+    const classesToUse: string[] = [];
+    classesToUse.push('task-card');
+    classesToUse.push('shadow-lg');
+    classesToUse.push('bg-light');
+    if (!task.done && task.highPriority) {
+      classesToUse.push('high-importance');
+    }
+    else if (!task.done && !task.highPriority) {
+      classesToUse.push('normal-importance');
+    }
+    else if (task.done) {
+      classesToUse.push('done-no-importance');
+    }
+    return classesToUse.join(' ');
+  };
+
   useEffect(() => {
     loadTasks();
   }, []);
@@ -158,7 +173,7 @@ function Task(): React.ReactNode {
       <AlertError errorMessage={errorMessage} />
 
       <Row>
-        <Col xs={12} sm={9}>
+        <Col xs={12} sm={8} lg={9}>
           <Form.Control
             type="text"
             id="search_term"
@@ -169,12 +184,16 @@ function Task(): React.ReactNode {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => filterTasks(e.target.value, selectedOption)}
           />
         </Col>
-        <Col xs={12} sm={3} className="mt-3 mt-sm-0">
+        <Col xs={12} sm={4} lg={3} className="mt-3 mt-sm-0">
           <NavLink to="/tasks/new">
-            <div className="d-grid gap-2">
-              <Button variant="primary" size="lg" type="button" className="d-grip">
-                Add task
-              </Button>
+            <div className="d-grid">
+              <button
+                type="button"
+                className="home-new-item task-note-btn"
+              >
+                <PlusCircleFill size={25} />
+                Add Tasks
+              </button>
             </div>
           </NavLink>
         </Col>
@@ -225,15 +244,18 @@ function Task(): React.ReactNode {
       <Row className="mt-3">
         {tasks.map((task: TaskResponse) => (
           <Col xs={12} key={task.id.toString()}>
-            <Card key={task.id.toString()} className="task-card">
+            <Card
+              key={task.id.toString()}
+              className={getTaskClasses(task)}
+            >
               <Card.Body>
                 <Row>
                   <Col xs={10}>
                     <Card.Title>
                       <TaskTitle
                         title={task.description}
-                        highPriority={task.highPriority}
                         done={task.done}
+                        taskUrl={task.urls}
                       />
                     </Card.Title>
                   </Col>
@@ -267,9 +289,6 @@ function Task(): React.ReactNode {
                     done={task.done}
                     tooltip={task.dueDate}
                   />
-                )}
-                {task.urls.length > 0 && (
-                  <TaskUrl url={task.urls[0]} />
                 )}
               </Card.Body>
               <Card.Footer className="task-card-footer">

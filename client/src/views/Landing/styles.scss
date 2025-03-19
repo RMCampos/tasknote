@@ -1,6 +1,4 @@
-$primary-color: #61cd8d;
-$light-bg: #f8f9fa;
-$dark-text: #343a40;
+@import '../../styles/theme.scss';
 
 .landing-page {
   position: relative;
@@ -48,14 +46,14 @@ $dark-text: #343a40;
     margin-top: 5rem;
     font-size: 2.5rem;
     padding: 0.75rem 1rem;
-    color: darken($primary-color, 20%);
+    color: map-get($theme-colors, 'primary');
     font-weight: 600;
   }
 
   a.login {
     &:hover {
       font-size: 2.7rem;
-      color: darken($primary-color, 30%);
+      color: darken(map-get($theme-colors, 'primary'), 10%);
     }
   }
 
@@ -64,11 +62,11 @@ $dark-text: #343a40;
   }
 
   .btn-outline-primary {
-    color: $primary-color;
-    border-color: $primary-color;
+    color: map-get($theme-colors, 'primary');
+    border-color: map-get($theme-colors, 'primary');
     width: 9rem;
     &:hover {
-      background-color: $primary-color;
+      background-color: map-get($theme-colors, 'primary');
       color: #fff;
     }
   }

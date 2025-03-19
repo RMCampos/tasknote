@@ -7,7 +7,7 @@ import SidebarContext from '../../context/SidebarContext';
 import NavButton from '../NavButton';
 import SidebarIcon from '../SidebarIcon';
 import { env } from '../../env';
-import './style.css';
+import './style.scss';
 
 interface Props {
   isMobileOpen: boolean;
@@ -27,7 +27,11 @@ function Sidebar(props: React.PropsWithChildren<Props>): React.ReactNode {
 
   // Note: when selected, change class to plus-jakarta-sans-thin and add background
 
-  useEffect(() => {}, [user]);
+  const logout = (): void => {
+    setNewPage('/home');
+    signOut();
+  };
+  useEffect(() => {}, [user, currentPage]);
 
   return (
     <>
@@ -100,7 +104,7 @@ function Sidebar(props: React.PropsWithChildren<Props>): React.ReactNode {
               {t('home_nav_about')}
             </div>
           </NavLink>
-          <NavButton className="mb-2" onClick={() => signOut()}>
+          <NavButton className="mb-2" onClick={() => logout()}>
             <div className="sidebar-nav">
               <SidebarIcon
                 iconName="logout"
