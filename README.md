@@ -57,7 +57,7 @@ Please refer to the [CONTRIBUTING](CONTRIBUTING.md) file for more information ab
 
 ## 📞 Contact
 
-Reach out on X [@XerifeRicWoody](https://twitter.com/XerifeRicWoody) or email me ricardocampos@gmail.com
+Reach out on X [@RMCamposs](https://x.com/RMCamposs)
 
 ## 📄 License
 
