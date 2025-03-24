@@ -40,6 +40,7 @@ import org.springframework.context.annotation.ImportRuntimeHints;
   io.jsonwebtoken.Jwts.SIG.class,
   io.jsonwebtoken.Jwts.ENC.class,
   io.jsonwebtoken.Jwts.KEY.class,
+  io.jsonwebtoken.impl.security.KeysBridge.class,
   io.jsonwebtoken.impl.security.StandardSecureDigestAlgorithms.class,
   io.jsonwebtoken.impl.security.StandardKeyOperations.class,
   io.jsonwebtoken.impl.security.StandardEncryptionAlgorithms.class,

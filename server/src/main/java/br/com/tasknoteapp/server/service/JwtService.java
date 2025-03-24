@@ -1,5 +1,6 @@
 package br.com.tasknoteapp.server.service;
 
+import br.com.tasknoteapp.server.entity.UserEntity;
 import java.time.LocalDateTime;
 import java.util.Map;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,7 +12,7 @@ public interface JwtService {
 
   public LocalDateTime extractExpiration(String token);
 
-  public String generateToken(String username);
+  public String generateToken(UserEntity user);
 
   public String createToken(Map<String, Object> claims, String email);
 

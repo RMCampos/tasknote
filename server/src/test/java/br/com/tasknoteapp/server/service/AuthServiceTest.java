@@ -78,9 +78,10 @@ class AuthServiceTest {
     UserEntity entity = new UserEntity();
     entity.setId(3L);
     entity.setEmail(request.email());
+    entity.setName("User");
 
     when(userRepository.save(any())).thenReturn(entity);
-    when(jwtService.generateToken(request.email())).thenReturn("a1b2c3");
+    when(jwtService.generateToken(any())).thenReturn("a1b2c3");
 
     UserResponseWithToken token = authService.signUpNewUser(request);
 
@@ -190,7 +191,7 @@ class AuthServiceTest {
     Sort sort = Sort.by(Direction.DESC, "whenHappened");
     when(userPwdLimitRepository.findAllByUser_id(existing.getId(), sort)).thenReturn(List.of());
     when(authenticationManager.authenticate(any())).thenReturn(null);
-    when(jwtService.generateToken(request.email())).thenReturn("a1b2c3");
+    when(jwtService.generateToken(existing)).thenReturn("a1b2c3");
 
     doNothing().when(userPwdLimitRepository).deleteAllForUser(existing.getId());
 
@@ -340,7 +341,7 @@ class AuthServiceTest {
     existing.setAdmin(false);
     when(userRepository.findByEmail(email)).thenReturn(Optional.of(existing));
 
-    when(jwtService.generateToken(email)).thenReturn("a1b2c3");
+    when(jwtService.generateToken(existing)).thenReturn("a1b2c3");
 
     String token = authService.refreshCurrentUserToken();
 

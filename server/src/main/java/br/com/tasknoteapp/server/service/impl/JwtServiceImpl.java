@@ -1,17 +1,23 @@
 package br.com.tasknoteapp.server.service.impl;
 
+import br.com.tasknoteapp.server.entity.UserEntity;
 import br.com.tasknoteapp.server.service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import javax.crypto.SecretKey;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +30,12 @@ class JwtServiceImpl implements JwtService {
   private static final long HOUR = MINUTE * 60;
   private static final long DAY = HOUR * 24;
   private static final long EXPIRATION_TIME = DAY * 7;
-  private static final SecretKey KEY = Jwts.SIG.HS256.key().build();
+  private final SecretKey key;
+
+  public JwtServiceImpl(@Value("${br.com.tasknote.server.jwt-secret}") String secretKey) {
+    byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
+    this.key = Keys.hmacShaKeyFor(keyBytes);
+  }
 
   @Override
   public String getEmailFromToken(String token) {
@@ -41,9 +52,19 @@ class JwtServiceImpl implements JwtService {
   }
 
   @Override
-  public String generateToken(String username) {
+  public String generateToken(UserEntity user) {
     Map<String, Object> claims = new HashMap<>();
-    return createToken(claims, username);
+    claims.put("userId", user.getId());
+    claims.put("email", user.getEmail());
+    claims.put("name", user.getName());
+
+    List<String> roles = new ArrayList<>();
+    if (Boolean.TRUE.equals(user.getAdmin())) {
+      roles.add("admin");
+    }
+
+    claims.put("roles", roles);
+    return createToken(claims, user.getEmail());
   }
 
   @Override
@@ -53,7 +74,8 @@ class JwtServiceImpl implements JwtService {
         .subject(email)
         .issuedAt(new Date(System.currentTimeMillis()))
         .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-        .signWith(KEY)
+        .claims(claims)
+        .signWith(key)
         .compact();
   }
 
@@ -83,7 +105,7 @@ class JwtServiceImpl implements JwtService {
   private Optional<Claims> extractAllClaims(String token) {
     try {
       return Optional.of(
-          Jwts.parser().verifyWith(KEY).build().parseSignedClaims(token).getPayload());
+          Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload());
     } catch (MalformedJwtException me) {
       return Optional.empty();
     }

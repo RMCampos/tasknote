@@ -79,9 +79,9 @@ public class AuthService {
     user.setCreatedAt(LocalDateTime.now());
     userRepository.save(user);
 
-    String token = jwtService.generateToken(user.getEmail());
+    String token = jwtService.generateToken(user);
 
-    log.info("User created! Token {}", token);
+    log.info("User created! ID {}", user.getId());
     return UserResponseWithToken.fromEntity(user, token, getGravatarImageUrl(login.email()));
   }
 
@@ -131,7 +131,7 @@ public class AuthService {
       authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(login.email(), login.password()));
 
-      String token = jwtService.generateToken(user.get().getEmail());
+      String token = jwtService.generateToken(user.get());
 
       log.info("User authenticated! Token {}", token);
 
@@ -199,7 +199,7 @@ public class AuthService {
 
     log.info("Refreshing current session to user {}", currentUser.getId());
 
-    String token = jwtService.generateToken(email);
+    String token = jwtService.generateToken(currentUser);
 
     log.info("User refreshed! Token {}", token);
     return token;
@@ -285,7 +285,7 @@ public class AuthService {
         }
         hexString.append(hex);
       }
-      log.info("Email hashed: {}", hexString);
+      log.debug("Email hashed: {}", hexString);
       return Optional.of(hexString.toString());
     } catch (NoSuchAlgorithmException | NullPointerException e) {
       log.error("NoSuchAlgorithmException or NullPointerException", e.getMessage());

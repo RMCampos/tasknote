@@ -2,6 +2,7 @@ br:
     com:
         tasknote:
             server:
+                jwt-secret: ${SECURITY_KEY:empty}
                 version: ${BUILD:local}
 cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost}
