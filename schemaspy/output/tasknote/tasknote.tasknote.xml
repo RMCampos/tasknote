@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<database name="tasknote" schema="tasknote" type="PostgreSQL - 15.8 (Debian 15.8-1.pgdg120+1)">
+   <sequences>
+      <sequence increment="1" name="note_urls_id_seq" startValue="1"/>
+      <sequence increment="1" name="notes_id_seq" startValue="1"/>
+      <sequence increment="1" name="tasks_id_seq" startValue="1"/>
+      <sequence increment="1" name="user_pwd_limits_id_seq" startValue="1"/>
+      <sequence increment="1" name="users_id_seq" startValue="1"/>
+   </sequences>
+   <tables>
+      <table name="note_urls" remarks="" schema="tasknote" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('tasknote.note_urls_id_seq'::regclass)" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="serial" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="note_id" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="note_url_note_id_fk" implied="false" onDeleteCascade="false" schema="tasknote" table="notes"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="url" nullable="false" remarks="" size="200" type="varchar" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="note_url_pk" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
+      <table name="notes" remarks="" schema="tasknote" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('tasknote.notes_id_seq'::regclass)" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="serial" typeCode="4">
+            <child column="note_id" foreignKey="note_url_note_id_fk" implied="false" onDeleteCascade="false" schema="tasknote" table="note_urls"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="user_id" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="notes_user_id_fk" implied="false" onDeleteCascade="false" schema="tasknote" table="users"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="description" nullable="false" remarks="Column increased to allow TEXT up to 2000 characters" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="title" nullable="true" remarks="" size="100" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="tag" nullable="true" remarks="" size="30" type="varchar" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="notes_pk" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
+      <table name="notes_created" remarks="" schema="tasknote" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="user_id" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="notes_created_user_id_fk" implied="false" onDeleteCascade="false" schema="tasknote" table="users"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="count" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <primaryKey column="user_id" sequenceNumberInPK="1"/>
+         <index name="notes_created_pk" unique="true">
+            <column ascending="true" name="user_id"/>
+         </index>
+      </table>
+      <table name="task_url" remarks="" schema="tasknote" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="task_id" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="task_url_task_id_fk" implied="false" onDeleteCascade="false" schema="tasknote" table="tasks"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="url" nullable="false" remarks="" size="200" type="varchar" typeCode="12"/>
+         <primaryKey column="task_id" sequenceNumberInPK="1"/>
+         <primaryKey column="url" sequenceNumberInPK="2"/>
+         <index name="task_url_pk" unique="true">
+            <column ascending="true" name="task_id"/>
+            <column ascending="true" name="url"/>
+         </index>
+      </table>
+      <table name="tasks" remarks="" schema="tasknote" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('tasknote.tasks_id_seq'::regclass)" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="serial" typeCode="4">
+            <child column="task_id" foreignKey="task_url_task_id_fk" implied="false" onDeleteCascade="false" schema="tasknote" table="task_url"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="user_id" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="task_user_id_fk" implied="false" onDeleteCascade="false" schema="tasknote" table="users"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="description" nullable="false" remarks="" size="300" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="done" nullable="false" remarks="" size="1" type="bool" typeCode="-7"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="4" name="last_update" nullable="true" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="status" nullable="true" remarks="" size="1" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="due_date" nullable="true" remarks="" size="13" type="date" typeCode="91"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="due_date_notify" nullable="true" remarks="" size="1" type="bool" typeCode="-7"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="due_date_notify_sent" nullable="true" remarks="" size="1" type="bool" typeCode="-7"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="high_priority" nullable="true" remarks="" size="1" type="bool" typeCode="-7"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="10" name="tag" nullable="true" remarks="" size="30" type="varchar" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="task_pk" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
+      <table name="user_pwd_limits" remarks="" schema="tasknote" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('tasknote.user_pwd_limits_id_seq'::regclass)" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="serial" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="user_id" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="user_pwd_limits_user_id_fk" implied="false" onDeleteCascade="false" schema="tasknote" table="users"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="2" name="when_happened" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="user_pwd_limits_pk" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
+      <table name="user_tasks_done" remarks="" schema="tasknote" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="user_id" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="user_tasks_done_user_id_fk" implied="false" onDeleteCascade="false" schema="tasknote" table="users"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="task_id" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="2" name="done_date" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <primaryKey column="user_id" sequenceNumberInPK="1"/>
+         <primaryKey column="task_id" sequenceNumberInPK="2"/>
+         <index name="user_tasks_done_pk" unique="true">
+            <column ascending="true" name="user_id"/>
+            <column ascending="true" name="task_id"/>
+         </index>
+      </table>
+      <table name="users" remarks="" schema="tasknote" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('tasknote.users_id_seq'::regclass)" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="serial" typeCode="4">
+            <child column="user_id" foreignKey="notes_user_id_fk" implied="false" onDeleteCascade="false" schema="tasknote" table="notes"/>
+            <child column="user_id" foreignKey="notes_created_user_id_fk" implied="false" onDeleteCascade="false" schema="tasknote" table="notes_created"/>
+            <child column="user_id" foreignKey="task_user_id_fk" implied="false" onDeleteCascade="false" schema="tasknote" table="tasks"/>
+            <child column="user_id" foreignKey="user_pwd_limits_user_id_fk" implied="false" onDeleteCascade="false" schema="tasknote" table="user_pwd_limits"/>
+            <child column="user_id" foreignKey="user_tasks_done_user_id_fk" implied="false" onDeleteCascade="false" schema="tasknote" table="user_tasks_done"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="email" nullable="false" remarks="" size="100" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="password" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="false" digits="0" id="3" name="admin" nullable="false" remarks="" size="1" type="bool" typeCode="-7"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="4" name="created_at" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="5" name="inactivated_at" nullable="true" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="name" nullable="true" remarks="" size="20" type="varchar" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="users_pk" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="users_email_uk" unique="true">
+            <column ascending="true" name="email"/>
+         </index>
+      </table>
+   </tables>
+</database>

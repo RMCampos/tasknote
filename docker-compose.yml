@@ -47,6 +47,20 @@ services:
       retries: 3
       start_period: 10s
 
+  schemaspy:
+    container_name: schemaspy
+    profiles: ["schemaspy"]
+    image: schemaspy/schemaspy:7.0.2
+    user: ${UID:-1000}:${GID:-1000}
+    volumes:
+      - "./schemaspy/output:/output"
+      - "./schemaspy/postgres.properties:/schemaspy.properties"
+    depends_on:
+      db:
+        condition: service_healthy
+      server:
+        condition: service_healthy
+
   db:
     container_name: db
     image: postgres:15.8-bookworm
