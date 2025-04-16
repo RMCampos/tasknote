@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   createBrowserRouter,
   Navigate,
@@ -24,6 +24,9 @@ import './styles/custom.scss';
  */
 function App(): React.ReactNode {
   const { signed, checkCurrentAuthUser } = useContext(AuthContext);
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('theme') ?? 'light';
+  });
 
   /**
    * Routes for the users who are not signed in.
@@ -90,8 +93,28 @@ function App(): React.ReactNode {
     checkCurrentAuthUser(window.location.pathname);
   }, []);
 
+  useEffect(() => {
+    document.body.setAttribute('data-bs-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+  };
+
   return (
-    <RouterProvider router={browserRouter} />
+    <>
+      <button
+        type="button"
+        className="btn btn-dark"
+        onClick={toggleTheme}
+      >
+        {theme === 'dark' ? '☀ Light Mode' : '🌙 Dark Mode'}
+      </button>
+
+      {/* Your routes or content here */}
+      <RouterProvider router={browserRouter} />
+    </>
   );
 };
 

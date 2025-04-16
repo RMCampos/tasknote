@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Button,
   Card,
   Col,
   Container,
@@ -17,7 +16,6 @@ import { translateServerResponse } from '../../utils/TranslatorUtils';
 import FormInput from '../../components/FormInput';
 import ContentHeader from '../../components/ContentHeader';
 import AlertError from '../../components/AlertError';
-import { FloppyFill } from 'react-bootstrap-icons';
 
 type TaskAction = 'add' | 'edit';
 
@@ -288,21 +286,18 @@ function TaskAdd(): React.ReactNode {
 
                 <button
                   type="submit"
-                  className="home-new-item task-note-btn mt-3"
+                  className="home-new-item task-note-btn"
                 >
-                  <FloppyFill size={25} />
                   {t('task_form_submit')}
                 </button>
 
-                <Button
-                  variant="outline-primary"
+                <button
                   type="button"
-                  size="lg"
-                  className="ms-2"
+                  className="ms-2 home-new-item-secondary task-note-btn"
                   onClick={() => navigate('/tasks')}
                 >
                   Cancel
-                </Button>
+                </button>
               </Form>
             </Card.Body>
           </Card>

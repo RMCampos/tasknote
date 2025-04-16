@@ -22,6 +22,7 @@ import TaskProgress from '../../components/TaskProgress';
 import AuthContext from '../../context/AuthContext';
 import ContentHeader from '../../components/ContentHeader';
 import AlertError from '../../components/AlertError';
+import { Search } from 'react-bootstrap-icons';
 
 /**
  * Home page component.
@@ -127,6 +128,9 @@ function Home(): React.ReactNode {
 
               <Form noValidate validated={validated} onSubmit={handleSearch}>
                 <InputGroup className="mb-3">
+                  <InputGroup.Text>
+                    <Search />
+                  </InputGroup.Text>
                   <Form.Control
                     pattern=".{3,}"
                     required
@@ -135,7 +139,7 @@ function Home(): React.ReactNode {
                     name="search_term"
                     placeholder={t('home_card_search_placeholder')}
                   />
-                  <Button type="submit" variant="primary" id="button-search">
+                  <Button type="submit" variant="outline-secondary" id="button-search">
                     {t('home_card_search_btn')}
                   </Button>
                 </InputGroup>

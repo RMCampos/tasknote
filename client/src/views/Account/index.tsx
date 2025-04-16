@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Alert, Button, Col, Container, Form, Row } from 'react-bootstrap';
+import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { ExclamationSquareFill, FileText, FloppyFill, Person, ShieldExclamation, TrashFill } from 'react-bootstrap-icons';
 import DOMPurify from 'dompurify';
 import { clearStorage, setDefaultLang } from '../../storage-service/storage';
 import AuthContext from '../../context/AuthContext';
@@ -14,7 +13,6 @@ import { UserPatchRequest } from '../../types/UserPatchRequest';
 import { UserResponse } from '../../types/UserResponse';
 import ContentHeader from '../../components/ContentHeader';
 import AlertError from '../../components/AlertError';
-import './styles.css';
 
 /**
  * Account page component.
@@ -129,163 +127,153 @@ function Account(): React.ReactNode {
 
       <Row>
         <Col xs={12} lg={6}>
-          <div className="user-info-card">
-            <div className="title">
-              <Person />
-              {' '}
-              Change your info
-            </div>
-            <span className="description">
-              Update only what you need. Blank fields will not be updated
-            </span>
+          <Card>
+            <Card.Body>
+              <Card.Title>
+                Update only what you need. Blank fields will not be updated
+              </Card.Title>
 
-            <AlertError errorMessage={errorMessage} />
+              <AlertError errorMessage={errorMessage} />
 
-            <Form noValidate validated={validated} onSubmit={handleSubmit} className="mt-4">
-              {/* User name */}
-              <FormInput
-                labelText="First name"
-                iconName="Person"
-                required={false}
-                name="name"
-                placeholder={user?.name ? user.name : ''}
-                value={userName}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setUserName(e.target.value);
-                }}
-              />
+              <Form noValidate validated={validated} onSubmit={handleSubmit} className="mt-4">
+                {/* User name */}
+                <FormInput
+                  labelText="First name"
+                  iconName="Person"
+                  required={false}
+                  name="name"
+                  placeholder={user?.name ? user.name : ''}
+                  value={userName}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setUserName(e.target.value);
+                  }}
+                />
 
-              {/* User email */}
-              <FormInput
-                labelText="Email"
-                iconName="At"
-                required={false}
-                name="email"
-                placeholder={user?.email}
-                value={userEmail}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setUserEmail(e.target.value);
-                }}
-              />
+                {/* User email */}
+                <FormInput
+                  labelText="Email"
+                  iconName="At"
+                  required={false}
+                  name="email"
+                  placeholder={user?.email}
+                  value={userEmail}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setUserEmail(e.target.value);
+                  }}
+                />
 
-              {/* User password */}
-              <FormInput
-                labelText="Password"
-                iconName="Lock"
-                required={false}
-                type="password"
-                name="password"
-                value={userPassword}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setUserPassword(e.target.value);
-                }}
-                data_testid="account-password-one"
-              />
+                {/* User password */}
+                <FormInput
+                  labelText="Password"
+                  iconName="Lock"
+                  required={false}
+                  type="password"
+                  name="password"
+                  value={userPassword}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setUserPassword(e.target.value);
+                  }}
+                  data_testid="account-password-one"
+                />
 
-              {/* User password again */}
-              <FormInput
-                labelText="Repeat password"
-                iconName="Lock"
-                required={false}
-                type="password"
-                name="passwordAgain"
-                value={userPasswordAgain}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setUserPasswordAgain(e.target.value);
-                }}
-              />
+                {/* User password again */}
+                <FormInput
+                  labelText="Repeat password"
+                  iconName="Lock"
+                  required={false}
+                  type="password"
+                  name="passwordAgain"
+                  value={userPasswordAgain}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setUserPasswordAgain(e.target.value);
+                  }}
+                />
 
-              <div className="d-grid">
-                <button
-                  type="submit"
-                  className="home-new-item task-note-btn"
-                >
-                  <FloppyFill size={25} />
-                  Save
-                </button>
-              </div>
-            </Form>
-            <hr />
-            <p>
-              If you want to display your picture, we support Gravatar.
-              Please head to
-              {' '}
-              <a href="https://gravatar.com" target="_blank" rel="noreferrer">Gravatar</a>
-              {' '}
-              to register or update your profile picture. Once updated, please wait a few
-              minutes to see it here.
-            </p>
-          </div>
+                <div className="d-grid">
+                  <button
+                    type="submit"
+                    className="home-new-item task-note-btn"
+                  >
+                    Save
+                  </button>
+                </div>
+              </Form>
+              <hr />
+              <p>
+                If you want to display your picture, we support Gravatar.
+                Please head to
+                {' '}
+                <a href="https://gravatar.com" target="_blank" rel="noreferrer">Gravatar</a>
+                {' '}
+                to register or update your profile picture. Once updated, please wait a few
+                minutes to see it here.
+              </p>
+            </Card.Body>
+          </Card>
         </Col>
         <Col xs={12} lg={6} className="mt-4 mt-lg-0">
-          <div className="user-info-card">
-            <div className="title">
-              <FileText />
-              {' '}
-              Change the app language
-            </div>
-            <span className="description">{t('account_app_lang_description')}</span>
-            <div className="mt-4 mb-2">Available languages</div>
-            <div>
-              {languages.map((lang: LangAvailable) => (
-                <Button
-                  key={lang.key}
-                  type="button"
-                  variant="outline-primary"
-                  className="btn-sm me-3 mb-3 d-block"
-                  onClick={() => handleLanguage(lang.lang)}
-                  data-testid={`language-button-${lang.lang}`}
-                >
-                  {lang.lang === 'pt_br' && (
-                    <span>🇧🇷 </span>
-                  )}
-                  {lang.lang === 'en' && (
-                    <span>🇺🇸 </span>
-                  )}
-                  {lang.lang === 'es' && (
-                    <span>🇪🇸 </span>
-                  )}
-                  {lang.lang === 'ru' && (
-                    <span>🇷🇺 </span>
-                  )}
-                  {t(lang.key)}
-                </Button>
-              ))}
-            </div>
-          </div>
+          <Card>
+            <Card.Body>
+              <Card.Title>Change the app language</Card.Title>
+              <span className="description">{t('account_app_lang_description')}</span>
+              <div className="mt-4 mb-2">Available languages</div>
+              <div>
+                {languages.map((lang: LangAvailable) => (
+                  <Button
+                    key={lang.key}
+                    type="button"
+                    variant="outline-primary"
+                    className="btn-sm me-3 mb-3 d-block"
+                    onClick={() => handleLanguage(lang.lang)}
+                    data-testid={`language-button-${lang.lang}`}
+                  >
+                    {lang.lang === 'pt_br' && (
+                      <span>🇧🇷 </span>
+                    )}
+                    {lang.lang === 'en' && (
+                      <span>🇺🇸 </span>
+                    )}
+                    {lang.lang === 'es' && (
+                      <span>🇪🇸 </span>
+                    )}
+                    {lang.lang === 'ru' && (
+                      <span>🇷🇺 </span>
+                    )}
+                    {t(lang.key)}
+                  </Button>
+                ))}
+              </div>
+            </Card.Body>
+          </Card>
 
-          <div className="user-info-card mt-4">
-            <div className="title">
-              <ShieldExclamation />
-              {' '}
-              Your Privacy matters
-            </div>
-            <span className="description">
-              You decide when to delete your data
-            </span>
+          <Card className="mt-4">
+            <Card.Body>
+              <Card.Title>Your Privacy matters</Card.Title>
+              <span className="description">
+                You decide when to delete your data
+              </span>
 
-            <p className="mt-4 mb-2">{t('account_privacy_text')}</p>
-            <Button
-              variant="danger"
-              type="button"
-              onClick={() => setShowAlert(true)}
-              className="text-white btn-icon-fix"
-            >
-              <TrashFill />
-              {t('account_privacy_delete_btn')}
-            </Button>
+              <p className="mt-4 mb-2">{t('account_privacy_text')}</p>
+              <Button
+                variant="danger"
+                type="button"
+                onClick={() => setShowAlert(true)}
+                className=""
+              >
+                {t('account_privacy_delete_btn')}
+              </Button>
 
-            {showAlert && (
-              <Alert className="mt-3" variant="danger" onClose={() => setShowAlert(false)} dismissible>
-                <Alert.Heading>{t('account_delete_title')}</Alert.Heading>
-                <p>{t('account_delete_description')}</p>
-                <Button onClick={() => deleteAccount()} variant="outline-danger" className="btn-icon-fix">
-                  <ExclamationSquareFill />
-                  {t('account_delete_btn')}
-                </Button>
-              </Alert>
-            )}
-          </div>
+              {showAlert && (
+                <Alert className="mt-3" variant="danger" onClose={() => setShowAlert(false)} dismissible>
+                  <Alert.Heading>{t('account_delete_title')}</Alert.Heading>
+                  <p>{t('account_delete_description')}</p>
+                  <Button onClick={() => deleteAccount()} variant="outline-danger">
+                    {t('account_delete_btn')}
+                  </Button>
+                </Alert>
+              )}
+            </Card.Body>
+          </Card>
         </Col>
       </Row>
     </Container>

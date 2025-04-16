@@ -41,7 +41,7 @@ describe('ContentHeader test cases', () => {
     expect(getByText(headerProps.h2GreenText)).toBeDefined();
     
     // renders only if it's the home (dashboard)
-    expect(getByText("Add note")).toBeDefined();
-    expect(getByText("Add task")).toBeDefined();
+    expect(getByText("New note")).toBeDefined();
+    expect(getByText("New task")).toBeDefined();
   });
 });

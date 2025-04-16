@@ -4,12 +4,89 @@ $theme-colors: (
   'danger': #FB1A41, /* from design */
 );
 
+$light-bg: #E6F5E9;
 $dark-text: #343a40;
-
-$btn-border-radius: 0.3rem;         // Default button border radius
-$btn-border-radius-sm: 0.3rem;      // Small button border radius
-$btn-border-radius-lg: 0.3rem;
 
 $input-border-radius: 0.3rem;       // Default input border radius
 $input-border-radius-sm: 0.3rem;    // Small input border radius
 $input-border-radius-lg: 0.3rem; 
+
+// Light theme overrides
+[data-bs-theme="light"] {
+  /* Landing */
+  --bs-landing-bg: url('../assets/landing-bg.jpg');
+  --bs-bg-overlay: rgba(255, 255, 255, 0.85);
+
+  /* Body */
+  --bs-custom-body-bg: #E6F5E9; // light green
+  --bs-body-bg: rgba(248, 249, 250, 1);
+  --bs-body-color: #212529;
+  --bs-box-shadow: rgba(0, 0, 0, 0.1);
+
+  /* Card */
+  --bs-card-bg: rgba(248, 249, 250, 1);
+  --bs-card-color: #212529;
+
+  /* Border */
+  --bs-border-color: #dee2e6;
+  --bs-border-radius-lg: 4px;
+  --bs-border-new-btn-item-color: #6c757d;
+  --bs-border-color-translucent: rgba(248, 249, 250, 1);
+
+  /* Buttons */
+  --bs-btn-color: #2EB745;
+  --bs-btn-border-color: #2EB745;
+  --bs-btn-hover-color: #2EB745;
+  --bs-btn-new-btn-item-bg: #2EB745;
+  --bs-btn-new-btn-item-color: #FFF;
+
+  /* Color palette */
+  --bs-primary: #2EB745;
+  --bs-info: #2EB745;
+
+  /* sidebar header */
+  --bs-header-sidebar-color: #DCDCDC;
+}
+
+// card bg color: #161a1d
+// secondary button bg: #272d33
+
+// Dark theme overrides
+[data-bs-theme="dark"] {
+  /* Landing */
+  --bs-landing-bg: url('../assets/landing-bg-dark.jpg');
+  --bs-bg-overlay: rgba(0, 0, 0, 0.95);
+
+  /* Body */
+  --bs-custom-body-bg: #192123; // body background color
+  --bs-body-bg: #161a1d; // input background color
+  --bs-body-color: #e0e0e0;
+  --bs-box-shadow: rgba(255, 255, 255, 0.9);
+
+  /* Card */
+  --bs-card-bg: #161a1d; // #282d33
+  --bs-card-color: #e0e0e0;
+  
+  /* Border */
+  --bs-border-color: #444;
+  --bs-border-radius-lg: 4px;
+  --bs-border-new-btn-item-color: #6c757d;
+  --bs-border-color-translucent: #161a1d;
+
+  /* Buttons */
+  --bs-btn-color: #2EB745;
+  --bs-btn-border-color: #2EB745;
+  --bs-btn-hover-color: #2EB745;
+  --bs-btn-new-btn-item-bg: #2EB745;
+  --bs-btn-new-btn-item-color: #212529;
+
+  /* Inputs */
+  --bs-tertiary-bg: #161a1d;
+  
+  /* Color palette */
+  --bs-primary: #2EB745;
+  --bs-info: #2EB745;
+
+  /* sidebar header */
+  --bs-header-sidebar-color: #444;
+}

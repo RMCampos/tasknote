@@ -5,7 +5,7 @@ import { TasksChartResponse } from '../../types/TasksChartResponse';
 import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
 import ChartIcon from '../../assets/chart-icon.svg';
-import './style.css';
+import './style.scss';
 
 type Series = {
   label: string;

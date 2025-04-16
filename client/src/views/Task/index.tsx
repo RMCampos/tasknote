@@ -9,7 +9,7 @@ import {
   Form,
   Row
 } from 'react-bootstrap';
-import { PlusCircleFill, ThreeDotsVertical } from 'react-bootstrap-icons';
+import { ThreeDotsVertical } from 'react-bootstrap-icons';
 import { TaskResponse } from '../../types/TaskResponse';
 import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
@@ -143,7 +143,6 @@ function Task(): React.ReactNode {
     const classesToUse: string[] = [];
     classesToUse.push('task-card');
     classesToUse.push('shadow-lg');
-    classesToUse.push('bg-light');
     if (!task.done && task.highPriority) {
       classesToUse.push('high-importance');
     }
@@ -191,7 +190,6 @@ function Task(): React.ReactNode {
                 type="button"
                 className="home-new-item task-note-btn"
               >
-                <PlusCircleFill size={25} />
                 Add Tasks
               </button>
             </div>

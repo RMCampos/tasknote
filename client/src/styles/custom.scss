@@ -1,20 +1,18 @@
-@import './theme.scss';
 @import '~bootstrap/scss/bootstrap';
+@import './theme.scss';
 
-$light-bg: #E6F5E9;
-$dark-text: #343a40;
 
 body {
-  background-color: #E6F5E9;
+  background-color: var(--bs-custom-body-bg);
 }
 
 a, .btn-link {
-  color: map-get($theme-colors, 'primary');
+  color: var(--bs-primary);
   text-decoration: none;
 }
 
 a:hover, .btn-link:hover {
-  color: map-get($theme-colors, 'primary');
+  color: var(--bs-primary);
 }
 
 .poppins-thin {
@@ -194,7 +192,7 @@ a:hover, .btn-link:hover {
 }
 
 .home-productive {
-  color: map-get($theme-colors, 'primary');
+  color: var(--bs-primary);
 }
 
 .font-size-14 {
@@ -210,16 +208,28 @@ a:hover, .btn-link:hover {
 }
 
 .home-new-item {
-  border: none;
-  border-radius: 4px;
+  border: 1px solid var(--bs-btn-new-btn-item-bg);
+  border-radius: 3px;
   padding: 8px 16px;
-  color: #fff;
-  background-color: #233C46;
+  color: var(--bs-btn-new-btn-item-color);
+  background-color: var(--bs-btn-new-btn-item-bg);
+  font-weight: 500;
 }
 
-.home-new-item svg {
-  margin-right: 1rem;
-  color: #4CD964;
+.home-new-item:hover {
+  background-color: #36d451;
+}
+
+.home-new-item-secondary {
+  border: 1px solid #272d33;
+  border-radius: 3px;
+  padding: 8px 16px;
+  color: #e0e0e0;
+  background-color: #272d33;
+}
+
+.home-new-item-secondary:hover {
+  background-color: #333b42;
 }
 
 .task-note-btn {
@@ -227,17 +237,17 @@ a:hover, .btn-link:hover {
 }
 
 pre {
-  background-color: #f5f5f5;
-  border: 1px solid #ddd;
+  background-color: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color);
   border-radius: 4px;
   padding: 10px;
   margin-top: 5px;
-  overflow-x: auto; /* Enables horizontal scrolling for long lines */
+  overflow-x: auto;
   font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
   font-size: 12px;
   line-height: 1.5;
   tab-size: 2; /* Controls tab width */
-  white-space: pre; /* Preserves whitespace */
+  white-space: pre;
 }
 
 code {
@@ -252,4 +262,20 @@ code {
   padding: 2px 4px;
   border-radius: 3px;
   color: #d63384;
+}
+
+.input-group-text {
+  border-right: none !important;
+  padding: 0.375rem 0.05rem 0.375rem 0.75rem;
+}
+
+.input-group > .form-control,
+.react-datepicker__input-container > .form-control {
+  border-left: none !important;
+}
+
+.dropdown-toggle.btn.btn-success {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  border: none;
 }

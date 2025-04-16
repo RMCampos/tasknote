@@ -4,7 +4,7 @@
   position: relative;
   text-align: center;
   color: $dark-text;
-  background: url('../../assets/landing-bg.jpg') no-repeat center center;
+  background: var(--bs-landing-bg) no-repeat center center;
   background-size: cover; // Ensures the image covers the whole background
 
   &::before {
@@ -14,7 +14,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.85); // Slight white overlay for text readability
+    background-color: var(--bs-bg-overlay); // Slight overlay for text readability
     z-index: 1;
   }
 
@@ -46,14 +46,14 @@
     margin-top: 5rem;
     font-size: 2.5rem;
     padding: 0.75rem 1rem;
-    color: map-get($theme-colors, 'primary');
+    color: var(--bs-primary);
     font-weight: 600;
   }
 
   a.login {
     &:hover {
       font-size: 2.7rem;
-      color: darken(map-get($theme-colors, 'primary'), 10%);
+      color: var(--bs-primary);
     }
   }
 
@@ -62,11 +62,11 @@
   }
 
   .btn-outline-primary {
-    color: map-get($theme-colors, 'primary');
-    border-color: map-get($theme-colors, 'primary');
+    color: var(--bs-primary);
+    border-color: var(--bs-primary);
     width: 9rem;
     &:hover {
-      background-color: map-get($theme-colors, 'primary');
+      background-color: var(--bs-primary);
       color: #fff;
     }
   }

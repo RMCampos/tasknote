@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Button,
   Card,
   Col,
   Container,
@@ -17,7 +16,6 @@ import FormInput from '../../components/FormInput';
 import ModalMarkdown from '../../components/ModalMarkdown';
 import AlertError from '../../components/AlertError';
 import ContentHeader from '../../components/ContentHeader';
-import { FloppyFill } from 'react-bootstrap-icons';
 
 type NoteAction = 'add' | 'edit';
 
@@ -273,19 +271,16 @@ function NoteAdd(): React.ReactNode {
                   type="submit"
                   className="home-new-item task-note-btn mt-3"
                 >
-                  <FloppyFill size={25} />
                   {t('note_form_submit')}
                 </button>
 
-                <Button
-                  variant="outline-primary"
+                <button
                   type="button"
-                  size="lg"
-                  className="ms-2"
+                  className="ms-2 home-new-item-secondary task-note-btn"
                   onClick={() => navigate('/notes')}
                 >
                   Cancel
-                </Button>
+                </button>
               </Form>
 
             </Card.Body>

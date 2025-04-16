@@ -13,7 +13,7 @@ import { NoteResponse } from '../../types/NoteResponse';
 import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
 import { translateServerResponse } from '../../utils/TranslatorUtils';
-import { PlusCircleFill, ThreeDotsVertical } from 'react-bootstrap-icons';
+import { ThreeDotsVertical } from 'react-bootstrap-icons';
 import NoteTitle from '../../components/NoteTitle';
 import ModalMarkdown from '../../components/ModalMarkdown';
 import ContentHeader from '../../components/ContentHeader';
@@ -197,7 +197,6 @@ function Note(): React.ReactNode {
                 type="button"
                 className="home-new-item task-note-btn"
               >
-                <PlusCircleFill size={25} />
                 Add Notes
               </button>
             </div>

@@ -44,7 +44,7 @@ const ModalMarkdown: React.FC<Props> = (props: Props): React.ReactNode => {
             <Markdown>{props.markdownText}</Markdown>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="primary" onClick={props.onHide}>
+            <Button variant="outline-secondary" onClick={props.onHide}>
               Close
             </Button>
           </Modal.Footer>

@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import { Col, Row } from 'react-bootstrap';
-import { PlusCircleFill } from 'react-bootstrap-icons';
 import { NavLink } from 'react-router';
 import SidebarContext from '../../context/SidebarContext';
 
@@ -55,8 +54,7 @@ const ContentHeader: React.FC<Props> = (props: Props): React.ReactNode => {
                 type="button"
                 className="home-new-item w-45 mb-2"
               >
-                <PlusCircleFill size={25} />
-                Add task
+                New task
               </button>
             </NavLink>
             <NavLink to="/notes/new" onClick={() => setNewPage('/notes/new')}>
@@ -64,8 +62,7 @@ const ContentHeader: React.FC<Props> = (props: Props): React.ReactNode => {
                 type="button"
                 className="home-new-item w-45 ms-2"
               >
-                <PlusCircleFill size={25} />
-                Add note
+                New note
               </button>
             </NavLink>
           </Col>

@@ -43,10 +43,10 @@ function Sidebar(props: React.PropsWithChildren<Props>): React.ReactNode {
         <i className="bi bi-list"></i>
       </button>
 
-      <div className={`d-flex flex-column vh-100 bg-light sidebar ${props.isMobileOpen ? 'sidebar-mobile-open' : ''}`}>
+      <div className={`d-flex flex-column vh-100 sidebar ${props.isMobileOpen ? 'sidebar-mobile-open' : ''}`}>
         <div className="sidebar-header plus-jakarta-sans-bold">
           <img src={`https://gravatar.com/avatar/${user?.gravatarImageUrl}.jpg`} alt="User icon" />
-          <span>{user?.name ? user?.name : 'User'}</span>
+          <span className="header-username">{user?.name ? user?.name : 'User'}</span>
         </div>
 
         <div className="header-spacer"></div>
@@ -115,10 +115,7 @@ function Sidebar(props: React.PropsWithChildren<Props>): React.ReactNode {
         </Nav>
 
         {/* Footer at the bottom */}
-        <div
-          className="mt-auto text-center text-muted py-3"
-          style={{ borderTop: '1px solid #ddd' }}
-        >
+        <div className="mt-auto text-center text-muted py-3">
           <small data-testid="footer-text">
             {build}
           </small>

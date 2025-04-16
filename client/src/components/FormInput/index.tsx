@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Col, Form, InputGroup, Row } from 'react-bootstrap';
 import * as Icons from 'react-bootstrap-icons';
 import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import './custom-datepicker.css';
 import { MiddlewareReturn } from '@floating-ui/core';
 import { MiddlewareState } from '@floating-ui/dom';
+import 'react-datepicker/dist/react-datepicker.css';
+import './custom-datepicker.scss';
 
 type IconName = keyof typeof Icons;
 

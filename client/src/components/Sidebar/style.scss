@@ -2,7 +2,7 @@
 
 .sidebar {
   width: 276px;
-  background-color: #fff;
+  background-color: var(--bs-body-bg);
   position: fixed;
   left: 0;
   top: 0;
@@ -40,10 +40,14 @@
   }
 }
 
+.header-username {
+  color: var(--bs-body-color);
+}
+
 .header-spacer {
   margin-top: 1.8rem;
   margin-left: 1rem;
-  border-bottom: 0.5px dashed #DCDCDC;
+  border-bottom: 0.5px dashed var(--bs-header-sidebar-color);
   width: 220px;
 }
 .sidebar-header img {

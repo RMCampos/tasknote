@@ -61,7 +61,7 @@ describe('Account Component', () => {
 
   it('should render the Account component', () => {
     const { getByText } = renderAccount();
-    expect(getByText('Change your info')).toBeDefined();
+    expect(getByText('Update only what you need. Blank fields will not be updated')).toBeDefined();
   });
 
   it('should change language when a language button is clicked', () => {
