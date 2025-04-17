@@ -28,7 +28,8 @@ public record UserResponseWithToken(
    * @param token The token created upon registration or login.
    * @return UserResponse instance.
    */
-  public static UserResponseWithToken fromEntity(UserEntity user, String token, Optional<String> gravatarUrl) {
+  public static UserResponseWithToken fromEntity(
+      UserEntity user, String token, Optional<String> gravatarUrl) {
     return new UserResponseWithToken(
         user.getId(),
         user.getName(),

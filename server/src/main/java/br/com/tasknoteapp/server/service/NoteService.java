@@ -89,6 +89,8 @@ public class NoteService {
     note.setUser(user);
     NoteEntity created = noteRepository.save(note);
 
+    log.info("Note created! Id {}", created.getId());
+
     if (!Objects.isNull(noteRequest.url()) && !noteRequest.url().isEmpty()) {
       NoteUrlEntity urlEntity = saveUrl(note, noteRequest.url());
       note.setNoteUrl(urlEntity);
@@ -107,7 +109,7 @@ public class NoteService {
 
     notesCreatedRepository.save(userNoteEntity);
 
-    log.info("Note created! Id {}", created.getId());
+    log.info("Finished note creation!");
     return created;
   }
 

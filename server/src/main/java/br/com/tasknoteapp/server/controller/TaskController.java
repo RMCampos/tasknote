@@ -86,7 +86,7 @@ public class TaskController {
             content = @Content(schema = @Schema(implementation = Void.class)))
       })
   public TaskResponse getTaskById(
-    @Parameter(
+      @Parameter(
               name = "id",
               in = ParameterIn.PATH,
               description = "Task id to be fetched.",

@@ -33,6 +33,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -132,9 +134,10 @@ class TaskServiceTest {
     assertEquals("development", entity.getTag());
   }
 
-  @Test
-  @DisplayName("Create a task blank dueDate should succeed")
-  void createTask_blankDueDate_shouldSucceed() {
+  @ParameterizedTest
+  @CsvSource({"'', null", "'2025-12-12', '2025-12-12'"})
+  @DisplayName("Create a task with various dueDate values should succeed")
+  void createTask_parametrizedDueDate_shouldSucceed(String dueDate, String expectedDueDate) {
     when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(USER_EMAIL));
 
     UserEntity userEntity = new UserEntity();
@@ -142,32 +145,7 @@ class TaskServiceTest {
     userEntity.setEmail(USER_EMAIL);
     when(authService.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
 
-    TaskRequest request = new TaskRequest("Write unit tests", null, "", false, "development");
-
-    TaskEntity entity = new TaskEntity();
-    entity.setDescription(request.description());
-    entity.setHighPriority(request.highPriority());
-    entity.setTag(request.tag());
-    when(taskRepository.save(any())).thenReturn(new TaskEntity());
-
-    taskService.createTask(request);
-
-    assertNotNull(entity);
-    assertEquals("development", entity.getTag());
-  }
-
-  @Test
-  @DisplayName("Create a task full dueDate should succeed")
-  void createTask_fullDueDate_shouldSucceed() {
-    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(USER_EMAIL));
-
-    UserEntity userEntity = new UserEntity();
-    userEntity.setId(USER_ID);
-    userEntity.setEmail(USER_EMAIL);
-    when(authService.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
-
-    TaskRequest request =
-        new TaskRequest("Write unit tests", null, "2025-12-12", false, "development");
+    TaskRequest request = new TaskRequest("Write unit tests", null, dueDate, false, "development");
 
     TaskEntity entity = new TaskEntity();
     entity.setDescription(request.description());
@@ -358,7 +336,6 @@ class TaskServiceTest {
     when(taskUrlRepository.findAllById_taskId(taskId)).thenReturn(List.of());
 
     String dueDate = "2026-12-31";
-    String timeLeft = TimeAgoUtil.formatDueDate(LocalDate.parse(dueDate));
 
     TaskEntity savedTask = new TaskEntity();
     savedTask.setDescription("Test task updated");
@@ -378,7 +355,7 @@ class TaskServiceTest {
     assertNotNull(patched);
     assertEquals("Test task updated", patched.description());
     assertTrue(patched.done());
-    assertEquals(timeLeft, patched.dueDateFmt());
+    assertEquals(TimeAgoUtil.formatDueDate(LocalDate.parse(dueDate)), patched.dueDateFmt());
     assertFalse(patched.highPriority());
     assertEquals("test", patched.tag());
     assertTrue(patched.urls().isEmpty());
@@ -411,7 +388,6 @@ class TaskServiceTest {
     doNothing().when(taskUrlRepository).deleteAllById_taskId(taskId);
 
     String dueDate = "2026-12-31";
-    String timeLeft = TimeAgoUtil.formatDueDate(LocalDate.parse(dueDate));
 
     TaskEntity savedTask = new TaskEntity();
     savedTask.setDescription("Test task updated");
@@ -427,14 +403,14 @@ class TaskServiceTest {
     String url = "http://test.com";
     TaskPatchRequest patch =
         new TaskPatchRequest("Test task updated", true, List.of(url), dueDate, false, "test");
-    
+
     when(taskUrlRepository.saveAll(any())).thenReturn(List.of());
     TaskResponse patched = taskService.patchTask(taskId, patch);
 
     assertNotNull(patched);
     assertEquals("Test task updated", patched.description());
     assertTrue(patched.done());
-    assertEquals(timeLeft, patched.dueDateFmt());
+    assertEquals(TimeAgoUtil.formatDueDate(LocalDate.parse(dueDate)), patched.dueDateFmt());
     assertFalse(patched.highPriority());
     assertEquals("test", patched.tag());
     assertFalse(patched.urls().isEmpty());

@@ -153,7 +153,7 @@ public class TaskService {
 
     log.info("Task patched! Id {}", patchedTask.getId());
 
-    if (taskEntity.getDone()) {
+    if (Boolean.TRUE.equals(taskEntity.getDone())) {
       UserTasksDone userTasksDone = new UserTasksDone();
       userTasksDone.setId(new UserTasksDonePk(user.getId(), taskEntity.getId()));
       userTasksDone.setDoneDate(LocalDateTime.now());

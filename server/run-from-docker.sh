@@ -9,7 +9,7 @@ if [ -z "$CHECK" ]; then
 else
   echo "Running checks..."
   echo "1/3 - Check Style started..."
-  ./mvnw --no-transfer-progress checkstyle:checkstyle -Dskip.checkstyle=false
+  ./mvnw --no-transfer-progress checkstyle:check -Dcheckstyle.skip=false
   if [ $? -eq 1 ]; then
     echo "Issues when running Check Style. Please review.."
     exit 1

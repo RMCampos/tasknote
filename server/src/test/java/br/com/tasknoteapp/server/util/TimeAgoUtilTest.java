@@ -22,6 +22,7 @@ class TimeAgoUtilTest {
   void formatDueDateTest() {
     Assertions.assertNull(TimeAgoUtil.formatDueDate(null));
     Assertions.assertEquals("1 day left", TimeAgoUtil.formatDueDate(LocalDate.now().plusDays(1L)));
-    Assertions.assertEquals("12 days left", TimeAgoUtil.formatDueDate(LocalDate.now().plusDays(12L)));
+    Assertions.assertEquals(
+        "12 days left", TimeAgoUtil.formatDueDate(LocalDate.now().plusDays(12L)));
   }
 }

@@ -417,4 +417,31 @@ class AuthServiceTest {
     Assertions.assertEquals("Kong", response.name());
     Assertions.assertEquals("newemail@domain.com", response.email());
   }
+
+  @Test
+  @DisplayName("Get the current user happy path should succeed")
+  void getCurrentUser_happyPath_shouldSucceed() {
+    String email = "user@domain.com";
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(email));
+
+    UserEntity existing = new UserEntity();
+    existing.setId(775L);
+    existing.setName("Test");
+    existing.setEmail(email);
+    existing.setAdmin(false);
+    when(userRepository.findByEmail(email)).thenReturn(Optional.of(existing));
+
+    Optional<UserEntity> userOptional = authService.getCurrentUser();
+
+    Assertions.assertNotNull(userOptional);
+    Assertions.assertTrue(userOptional.isPresent());
+  }
+
+  @Test
+  @DisplayName("Get the current user with user not found it should fail")
+  void getCurrentUser_userNotFound_shouldFail() {
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.empty());
+
+    Assertions.assertThrows(UserNotFoundException.class, () -> authService.getCurrentUser());
+  }
 }

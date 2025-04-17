@@ -105,19 +105,18 @@ class HomeServiceTest {
   @Test
   @DisplayName("Get tasks chart data happy path should succeed")
   void getTasksChartData_happyPath_shouldSucceed() {
-    Long userId = 1L;
-    Long taskId = 2L;
     String userEmail = "user@domain.com";
-    LocalDateTime now = LocalDateTime.now();
-    String firstDay = now.getDayOfWeek().toString().substring(0, 3);
-
     when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(userEmail));
 
+    Long userId = 1L;
     UserEntity userEntity = new UserEntity();
     userEntity.setId(userId);
     userEntity.setEmail(userEmail);
     when(authService.findByEmail(userEmail)).thenReturn(Optional.of(userEntity));
 
+    LocalDateTime now = LocalDateTime.now();
+
+    Long taskId = 2L;
     UserTasksDone userTasksDone = new UserTasksDone();
     userTasksDone.setId(new UserTasksDonePk(userId, taskId));
     userTasksDone.setDoneDate(now);
@@ -125,6 +124,8 @@ class HomeServiceTest {
         .thenReturn(List.of(userTasksDone));
 
     List<TasksChartResponse> chartData = homeService.getTasksChartData();
+
+    String firstDay = now.getDayOfWeek().toString().substring(0, 3);
 
     Assertions.assertNotNull(chartData);
     Assertions.assertEquals(7, chartData.size());
@@ -136,9 +137,6 @@ class HomeServiceTest {
   void getTasksChartData_emptyData_shouldSucceed() {
     Long userId = 1L;
     String userEmail = "user@domain.com";
-    LocalDateTime now = LocalDateTime.now();
-    String firstDay = now.getDayOfWeek().toString().substring(0, 3);
-
     when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(userEmail));
 
     UserEntity userEntity = new UserEntity();
@@ -150,6 +148,9 @@ class HomeServiceTest {
         .thenReturn(List.of());
 
     List<TasksChartResponse> chartData = homeService.getTasksChartData();
+
+    LocalDateTime now = LocalDateTime.now();
+    String firstDay = now.getDayOfWeek().toString().substring(0, 3);
 
     Assertions.assertNotNull(chartData);
     Assertions.assertEquals(7, chartData.size());

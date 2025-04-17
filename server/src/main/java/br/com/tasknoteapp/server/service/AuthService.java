@@ -269,6 +269,21 @@ public class AuthService {
     return UserResponse.fromEntity(currentUser, getGravatarImageUrl(email));
   }
 
+  /**
+   * Get the current logged user (based in the JWT Authentication).
+   *
+   * @return An instance of {@link UserEntity} with the current user.
+   * @throws UserNotFoundException when the user was not found
+   */
+  public Optional<UserEntity> getCurrentUser() {
+    Optional<String> currentUserEmail = authUtil.getCurrentUserEmail();
+    if (currentUserEmail.isEmpty()) {
+      throw new UserNotFoundException();
+    }
+    String email = currentUserEmail.get();
+    return findByEmail(email);
+  }
+
   private Optional<String> getGravatarImageUrl(String email) {
     email = email.toLowerCase().trim();
     log.info("Current user email: {}", email);

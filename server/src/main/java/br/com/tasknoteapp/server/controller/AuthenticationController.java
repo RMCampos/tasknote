@@ -1,7 +1,7 @@
 package br.com.tasknoteapp.server.controller;
 
-import br.com.tasknoteapp.server.exception.InvalidCredentialsException;
 import br.com.tasknoteapp.server.exception.EmailAlreadyExistsException;
+import br.com.tasknoteapp.server.exception.InvalidCredentialsException;
 import br.com.tasknoteapp.server.exception.UserNotFoundException;
 import br.com.tasknoteapp.server.request.LoginRequest;
 import br.com.tasknoteapp.server.response.UserResponseWithToken;
@@ -57,7 +57,7 @@ public class AuthenticationController {
       })
   public ResponseEntity<UserResponseWithToken> signUp(
       @RequestBody @Valid LoginRequest loginRequest) {
-      UserResponseWithToken response = authService.signUpNewUser(loginRequest);
+    UserResponseWithToken response = authService.signUpNewUser(loginRequest);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
@@ -88,7 +88,8 @@ public class AuthenticationController {
             description = "User not found",
             content = @Content(schema = @Schema(implementation = Void.class)))
       })
-  public ResponseEntity<UserResponseWithToken> signIn(@RequestBody @Valid LoginRequest loginRequest) {
+  public ResponseEntity<UserResponseWithToken> signIn(
+      @RequestBody @Valid LoginRequest loginRequest) {
     UserResponseWithToken response = authService.signInUser(loginRequest);
     if (Objects.isNull(response)) {
       throw new InvalidCredentialsException();

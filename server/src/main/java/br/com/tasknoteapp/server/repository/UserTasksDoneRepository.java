@@ -10,6 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UserTasksDoneRepository extends JpaRepository<UserTasksDone, UserTasksDonePk> {
 
   List<UserTasksDone> findAllByDoneDateAfterAndId_userId(LocalDateTime date, Long userId);
-  
+
   List<UserTasksDone> findAllById_userId(Long userId);
 }

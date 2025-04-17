@@ -49,7 +49,7 @@ public class UserSessionController {
 
   /**
    * Delete all the user data and information from the server.
-   * 
+   *
    * @returns {@link UserResponse} with the user information.
    */
   @PostMapping("/delete-account")

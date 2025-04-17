@@ -52,7 +52,7 @@ public class TimeAgoUtil {
   /**
    * Format a given due date into left time format.
    *
-   * @param dueDate Date to be formatted in the yyyy-MM-dd format.
+   * @param futureDate Date to be formatted in the yyyy-MM-dd format.
    * @return The formatted date.
    */
   public static String formatDueDate(LocalDate futureDate) {

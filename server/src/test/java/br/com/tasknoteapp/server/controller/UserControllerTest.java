@@ -33,7 +33,8 @@ class UserControllerTest {
   @DisplayName("Get all users happy path should succeed")
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
   void getAllUsers_happyPath_shouldSucceed() throws Exception {
-    UserResponse userResponse = new UserResponse(1L, "John", "email@test.com", false, null, null, null);
+    UserResponse userResponse =
+        new UserResponse(1L, "John", "email@test.com", false, null, null, null);
     when(authService.getAllUsers()).thenReturn(List.of(userResponse));
 
     mockMvc
@@ -66,7 +67,8 @@ class UserControllerTest {
   @DisplayName("Patch user info happy path should succeed")
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
   void patchUserInfo_happyPath_shouldSucceed() throws Exception {
-    UserResponse response = new UserResponse(1L, "John", "email@example.com", false, null, null, null);
+    UserResponse response =
+        new UserResponse(1L, "John", "email@example.com", false, null, null, null);
     UserPatchRequest request = new UserPatchRequest("John Doe", response.email(), null, null);
     when(authService.patchUserInfo(request)).thenReturn(response);
 
