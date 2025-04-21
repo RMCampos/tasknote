@@ -139,4 +139,78 @@ class HomeControllerTest {
         .andExpect(status().isUnauthorized())
         .andReturn();
   }
+
+  @Test
+  @DisplayName("Get tasks by filter using the filter all it should succeed")
+  @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
+  void tasksByFilter_allTasks_shouldSucceed() throws Exception {
+    String filter = "all";
+    TaskResponse taskResponse =
+        new TaskResponse(
+            1L, "Desc", false, true, null, null, "Moments ago", "tag", List.of("http://test.com"));
+    when(homeService.getTasksByFilter(filter)).thenReturn(List.of(taskResponse));
+
+    mockMvc
+        .perform(
+            get("/rest/home/tasks/filter/{filter}", filter)
+                .with(csrf().asHeader())
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].id").value(taskResponse.id()))
+        .andExpect(jsonPath("$[0].description").value(taskResponse.description()))
+        .andExpect(jsonPath("$[0].done", Matchers.is(false)))
+        .andExpect(jsonPath("$[0].highPriority", Matchers.is(true)))
+        .andExpect(jsonPath("$[0].dueDate", Matchers.nullValue()))
+        .andExpect(jsonPath("$[0].dueDateFmt", Matchers.nullValue()))
+        .andExpect(jsonPath("$[0].lastUpdate").value("Moments ago"))
+        .andExpect(jsonPath("$[0].urls[0]").value(taskResponse.urls().get(0)))
+        .andReturn();
+  }
+
+  @Test
+  @DisplayName("Get tasks by filter not authorized it should fail")
+  void tasksByFilter_notAuthorized_shouldFail() throws Exception {
+    String filter = "all";
+
+    mockMvc
+        .perform(
+            get("/rest/home/tasks/filter/{filter}", filter)
+                .with(csrf().asHeader())
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isUnauthorized())
+        .andReturn();
+  }
+
+  @Test
+  @DisplayName("Get task tags following the happy path it should succeed")
+  @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
+  void getTasksTags_happyPath_shouldSucceed() throws Exception {
+    when(homeService.getTopTasksTag()).thenReturn(List.of("tag1", "tag2"));
+
+    mockMvc
+        .perform(
+            get("/rest/home/tasks/tags")
+                .with(csrf().asHeader())
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0]").value("tag1"))
+        .andExpect(jsonPath("$[1]").value("tag2"))
+        .andReturn();
+  }
+
+  @Test
+  @DisplayName("Get task tags not authorized it should fail")
+  void getTasksTags_notAuthorized_shouldSucceed() throws Exception {
+    mockMvc
+        .perform(
+            get("/rest/home/tasks/tags")
+                .with(csrf().asHeader())
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isUnauthorized())
+        .andReturn();
+  }
 }

@@ -32,6 +32,7 @@ $input-border-radius-lg: 0.3rem;
   --bs-border-radius-lg: 4px;
   --bs-border-new-btn-item-color: #6c757d;
   --bs-border-color-translucent: rgba(248, 249, 250, 1);
+  --bs-form-invalid-border-color: #dee2e6;
 
   /* Buttons */
   --bs-btn-color: #2EB745;
@@ -43,9 +44,23 @@ $input-border-radius-lg: 0.3rem;
   /* Color palette */
   --bs-primary: #2EB745;
   --bs-info: #2EB745;
+  --bs-success: #2EB745;
 
   /* sidebar header */
   --bs-header-sidebar-color: #DCDCDC;
+
+  /* Override outline-success specific variables */
+  .btn-outline-success {
+    --bs-btn-color: #2EB745;
+    --bs-btn-border-color: #2EB745;
+    --bs-btn-hover-bg: #2EB745;
+    --bs-btn-hover-border-color: #2EB745;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-active-bg: #249a3a;
+    --bs-btn-active-border-color: #249a3a;
+    --bs-btn-disabled-color: #2EB745;
+    --bs-btn-disabled-border-color: #2EB745;
+  }
 }
 
 // card bg color: #161a1d
@@ -72,6 +87,7 @@ $input-border-radius-lg: 0.3rem;
   --bs-border-radius-lg: 4px;
   --bs-border-new-btn-item-color: #6c757d;
   --bs-border-color-translucent: #161a1d;
+  --bs-form-invalid-border-color: #444;
 
   /* Buttons */
   --bs-btn-color: #2EB745;
@@ -86,7 +102,21 @@ $input-border-radius-lg: 0.3rem;
   /* Color palette */
   --bs-primary: #2EB745;
   --bs-info: #2EB745;
+  --bs-success: #2EB745;
 
   /* sidebar header */
   --bs-header-sidebar-color: #444;
+
+  /* Override outline-success specific variables */
+  .btn-outline-success {
+    --bs-btn-color: #2EB745;
+    --bs-btn-border-color: #2EB745;
+    --bs-btn-hover-bg: #2EB745;
+    --bs-btn-hover-border-color: #2EB745;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-active-bg: #249a3a;
+    --bs-btn-active-border-color: #249a3a;
+    --bs-btn-disabled-color: #2EB745;
+    --bs-btn-disabled-border-color: #2EB745;
+  }
 }

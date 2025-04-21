@@ -15,7 +15,7 @@ function About(): React.ReactNode {
   const { t } = useTranslation();
 
   return (
-    <Container>
+    <Container fluid>
       <ContentHeader
         h1TextRegular="About the"
         h1TextBold="TaskNote App"

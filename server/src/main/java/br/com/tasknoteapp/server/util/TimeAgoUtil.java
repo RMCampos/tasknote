@@ -4,6 +4,8 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.time.format.TextStyle;
+import java.util.Locale;
 import java.util.Objects;
 
 /** This class contains util methods to format local date time. */
@@ -60,23 +62,47 @@ public class TimeAgoUtil {
       return null;
     }
 
+    StringBuilder sb = new StringBuilder();
+
     // Format should be: yyyy-MM-dd
     Period period = Period.between(LocalDate.now(), futureDate);
     if (period.getYears() > 1) {
-      return String.format("%d years left", period.getYears());
+      sb.append(String.format("%d years left", period.getYears()));
     } else if (period.getYears() > 0) {
-      return String.format("%d year left", period.getYears());
+      sb.append(String.format("%d year left", period.getYears()));
     } else if (period.getMonths() > 1) {
-      return String.format("%d months left", period.getMonths());
+      sb.append(String.format("%d months left", period.getMonths()));
     } else if (period.getMonths() > 0) {
-      return String.format("%d month left", period.getMonths());
+      sb.append(String.format("%d month left", period.getMonths()));
     } else if (period.getDays() > 1) {
-      return String.format("%d days left", period.getDays());
+      sb.append(String.format("%d days left", period.getDays()));
     } else if (period.getDays() > 0) {
-      return String.format("%d day left", period.getDays());
+      sb.append(String.format("%d day left", period.getDays()));
     } else if (period.getDays() == 0) {
-      return String.format("0 days left", period.getDays());
+      sb.append("0 days left");
+    } else {
+      sb.append("Due");
     }
-    return "Due date";
+
+    String dayOfWeek = futureDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+    int dayOfMonth = futureDate.getDayOfMonth();
+    String suffix = getDaySuffix(dayOfMonth);
+    String month = futureDate.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+    int year = futureDate.getYear();
+    String dateFmt = String.format(" (%s %d%s, %s %d)", dayOfWeek, dayOfMonth, suffix, month, year);
+
+    return sb.toString()  + dateFmt;
+  }
+
+  private static String getDaySuffix(int day) {
+    if (day >= 11 && day <= 13) {
+      return "th";
+    }
+    return switch (day % 10) {
+      case 1 -> "st";
+      case 2 -> "nd";
+      case 3 -> "rd";
+      default -> "th";
+    };
   }
 }

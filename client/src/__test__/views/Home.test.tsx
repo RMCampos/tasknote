@@ -7,6 +7,7 @@ import api from '../../api-service/api';
 import Home from '../../views/Home';
 import '../../i18n';
 import AuthContext from '../../context/AuthContext';
+import { TasksChartResponse } from '../../types/TasksChartResponse';
 
 // Mock the Chart component
 vi.mock('react-charts', () => ({
@@ -33,14 +34,32 @@ const authContextMock = {
   updateUser: vi.fn()
 };
 
+const mockData: SummaryResponse = {
+  pendingTaskCount: 354,
+  doneTaskCount: 555,
+  notesCount: 2222
+};
+
+const mockTags: string[] = ['tag1', 'tag2'];
+
+const mockChart: TasksChartResponse[] = [
+  { day: 'S', count: 5, date: new Date() },
+  { day: 'M', count: 10, date: new Date() },
+];
+
 describe('Renders the home view', () => {
   it('should render text based on new contentHeader component', async () => {
-    const mockData: SummaryResponse = {
-      pendingTaskCount: 354,
-      doneTaskCount: 555,
-      notesCount: 2222
-    };
-    const mockedGetJSON = vi.spyOn(api, 'getJSON').mockResolvedValue(mockData);
+    
+    vi.spyOn(api, "getJSON").mockImplementation((url: string) => {
+      if (url === 'http://localhost:8585/rest/home/tasks/tags') {
+        return Promise.resolve(mockTags);
+      } else if (url === 'http://localhost:8585/rest/home/summary') {
+        return Promise.resolve(mockData);
+      } else if (url === 'http://localhost:8585/rest/home/completed-tasks-chart') {
+        return Promise.resolve(mockChart);
+      }
+      return Promise.reject(new Error("Unknown endpoint: " + url));
+    });
 
     await act(async () => {
       render(

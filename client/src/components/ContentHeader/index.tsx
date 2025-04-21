@@ -49,7 +49,7 @@ const ContentHeader: React.FC<Props> = (props: Props): React.ReactNode => {
         </Col>
         {props.isHomeComponent && (
           <Col xs={12} sm={4} className="text-sm-end">
-            <NavLink to="/tasks/new" onClick={() => setNewPage('/tasks/new')}>
+            <NavLink to="/tasks/new?backTo=home" onClick={() => setNewPage('/tasks/new')}>
               <button
                 type="button"
                 className="home-new-item w-45 mb-2"
@@ -57,7 +57,7 @@ const ContentHeader: React.FC<Props> = (props: Props): React.ReactNode => {
                 New task
               </button>
             </NavLink>
-            <NavLink to="/notes/new" onClick={() => setNewPage('/notes/new')}>
+            <NavLink to="/notes/new?backTo=home" onClick={() => setNewPage('/notes/new')}>
               <button
                 type="button"
                 className="home-new-item w-45 ms-2"

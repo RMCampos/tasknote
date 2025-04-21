@@ -9,6 +9,8 @@ import i18n from '../../i18n';
 import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
 import { NoteResponse } from '../../types/NoteResponse';
+import SidebarContext from '../../context/SidebarContext';
+import { beforeEach } from 'node:test';
 
 vi.mock('../../api-service/api');
 
@@ -26,6 +28,17 @@ vi.mock('react-i18next', () => ({
   },
   I18nextProvider: ({ children }: any) => children,
 }));
+
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual<any>("react-router-dom");
+
+  return {
+    ...actual,
+    useSearchParams: vi.fn(),
+  };
+});
+
+import { useSearchParams } from "react-router-dom";
 
 const authContextMock = {
   signed: true,
@@ -45,18 +58,30 @@ const authContextMock = {
   updateUser: vi.fn(),
 };
 
+const sidebarContextMock = {
+  currentPage: '/home',
+  setNewPage: vi.fn()
+};
+
 describe('NoteAdd Component', () => {
   const renderNoteAdd = () => {
     return render(
       <MemoryRouter>
         <AuthContext.Provider value={authContextMock}>
           <I18nextProvider i18n={i18n}>
-            <NoteAdd />
+            <SidebarContext.Provider value={sidebarContextMock}>
+              <NoteAdd />
+            </SidebarContext.Provider>
           </I18nextProvider>
         </AuthContext.Provider>
       </MemoryRouter>
     );
   };
+
+  beforeEach(() => {
+    // Reset mock between tests
+    (useSearchParams as unknown as ReturnType<typeof vi.fn>).mockReset();
+  });
 
   it('should render the NoteAdd component', () => {
     const { getByText } = renderNoteAdd();
@@ -76,6 +101,10 @@ describe('NoteAdd Component', () => {
   });
 
   it('should add a new note when form is valid', async () => {
+    (useSearchParams as unknown as ReturnType<typeof vi.fn>).mockReturnValue([
+      new URLSearchParams("backTo=home"),
+    ]);
+
     const { getByLabelText, getByTestId, getByRole } = renderNoteAdd();
     const descriptionInput = getByLabelText('note_form_title_label') as HTMLInputElement;
     const noteContentInput = getByTestId('note-content-input-area') as HTMLAreaElement;

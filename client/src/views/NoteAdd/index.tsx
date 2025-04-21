@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Card,
   Col,
@@ -6,7 +6,7 @@ import {
   Form,
   Row
 } from 'react-bootstrap';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { NoteResponse } from '../../types/NoteResponse';
 import api from '../../api-service/api';
@@ -16,6 +16,7 @@ import FormInput from '../../components/FormInput';
 import ModalMarkdown from '../../components/ModalMarkdown';
 import AlertError from '../../components/AlertError';
 import ContentHeader from '../../components/ContentHeader';
+import SidebarContext from '../../context/SidebarContext';
 
 type NoteAction = 'add' | 'edit';
 
@@ -34,7 +35,9 @@ function NoteAdd(): React.ReactNode {
   const [action, setAction] = useState<NoteAction>('add');
   const [showPreviewMd, setShowPreviewMd] = useState<boolean>(false);
   const { i18n, t } = useTranslation();
+  const { setNewPage } = useContext(SidebarContext);
   const params = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   /**
@@ -127,7 +130,8 @@ function NoteAdd(): React.ReactNode {
       if (added) {
         form.reset();
         resetInputs();
-        navigate('/notes');
+        setNewPage(`/${searchParams.get('backTo')}`);
+        navigate(`/${searchParams.get('backTo')}`);
       }
     }
     else if (action === 'edit') {
@@ -142,7 +146,8 @@ function NoteAdd(): React.ReactNode {
       if (edited) {
         form.reset();
         resetInputs();
-        navigate('/notes');
+        setNewPage(`/${searchParams.get('backTo')}`);
+        navigate(`/${searchParams.get('backTo')}`);
       }
     }
   };
@@ -189,7 +194,7 @@ function NoteAdd(): React.ReactNode {
   }, []);
 
   return (
-    <Container>
+    <Container fluid>
       <ContentHeader
         h1TextRegular="Add"
         h1TextBold="Note"
@@ -204,7 +209,10 @@ function NoteAdd(): React.ReactNode {
             <Card.Body>
               <Card.Title>{t('note_form_title')}</Card.Title>
 
-              <AlertError errorMessage={errorMessage} />
+              <AlertError
+                errorMessage={errorMessage}
+                onClose={() => setErrorMessage('')}
+              />
 
               <Form
                 noValidate
@@ -277,7 +285,10 @@ function NoteAdd(): React.ReactNode {
                 <button
                   type="button"
                   className="ms-2 home-new-item-secondary task-note-btn"
-                  onClick={() => navigate('/notes')}
+                  onClick={() => {
+                    setNewPage(`/${searchParams.get('backTo')}`);
+                    navigate(`/${searchParams.get('backTo')}`);
+                  }}
                 >
                   Cancel
                 </button>

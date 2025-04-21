@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { Button, Container } from 'react-bootstrap';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { handleDefaultLang } from '../../lang-service/LangHandler';
 import { setDefaultLang } from '../../storage-service/storage';
@@ -18,7 +18,8 @@ import './styles.scss';
  * @returns {React.ReactNode} The Landing page component.
  */
 function Landing(): React.ReactNode {
-  const { checkCurrentAuthUser } = useContext(AuthContext);
+  const { signed, checkCurrentAuthUser } = useContext(AuthContext);
+  const navigate = useNavigate();
   const { i18n, t } = useTranslation();
 
   const handleLanguage = (lang: string): void => {
@@ -29,7 +30,10 @@ function Landing(): React.ReactNode {
   useEffect(() => {
     checkCurrentAuthUser(window.location.pathname);
     handleDefaultLang();
-  }, []);
+    if (signed) {
+      navigate('/home');
+    }
+  }, [signed]);
 
   return (
     <Container fluid className="vh-100 d-flex justify-content-center align-items-center landing-page">

@@ -1,8 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Accordion,
-  Button,
   Card,
   Col,
   Container,
@@ -23,6 +21,11 @@ import AuthContext from '../../context/AuthContext';
 import ContentHeader from '../../components/ContentHeader';
 import AlertError from '../../components/AlertError';
 import { Search } from 'react-bootstrap-icons';
+import HomeFilterButton from '../../components/HomeFilterButton';
+import { SearchResults } from '../../components/SearchResults';
+import { useNavigate } from 'react-router';
+import { SearchNoteResults } from '../../components/SearchNoteResults';
+import ModalMarkdown from '../../components/ModalMarkdown';
 
 /**
  * Home page component.
@@ -34,10 +37,18 @@ import { Search } from 'react-bootstrap-icons';
 function Home(): React.ReactNode {
   const { user } = useContext(AuthContext);
   const { i18n, t } = useTranslation();
+  const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [tags, setTags] = useState<string[]>([]);
   const [validated, setValidated] = useState<boolean>(false);
+  const [hasError, setHasError] = useState<boolean>(false);
   const [searchResults, setSearchResults] = useState<HomeSearchResponse | null>(null);
   const [name, setName] = useState<string>(user?.name ? user?.name : 'User');
+  const [lastSearch, setLastSearch] = useState<string>('');
+  const [showMarkdownView, setShowMarkdownView] = useState<boolean>(false);
+  const [modalTitle, setModalTitle] = useState<string>('');
+  const [modalContent, setModalContent] = useState<string>('');
+  const [searchTermValue, setSearchTermValue] = useState<string>('');
 
   /**
    * Handles the error by setting the error message.
@@ -63,6 +74,7 @@ function Home(): React.ReactNode {
     try {
       const response: HomeSearchResponse = await api.getJSON(`${ApiConfig.homeUrl}/search?term=${term}`);
       setSearchResults(response);
+      setLastSearch(`textSearch#${term}`);
       return true;
     }
     catch (e) {
@@ -79,27 +91,124 @@ function Home(): React.ReactNode {
   const handleSearch = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
     event.stopPropagation();
-    setValidated(true);
+    setValidated(false);
+    setHasError(false);
 
     const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      setErrorMessage(translateServerResponse('Please type at least 3 characters', i18n.language));
+    if (searchTermValue.length === 0) {
+      form.reset();
+      setHasError(false);
+      setSearchResults(null);
       return;
     }
 
-    const searched: boolean = await searchTerm(form.search_term.value);
+    if (searchTermValue.length < 3) {
+      setErrorMessage(translateServerResponse('Please type at least 3 characters', i18n.language));
+      setHasError(true);
+      return;
+    }
+
+    const searched: boolean = await searchTerm(searchTermValue);
     if (searched) {
       form.reset();
     }
   };
 
+  const loadTasks = async (filter: string): Promise<void> => {
+    try {
+      const response: TaskResponse[] = await api.getJSON(`${ApiConfig.homeUrl}/tasks/filter/${filter}`);
+      const result: HomeSearchResponse = {
+        tasks: response,
+        notes: []
+      };
+      setSearchResults(result);
+      setLastSearch(`tagClick#${filter}`);
+    }
+    catch (e) {
+      handleError(e);
+    }
+  };
+
+  const loadTags = async (): Promise<void> => {
+    try {
+      const response: string[] = await api.getJSON(`${ApiConfig.homeUrl}/tasks/tags`);
+      setTags(response);
+    }
+    catch (e) {
+      handleError(e);
+    }
+  };
+
+  const reDoLastSearch = () => {
+    if (lastSearch.startsWith('textSearch#')) {
+      searchTerm(lastSearch.substring(11));
+    }
+    else if (lastSearch.startsWith('tagClick#')) {
+      loadTasks(lastSearch.substring(9));
+    }
+  };
+
+  /**
+   * Mark a task as done or undone.
+   *
+   * @param {TaskResponse} task The task to be marked as done or undone.
+   */
+  const markAsDone = async (task: TaskResponse): Promise<void> => {
+    try {
+      const updatedTask = {
+        ...task,
+        done: !task.done
+      };
+      await api.patchJSON(`${ApiConfig.tasksUrl}/${task.id}`, updatedTask);
+      reDoLastSearch();
+    }
+    catch (e) {
+      handleError(e);
+    }
+  };
+
+  /**
+   * Delete a task.
+   *
+   * @param {number} taskIdParam The task ID to be deleted.
+   */
+  const deleteTask = async (taskIdParam: number) => {
+    try {
+      await api.deleteNoContent(`${ApiConfig.tasksUrl}/${taskIdParam}`);
+      reDoLastSearch();
+    }
+    catch (e) {
+      handleError(e);
+    }
+  };
+
+  /**
+   * Delete a note.
+   *
+   * @param {number} noteIdParam The note ID to be deleted.
+   */
+  const deleteNote = async (noteIdParam: number) => {
+    try {
+      await api.deleteNoContent(`${ApiConfig.notesUrl}/${noteIdParam}`);
+      reDoLastSearch();
+    }
+    catch (e) {
+      handleError(e);
+    }
+  };
+
+  const handleCloseModal = () => setShowMarkdownView(false);
+
   useEffect(() => {
     handleDefaultLang();
     setName(user?.name ? user?.name : 'User');
+    loadTags();
   }, [user]);
 
+  useEffect(() => {}, [searchResults]);
+
   return (
-    <Container>
+    <Container fluid>
       <ContentHeader
         h1TextRegular={t('home_welcome_title')}
         h1TextBold={name}
@@ -110,6 +219,115 @@ function Home(): React.ReactNode {
       />
 
       <Row className="mb-4">
+        <Col xs={12}>
+          <Card>
+            <Card.Body>
+
+              <AlertError
+                errorMessage={errorMessage}
+                onClose={() => {
+                  setErrorMessage('');
+                  setHasError(false);
+                  setValidated(false);
+                }}
+              />
+
+              <Form noValidate validated={validated} onSubmit={handleSearch}>
+                <InputGroup className={`me-auto ${hasError ? 'is-invalid border border-danger rounded' : ''}`}>
+                  <InputGroup.Text>
+                    <Search />
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="text"
+                    id="search_term"
+                    name="search_term"
+                    placeholder="Search tasks & notes"
+                    value={searchTermValue}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setSearchTermValue(e.target.value);
+                    }}
+                  />
+                </InputGroup>
+
+                <Row className="mt-2">
+                  <Col xs={12}>
+                    <HomeFilterButton
+                      text="🔥 High Priority"
+                      type="high"
+                      onClick={() => loadTasks('high')}
+                    />
+                    <HomeFilterButton
+                      text="All tasks"
+                      type="all"
+                      onClick={() => loadTasks('all')}
+                    />
+                    {tags.map((tag: string) => (
+                      <HomeFilterButton
+                        key={tag}
+                        text={`#${tag}`}
+                        type="tag"
+                        onClick={() => loadTasks(tag)}
+                      />
+                    ))}
+                    <HomeFilterButton
+                      text="Clear result"
+                      type="tag"
+                      onClick={() => setSearchResults(null)}
+                    />
+                  </Col>
+                </Row>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        {searchResults && (
+          <Col xs={12}>
+
+            <Card className="mt-3">
+              <Card.Body>
+                <SearchResults
+                  results={searchResults.tasks}
+                  taskAction={(action: string, task: TaskResponse) => {
+                    if (action === 'done') {
+                      markAsDone(task);
+                    }
+                    else if (action === 'edit') {
+                      navigate(`/tasks/edit/${task.id}?backTo=home`);
+                    }
+                    else if (action === 'delete') {
+                      deleteTask(task.id);
+                    }
+                  }}
+                />
+              </Card.Body>
+            </Card>
+
+            <Card className="mt-3">
+              <Card.Body>
+                <SearchNoteResults
+                  results={searchResults.notes}
+                  noteAction={(action: string, note: NoteResponse) => {
+                    if (action === 'edit') {
+                      navigate(`/notes/edit/${note.id}?backTo=home`);
+                    }
+                    else if (action === 'delete') {
+                      deleteNote(note.id);
+                    }
+                    else if (action === 'open') {
+                      setModalTitle(note.title);
+                      setModalContent(note.description);
+                      setShowMarkdownView(true);
+                    }
+                  }}
+                />
+              </Card.Body>
+            </Card>
+          </Col>
+        )}
+      </Row>
+
+      <Row className="mb-4">
         <Col xs={12} lg={6} className="mb-4">
           <CompletedTasks />
         </Col>
@@ -118,82 +336,12 @@ function Home(): React.ReactNode {
         </Col>
       </Row>
 
-      <Row className="mb-4">
-        <Col xs={12}>
-          <Card>
-            <Card.Body>
-              <Card.Title>{t('home_card_search_label')}</Card.Title>
-
-              <AlertError errorMessage={errorMessage} />
-
-              <Form noValidate validated={validated} onSubmit={handleSearch}>
-                <InputGroup className="mb-3">
-                  <InputGroup.Text>
-                    <Search />
-                  </InputGroup.Text>
-                  <Form.Control
-                    pattern=".{3,}"
-                    required
-                    type="text"
-                    id="search_term"
-                    name="search_term"
-                    placeholder={t('home_card_search_placeholder')}
-                  />
-                  <Button type="submit" variant="outline-secondary" id="button-search">
-                    {t('home_card_search_btn')}
-                  </Button>
-                </InputGroup>
-              </Form>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-
-      <Row>
-        <Col xs={12}>
-          <h2>{t('home_card_search_result_label')}</h2>
-
-          <Accordion defaultActiveKey="0">
-            {searchResults && searchResults.tasks.length > 0 && (
-              searchResults.tasks.map((task: TaskResponse) => (
-                <Accordion.Item key={task.description} eventKey={task.description}>
-                  <Accordion.Header>
-                    [Task]
-                    {' '}
-                    {task.description}
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    {task.urls.length > 0
-                      ? (
-                          <a href={`${task.urls[0]}`}>{task.urls[0]}</a>
-                        )
-                      : 'No URL!'}
-                  </Accordion.Body>
-                </Accordion.Item>
-              ))
-            )}
-            {searchResults && searchResults.notes.length > 0 && (
-              searchResults.notes.map((note: NoteResponse) => (
-                <Accordion.Item key={note.title} eventKey={note.title}>
-                  <Accordion.Header>
-                    [Note]
-                    {' '}
-                    {note.title}
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    <span className="span-line-break">
-                      { note.description }
-                    </span>
-                  </Accordion.Body>
-                </Accordion.Item>
-              ))
-            )}
-            {searchResults?.tasks.length === 0 && searchResults?.notes.length === 0 && (
-              <h3>{t('home_card_search_empty_result')}</h3>
-            )}
-          </Accordion>
-        </Col>
-      </Row>
+      <ModalMarkdown
+        show={showMarkdownView}
+        onHide={handleCloseModal}
+        title={modalTitle}
+        markdownText={modalContent}
+      />
     </Container>
   );
 }

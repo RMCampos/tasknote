@@ -116,7 +116,7 @@ function Account(): React.ReactNode {
   useEffect(() => {}, [user]);
 
   return (
-    <Container>
+    <Container fluid>
       <ContentHeader
         h1TextRegular="My"
         h1TextBold="Account"
@@ -133,7 +133,10 @@ function Account(): React.ReactNode {
                 Update only what you need. Blank fields will not be updated
               </Card.Title>
 
-              <AlertError errorMessage={errorMessage} />
+              <AlertError
+                errorMessage={errorMessage}
+                onClose={() => setErrorMessage('')}
+              />
 
               <Form noValidate validated={validated} onSubmit={handleSubmit} className="mt-4">
                 {/* User name */}

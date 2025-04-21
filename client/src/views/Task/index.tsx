@@ -160,7 +160,7 @@ function Task(): React.ReactNode {
   }, []);
 
   return (
-    <Container>
+    <Container fluid>
       <ContentHeader
         h1TextRegular="All"
         h1TextBold="Tasks"
@@ -169,7 +169,10 @@ function Task(): React.ReactNode {
         h2GreenText="Them"
       />
 
-      <AlertError errorMessage={errorMessage} />
+      <AlertError
+        errorMessage={errorMessage}
+        onClose={() => setErrorMessage('')}
+      />
 
       <Row>
         <Col xs={12} sm={8} lg={9}>
@@ -184,7 +187,7 @@ function Task(): React.ReactNode {
           />
         </Col>
         <Col xs={12} sm={4} lg={3} className="mt-3 mt-sm-0">
-          <NavLink to="/tasks/new">
+          <NavLink to="/tasks/new?backTo=tasks">
             <div className="d-grid">
               <button
                 type="button"
@@ -264,7 +267,7 @@ function Task(): React.ReactNode {
                       </Dropdown.Toggle>
                       <Dropdown.Menu>
                         {!task.done && (
-                          <NavLink to={`/tasks/edit/${task.id}`}>
+                          <NavLink to={`/tasks/edit/${task.id}?backTo=tasks`}>
                             <Dropdown.Item as="span">
                               {t('task_table_action_edit')}
                             </Dropdown.Item>

@@ -36,7 +36,7 @@ function Sidebar(props: React.PropsWithChildren<Props>): React.ReactNode {
   return (
     <>
       <button
-        className="d-md-none position-fixed top-0 start-0 btn btn-light m-2 z-3"
+        className="d-lg-none position-fixed top-0 start-0 btn btn-light m-2 z-3"
         onClick={() => props.setIsMobileOpen(!props.isMobileOpen)}
         aria-label="Toggle sidebar"
       >
@@ -124,7 +124,7 @@ function Sidebar(props: React.PropsWithChildren<Props>): React.ReactNode {
 
       {props.isMobileOpen && (
         <button
-          className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-md-none"
+          className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-lg-none"
           style={{ zIndex: 1 }}
           onClick={() => props.setIsMobileOpen(false)}
           aria-label="Close mobile menu"

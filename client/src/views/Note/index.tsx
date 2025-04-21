@@ -167,7 +167,7 @@ function Note(): React.ReactNode {
   }, []);
 
   return (
-    <Container>
+    <Container fluid>
       <ContentHeader
         h1TextRegular="All"
         h1TextBold="Notes"
@@ -176,7 +176,10 @@ function Note(): React.ReactNode {
         h2GreenText="Them"
       />
 
-      <AlertError errorMessage={errorMessage} />
+      <AlertError
+        errorMessage={errorMessage}
+        onClose={() => setErrorMessage('')}
+      />
 
       <Row>
         <Col xs={12} sm={8} lg={9}>
@@ -191,7 +194,7 @@ function Note(): React.ReactNode {
           />
         </Col>
         <Col xs={12} sm={4} lg={3} className="mt-3 mt-sm-0">
-          <NavLink to="/notes/new">
+          <NavLink to="/notes/new?backTo=notes">
             <div className="d-grid">
               <button
                 type="button"

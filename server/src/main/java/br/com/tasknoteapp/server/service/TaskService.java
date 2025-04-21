@@ -133,9 +133,9 @@ public class TaskService {
     if (!Objects.isNull(patch.done())) {
       taskEntity.setDone(patch.done());
     }
-    
+
     patchDueDate(taskEntity, patch);
-    
+
     taskEntity.setHighPriority(false);
     if (!Objects.isNull(patch.highPriority())) {
       taskEntity.setHighPriority(patch.highPriority());
@@ -212,11 +212,58 @@ public class TaskService {
 
     log.info("Searching tasks to user {}", user.getId());
 
+    if (Objects.isNull(searchTerm) || searchTerm.isBlank()) {
+      return List.of();
+    }
+
     List<TaskEntity> tasks =
         taskRepository.findAllBySearchTerm(searchTerm.toUpperCase(), user.getId());
     log.info("{} tasks found!", tasks.size());
 
     return tasks.stream()
+        .map((TaskEntity tr) -> TaskResponse.fromEntity(tr, getAllTasksUrls(tr.getId())))
+        .toList();
+  }
+
+  /**
+   * Get tasks by a given filter.
+   *
+   * @param filter The filter to get the tasks.
+   * @return {@link List} of {@link TaskResponse} with found records or an empty list.
+   */
+  public List<TaskResponse> getTasksByFilter(String filter) {
+    UserEntity user = getCurrentUser();
+
+    List<TaskEntity> allTasks =
+        taskRepository.findAllByUser_id(user.getId()).stream()
+            .filter(t -> t.getDone().equals(Boolean.FALSE))
+            .toList();
+    if (allTasks.isEmpty()) {
+      return List.of();
+    }
+
+    if (filter.equals("all")) {
+      return allTasks.stream()
+          .map((TaskEntity tr) -> TaskResponse.fromEntity(tr, getAllTasksUrls(tr.getId())))
+          .toList();
+    }
+
+    if (filter.equals("high")) {
+      return allTasks.stream()
+          .filter(TaskEntity::getHighPriority)
+          .map((TaskEntity tr) -> TaskResponse.fromEntity(tr, getAllTasksUrls(tr.getId())))
+          .toList();
+    }
+
+    if (filter.equals("untagged")) {
+      return allTasks.stream()
+          .filter(t -> t.getTag() == null || t.getTag().isBlank())
+          .map((TaskEntity tr) -> TaskResponse.fromEntity(tr, getAllTasksUrls(tr.getId())))
+          .toList();
+    }
+
+    return allTasks.stream()
+        .filter(t -> t.getTag().equals(filter))
         .map((TaskEntity tr) -> TaskResponse.fromEntity(tr, getAllTasksUrls(tr.getId())))
         .toList();
   }

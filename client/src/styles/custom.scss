@@ -155,16 +155,16 @@ a:hover, .btn-link:hover {
 }
 
 /* On medium screens and larger */
-@media (min-width: 768px) {
+@media (min-width: 992px) {
   .main-margin {
     margin-top: 2rem;
   }
 }
 
 /* On small screens, content takes full width by default */
-@media (max-width: 767.98px) {
+@media (max-width: 991.98px) {
   .main-margin {
-    margin-top: 3rem;
+    margin-top: 5rem;
   }
 }
 
@@ -266,7 +266,7 @@ code {
 
 .input-group-text {
   border-right: none !important;
-  padding: 0.375rem 0.05rem 0.375rem 0.75rem;
+  padding: 0.375rem 0.10rem 0.375rem 0.75rem;
 }
 
 .input-group > .form-control,
@@ -278,4 +278,45 @@ code {
   background-color: var(--bs-body-bg);
   color: var(--bs-body-color);
   border: none;
+}
+
+.form-control:focus {
+  box-shadow: none;
+  outline: none;
+  border-color: var(--bs-border-color); /* optional – prevents border from changing on focus */
+}
+
+.form-control:invalid {
+  box-shadow: none;
+  outline: none;
+}
+
+.home-filter {
+  all: unset;
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 4px;
+}
+
+.home-filter.home-high {
+  background-color: #d63031;
+  color: #FFFFFF;
+}
+.home-filter.home-all {
+  background-color: #feca57;
+  color: #000;
+}
+.home-filter.home-tag {
+  background-color: #E0E0E0;
+  color: #212121;
+}
+
+p.search-result-item-title {
+  font-size: 16px;
+  margin-bottom: 0;
+  margin-left: 2px;
+}
+.search-result-item {
+  font-size: 16px;
+
 }

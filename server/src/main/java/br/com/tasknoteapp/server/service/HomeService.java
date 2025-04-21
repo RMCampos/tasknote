@@ -16,9 +16,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,8 @@ public class HomeService {
   private final AuthService authService;
 
   private final NotesCreatedRepository notesCreatedRepository;
+
+  private static final String N_TASKS_FOUND = "{} tasks found!";
 
   /**
    * Get summary for the home page.
@@ -78,7 +82,7 @@ public class HomeService {
     log.info("Searching for {}", term);
 
     List<TaskResponse> tasks = taskService.searchTasks(term);
-    log.info("{} tasks found!", tasks.size());
+    log.info(N_TASKS_FOUND, tasks.size());
 
     List<NoteResponse> notes = noteService.searchNotes(term);
     log.info("{} notes found!", notes.size());
@@ -134,6 +138,56 @@ public class HomeService {
     chartData.sort((t1, t2) -> t2.date().compareTo(t1.date()));
 
     return chartData;
+  }
+
+  /**
+   * Get tasks by a given filter.
+   *
+   * @param filter The filter to get the tasks.
+   * @return {@link List} of {@link TaskResponse} with found records or an empty list.
+   */
+  public List<TaskResponse> getTasksByFilter(String filter) {
+    log.info("Getting tasks by filter for filter: {}", filter);
+
+    List<TaskResponse> tasks = taskService.getTasksByFilter(filter);
+    log.info(N_TASKS_FOUND, tasks.size());
+
+    return tasks;
+  }
+
+  /**
+   * Get up to 5 most used tags.
+   *
+   * @return List of String with the tags.
+   */
+  public List<String> getTopTasksTag() {
+    log.info("Getting top tags for the tasks");
+
+    List<TaskResponse> tasks = taskService.getTasksByFilter("all");
+    log.info(N_TASKS_FOUND, tasks.size());
+
+    Map<String, Integer> tagsCount = new HashMap<>();
+    for (TaskResponse task : tasks) {
+      if (tagsCount.size() == 5) {
+        break;
+      }
+
+      String tag = task.tag();
+      if (tag.isBlank()) {
+        tag = "untagged";
+      }
+      tagsCount.putIfAbsent(tag, 0);
+      tagsCount.put(tag, tagsCount.get(tag) + 1);
+    }
+
+    Map<String, Integer> sortedDesc =
+        tagsCount.entrySet().stream()
+            .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+            .collect(
+                Collectors.toMap(
+                    Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+    return sortedDesc.keySet().stream().toList();
   }
 
   private List<TasksChartResponse> createListFromDate(LocalDateTime date) {

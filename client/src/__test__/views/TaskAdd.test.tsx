@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router';
 import { I18nextProvider } from 'react-i18next';
 import TaskAdd from '../../views/TaskAdd';
@@ -9,6 +9,7 @@ import i18n from '../../i18n';
 import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
 import TaskNoteRequest from '../../types/TaskNoteRequest';
+import SidebarContext from '../../context/SidebarContext';
 
 vi.mock('../../api-service/api');
 
@@ -26,6 +27,17 @@ vi.mock('react-i18next', () => ({
   },
   I18nextProvider: ({ children }: any) => children,
 }));
+
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual<any>("react-router-dom");
+
+  return {
+    ...actual,
+    useSearchParams: vi.fn(),
+  };
+});
+
+import { useSearchParams } from "react-router-dom";
 
 const authContextMock = {
   signed: true,
@@ -45,18 +57,30 @@ const authContextMock = {
   updateUser: vi.fn(),
 };
 
+const sidebarContextMock = {
+  currentPage: '/home',
+  setNewPage: vi.fn()
+};
+
 describe('TaskAdd Component', () => {
   const renderTaskAdd = () => {
     return render(
       <MemoryRouter>
         <AuthContext.Provider value={authContextMock}>
           <I18nextProvider i18n={i18n}>
-            <TaskAdd />
+            <SidebarContext.Provider value={sidebarContextMock}>
+              <TaskAdd />
+            </SidebarContext.Provider>
           </I18nextProvider>
         </AuthContext.Provider>
       </MemoryRouter>
     );
   };
+
+  beforeEach(() => {
+    // Reset mock between tests
+    (useSearchParams as unknown as ReturnType<typeof vi.fn>).mockReset();
+  });
 
   it('should render the TaskAdd component', () => {
     const { getByText } = renderTaskAdd();
@@ -77,6 +101,10 @@ describe('TaskAdd Component', () => {
   });
 
   it('should add a new task when form is valid', async () => {
+    (useSearchParams as unknown as ReturnType<typeof vi.fn>).mockReturnValue([
+      new URLSearchParams("backTo=home"),
+    ]);
+
     const { getByLabelText, getByRole } = renderTaskAdd();
     const descriptionInput = getByLabelText('task_form_desc_label') as HTMLInputElement;
     const submitButton = getByRole('button', { name: 'task_form_submit' });
@@ -98,6 +126,10 @@ describe('TaskAdd Component', () => {
   });
 
   it('should render text based on new contentHeader component', () => {
+    (useSearchParams as unknown as ReturnType<typeof vi.fn>).mockReturnValue([
+      new URLSearchParams("backTo=home"),
+    ]);
+
     const { getByText } = renderTaskAdd();
 
     expect(getByText('Add')).toBeDefined();

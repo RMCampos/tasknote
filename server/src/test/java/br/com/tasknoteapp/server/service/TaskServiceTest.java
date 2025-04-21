@@ -485,4 +485,220 @@ class TaskServiceTest {
     assertEquals("test", patched.tag());
     assertTrue(patched.urls().isEmpty());
   }
+
+  @Test
+  @DisplayName("Search tasks with matching term should succeed")
+  void searchTasks_matchingTerm_shouldSucceed() {
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(USER_EMAIL));
+
+    UserEntity userEntity = new UserEntity();
+    userEntity.setId(USER_ID);
+    userEntity.setEmail(USER_EMAIL);
+    when(authService.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
+
+    TaskEntity taskEntity = new TaskEntity();
+    taskEntity.setId(1L);
+    taskEntity.setDescription("Write unit tests");
+    taskEntity.setHighPriority(false);
+    taskEntity.setTag("development");
+
+    String searchTerm = "unit";
+    when(taskRepository.findAllBySearchTerm(searchTerm.toUpperCase(), USER_ID))
+        .thenReturn(List.of(taskEntity));
+
+    List<TaskResponse> responses = taskService.searchTasks(searchTerm);
+
+    assertNotNull(responses);
+    assertFalse(responses.isEmpty());
+    assertEquals(1, responses.size());
+    assertEquals(taskEntity.getDescription(), responses.get(0).description());
+  }
+
+  @Test
+  @DisplayName("Search tasks with no matching term should return empty list")
+  void searchTasks_noMatchingTerm_shouldReturnEmptyList() {
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(USER_EMAIL));
+
+    UserEntity userEntity = new UserEntity();
+    userEntity.setId(USER_ID);
+    userEntity.setEmail(USER_EMAIL);
+    when(authService.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
+
+    String searchTerm = "nonexistent";
+
+    when(taskRepository.findAllBySearchTerm(searchTerm.toUpperCase(), USER_ID))
+        .thenReturn(List.of());
+
+    List<TaskResponse> responses = taskService.searchTasks(searchTerm);
+
+    assertNotNull(responses);
+    assertTrue(responses.isEmpty());
+  }
+
+  @Test
+  @DisplayName("Search tasks with null search term should return empty list")
+  void searchTasks_nullSearchTerm_shouldReturnEmptyList() {
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(USER_EMAIL));
+
+    UserEntity userEntity = new UserEntity();
+    userEntity.setId(USER_ID);
+    userEntity.setEmail(USER_EMAIL);
+    when(authService.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
+
+    String searchTerm = null;
+
+    when(taskRepository.findAllBySearchTerm(null, USER_ID)).thenReturn(List.of());
+
+    List<TaskResponse> responses = taskService.searchTasks(searchTerm);
+
+    assertNotNull(responses);
+    assertTrue(responses.isEmpty());
+  }
+
+  @Test
+  @DisplayName("Get tasks by filter 'all' should succeed")
+  void getTasksByFilter_all_shouldSucceed() {
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(USER_EMAIL));
+
+    UserEntity userEntity = new UserEntity();
+    userEntity.setId(USER_ID);
+    userEntity.setEmail(USER_EMAIL);
+    when(authService.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
+
+    TaskEntity task1 = new TaskEntity();
+    task1.setId(1L);
+    task1.setDescription("Task 1");
+    task1.setHighPriority(false);
+    task1.setDone(false);
+    task1.setTag("tag1");
+
+    TaskEntity task2 = new TaskEntity();
+    task2.setId(2L);
+    task2.setDescription("Task 2");
+    task2.setHighPriority(true);
+    task2.setDone(false);
+    task2.setTag("tag2");
+
+    when(taskRepository.findAllByUser_id(USER_ID)).thenReturn(List.of(task1, task2));
+
+    List<TaskResponse> responses = taskService.getTasksByFilter("all");
+
+    assertEquals(2, responses.size());
+    assertEquals("tag1", responses.get(0).tag());
+    assertEquals("tag2", responses.get(1).tag());
+  }
+
+  @Test
+  @DisplayName("Get tasks by filter 'high' should succeed")
+  void getTasksByFilter_high_shouldSucceed() {
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(USER_EMAIL));
+
+    UserEntity userEntity = new UserEntity();
+    userEntity.setId(USER_ID);
+    userEntity.setEmail(USER_EMAIL);
+    when(authService.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
+
+    TaskEntity task1 = new TaskEntity();
+    task1.setId(1L);
+    task1.setDescription("Task 1");
+    task1.setHighPriority(false);
+    task1.setDone(false);
+    task1.setTag("tag1");
+
+    TaskEntity task2 = new TaskEntity();
+    task2.setId(2L);
+    task2.setDescription("Task 2");
+    task2.setHighPriority(true);
+    task2.setDone(false);
+    task2.setTag("tag2");
+
+    when(taskRepository.findAllByUser_id(USER_ID)).thenReturn(List.of(task1, task2));
+
+    List<TaskResponse> responses = taskService.getTasksByFilter("high");
+
+    assertEquals(1, responses.size());
+    assertEquals("tag2", responses.get(0).tag());
+  }
+
+  @Test
+  @DisplayName("Get tasks by filter 'untagged' should succeed")
+  void getTasksByFilter_untagged_shouldSucceed() {
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(USER_EMAIL));
+
+    UserEntity userEntity = new UserEntity();
+    userEntity.setId(USER_ID);
+    userEntity.setEmail(USER_EMAIL);
+    when(authService.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
+
+    TaskEntity task1 = new TaskEntity();
+    task1.setId(1L);
+    task1.setDescription("Task 1");
+    task1.setHighPriority(false);
+    task1.setDone(false);
+    task1.setTag(null);
+
+    TaskEntity task2 = new TaskEntity();
+    task2.setId(2L);
+    task2.setDescription("Task 2");
+    task2.setHighPriority(true);
+    task2.setDone(false);
+    task2.setTag("");
+
+    when(taskRepository.findAllByUser_id(USER_ID)).thenReturn(List.of(task1, task2));
+
+    List<TaskResponse> responses = taskService.getTasksByFilter("untagged");
+
+    assertEquals(2, responses.size());
+    assertNull(responses.get(0).tag());
+    assertTrue(responses.get(1).tag().isBlank());
+  }
+
+  @Test
+  @DisplayName("Get tasks by specific tag filter should succeed")
+  void getTasksByFilter_specificTag_shouldSucceed() {
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(USER_EMAIL));
+
+    UserEntity userEntity = new UserEntity();
+    userEntity.setId(USER_ID);
+    userEntity.setEmail(USER_EMAIL);
+    when(authService.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
+
+    TaskEntity task1 = new TaskEntity();
+    task1.setId(1L);
+    task1.setDescription("Task 1");
+    task1.setHighPriority(false);
+    task1.setDone(false);
+    task1.setTag("tag1");
+
+    TaskEntity task2 = new TaskEntity();
+    task2.setId(2L);
+    task2.setDescription("Task 2");
+    task2.setHighPriority(true);
+    task2.setDone(false);
+    task2.setTag("tag2");
+
+    when(taskRepository.findAllByUser_id(USER_ID)).thenReturn(List.of(task1, task2));
+
+    List<TaskResponse> responses = taskService.getTasksByFilter("tag1");
+
+    assertEquals(1, responses.size());
+    assertEquals("tag1", responses.get(0).tag());
+  }
+
+  @Test
+  @DisplayName("Get tasks by filter with no matching tasks should return empty list")
+  void getTasksByFilter_noMatchingTasks_shouldReturnEmptyList() {
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(USER_EMAIL));
+
+    UserEntity userEntity = new UserEntity();
+    userEntity.setId(USER_ID);
+    userEntity.setEmail(USER_EMAIL);
+    when(authService.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
+
+    when(taskRepository.findAllByUser_id(USER_ID)).thenReturn(List.of());
+
+    List<TaskResponse> responses = taskService.getTasksByFilter("nonexistent");
+
+    assertTrue(responses.isEmpty());
+  }
 }

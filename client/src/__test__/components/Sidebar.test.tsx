@@ -38,7 +38,7 @@ describe('Sidebar Component', () => {
         <AuthContext.Provider value={authContextMock}>
           <I18nextProvider i18n={i18n}>
             <SidebarContext.Provider value={sidebarContextMock}>
-              <Sidebar />
+              <Sidebar isMobileOpen={false} setIsMobileOpen={vi.fn()} />
             </SidebarContext.Provider>
           </I18nextProvider>
         </AuthContext.Provider>

@@ -156,4 +156,85 @@ class HomeServiceTest {
     Assertions.assertEquals(7, chartData.size());
     Assertions.assertEquals(firstDay, chartData.get(0).day());
   }
+
+  @Test
+  @DisplayName("Get tasks by filter high priority tasks it should succeed")
+  void getTasksByFilter_highTasks_shouldSucceed() {
+    String filter = "high";
+
+    TaskResponse highTask1 =
+        new TaskResponse(2L, "Task 1", false, true, null, null, null, "tag", List.of());
+    when(taskService.getTasksByFilter(filter)).thenReturn(List.of(highTask1));
+
+    List<TaskResponse> list = homeService.getTasksByFilter(filter);
+
+    Assertions.assertNotNull(list);
+    Assertions.assertEquals(1, list.size());
+    Assertions.assertTrue(list.get(0).highPriority());
+  }
+
+  @Test
+  @DisplayName("Get top tasks tag should return up to 5 most used tags")
+  void getTopTasksTag_shouldReturnTopTags() {
+    TaskResponse task1 =
+        new TaskResponse(1L, "Task 1", false, false, null, null, null, "tag1", List.of());
+    TaskResponse task2 =
+        new TaskResponse(2L, "Task 2", false, false, null, null, null, "tag2", List.of());
+    TaskResponse task3 =
+        new TaskResponse(3L, "Task 3", false, false, null, null, null, "tag1", List.of());
+    TaskResponse task4 =
+        new TaskResponse(4L, "Task 4", false, false, null, null, null, "tag3", List.of());
+    TaskResponse task5 =
+        new TaskResponse(5L, "Task 5", false, false, null, null, null, "tag2", List.of());
+    TaskResponse task6 =
+        new TaskResponse(6L, "Task 6", false, false, null, null, null, "tag4", List.of());
+    TaskResponse task7 =
+        new TaskResponse(7L, "Task 7", false, false, null, null, null, "tag5", List.of());
+    TaskResponse task8 =
+        new TaskResponse(8L, "Task 8", false, false, null, null, null, "tag6", List.of());
+
+    when(taskService.getTasksByFilter("all"))
+        .thenReturn(List.of(task1, task2, task3, task4, task5, task6, task7, task8));
+
+    List<String> topTags = homeService.getTopTasksTag();
+
+    Assertions.assertNotNull(topTags);
+    Assertions.assertEquals(5, topTags.size());
+    Assertions.assertTrue(topTags.contains("tag1"));
+    Assertions.assertTrue(topTags.contains("tag2"));
+    Assertions.assertTrue(topTags.contains("tag3"));
+    Assertions.assertTrue(topTags.contains("tag4"));
+    Assertions.assertTrue(topTags.contains("tag5"));
+  }
+
+  @Test
+  @DisplayName("Get top tasks tag with no tags should return empty list")
+  void getTopTasksTag_noTags_shouldReturnEmptyList() {
+    when(taskService.getTasksByFilter("all")).thenReturn(List.of());
+
+    List<String> topTags = homeService.getTopTasksTag();
+
+    Assertions.assertNotNull(topTags);
+    Assertions.assertTrue(topTags.isEmpty());
+  }
+
+  @Test
+  @DisplayName("Get top tasks tag with blank tags should handle untagged tasks")
+  void getTopTasksTag_blankTags_shouldHandleUntagged() {
+    TaskResponse task1 =
+        new TaskResponse(1L, "Task 1", false, false, null, null, null, "", List.of());
+    TaskResponse task2 =
+        new TaskResponse(2L, "Task 2", false, false, null, null, null, " ", List.of());
+    TaskResponse task3 =
+        new TaskResponse(3L, "Task 3", false, false, null, null, null, "tag1", List.of());
+
+    when(taskService.getTasksByFilter("all")).thenReturn(List.of(task1, task2, task3));
+
+    List<String> topTags = homeService.getTopTasksTag();
+
+    Assertions.assertNotNull(topTags);
+    Assertions.assertEquals(2, topTags.size());
+    Assertions.assertTrue(topTags.contains("untagged"));
+    Assertions.assertTrue(topTags.contains("tag1"));
+  }
 }
