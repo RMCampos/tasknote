@@ -140,3 +140,20 @@ while true; do clear; docker inspect --format "{{json .State.Health}}" server | 
 ```bash
 docker inspect client:candidate | jq -r '.[0].Config.Env[] | select(startswith("SOURCE_PR="))' | sed -n 's/SOURCE_PR=\(v[0-9]*\).*/\1/p'
 ```
+
+## Restoring DB for testing
+
+```bash
+docker run \
+ --name my-postgres-db \
+ -e POSTGRES_USER="<user>" \
+ -e POSTGRES_PASSWORD='<password>' \
+ -e POSTGRES_DB="<db-name>" \
+ -p 5432:5432 \
+ -d postgres
+```
+
+```bash
+docker exec -i my-postgres-db pg_restore -U <user> -d <db-name> < 2025-04-26T20_00_00.114Z.sql
+
+```
