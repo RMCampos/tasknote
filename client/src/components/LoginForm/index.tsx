@@ -13,11 +13,14 @@ import {
   Form,
   Row
 } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import AuthContext from '../../context/AuthContext';
 import { translateServerResponse } from '../../utils/TranslatorUtils';
 import { handleDefaultLang } from '../../lang-service/LangHandler';
+import FormInput from '../FormInput';
+import api from '../../api-service/api';
+import ApiConfig from '../../api-service/apiConfig';
 
 /**
  * @returns {React.ReactNode} The form component for Login and Register pages.
@@ -26,9 +29,16 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
   const { signIn, register } = useContext(AuthContext);
   const { i18n, t } = useTranslation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [validated, setValidated] = useState<boolean>(false);
   const [formInvalid, setFormInvalid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [successMessage, setSuccessMessage] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [passwordAgain, setPasswordAgain] = useState<string>('');
+  const [secondsLeft, setSecondsLeft] = useState<number>(0);
+  const [isResendEnabled, setIsResendEnabled] = useState(true);
 
   /**
    * Navigates to the specified page.
@@ -53,19 +63,63 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       setFormInvalid(true);
-      setErrorMessage(translateServerResponse('Please fill in your username and password!', i18n.language));
+      if (prefix !== 'reset') {
+        setErrorMessage(translateServerResponse('Please fill in your username and password!', i18n.language));
+      }
+      else {
+        setErrorMessage(translateServerResponse('Please fill in your email', i18n.language));
+      }
       return;
+    }
+
+    if (password !== passwordAgain && prefix === 'register') {
+      setFormInvalid(true);
+      setErrorMessage(translateServerResponse('Please fill in your username and password!', i18n.language));
     }
 
     setFormInvalid(false);
     try {
       if (prefix === 'login') {
-        await signIn(form.email.value, form.password.value);
+        await signIn(email, password);
+        goTo('/home');
       }
-      else {
-        await register(form.email.value, form.password.value);
+      else if (prefix === 'register') {
+        await register(email, password, passwordAgain);
+        // Do not clear the email, because user might request to resend
+        setPassword('');
+        setPasswordAgain('');
+        setSuccessMessage('Please confirm your email before proceeding.');
+        setSecondsLeft(30);
+        setIsResendEnabled(false);
       }
-      goTo('/home');
+      else if (prefix === 'reset') {
+        await api.postJSON(ApiConfig.resetPwdUrl, { email });
+        setSuccessMessage('If the email address you entered is associated with an account, you will receive a password reset link shortly.');
+      }
+      else if (prefix === 'complete_reset') {
+        const token = searchParams.get('token');
+        await api.postJSON(ApiConfig.completeResetPwdUrl, { token, password, passwordAgain });
+        goTo('/home');
+      }
+    }
+    catch (e) {
+      setFormInvalid(true);
+      if (typeof e === 'string') {
+        setErrorMessage(translateServerResponse(e, i18n.language));
+      }
+      else if (e instanceof Error) {
+        setErrorMessage(translateServerResponse(e.message, i18n.language));
+      }
+    }
+  };
+
+  const handleResend = async () => {
+    try {
+      await api.postJSON(ApiConfig.resendConfirmUrl, { email });
+
+      setSuccessMessage('Confirmation email re-sent! Please check the spam folder.');
+      setSecondsLeft(30);
+      setIsResendEnabled(false);
     }
     catch (e) {
       setFormInvalid(true);
@@ -81,6 +135,16 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
   useEffect(() => {
     handleDefaultLang();
   }, [formInvalid]);
+
+  useEffect(() => {
+    if (secondsLeft > 0) {
+      const timer = setTimeout(() => setSecondsLeft(prev => prev - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+    else {
+      setIsResendEnabled(true);
+    }
+  }, [secondsLeft]);
 
   return (
     <Container as="main" fluid className="login-page">
@@ -98,27 +162,75 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
                   )
                 : null}
 
+              {successMessage.length > 1 && prefix === 'register' && (
+                <>
+                  <Alert variant="success">
+                    { successMessage }
+                  </Alert>
+
+                  <div className="text-center">
+                    <Button
+                      variant="outline-secondary"
+                      onClick={handleResend}
+                      disabled={!isResendEnabled}
+                    >
+                      {isResendEnabled ? 'Resend Confirmation Email' : `Resend in ${secondsLeft}s`}
+                    </Button>
+                  </div>
+                </>
+              )}
+
+              {successMessage.length > 1 && prefix !== 'register' && (
+                <Alert variant="success">
+                  { successMessage }
+                </Alert>
+              )}
+
               <Form noValidate validated={validated} onSubmit={handleSubmit}>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                  <Form.Label>{t(`${prefix}_email_label`)}</Form.Label>
-                  <Form.Control
-                    required
-                    type="email"
+                {prefix !== 'complete_reset' && (
+                  <FormInput
+                    labelText="Email"
+                    iconName="At"
+                    required={true}
                     name="email"
                     placeholder={t(`${prefix}_email_placeholder`)}
-                    data-testid={`${prefix}_email_input`}
+                    data_testid={`${prefix}_email_input`}
+                    value={email}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setEmail(e.target.value);
+                    }}
                   />
-                </Form.Group>
+                )}
 
-                <Form.Group className="mb-3" controlId="formBasicPassword">
-                  <Form.Label>{t(`${prefix}_password_label`)}</Form.Label>
-                  <Form.Control
-                    required
+                {prefix !== 'reset' && (
+                  <FormInput
+                    labelText="Password"
+                    iconName="Lock"
+                    required={true}
                     type="password"
                     name="password"
-                    placeholder={t(`${prefix}_password_placeholder`)}
+                    value={password}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setPassword(e.target.value);
+                    }}
+                    data_testid="account-password-login"
                   />
-                </Form.Group>
+                )}
+
+                {(prefix === 'register' || prefix === 'complete_reset') && (
+                  <FormInput
+                    labelText="Repeat password"
+                    iconName="Lock"
+                    required={true}
+                    type="password"
+                    name="passwordAgain"
+                    value={passwordAgain}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setPasswordAgain(e.target.value);
+                    }}
+                    data_testid={`account-repeat-password-${prefix}`}
+                  />
+                )}
 
                 <Button
                   variant="primary"
@@ -130,12 +242,8 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
               </Form>
 
               <div className="text-center mt-3">
-                {prefix === 'login'
-                  ? (
-                      `${t('login_account')} `
-                    )
-                  : `${t('register_account')} `}
-                <Link to={prefix === 'login' ? '/register' : '/login'} className="text-decoration-none">
+                {t(`${prefix}_account`)}
+                <Link to={prefix === 'login' ? '/register' : '/login'} className="text-decoration-none ms-2">
                   {t(`${prefix}_go_other`)}
                 </Link>
               </div>
@@ -144,6 +252,13 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
                 <Link to="/" className="text-decoration-none">
                   {t(`${prefix}_back_home`)}
                 </Link>
+              </div>
+              <div className="text-center mt-3">
+                {prefix === 'login' && (
+                  <Link to="/reset-password" className="text-decoration-none ms-2">
+                    Forgot your password?
+                  </Link>
+                )}
               </div>
             </Card.Body>
           </Card>

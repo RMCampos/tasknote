@@ -72,22 +72,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     }
   };
 
-  const register = async (email: string, password: string): Promise<string> => {
+  const register = async (email: string, password: string, passwordAgain: string): Promise<string> => {
     try {
-      const payload = { email, password };
-      const registerResponse: SigninResponse = await api.putJSON(ApiConfig.registerUrl, payload);
-      const currentUser: UserResponse = {
-        userId: registerResponse.userId,
-        name: registerResponse.name,
-        email: registerResponse.email,
-        admin: registerResponse.admin,
-        createdAt: new Date(registerResponse.createdAt),
-        gravatarImageUrl: registerResponse.gravatarImageUrl
-      };
-
-      setSigned(true);
-      setUser(currentUser);
-      updateUserSession(currentUser, registerResponse.token);
+      const payload = { email, password, passwordAgain };
+      await api.putJSON(ApiConfig.registerUrl, payload);
       return Promise.resolve('OK');
     }
     catch (e) {
@@ -180,7 +168,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
 
   return (
     <AuthContext.Provider value={contextValue}>
-      { children }
+      {children}
     </AuthContext.Provider>
   );
 };

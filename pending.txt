@@ -1,6 +1,0 @@
-- make add task button and other text white
-- remove tasks icons
-- when a task is done, create another tag #done on it
-- test multiple tags
-- improve the calendar icon and due date display
-- improve styling for rendered markdown

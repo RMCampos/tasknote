@@ -10,6 +10,7 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -45,6 +46,17 @@ public class UserEntity implements UserDetails {
   @OneToMany(mappedBy = "user")
   private List<TaskEntity> tasks;
 
+  @Column(name = "email_confirmed_at", nullable = true)
+  private LocalDateTime emailConfirmedAt;
+
+  @Column(name = "email_uuid", columnDefinition = "uuid", nullable = true, unique = true)
+  private UUID emailUuid;
+
+  @Column(name = "reset_password_expiration", nullable = true)
+  private LocalDateTime resetPasswordExpiration;
+
+  @Column(name = "reset_token", nullable = true)
+  private String resetToken;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

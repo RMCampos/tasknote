@@ -13,6 +13,9 @@ import Landing from './views/Landing';
 import Login from './views/Login';
 import NotFound from './views/NotFound';
 import Register from './views/Register';
+import EmailConfirmation from './views/EmailConfirmation';
+import ResetPassword from './views/ResetPassword';
+import CompleteResetPassword from './views/CompleteResetPassword';
 import './styles/custom.scss';
 
 /**
@@ -48,6 +51,19 @@ function App(): React.ReactNode {
     {
       path: '/home',
       element: <Navigate to="/login" replace />
+    },
+    {
+      path: '/email-confirmation',
+      element: <EmailConfirmation />
+    },
+    {
+      // The reset-password is where the password reset workflow starts
+      path: '/reset-password',
+      element: <ResetPassword />
+    },
+    {
+      path: '/finish-reset-password',
+      element: <CompleteResetPassword />
     },
     {
       path: '*',

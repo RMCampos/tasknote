@@ -9,34 +9,19 @@ import lombok.Setter;
 import lombok.ToString;
 
 /** This class represents a login request with user email and password. */
-@Schema(description = "Login request with user email and password.")
+@Schema(description = "Resend confirmation request with user email and password.")
 @Setter
 @NotNull
 @EqualsAndHashCode
 @ToString
 @AllArgsConstructor
-public class LoginRequest {
+public class ResendConfirmationRequest {
   @Schema(description = "User email.")
   @Email
   @NotNull
   String email;
 
-  @Schema(description = "User password.")
-  @NotNull
-  String password;
-
-  @Schema(description = "User password again.")
-  String passwordAgain;
-
   public String email() {
     return email.trim().toLowerCase();
-  }
-
-  public String password() {
-    return password;
-  }
-
-  public String passwordAgain() {
-    return passwordAgain;
   }
 }

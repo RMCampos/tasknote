@@ -9,14 +9,17 @@ import static org.mockito.Mockito.when;
 import br.com.tasknoteapp.server.entity.UserEntity;
 import br.com.tasknoteapp.server.entity.UserPwdLimitEntity;
 import br.com.tasknoteapp.server.exception.BadPasswordException;
+import br.com.tasknoteapp.server.exception.BadUuidException;
 import br.com.tasknoteapp.server.exception.EmailAlreadyExistsException;
 import br.com.tasknoteapp.server.exception.InvalidCredentialsException;
 import br.com.tasknoteapp.server.exception.MaxLoginLimitAttemptException;
+import br.com.tasknoteapp.server.exception.ResetExpiredException;
 import br.com.tasknoteapp.server.exception.UserForbiddenException;
 import br.com.tasknoteapp.server.exception.UserNotFoundException;
 import br.com.tasknoteapp.server.repository.UserPwdLimitRepository;
 import br.com.tasknoteapp.server.repository.UserRepository;
 import br.com.tasknoteapp.server.request.LoginRequest;
+import br.com.tasknoteapp.server.request.PasswordResetRequest;
 import br.com.tasknoteapp.server.request.UserPatchRequest;
 import br.com.tasknoteapp.server.response.UserResponse;
 import br.com.tasknoteapp.server.response.UserResponseWithToken;
@@ -24,6 +27,7 @@ import br.com.tasknoteapp.server.util.AuthUtil;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -53,6 +57,8 @@ class AuthServiceTest {
 
   @Mock private UserPwdLimitRepository userPwdLimitRepository;
 
+  @Mock private MailgunEmailService mailgunEmailService;
+
   private AuthService authService;
 
   @BeforeEach
@@ -64,13 +70,14 @@ class AuthServiceTest {
             jwtService,
             authenticationManager,
             authUtil,
-            userPwdLimitRepository);
+            userPwdLimitRepository,
+            mailgunEmailService);
   }
 
   @Test
   @DisplayName("SignUp new user happy path should succeed")
   void signUpNewUser_happyPath_shouldSucceed() {
-    LoginRequest request = new LoginRequest("email@domain.com", "123456@abcde!");
+    LoginRequest request = new LoginRequest("email@domain.com", "123456@abcde!", "123456@abcde!");
 
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.empty());
     when(authUtil.validatePassword(request.password())).thenReturn(Optional.empty());
@@ -79,22 +86,24 @@ class AuthServiceTest {
     entity.setId(3L);
     entity.setEmail(request.email());
     entity.setName("User");
+    entity.setEmailUuid(UUID.randomUUID());
 
     when(userRepository.save(any())).thenReturn(entity);
     when(jwtService.generateToken(any())).thenReturn("a1b2c3");
+    doNothing().when(mailgunEmailService).sendNewUser(any());
 
     UserResponseWithToken token = authService.signUpNewUser(request);
 
     Assertions.assertNotNull(token);
-    Assertions.assertFalse(token.token().isBlank());
-    Assertions.assertEquals("a1b2c3", token.token());
+    Assertions.assertNull(token.token());
     Assertions.assertEquals(entity.getEmail(), token.email());
+    Assertions.assertNotNull(entity.getEmailUuid());
   }
 
   @Test
   @DisplayName("SignUp new user with existing email should fail")
   void signUpNewUser_emailExists_shouldFail() {
-    LoginRequest request = new LoginRequest("email@domain.com", "123456@abcde!");
+    LoginRequest request = new LoginRequest("email@domain.com", "123456@abcde!", "123456@abcde!");
 
     UserEntity existing = new UserEntity();
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(existing));
@@ -109,7 +118,7 @@ class AuthServiceTest {
   @Test
   @DisplayName("SignUp new user with bad password should fail")
   void signUpNewUser_badPassword_shouldFail() {
-    LoginRequest request = new LoginRequest("email@domain.com", "123456");
+    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456");
 
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.empty());
     when(authUtil.validatePassword(request.password())).thenReturn(Optional.of("Bad password"));
@@ -181,7 +190,7 @@ class AuthServiceTest {
   @Test
   @DisplayName("SignIn user happy path should succeed")
   void signInUser_happyPath_shouldSucceed() {
-    LoginRequest request = new LoginRequest("email@domain.com", "123456");
+    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456");
 
     UserEntity existing = new UserEntity();
     existing.setId(919L);
@@ -204,7 +213,7 @@ class AuthServiceTest {
   @Test
   @DisplayName("SignIn wrong user or password should fail")
   void signInUser_wrongUserOrPassword_shouldFail() {
-    LoginRequest request = new LoginRequest("email@domain.com", "123456");
+    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456");
 
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.empty());
 
@@ -218,7 +227,7 @@ class AuthServiceTest {
   @Test
   @DisplayName("SignIn max login attempt should fail")
   void signInUser_maxLoginAttempt_shouldFail() {
-    LoginRequest request = new LoginRequest("email@domain.com", "123456");
+    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456");
 
     UserEntity existing = new UserEntity();
     existing.setId(919L);
@@ -242,7 +251,7 @@ class AuthServiceTest {
   @Test
   @DisplayName("SignIn bad credentials should fail")
   void signInUser_badCredentials_shouldFail() {
-    LoginRequest request = new LoginRequest("email@domain.com", "123456");
+    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456");
 
     UserEntity existing = new UserEntity();
     existing.setId(919L);
@@ -443,5 +452,214 @@ class AuthServiceTest {
     when(authUtil.getCurrentUserEmail()).thenReturn(Optional.empty());
 
     Assertions.assertThrows(UserNotFoundException.class, () -> authService.getCurrentUser());
+  }
+
+  @Test
+  @DisplayName("Confirm user account happy path should succeed")
+  void confirmUserAccount_happyPath_shouldSucceed() {
+    String uuid = UUID.randomUUID().toString();
+
+    UserEntity user = new UserEntity();
+    user.setEmailUuid(UUID.fromString(uuid));
+    when(userRepository.findByEmailUuid(UUID.fromString(uuid))).thenReturn(Optional.of(user));
+    when(userRepository.save(any())).thenReturn(user);
+
+    Assertions.assertDoesNotThrow(() -> authService.confirmUserAccount(uuid));
+    verify(userRepository, times(1)).save(user);
+    Assertions.assertNotNull(user.getEmailConfirmedAt());
+  }
+
+  @Test
+  @DisplayName("Confirm user account with invalid UUID should fail")
+  void confirmUserAccount_invalidUuid_shouldFail() {
+    String invalidUuid = "invalid-uuid";
+
+    Assertions.assertThrows(
+        BadUuidException.class,
+        () -> {
+          authService.confirmUserAccount(invalidUuid);
+        });
+    verify(userRepository, times(0)).save(any());
+  }
+
+  @Test
+  @DisplayName("Confirm user account with non-existent UUID should fail")
+  void confirmUserAccount_nonExistentUuid_shouldFail() {
+    String uuid = UUID.randomUUID().toString();
+
+    when(userRepository.findByEmailUuid(UUID.fromString(uuid))).thenReturn(Optional.empty());
+
+    Assertions.assertThrows(
+        UserNotFoundException.class,
+        () -> {
+          authService.confirmUserAccount(uuid);
+        });
+    verify(userRepository, times(0)).save(any());
+  }
+
+  @Test
+  @DisplayName("Resend email confirmation happy path should succeed")
+  void resendEmailConfirmation_happyPath_shouldSucceed() {
+    String email = "user@domain.com";
+
+    UserEntity existing = new UserEntity();
+    existing.setId(919L);
+    existing.setEmail(email);
+    when(userRepository.findByEmail(email)).thenReturn(Optional.of(existing));
+
+    doNothing().when(mailgunEmailService).sendNewUser(existing);
+
+    Assertions.assertDoesNotThrow(() -> authService.resendEmailConfirmation(email));
+    verify(mailgunEmailService, times(1)).sendNewUser(existing);
+  }
+
+  @Test
+  @DisplayName("Resend email confirmation with non-existent email should fail")
+  void resendEmailConfirmation_nonExistentEmail_shouldFail() {
+    String email = "nonexistent@domain.com";
+
+    when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+    Assertions.assertThrows(
+        UserNotFoundException.class, () -> authService.resendEmailConfirmation(email));
+    verify(mailgunEmailService, times(0)).sendNewUser(any());
+  }
+
+  @Test
+  @DisplayName("Reset password for user happy path should succeed")
+  void resetPasswordForUser_happyPath_shouldSucceed() {
+    String email = "user@domain.com";
+
+    UserEntity existing = new UserEntity();
+    existing.setId(919L);
+    existing.setEmail(email);
+    when(userRepository.findByEmail(email)).thenReturn(Optional.of(existing));
+
+    doNothing().when(mailgunEmailService).sendResetPassword(any());
+    when(userRepository.save(any())).thenReturn(existing);
+
+    Assertions.assertDoesNotThrow(() -> authService.resetPasswordForUser(email));
+    verify(userRepository, times(1)).save(existing);
+    verify(mailgunEmailService, times(1)).sendResetPassword(existing);
+  }
+
+  @Test
+  @DisplayName("Reset password for user with non-existent email should succeed without exception")
+  void resetPasswordForUser_nonExistentEmail_shouldSucceed() {
+    String email = "nonexistent@domain.com";
+
+    when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+    Assertions.assertDoesNotThrow(() -> authService.resetPasswordForUser(email));
+    verify(userRepository, times(0)).save(any());
+    verify(mailgunEmailService, times(0)).sendResetPassword(any());
+  }
+
+  @Test
+  @DisplayName("Confirm reset password happy path should succeed")
+  void confirmResetPasswordForUser_happyPath_shouldSucceed() {
+    String token = "validToken";
+    UserEntity user = new UserEntity();
+    user.setResetToken(token);
+    user.setResetPasswordExpiration(LocalDateTime.now().plusMinutes(30));
+
+    String newPassword = "NewPassword@123";
+
+    String encodedPassword = "hash@abcxasd123!";
+    when(passwordEncoder.encode(newPassword)).thenReturn(encodedPassword);
+    user.setPassword(encodedPassword);
+
+    when(userRepository.findByResetToken(token)).thenReturn(Optional.of(user));
+    when(authUtil.validatePassword(newPassword)).thenReturn(Optional.empty());
+
+    PasswordResetRequest request = new PasswordResetRequest(token, newPassword, newPassword);
+
+    Assertions.assertDoesNotThrow(() -> authService.confirmResetPasswordForUser(request));
+
+    verify(userRepository, times(1)).save(user);
+    verify(mailgunEmailService, times(1)).sendPasswordResetConfirmation(user);
+    Assertions.assertNull(user.getResetToken());
+    Assertions.assertNull(user.getResetPasswordExpiration());
+    Assertions.assertNotNull(user.getPassword());
+  }
+
+  @Test
+  @DisplayName("Confirm reset password with expired token should fail")
+  void confirmResetPasswordForUser_expiredToken_shouldFail() {
+    String token = "expiredToken";
+    String newPassword = "NewPassword@123";
+
+    UserEntity user = new UserEntity();
+    user.setResetToken(token);
+    user.setResetPasswordExpiration(LocalDateTime.now().minusHours(3));
+
+    PasswordResetRequest request = new PasswordResetRequest(token, newPassword, newPassword);
+
+    when(userRepository.findByResetToken(token)).thenReturn(Optional.of(user));
+
+    Assertions.assertThrows(
+        ResetExpiredException.class, () -> authService.confirmResetPasswordForUser(request));
+
+    verify(userRepository, times(0)).save(any());
+    verify(mailgunEmailService, times(0)).sendPasswordResetConfirmation(any());
+  }
+
+  @Test
+  @DisplayName("Confirm reset password with invalid token should fail")
+  void confirmResetPasswordForUser_invalidToken_shouldFail() {
+    String token = "invalidToken";
+    String newPassword = "NewPassword@123";
+    PasswordResetRequest request = new PasswordResetRequest(token, newPassword, newPassword);
+
+    when(userRepository.findByResetToken(token)).thenReturn(Optional.empty());
+
+    Assertions.assertThrows(
+        UserNotFoundException.class, () -> authService.confirmResetPasswordForUser(request));
+
+    verify(userRepository, times(0)).save(any());
+    verify(mailgunEmailService, times(0)).sendPasswordResetConfirmation(any());
+  }
+
+  @Test
+  @DisplayName("Confirm reset password with mismatched passwords should fail")
+  void confirmResetPasswordForUser_mismatchedPasswords_shouldFail() {
+    String token = "validToken";
+    String newPassword = "NewPassword@123";
+    String mismatchedPassword = "Mismatch@123";
+
+    UserEntity user = new UserEntity();
+    user.setResetToken(token);
+    user.setResetPasswordExpiration(LocalDateTime.now().plusMinutes(30));
+    PasswordResetRequest request = new PasswordResetRequest(token, newPassword, mismatchedPassword);
+
+    when(userRepository.findByResetToken(token)).thenReturn(Optional.of(user));
+
+    Assertions.assertThrows(
+        BadPasswordException.class, () -> authService.confirmResetPasswordForUser(request));
+
+    verify(userRepository, times(0)).save(any());
+    verify(mailgunEmailService, times(0)).sendPasswordResetConfirmation(any());
+  }
+
+  @Test
+  @DisplayName("Confirm reset password with invalid password should fail")
+  void confirmResetPasswordForUser_invalidPassword_shouldFail() {
+    String token = "validToken";
+    String newPassword = "weak";
+
+    UserEntity user = new UserEntity();
+    user.setResetToken(token);
+    user.setResetPasswordExpiration(LocalDateTime.now().plusMinutes(30));
+
+    PasswordResetRequest request = new PasswordResetRequest(token, newPassword, newPassword);
+
+    when(userRepository.findByResetToken(token)).thenReturn(Optional.of(user));
+    when(authUtil.validatePassword(newPassword)).thenReturn(Optional.of("Weak password"));
+
+    Assertions.assertThrows(
+        BadPasswordException.class, () -> authService.confirmResetPasswordForUser(request));
+
+    verify(userRepository, times(0)).save(any());
+    verify(mailgunEmailService, times(0)).sendPasswordResetConfirmation(any());
   }
 }

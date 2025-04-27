@@ -3,9 +3,16 @@ br:
         tasknote:
             server:
                 jwt-secret: ${SECURITY_KEY:test-secret-key-not-for-production}
+                target-env: ${TARGET_ENV:development}
                 version: ${BUILD:local}
 cors:
     allowed-origins: "${CORS_ALLOWED_ORIGINS:http://localhost}\t"
+
+mailgun:
+  api-key: ${MAILGUN_APIKEY:abc123456}
+  domain: tasknoteapp.dev.br
+  sender-email: no-reply@yourdomain.com
+
 management:
     endpoint:
         health:
