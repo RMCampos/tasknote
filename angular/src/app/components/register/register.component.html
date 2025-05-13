@@ -1,0 +1,36 @@
+<h1>Register</h1>
+
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+  <label for="email">Email</label><br>
+  <input type="email" formControlName="email" required /><br>
+  <div *ngIf="registerForm.controls.email.invalid && registerForm.controls.email.touched" class="error">
+    Please enter a valid email.
+  </div>
+
+  <label for="password">Password</label><br>
+  <input type="password" formControlName="password" required /><br>
+  <div *ngIf="registerForm.controls.password.invalid && registerForm.controls.password.touched" class="error">
+    Password must be at least 6 characters.
+  </div>
+
+  <label for="password">Repeat password</label><br>
+  <input type="password" formControlName="passwordAgain" required /><br>
+  <div *ngIf="registerForm.controls.passwordAgain.invalid && registerForm.controls.passwordAgain.touched" class="error">
+    Password must be at least 6 characters.
+  </div>
+
+  <br>
+  <input type="submit" value="Create account" [disabled]="registerForm.invalid">
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+</form>
+
+<p>
+  Already have an account?
+  <a routerLink="/login">Login</a>
+</p>
+<div>
+  <a routerLink="/">Back to home</a>
+</div>
+
