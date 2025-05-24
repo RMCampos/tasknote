@@ -26,7 +26,7 @@ function About(): React.ReactNode {
 
       <Row className="justify-content-center mb-4">
         <Col xs={12}>
-          <Card>
+          <Card className="p-4">
             <Card.Body>
               <h2 className="mb-4 poppins-bold about-title">{t('about_app_title')}</h2>
               <p className="poppins-medium">{t('about_app_description')}</p>
@@ -45,7 +45,7 @@ function About(): React.ReactNode {
 
       <Row className="justify-content-center">
         <Col xs={12} md={8}>
-          <Card className="min-height-350">
+          <Card className="min-height-350 p-4">
             <Card.Body>
               <h2 className="mb-4 poppins-bold about-title">{t('about_tech_title')}</h2>
               <p className="poppins-light">{t('about_tech_description')}</p>
@@ -62,7 +62,7 @@ function About(): React.ReactNode {
           </Card>
         </Col>
         <Col sx={12} md={4} className="mt-4 mt-sm-0">
-          <Card className="min-height-350">
+          <Card className="min-height-350 p-4">
             <Card.Body>
               <h2 className="mb-4 poppins-bold about-title">{t('about_dev_title')}</h2>
               <p className="poppins-light">

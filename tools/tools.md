@@ -157,3 +157,12 @@ docker run \
 docker exec -i my-postgres-db pg_restore -U <user> -d <db-name> < 2025-04-26T20_00_00.114Z.sql
 
 ```
+
+<div className="py-5 text-center">
+  <div className="d-block d-sm-none bg-primary text-white p-3">XS (Extra Small): less than 576px</div>
+  <div className="d-none d-sm-block d-md-none bg-secondary text-white p-3">SM (Small): ≥576px</div>
+  <div className="d-none d-md-block d-lg-none bg-success text-white p-3">MD (Medium): ≥768px</div>
+  <div className="d-none d-lg-block d-xl-none bg-warning text-dark p-3">LG (Large): ≥992px</div>
+  <div className="d-none d-xl-block d-xxl-none bg-danger text-white p-3">XL (Extra Large): ≥1200px</div>
+  <div className="d-none d-xxl-block bg-dark text-white p-3">XXL (Extra Extra Large): ≥1400px</div>
+</div>

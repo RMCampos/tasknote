@@ -3,6 +3,8 @@ type NoteResponse = {
   title: string;
   description: string;
   url: string | null;
+  tag: string;
+  lastUpdate: string;
 };
 
 export type { NoteResponse };

@@ -43,7 +43,8 @@ class NoteControllerTest {
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
   void getAllNotes_notesFound_shouldSucceed() throws Exception {
     NoteUrlResponse noteUrl = new NoteUrlResponse(111L, "https://test.com");
-    NoteResponse note = new NoteResponse(111L, "title", "description", "https://test.com", "tag");
+    NoteResponse note =
+        new NoteResponse(111L, "title", "description", "https://test.com", null, "tag");
 
     when(noteService.getAllNotes()).thenReturn(List.of(note));
 
@@ -96,10 +97,12 @@ class NoteControllerTest {
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
   void patchNote_happyPath_shouldSucceed() throws Exception {
     Long noteId = 123L;
-    NotePatchRequest patchRequest = new NotePatchRequest("New title", "New description", null);
+    NotePatchRequest patchRequest =
+        new NotePatchRequest("New title", "New description", null, null);
 
     NoteResponse response =
-        new NoteResponse(noteId, patchRequest.title(), patchRequest.description(), null, "tag");
+        new NoteResponse(
+            noteId, patchRequest.title(), patchRequest.description(), null, null, "tag");
 
     when(noteService.patchNote(noteId, patchRequest)).thenReturn(response);
 
@@ -132,7 +135,8 @@ class NoteControllerTest {
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
   void patchNote_notFound_shouldFail() throws Exception {
     Long noteId = 123L;
-    NotePatchRequest patchRequest = new NotePatchRequest("New title", "New description", null);
+    NotePatchRequest patchRequest =
+        new NotePatchRequest("New title", "New description", null, null);
 
     when(noteService.patchNote(noteId, patchRequest)).thenThrow(new NoteNotFoundException());
 
@@ -185,7 +189,7 @@ class NoteControllerTest {
   @DisplayName("Post create note happy path should succeed and return 201")
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
   void postNotes_happyPath_shouldSucceed() throws Exception {
-    NoteRequest request = new NoteRequest("Title", "Description", null);
+    NoteRequest request = new NoteRequest("Title", "Description", null, null);
 
     NoteEntity entity = new NoteEntity();
     entity.setId(1L);

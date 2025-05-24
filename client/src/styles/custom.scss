@@ -320,3 +320,126 @@ p.search-result-item-title {
   font-size: 16px;
 
 }
+
+.dropdown-menu {
+  border: 1px solid var(--bs-border-color);
+}
+
+.task-due-date {
+  font-size: 11px;
+}
+
+.high-importance {
+  border-left: 5px solid #FFD54F !important;
+  box-shadow: 0 4px 8px var(--bs-box-shadow);
+}
+
+.span-line-break {
+  white-space: pre;
+}
+
+.btn.btn-dark {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1030;
+}
+
+.btn-action {
+  margin-right: 0.5rem;
+}
+
+.task-card {
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+}
+
+.dropdown-toggle::after {
+  display: none!important;
+}
+
+.task-card-footer {
+  background-color: var(--bs-card-bg) !important;
+  border-top: var(--bs-card-bg) !important;
+}
+
+/* Radio Buttons */
+/* Container styling */
+.radio-group-container {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+}
+
+/* Label styling */
+.radio-group-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+/* Radio buttons wrapper */
+.radio-buttons-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+/* Custom radio button styling */
+.custom-radio-button .form-check-input {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-top: 0.2rem;
+  cursor: pointer;
+  border: 2px solid #6c757d;
+}
+
+.custom-radio-button .form-check-input:checked {
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+.custom-radio-button .form-check-input:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  border-color: var(--bs-primary);
+}
+
+.custom-radio-button .form-check-label {
+  font-size: 1rem;
+  padding-left: 0.3rem;
+  cursor: pointer;
+  color: #495057;
+  transition: color 0.2s;
+}
+
+.custom-radio-button:hover .form-check-label {
+  color: var(--bs-primary);
+}
+
+/* Selected option text */
+.selected-option {
+  font-weight: 500;
+  color: #0d6efd;
+  margin-top: 1rem;
+  padding: 0.5rem;
+  background-color: rgba(13, 110, 253, 0.1);
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.add-button svg {
+  margin-right: .5rem;
+  margin-left: -1rem;
+  margin-top: -3px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .radio-buttons-wrapper {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}

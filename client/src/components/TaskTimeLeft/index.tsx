@@ -30,7 +30,7 @@ function TaskTimeLeft(props: React.PropsWithChildren<Props>): React.ReactNode | 
   return props.done
     ? null
     : (
-        <div className="d-block">
+        <div className="d-block task-due-date">
           <CalendarCheck />
           {props.tooltip.length > 0 && (
             <OverlayTrigger

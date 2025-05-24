@@ -7,4 +7,5 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record NotePatchRequest(
     @Schema(description = "Note title. Optional.") String title,
     @Schema(description = "Note description. Optional.") String description,
-    @Schema(description = "Note urls. Optional.") String url) {}
+    @Schema(description = "Note urls. Optional.") String url,
+    @Schema(description = "Note tag, optional.") String tag) {}

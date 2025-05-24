@@ -8,4 +8,5 @@ import jakarta.validation.constraints.NotNull;
 public record NoteRequest(
     @Schema(description = "Note title.") @NotNull String title,
     @Schema(description = "Note description.") @NotNull String description,
-    @Schema(description = "Note urls. Optional.") String url) {}
+    @Schema(description = "Note urls. Optional.") String url,
+    @Schema(description = "Note tag, optional.") String tag) {}

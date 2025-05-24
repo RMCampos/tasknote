@@ -119,7 +119,9 @@ describe('NoteAdd Component', () => {
         id: 0,
         title: 'New Note',
         description: 'Note content',
-        url: ''
+        url: '',
+        tag: '',
+        lastUpdate: ''
       }
       expect(api.postJSON).toHaveBeenCalledWith(ApiConfig.notesUrl, newNote);
     });

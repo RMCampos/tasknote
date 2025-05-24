@@ -11,12 +11,10 @@ import static org.mockito.Mockito.when;
 
 import br.com.tasknoteapp.server.entity.NoteEntity;
 import br.com.tasknoteapp.server.entity.NoteUrlEntity;
-import br.com.tasknoteapp.server.entity.NotesCreatedEntity;
 import br.com.tasknoteapp.server.entity.UserEntity;
 import br.com.tasknoteapp.server.exception.NoteNotFoundException;
 import br.com.tasknoteapp.server.repository.NoteRepository;
 import br.com.tasknoteapp.server.repository.NoteUrlRepository;
-import br.com.tasknoteapp.server.repository.NotesCreatedRepository;
 import br.com.tasknoteapp.server.request.NotePatchRequest;
 import br.com.tasknoteapp.server.request.NoteRequest;
 import br.com.tasknoteapp.server.response.NoteResponse;
@@ -41,8 +39,6 @@ class NoteServiceTest {
 
   @Mock private NoteUrlRepository noteUrlRepository;
 
-  @Mock private NotesCreatedRepository notesCreatedRepository;
-
   @InjectMocks private NoteService noteService;
 
   private UserEntity user;
@@ -62,9 +58,9 @@ class NoteServiceTest {
     note.setDescription("Test Description");
     note.setUser(user);
 
-    noteRequest = new NoteRequest("Test Note", "Test Description", "http://example.com");
+    noteRequest = new NoteRequest("Test Note", "Test Description", "http://example.com", "tag");
     notePatchRequest =
-        new NotePatchRequest("Updated Note", "Updated Description", "http://example.com");
+        new NotePatchRequest("Updated Note", "Updated Description", "http://example.com", "tag");
   }
 
   @Test
@@ -103,28 +99,9 @@ class NoteServiceTest {
   }
 
   @Test
-  void createNote() {
-    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(user.getEmail()));
-    when(authService.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-    when(noteRepository.save(any(NoteEntity.class))).thenReturn(note);
-    when(noteUrlRepository.save(any(NoteUrlEntity.class))).thenReturn(new NoteUrlEntity());
-    when(notesCreatedRepository.findById(user.getId())).thenReturn(Optional.empty());
-
-    NoteEntity createdNote = noteService.createNote(noteRequest);
-
-    assertEquals("Test Note", createdNote.getTitle());
-    verify(noteRepository, times(1)).save(any(NoteEntity.class));
-    verify(noteUrlRepository, times(1)).save(any(NoteUrlEntity.class));
-    verify(notesCreatedRepository, times(1)).save(any(NotesCreatedEntity.class));
-  }
-
-  @Test
   void createNote_withExistingCount() {
     when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(user.getEmail()));
     when(authService.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-    NotesCreatedEntity noteUrlEntity = new NotesCreatedEntity();
-    noteUrlEntity.setCount(6);
-    when(notesCreatedRepository.findById(user.getId())).thenReturn(Optional.of(noteUrlEntity));
     when(noteRepository.save(any(NoteEntity.class))).thenReturn(note);
     when(noteUrlRepository.save(any(NoteUrlEntity.class))).thenReturn(new NoteUrlEntity());
 
@@ -133,7 +110,6 @@ class NoteServiceTest {
     assertEquals("Test Note", createdNote.getTitle());
     verify(noteRepository, times(1)).save(any(NoteEntity.class));
     verify(noteUrlRepository, times(1)).save(any(NoteUrlEntity.class));
-    verify(notesCreatedRepository, times(1)).save(any(NotesCreatedEntity.class));
   }
 
   @Test

@@ -49,8 +49,6 @@ describe('Sidebar Component', () => {
   it('should render the Sidebar component', () => {
     const { getByText } = renderSidebar();
     expect(getByText('Ricardo')).toBeDefined();
-    expect(getByText('Main Menu')).toBeDefined();
-    expect(getByText('Preferences')).toBeDefined();
   });
 
   it('should call signOut when logout is clicked', () => {
@@ -61,8 +59,8 @@ describe('Sidebar Component', () => {
 
   it('should highlight the selected menu item', () => {
     const { getByText } = renderSidebar();
-    fireEvent.click(getByText('Dashboard'));
-    const dashboardElement = getByText('Dashboard').closest('.sidebar-nav');
+    fireEvent.click(getByText('Home'));
+    const dashboardElement = getByText('Home').closest('.sidebar-nav');
     expect(dashboardElement).not.toBeNull();
     expect(dashboardElement!.classList.contains('selected')).toBe(true);
   });

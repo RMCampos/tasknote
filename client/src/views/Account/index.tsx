@@ -127,7 +127,7 @@ function Account(): React.ReactNode {
 
       <Row>
         <Col xs={12} lg={6}>
-          <Card>
+          <Card className="p-4">
             <Card.Body>
               <Card.Title>
                 Update only what you need. Blank fields will not be updated
@@ -215,7 +215,7 @@ function Account(): React.ReactNode {
           </Card>
         </Col>
         <Col xs={12} lg={6} className="mt-4 mt-lg-0">
-          <Card>
+          <Card className="p-4">
             <Card.Body>
               <Card.Title>Change the app language</Card.Title>
               <span className="description">{t('account_app_lang_description')}</span>
@@ -225,7 +225,7 @@ function Account(): React.ReactNode {
                   <Button
                     key={lang.key}
                     type="button"
-                    variant="outline-primary"
+                    variant="outline-secondary"
                     className="btn-sm me-3 mb-3 d-block"
                     onClick={() => handleLanguage(lang.lang)}
                     data-testid={`language-button-${lang.lang}`}
@@ -249,7 +249,7 @@ function Account(): React.ReactNode {
             </Card.Body>
           </Card>
 
-          <Card className="mt-4">
+          <Card className="mt-4 p-4">
             <Card.Body>
               <Card.Title>Your Privacy matters</Card.Title>
               <span className="description">

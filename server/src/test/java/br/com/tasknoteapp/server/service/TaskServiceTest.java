@@ -16,11 +16,9 @@ import br.com.tasknoteapp.server.entity.TaskEntity;
 import br.com.tasknoteapp.server.entity.TaskUrlEntity;
 import br.com.tasknoteapp.server.entity.TaskUrlEntityPk;
 import br.com.tasknoteapp.server.entity.UserEntity;
-import br.com.tasknoteapp.server.entity.UserTasksDonePk;
 import br.com.tasknoteapp.server.exception.TaskNotFoundException;
 import br.com.tasknoteapp.server.repository.TaskRepository;
 import br.com.tasknoteapp.server.repository.TaskUrlRepository;
-import br.com.tasknoteapp.server.repository.UserTasksDoneRepository;
 import br.com.tasknoteapp.server.request.TaskPatchRequest;
 import br.com.tasknoteapp.server.request.TaskRequest;
 import br.com.tasknoteapp.server.response.TaskResponse;
@@ -49,8 +47,6 @@ class TaskServiceTest {
 
   @Mock TaskUrlRepository taskUrlRepository;
 
-  @Mock UserTasksDoneRepository userTasksDoneRepository;
-
   private static final Long USER_ID = 123L;
 
   private static final String USER_EMAIL = "test@domain.com";
@@ -61,7 +57,7 @@ class TaskServiceTest {
   void setup() {
     taskService =
         new TaskService(
-            taskRepository, authService, authUtil, taskUrlRepository, userTasksDoneRepository);
+            taskRepository, authService, authUtil, taskUrlRepository);
   }
 
   @Test
@@ -345,9 +341,6 @@ class TaskServiceTest {
     savedTask.setTag(taskEntity.getTag());
     when(taskRepository.save(any())).thenReturn(savedTask);
 
-    UserTasksDonePk pk = new UserTasksDonePk(USER_ID, taskId);
-    when(userTasksDoneRepository.findById(pk)).thenReturn(Optional.empty());
-
     TaskPatchRequest patch =
         new TaskPatchRequest("Test task updated", true, null, dueDate, false, "test");
     TaskResponse patched = taskService.patchTask(taskId, patch);
@@ -396,9 +389,6 @@ class TaskServiceTest {
     savedTask.setDone(true);
     savedTask.setTag(taskEntity.getTag());
     when(taskRepository.save(any())).thenReturn(savedTask);
-
-    UserTasksDonePk pk = new UserTasksDonePk(USER_ID, taskId);
-    when(userTasksDoneRepository.findById(pk)).thenReturn(Optional.empty());
 
     String url = "http://test.com";
     TaskPatchRequest patch =
@@ -465,9 +455,6 @@ class TaskServiceTest {
     savedTask.setDone(true);
     savedTask.setTag(taskEntity.getTag());
     when(taskRepository.save(any())).thenReturn(savedTask);
-
-    UserTasksDonePk pk = new UserTasksDonePk(USER_ID, taskId);
-    when(userTasksDoneRepository.findById(pk)).thenReturn(Optional.empty());
 
     // wrong due date
     String dueDate = "2026-31-31";

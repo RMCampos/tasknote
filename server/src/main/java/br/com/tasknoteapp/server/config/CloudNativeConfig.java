@@ -10,8 +10,6 @@ import br.com.tasknoteapp.server.request.TaskUrlPatchRequest;
 import br.com.tasknoteapp.server.response.JwtAuthenticationResponse;
 import br.com.tasknoteapp.server.response.NoteResponse;
 import br.com.tasknoteapp.server.response.NoteUrlResponse;
-import br.com.tasknoteapp.server.response.SearchResponse;
-import br.com.tasknoteapp.server.response.SummaryResponse;
 import br.com.tasknoteapp.server.response.TaskResponse;
 import br.com.tasknoteapp.server.response.UserResponse;
 import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
@@ -31,8 +29,6 @@ import org.springframework.context.annotation.ImportRuntimeHints;
   JwtAuthenticationResponse.class,
   NoteResponse.class,
   NoteUrlResponse.class,
-  SearchResponse.class,
-  SummaryResponse.class,
   TaskResponse.class,
   UserResponse.class,
   io.jsonwebtoken.Claims.class,

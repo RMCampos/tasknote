@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   Col,
@@ -6,7 +6,7 @@ import {
   Form,
   Row
 } from 'react-bootstrap';
-import { useNavigate, useParams, useSearchParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { NoteResponse } from '../../types/NoteResponse';
 import api from '../../api-service/api';
@@ -16,7 +16,6 @@ import FormInput from '../../components/FormInput';
 import ModalMarkdown from '../../components/ModalMarkdown';
 import AlertError from '../../components/AlertError';
 import ContentHeader from '../../components/ContentHeader';
-import SidebarContext from '../../context/SidebarContext';
 
 type NoteAction = 'add' | 'edit';
 
@@ -32,12 +31,11 @@ function NoteAdd(): React.ReactNode {
   const [noteTitle, setNoteTitle] = useState<string>('');
   const [noteContent, setNoteContent] = useState<string>('');
   const [noteUrl, setNoteUrl] = useState<string>('');
+  const [noteTag, setNoteTag] = useState<string>('');
   const [action, setAction] = useState<NoteAction>('add');
   const [showPreviewMd, setShowPreviewMd] = useState<boolean>(false);
   const { i18n, t } = useTranslation();
-  const { setNewPage } = useContext(SidebarContext);
   const params = useParams();
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   /**
@@ -97,6 +95,7 @@ function NoteAdd(): React.ReactNode {
     setNoteTitle('');
     setNoteUrl('');
     setNoteContent('');
+    setNoteTag('');
 
     setAction('add');
     setValidated(false);
@@ -123,15 +122,16 @@ function NoteAdd(): React.ReactNode {
         id: 0,
         title: noteTitle,
         description: noteContent,
-        url: noteUrl
+        url: noteUrl,
+        tag: noteTag,
+        lastUpdate: ''
       };
 
       const added: boolean = await addNote(payload);
       if (added) {
         form.reset();
         resetInputs();
-        setNewPage(`/${searchParams.get('backTo')}`);
-        navigate(`/${searchParams.get('backTo')}`);
+        navigate('/home');
       }
     }
     else if (action === 'edit') {
@@ -139,15 +139,16 @@ function NoteAdd(): React.ReactNode {
         id: noteId,
         title: noteTitle,
         description: noteContent,
-        url: noteUrl
+        url: noteUrl,
+        tag: noteTag,
+        lastUpdate: ''
       };
 
       const edited: boolean = await submitEditNote(payload);
       if (edited) {
         form.reset();
         resetInputs();
-        setNewPage(`/${searchParams.get('backTo')}`);
-        navigate(`/${searchParams.get('backTo')}`);
+        navigate('/home');
       }
     }
   };
@@ -163,6 +164,9 @@ function NoteAdd(): React.ReactNode {
         setNoteTitle(noteToEdit.title);
         if (noteToEdit.url) {
           setNoteUrl(noteToEdit.url);
+        }
+        if (noteToEdit.tag) {
+          setNoteTag(noteToEdit.tag);
         }
         setNoteContent(noteToEdit.description);
         setAction('edit');
@@ -234,19 +238,38 @@ function NoteAdd(): React.ReactNode {
                   }}
                 />
 
-                {/* Note URL */}
-                <FormInput
-                  labelText={t('task_form_url_label')}
-                  iconName="At"
-                  required={false}
-                  type="text"
-                  name="url"
-                  placeholder={t('task_form_url_placeholder')}
-                  value={noteUrl}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setNoteUrl(e.target.value);
-                  }}
-                />
+                <Row>
+                  <Col xs={12} xl={9}>
+                    {/* Note URL */}
+                    <FormInput
+                      labelText={t('task_form_url_label')}
+                      iconName="At"
+                      required={false}
+                      type="text"
+                      name="url"
+                      placeholder={t('task_form_url_placeholder')}
+                      value={noteUrl}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setNoteUrl(e.target.value);
+                      }}
+                    />
+                  </Col>
+                  <Col xs={12} xl={3}>
+                    {/* Tag */}
+                    <FormInput
+                      labelText="Tag"
+                      iconName="Hash"
+                      required={false}
+                      type="text"
+                      name="tag"
+                      placeholder="my-tag (Optional)"
+                      value={noteTag}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setNoteTag(e.target.value);
+                      }}
+                    />
+                  </Col>
+                </Row>
 
                 <Form.Group controlId="form_noteDescription">
                   <Form.Label>
@@ -286,8 +309,7 @@ function NoteAdd(): React.ReactNode {
                   type="button"
                   className="ms-2 home-new-item-secondary task-note-btn"
                   onClick={() => {
-                    setNewPage(`/${searchParams.get('backTo')}`);
-                    navigate(`/${searchParams.get('backTo')}`);
+                    navigate('/home');
                   }}
                 >
                   Cancel

@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -40,4 +41,7 @@ public class NoteEntity {
 
   @Column(name = "tag", nullable = true, length = 30)
   private String tag;
+
+  @Column(name = "last_update")
+  private LocalDateTime lastUpdate;
 }

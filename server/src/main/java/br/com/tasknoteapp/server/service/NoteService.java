@@ -2,18 +2,17 @@ package br.com.tasknoteapp.server.service;
 
 import br.com.tasknoteapp.server.entity.NoteEntity;
 import br.com.tasknoteapp.server.entity.NoteUrlEntity;
-import br.com.tasknoteapp.server.entity.NotesCreatedEntity;
 import br.com.tasknoteapp.server.entity.UserEntity;
 import br.com.tasknoteapp.server.exception.NoteNotFoundException;
 import br.com.tasknoteapp.server.exception.TaskNotFoundException;
 import br.com.tasknoteapp.server.repository.NoteRepository;
 import br.com.tasknoteapp.server.repository.NoteUrlRepository;
-import br.com.tasknoteapp.server.repository.NotesCreatedRepository;
 import br.com.tasknoteapp.server.request.NotePatchRequest;
 import br.com.tasknoteapp.server.request.NoteRequest;
 import br.com.tasknoteapp.server.response.NoteResponse;
 import br.com.tasknoteapp.server.util.AuthUtil;
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,8 +33,6 @@ public class NoteService {
   private final AuthUtil authUtil;
 
   private final NoteUrlRepository noteUrlRepository;
-
-  private final NotesCreatedRepository notesCreatedRepository;
 
   /**
    * Get all notes for the current user.
@@ -86,6 +83,8 @@ public class NoteService {
     NoteEntity note = new NoteEntity();
     note.setTitle(noteRequest.title());
     note.setDescription(noteRequest.description());
+    note.setTag(noteRequest.tag());
+    note.setLastUpdate(LocalDateTime.now());
     note.setUser(user);
     NoteEntity created = noteRepository.save(note);
 
@@ -95,19 +94,6 @@ public class NoteService {
       NoteUrlEntity urlEntity = saveUrl(note, noteRequest.url());
       note.setNoteUrl(urlEntity);
     }
-
-    Optional<NotesCreatedEntity> userNote = notesCreatedRepository.findById(user.getId());
-    NotesCreatedEntity userNoteEntity = null;
-    if (userNote.isPresent()) {
-      userNoteEntity = userNote.get();
-      userNoteEntity.setCount(userNoteEntity.getCount() + 1);
-    } else {
-      userNoteEntity = new NotesCreatedEntity();
-      userNoteEntity.setCount(1);
-      userNoteEntity.setUserId(user.getId());
-    }
-
-    notesCreatedRepository.save(userNoteEntity);
 
     log.info("Finished note creation!");
     return created;
@@ -133,11 +119,15 @@ public class NoteService {
 
     NoteEntity noteEntity = note.get();
     if (!Objects.isNull(patch.title()) && !patch.title().isBlank()) {
-      noteEntity.setTitle(patch.title());
+      noteEntity.setTitle(patch.title().trim());
     }
     if (!Objects.isNull(patch.description()) && !patch.description().isBlank()) {
       noteEntity.setDescription(patch.description());
     }
+    if (!Objects.isNull(patch.tag()) && !patch.tag().isBlank()) {
+      noteEntity.setTag(patch.tag().trim());
+    }
+    noteEntity.setLastUpdate(LocalDateTime.now());
 
     noteUrlRepository.deleteByNote_id(noteId);
     noteUrlRepository.flush();
@@ -191,7 +181,7 @@ public class NoteService {
    * Search for notes given a search term.
    *
    * @param searchTerm The term to be used for the search.
-   * @return {@link List} of {@link NoteResponse} with ound records or an empty list.
+   * @return {@link List} of {@link NoteResponse} with found records or an empty list.
    */
   public List<NoteResponse> searchNotes(String searchTerm) {
     UserEntity user = getCurrentUser();

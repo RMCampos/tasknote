@@ -4,12 +4,9 @@ import br.com.tasknoteapp.server.entity.TaskEntity;
 import br.com.tasknoteapp.server.entity.TaskUrlEntity;
 import br.com.tasknoteapp.server.entity.TaskUrlEntityPk;
 import br.com.tasknoteapp.server.entity.UserEntity;
-import br.com.tasknoteapp.server.entity.UserTasksDone;
-import br.com.tasknoteapp.server.entity.UserTasksDonePk;
 import br.com.tasknoteapp.server.exception.TaskNotFoundException;
 import br.com.tasknoteapp.server.repository.TaskRepository;
 import br.com.tasknoteapp.server.repository.TaskUrlRepository;
-import br.com.tasknoteapp.server.repository.UserTasksDoneRepository;
 import br.com.tasknoteapp.server.request.TaskPatchRequest;
 import br.com.tasknoteapp.server.request.TaskRequest;
 import br.com.tasknoteapp.server.response.TaskResponse;
@@ -39,8 +36,6 @@ public class TaskService {
   private final AuthUtil authUtil;
 
   private final TaskUrlRepository taskUrlRepository;
-
-  private final UserTasksDoneRepository userTasksDoneRepository;
 
   /**
    * Get all tasks for the current user.
@@ -153,21 +148,7 @@ public class TaskService {
 
     log.info("Task patched! Id {}", patchedTask.getId());
 
-    if (Boolean.TRUE.equals(taskEntity.getDone())) {
-      UserTasksDone userTasksDone = new UserTasksDone();
-      userTasksDone.setId(new UserTasksDonePk(user.getId(), taskEntity.getId()));
-      userTasksDone.setDoneDate(LocalDateTime.now());
-      userTasksDoneRepository.save(userTasksDone);
-      log.info("Task done saved in the history! Id {}", taskEntity.getId());
-    } else {
-      log.info("Task undone! Id {}", taskEntity.getId());
-      Optional<UserTasksDone> userTasksDone =
-          userTasksDoneRepository.findById(new UserTasksDonePk(user.getId(), taskEntity.getId()));
-      if (userTasksDone.isPresent()) {
-        userTasksDoneRepository.delete(userTasksDone.get());
-        log.info("Task undone deleted from history! Id {}", taskEntity.getId());
-      }
-    }
+    
 
     return TaskResponse.fromEntity(patchedTask, getAllTasksUrls(taskId));
   }

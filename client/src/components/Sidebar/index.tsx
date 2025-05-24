@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next';
 import AuthContext from '../../context/AuthContext';
 import SidebarContext from '../../context/SidebarContext';
 import NavButton from '../NavButton';
-import SidebarIcon from '../SidebarIcon';
 import { env } from '../../env';
 import './style.scss';
+import { BoxArrowRight, InfoCircleFill, PersonFill, StarFill } from 'react-bootstrap-icons';
 
 interface Props {
   isMobileOpen: boolean;
@@ -31,6 +31,21 @@ function Sidebar(props: React.PropsWithChildren<Props>): React.ReactNode {
     setNewPage('/home');
     signOut();
   };
+
+  const isHomeSelected = (): string => {
+    const isHomeSelection: boolean = currentPage === '/home'
+      || currentPage == '/tasks/new'
+      || currentPage.includes('/tasks/edit')
+      || currentPage == '/notes/new'
+      || currentPage.includes('/notes/edit');
+
+    if (isHomeSelection) {
+      return 'selected';
+    }
+
+    return '';
+  };
+
   useEffect(() => {}, [user, currentPage]);
 
   return (
@@ -51,64 +66,28 @@ function Sidebar(props: React.PropsWithChildren<Props>): React.ReactNode {
 
         <div className="header-spacer"></div>
 
-        <div className="sidebar-menu-header plus-jakarta-sans-regular">Main Menu</div>
-
         <Nav className="flex-column p-3 plus-jakarta-sans-thin">
           <NavLink to="/home" className="mb-2" onClick={() => setNewPage('/home')}>
-            <div className={`sidebar-nav ${currentPage === '/home' ? 'selected' : ''}`}>
-              <SidebarIcon
-                iconName="dashboard"
-                selected={currentPage === '/home'}
-              />
-              Dashboard
+            <div className={`sidebar-nav ${isHomeSelected()}`}>
+              <StarFill />
+              Home
             </div>
           </NavLink>
-          <NavLink to="/tasks" className="mb-2" onClick={() => setNewPage('/tasks')}>
-            <div className={`sidebar-nav ${currentPage.includes('/tasks') ? 'selected' : ''}`}>
-              <SidebarIcon
-                iconName="tasks"
-                selected={currentPage.includes('/tasks')}
-              />
-              {t('home_nav_tasks')}
-            </div>
-          </NavLink>
-          <NavLink to="/notes" className="mb-2" onClick={() => setNewPage('/notes')}>
-            <div className={`sidebar-nav ${currentPage.includes('/notes') ? 'selected' : ''}`}>
-              <SidebarIcon
-                iconName="notes"
-                selected={currentPage.includes('/notes')}
-              />
-              {t('home_nav_notes')}
-            </div>
-          </NavLink>
-        </Nav>
-
-        <div className="sidebar-menu-header plus-jakarta-sans-regular">Preferences</div>
-
-        <Nav className="flex-column p-3 plus-jakarta-sans-thin">
           <NavLink to="/account" className="mb-2" onClick={() => setNewPage('/account')}>
             <div className={`sidebar-nav ${currentPage === '/account' ? 'selected' : ''}`}>
-              <SidebarIcon
-                iconName="account"
-                selected={currentPage === '/account'}
-              />
+              <PersonFill />
               {t('footer_my_account')}
             </div>
           </NavLink>
           <NavLink to="/about" className="mb-2" onClick={() => setNewPage('/about')}>
             <div className={`sidebar-nav ${currentPage === '/about' ? 'selected' : ''}`}>
-              <SidebarIcon
-                iconName="about"
-                selected={currentPage === '/about'}
-              />
+              <InfoCircleFill />
               {t('home_nav_about')}
             </div>
           </NavLink>
           <NavButton className="mb-2" onClick={() => logout()}>
             <div className="sidebar-nav">
-              <SidebarIcon
-                iconName="logout"
-              />
+              <BoxArrowRight />
               {t('logout')}
             </div>
           </NavButton>

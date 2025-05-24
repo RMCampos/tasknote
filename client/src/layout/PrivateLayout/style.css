@@ -13,6 +13,7 @@
 @media (min-width: 992px) {
   .main-content {
     margin-left: 276px; /* Same as sidebar width */
+    padding: 30px;
   }
 }
 
@@ -20,6 +21,7 @@
 @media (max-width: 991.98px) {
   .main-content {
     margin-left: 0;
+    padding: 15px;
   }
   
   /* When sidebar is open on mobile, optionally add some margin */

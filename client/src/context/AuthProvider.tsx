@@ -142,7 +142,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     const instance = setInterval(() => {
       refreshTokenPvt()
         .then(() => {
-          console.log('User session successfully refreshed!');
+          console.debug('User session successfully refreshed!');
         })
         .catch(e => console.error(e));
     }, REFRESH_TIMER);

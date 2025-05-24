@@ -70,12 +70,6 @@ function FormInput(props: React.PropsWithChildren<Props>): React.ReactNode {
                 </a>
               </small>
             )}
-            {props.name === 'tag' && (
-              <small className="text-muted">
-                {' '}
-                Comma or space separated
-              </small>
-            )}
           </Form.Label>
           <InputGroup className="mb-3">
             <InputGroup.Text>
@@ -93,6 +87,7 @@ function FormInput(props: React.PropsWithChildren<Props>): React.ReactNode {
                     dateFormat="MMMM d, yyyy"
                     className="form-control"
                     id="date-input"
+                    placeholderText={props.placeholder}
                     popperPlacement="bottom"
                     popperModifiers={[
                       {
