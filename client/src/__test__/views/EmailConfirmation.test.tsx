@@ -37,7 +37,7 @@ describe('EmailConfirmation Component', () => {
 
     await waitFor(() => {
       expect(screen.getByText('❌ Oops!')).toBeDefined();
-      expect(screen.getByText('Wrong or missing identification.')).toBeDefined();
+      expect(screen.getByTestId('email-confirm-error-msg')).toBeDefined();
     });
   });
 
@@ -46,7 +46,7 @@ describe('EmailConfirmation Component', () => {
     renderFn();
 
     await waitFor(() => {
-      expect(screen.getByText('✅ Email Confirmed')).toBeDefined();
+      expect(screen.getByTestId('email-confirm-success-msg')).toBeDefined();
     });
   });
 
@@ -83,9 +83,9 @@ describe('EmailConfirmation Component', () => {
     renderFn();
 
     await waitFor(() => {
-      const successMessage = screen.getByText('✅ Email Confirmed');
+      const successMessage = screen.getByTestId('email-confirm-success-msg');
       expect(successMessage).toBeDefined();
-      expect(successMessage.classList.contains('mb-3')).toBe(true);
+      expect(successMessage.classList.contains('mb-4')).toBe(true);
     });
   });
 
@@ -105,7 +105,7 @@ describe('EmailConfirmation Component', () => {
     renderFn();
 
     await waitFor(() => {
-      const loginButton = screen.getByText('Go to Login');
+      const loginButton = screen.getByText('Login');
       expect(loginButton).toBeDefined();
       expect(loginButton.classList.contains('btn-success')).toBe(true);
     });

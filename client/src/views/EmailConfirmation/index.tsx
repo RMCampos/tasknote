@@ -2,19 +2,23 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
+import { translateServerResponse } from '../../utils/TranslatorUtils';
+import { useTranslation } from 'react-i18next';
+import { handleDefaultLang } from '../../lang-service/LangHandler';
 
 type Status = 'loading' | 'success' | 'error';
 
 const EmailConfirmation: React.FC = () => {
   const [status, setStatus] = useState<Status>('loading');
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const { i18n, t } = useTranslation();
 
   const confirmEmail = async (): Promise<void> => {
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('identification');
     if (!id) {
       setStatus('error');
-      setErrorMessage('Wrong or missing identification.');
+      setErrorMessage(translateServerResponse('Wrong or missing identification', i18n.language));
       return;
     }
 
@@ -38,6 +42,10 @@ const EmailConfirmation: React.FC = () => {
     confirmEmail();
   }, []);
 
+  useEffect(() => {
+    handleDefaultLang();
+  }, [i18n.language]);
+
   return (
     <div
       className="d-flex flex-column align-items-center justify-content-center min-vh-100 px-3 text-center"
@@ -52,25 +60,22 @@ const EmailConfirmation: React.FC = () => {
         rel="stylesheet"
       />
 
-      <div className="p-4 bg-white rounded-3 shadow" style={{ maxWidth: '500px', width: '100%' }}>
+      <div className="p-5 bg-white rounded-3 shadow" style={{ maxWidth: '500px', width: '100%' }}>
 
         {status === 'loading' && (
           <>
             <div className="spinner-border text-success mb-3"></div>
-            <p>Confirming your email address...</p>
+            <p>{t('email_confirmation_loading')}</p>
           </>
         )}
 
         {status === 'success' && (
           <>
-            <h1 className="mb-3">✅ Email Confirmed</h1>
+            <h1 className="mb-4" data-testid="email-confirm-success-msg">{t('email_confirmation_success')}</h1>
 
-            <p className="mb-4">
-              Thank you! Your email address has been successfully confirmed.
-              You can now return to the TaskNote app and log in.
-            </p>
+            <p className="mb-4">{t('email_confirmation_success_text')}</p>
             <Link to="/login" className="btn btn-success px-4 py-2"style={{ fontWeight: 'bold', borderRadius: '6px' }}>
-              Go to Login
+              {t('email_confirmation_btn')}
             </Link>
           </>
         )}
@@ -78,7 +83,7 @@ const EmailConfirmation: React.FC = () => {
         {status === 'error' && (
           <>
             <h1 className="mb-3">❌ Oops!</h1>
-            <p className="mb-4">
+            <p className="mb-4" data-testid="email-confirm-error-msg">
               { errorMessage }
             </p>
           </>

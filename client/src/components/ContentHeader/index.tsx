@@ -10,6 +10,8 @@ type Props = {
   h2BlackText: string;
   h2GreenText: string;
   isHomeComponent?: boolean;
+  newTaskI18n?: string;
+  newNoteI18n?: string;
 };
 
 /**
@@ -54,7 +56,7 @@ const ContentHeader: React.FC<Props> = (props: Props): React.ReactNode => {
                 type="button"
                 className="home-new-item w-45 mb-2"
               >
-                New task
+                {props.newTaskI18n}
               </button>
             </NavLink>
             <NavLink to="/notes/new" onClick={() => setNewPage('/notes/new')}>
@@ -62,7 +64,7 @@ const ContentHeader: React.FC<Props> = (props: Props): React.ReactNode => {
                 type="button"
                 className="home-new-item w-45 ms-2"
               >
-                New note
+                {props.newNoteI18n}
               </button>
             </NavLink>
           </Col>

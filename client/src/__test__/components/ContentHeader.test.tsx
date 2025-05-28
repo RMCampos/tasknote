@@ -24,12 +24,14 @@ describe('ContentHeader test cases', () => {
     expect(getByText(headerProps.h2GreenText)).toBeDefined();
   });
 
-  it('should render all the text elements', () => {
+  it('should render all the text elements for home', () => {
     const { getByText } = render(
       <MemoryRouter>
         <ContentHeader
         { ...headerProps }
         isHomeComponent={true}
+        newTaskI18n="New task"
+        newNoteI18n="New note"
         />
       </MemoryRouter>
     );

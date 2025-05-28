@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { translateTimeMessage, translateServerResponse } from '../../utils/TranslatorUtils';
 import { serverResponses } from '../../constants/serverResponses';
 
-describe('Portuguese Utils unit tests', () => {
+describe('Spanish Utils unit tests', () => {
   it('should translate all time ago messages to es', () => {
     expect(translateTimeMessage('2 years ago', 'es')).toBe('Hace 2 años');
     expect(translateTimeMessage('1 year ago', 'es')).toBe('Hace 1 año');
@@ -35,33 +35,24 @@ describe('Portuguese Utils unit tests', () => {
   it('should translate all server responses to es', () => {
     const keys: string[] = Object.keys(serverResponses);
 
-    expect(translateServerResponse(keys[0], 'es'))
-      .toBe('Contraseña inválida: La contraseña debe tener al menos 8 caracteres, 1 mayúscula y 1 carácter especial');
-    expect(translateServerResponse(keys[1], 'es'))
-      .toBe('Contraseña inválida: La contraseña debe tener al menos 1 mayúscula y 1 carácter especial');
-    expect(translateServerResponse(keys[2], 'es'))
-      .toBe('Contraseña inválida: La contraseña debe tener al menos 1 carácter especial');
-    expect(translateServerResponse(keys[3], 'es'))
-      .toBe('¡El correo ya está registrado!');
-    expect(translateServerResponse(keys[4], 'es'))
-      .toBe('¡Prohibido! Acceso denegado');
-    expect(translateServerResponse(keys[5], 'es'))
-      .toBe('¡Error interno del servidor!');
-    expect(translateServerResponse(keys[6], 'es'))
-      .toBe('Has alcanzado el límite máximo de intentos de inicio de sesión. Por favor, espera 30 minutos');
-    expect(translateServerResponse(keys[7], 'es'))
-      .toBe('Por favor, completa todos los campos');
-    expect(translateServerResponse(keys[8], 'es'))
-      .toBe('¡Por favor, ingresa tu nombre de usuario y contraseña!');
-    expect(translateServerResponse(keys[9], 'es'))
-      .toBe('¡Por favor, escriba al menos 3 caracteres!');
-    expect(translateServerResponse(keys[10], 'es'))
-      .toBe('La longitud máxima del texto es 2000');
-    expect(translateServerResponse(keys[11], 'es'))
-      .toBe('Error desconocido');
-    expect(translateServerResponse(keys[12], 'es'))
-      .toBe('¡Información incorrecta o incompleta!');
-    expect(translateServerResponse(keys[13], 'es'))
-      .toBe('¡Usuario o contraseña incorrectos!');
+    expect(translateServerResponse(keys[0], 'es')).toBe('Contraseña inválida: La contraseña debe tener al menos 8 caracteres, 1 mayúscula y 1 carácter especial');
+    expect(translateServerResponse(keys[1], 'es')).toBe('Contraseña inválida: La contraseña debe tener al menos 1 mayúscula y 1 carácter especial');
+    expect(translateServerResponse(keys[2], 'es')).toBe('Contraseña inválida: La contraseña debe tener al menos 1 carácter especial');
+    expect(translateServerResponse(keys[3], 'es')).toBe('¡El correo ya está registrado!');
+    expect(translateServerResponse(keys[4], 'es')).toBe('¡Prohibido! Acceso denegado');
+    expect(translateServerResponse(keys[5], 'es')).toBe('Si la dirección de correo electrónico ingresada está asociada a una cuenta, recibirá un enlace para restablecer su contraseña en breve.');
+    expect(translateServerResponse(keys[6], 'es')).toBe('¡Error interno del servidor!');
+    expect(translateServerResponse(keys[7], 'es')).toBe('Has alcanzado el límite máximo de intentos de inicio de sesión. Por favor, espera 30 minutos');
+    expect(translateServerResponse(keys[8], 'es')).toBe('Error de red al intentar obtener el recurso.');
+    expect(translateServerResponse(keys[9], 'es')).toBe('Por favor, confirme su correo electrónico antes de continuar');
+    expect(translateServerResponse(keys[10], 'es')).toBe('Por favor, completa todos los campos');
+    expect(translateServerResponse(keys[11], 'es')).toBe('Por favor, ingresa tu correo electronico');
+    expect(translateServerResponse(keys[12], 'es')).toBe('¡Por favor, ingresa tu correo electronico y contraseña!');
+    expect(translateServerResponse(keys[13], 'es')).toBe('Por favor, rellene la nueva contraseña');
+    expect(translateServerResponse(keys[14], 'es')).toBe('¡Por favor, escriba al menos 3 caracteres!');
+    expect(translateServerResponse(keys[15], 'es')).toBe('La longitud máxima del texto es 2000');
+    expect(translateServerResponse(keys[16], 'es')).toBe('Error desconocido');
+    expect(translateServerResponse(keys[17], 'es')).toBe('Identificación incorrecta o faltante');
+    expect(translateServerResponse(keys[18], 'es')).toBe('¡Información incorrecta o incompleta!');
   });
 });

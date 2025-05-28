@@ -85,8 +85,8 @@ function Account(): React.ReactNode {
    * Resets the input fields to their default values.
    */
   const resetInputs = (userUpdated: UserResponse): void => {
-    setUserName(userUpdated.name ? userUpdated.name : '');
-    setUserEmail(userUpdated.email);
+    setUserName('');
+    setUserEmail('');
     updateUser(userUpdated);
 
     setValidated(false);
@@ -96,6 +96,7 @@ function Account(): React.ReactNode {
     event.preventDefault();
     event.stopPropagation();
     setValidated(true);
+    setErrorMessage('');
 
     const form = event.currentTarget;
 
@@ -105,6 +106,12 @@ function Account(): React.ReactNode {
       password: userPassword,
       passwordAgain: userPasswordAgain
     };
+
+    const sizeOfPayload = JSON.stringify(patchPayload).length;
+    if (sizeOfPayload === 57) {
+      setErrorMessage('Nothing to update!');
+      return;
+    }
 
     const updated: UserResponse | undefined = await patchUserInfo(patchPayload);
     if (updated) {
@@ -145,7 +152,7 @@ function Account(): React.ReactNode {
                   iconName="Person"
                   required={false}
                   name="name"
-                  placeholder={user?.name ? user.name : ''}
+                  placeholder={user?.name ?? 'Your name'}
                   value={userName}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setUserName(e.target.value);

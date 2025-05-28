@@ -63,8 +63,11 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       setFormInvalid(true);
-      if (prefix !== 'reset') {
-        setErrorMessage(translateServerResponse('Please fill in your username and password!', i18n.language));
+      if (prefix === 'complete_reset') {
+        setErrorMessage(translateServerResponse('Please fill in the new password', i18n.language));
+      }
+      else if (prefix !== 'reset') {
+        setErrorMessage(translateServerResponse('Please fill in your username and password!' + prefix, i18n.language));
       }
       else {
         setErrorMessage(translateServerResponse('Please fill in your email', i18n.language));
@@ -88,13 +91,13 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
         // Do not clear the email, because user might request to resend
         setPassword('');
         setPasswordAgain('');
-        setSuccessMessage('Please confirm your email before proceeding.');
+        setSuccessMessage(translateServerResponse('Please confirm your email before proceeding', i18n.language));
         setSecondsLeft(30);
         setIsResendEnabled(false);
       }
       else if (prefix === 'reset') {
         await api.postJSON(ApiConfig.resetPwdUrl, { email });
-        setSuccessMessage('If the email address you entered is associated with an account, you will receive a password reset link shortly.');
+        setSuccessMessage(translateServerResponse('If the email address you entered is associated with an account, you will receive a password reset link shortly.', i18n.language));
       }
       else if (prefix === 'complete_reset') {
         const token = searchParams.get('token');
@@ -103,11 +106,14 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
       }
     }
     catch (e) {
+      console.log(e);
       setFormInvalid(true);
       if (typeof e === 'string') {
+        console.log('string');
         setErrorMessage(translateServerResponse(e, i18n.language));
       }
       else if (e instanceof Error) {
+        console.log(e.message);
         setErrorMessage(translateServerResponse(e.message, i18n.language));
       }
     }
@@ -174,7 +180,7 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
                       onClick={handleResend}
                       disabled={!isResendEnabled}
                     >
-                      {isResendEnabled ? 'Resend Confirmation Email' : `Resend in ${secondsLeft}s`}
+                      {isResendEnabled ? `${t('register_resent_email')}` : `${t('register_resent_email_secs')} ${secondsLeft}`}
                     </Button>
                   </div>
                 </>
@@ -189,7 +195,7 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
               <Form noValidate validated={validated} onSubmit={handleSubmit}>
                 {prefix !== 'complete_reset' && (
                   <FormInput
-                    labelText="Email"
+                    labelText={t(`${prefix}_email_label`)}
                     iconName="At"
                     required={true}
                     name="email"
@@ -204,12 +210,16 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
 
                 {prefix !== 'reset' && (
                   <FormInput
-                    labelText="Password"
+                    labelText={t(`${prefix}_password_label`)}
                     iconName="Lock"
                     required={true}
                     type="password"
                     name="password"
+                    placeholder={t(`${prefix}_password_placeholder`)}
                     value={password}
+                    pwdShowText={t('password_show_txt')}
+                    pwdHideText={t('password_hide_txt')}
+                    pwdHelperTxt={t('password_helper')}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setPassword(e.target.value);
                     }}
@@ -219,12 +229,16 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
 
                 {(prefix === 'register' || prefix === 'complete_reset') && (
                   <FormInput
-                    labelText="Repeat password"
+                    labelText={t('register_password_repeat_label')}
                     iconName="Lock"
                     required={true}
                     type="password"
                     name="passwordAgain"
+                    placeholder={t('login_password_placeholder')}
                     value={passwordAgain}
+                    pwdShowText={t('password_show_txt')}
+                    pwdHideText={t('password_hide_txt')}
+                    pwdHelperTxt={t('password_helper')}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setPasswordAgain(e.target.value);
                     }}
@@ -256,7 +270,7 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
               <div className="text-center mt-3">
                 {prefix === 'login' && (
                   <Link to="/reset-password" className="text-decoration-none ms-2">
-                    Forgot your password?
+                    {t('login_forgot_password')}
                   </Link>
                 )}
               </div>

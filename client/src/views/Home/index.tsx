@@ -264,7 +264,7 @@ function Home(): React.ReactNode {
 
   useEffect(() => {
     handleDefaultLang();
-    setName(user?.name ? user?.name : 'User');
+    setName(user?.name ?? 'User');
     loadTags();
     loadAllTasks();
     loadAllNotes();
@@ -275,10 +275,12 @@ function Home(): React.ReactNode {
       <ContentHeader
         h1TextRegular={t('home_welcome_title')}
         h1TextBold={name}
-        subtitle="Welcome to TaskNote! Get ready to complete your pending tasks"
-        h2BlackText="Start Your Day, Be"
-        h2GreenText="Productive"
+        subtitle={t('home_welcome_subtitle')}
+        h2BlackText={t('home_welcome_start')}
+        h2GreenText={t('home_welcome_productive')}
         isHomeComponent
+        newTaskI18n={t('task_form_title')}
+        newNoteI18n={t('note_form_title')}
       />
 
       <AlertError
@@ -295,7 +297,7 @@ function Home(): React.ReactNode {
             id="search_term"
             size="lg"
             name="search_term"
-            placeholder="Filter tasks & notes"
+            placeholder={t('home_input_filter')}
             value={filterText}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => filterTasksAndNotes(e.target.value, selectedOption)}
           />
@@ -309,7 +311,7 @@ function Home(): React.ReactNode {
               <Form.Check
                 inline
                 type="radio"
-                label="Everything"
+                label={t('home_radio_everything')}
                 name="radioGroup"
                 id="everything"
                 value="everything"
@@ -323,7 +325,7 @@ function Home(): React.ReactNode {
               <Form.Check
                 inline
                 type="radio"
-                label="Tasks"
+                label={t('home_radio_tasks')}
                 name="radioGroup"
                 id="onlyTasks"
                 value="onlyTasks"
@@ -337,7 +339,7 @@ function Home(): React.ReactNode {
               <Form.Check
                 inline
                 type="radio"
-                label="Notes"
+                label={t('home_radio_notes')}
                 name="radioGroup"
                 id="onlyNotes"
                 value="onlyNotes"

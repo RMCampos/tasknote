@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.4.1</version>
+    <version>3.5.0</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   
@@ -42,7 +42,7 @@
     <jacoco.output.data>${project.build.directory}/coverage-reports</jacoco.output.data>
     <timestamp>${maven.build.timestamp}</timestamp>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
-    <hibernate.version>6.6.15.Final</hibernate.version>
+    <hibernate.version>6.6.16.Final</hibernate.version>
     <sonar.organization>ricardo-campos-org</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
   </properties>
@@ -423,7 +423,7 @@
           <dependency>
             <groupId>com.puppycrawl.tools</groupId>
             <artifactId>checkstyle</artifactId>
-            <version>10.23.1</version>
+            <version>10.24.0</version>
           </dependency>
         </dependencies>
         <configuration>

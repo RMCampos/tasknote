@@ -46,7 +46,7 @@ function Landing(): React.ReactNode {
         <Link to="/register" className="login">{t('landing_btn_register')}</Link>
 
         <aside>
-          <h3>You can choose one of these languages</h3>
+          <h3>{t('landing_languages')}</h3>
           {languages.map((lang: LangAvailable) => (
             <Button
               key={lang.key}

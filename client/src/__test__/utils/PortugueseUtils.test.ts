@@ -35,33 +35,25 @@ describe('Portuguese Utils unit tests', () => {
   it('should translate all server responses to pt_br', () => {
     const keys: string[] = Object.keys(serverResponses);
 
-    expect(translateServerResponse(keys[0], 'pt_br'))
-      .toBe('Senha fraca: Senha deve possuir pelo menos 8 letras, 1 maiúscula, 1 caracter especial');
-    expect(translateServerResponse(keys[1], 'pt_br'))
-      .toBe('Senha fraca: Senha deve possuir pelo menos 1 maiúscula, 1 caracter especial');
-    expect(translateServerResponse(keys[2], 'pt_br'))
-      .toBe('Senha fraca: Senha deve possuir pelo menos 1 caracter especial');
-    expect(translateServerResponse(keys[3], 'pt_br'))
-      .toBe('E-mail já cadastrado!');
-    expect(translateServerResponse(keys[4], 'pt_br'))
-      .toBe('Proibido! Acesso negado');
-    expect(translateServerResponse(keys[5], 'pt_br'))
-      .toBe('Erro Interno do Servidor!');
-    expect(translateServerResponse(keys[6], 'pt_br'))
-      .toBe('Limite máximo de tentativas atingido. Por favor aguarde 30 minutos');
-    expect(translateServerResponse(keys[7], 'pt_br'))
-      .toBe('Por ravor, preencha todos os campos');
-    expect(translateServerResponse(keys[8], 'pt_br'))
-      .toBe('Por favor, informe seu e-mail e senha!');
-    expect(translateServerResponse(keys[9], 'pt_br'))
-      .toBe('Por favor, digite pelo menos 3 letras');
-    expect(translateServerResponse(keys[10], 'pt_br'))
-      .toBe('O tamanho máximo do texto é 2000');
-    expect(translateServerResponse(keys[11], 'pt_br'))
-      .toBe('Erro desconhecido');
-    expect(translateServerResponse(keys[12], 'pt_br'))
-      .toBe('Informação errada ou incompleta!');
-    expect(translateServerResponse(keys[13], 'pt_br'))
-      .toBe('E-mail ou senha inválidos!');
+    expect(translateServerResponse(keys[0], 'pt_br')).toBe('Senha fraca: Senha deve possuir pelo menos 8 letras, 1 maiúscula, 1 caracter especial');
+    expect(translateServerResponse(keys[1], 'pt_br')).toBe('Senha fraca: Senha deve possuir pelo menos 1 maiúscula, 1 caracter especial');
+    expect(translateServerResponse(keys[2], 'pt_br')).toBe('Senha fraca: Senha deve possuir pelo menos 1 caracter especial');
+    expect(translateServerResponse(keys[3], 'pt_br')).toBe('E-mail já cadastrado!');
+    expect(translateServerResponse(keys[4], 'pt_br')).toBe('Proibido! Acesso negado');
+    expect(translateServerResponse(keys[5], 'pt_br')).toBe('Se o endereço de e-mail informado estiver associado a uma conta, você receberá um link para resetar a senha em breve.');
+    expect(translateServerResponse(keys[6], 'pt_br')).toBe('Erro Interno do Servidor!');
+    expect(translateServerResponse(keys[7], 'pt_br')).toBe('Limite máximo de tentativas atingido. Por favor aguarde 30 minutos');
+    expect(translateServerResponse(keys[8], 'pt_br')).toBe('Erro de rede ao tentar obter recursos.');
+    expect(translateServerResponse(keys[9], 'pt_br')).toBe('Por favor, confirme seu e-mail antes de continuar');
+    expect(translateServerResponse(keys[10], 'pt_br')).toBe('Por ravor, preencha todos os campos');
+    expect(translateServerResponse(keys[11], 'pt_br')).toBe('Por favor, informe seu e-mail');
+    expect(translateServerResponse(keys[12], 'pt_br')).toBe('Por favor, informe seu e-mail e senha!');
+    expect(translateServerResponse(keys[13], 'pt_br')).toBe('Por favor, informe a nova senha');
+    expect(translateServerResponse(keys[14], 'pt_br')).toBe('Por favor, digite pelo menos 3 letras');
+    expect(translateServerResponse(keys[15], 'pt_br')).toBe('O tamanho máximo do texto é 2000');
+    expect(translateServerResponse(keys[16], 'pt_br')).toBe('Erro desconhecido');
+    expect(translateServerResponse(keys[17], 'pt_br')).toBe('Identificação incorreta ou faltando');
+    expect(translateServerResponse(keys[18], 'pt_br')).toBe('Informação errada ou incompleta!');
+    expect(translateServerResponse(keys[19], 'pt_br')).toBe('E-mail ou senha inválidos!');
   });
 });

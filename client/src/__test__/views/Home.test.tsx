@@ -178,7 +178,7 @@ describe('Home Component', () => {
     });
 
     expect(screen.getByTestId('content-header')).toBeDefined();
-    expect(screen.getByPlaceholderText('Filter tasks & notes')).toBeDefined();
+    expect(screen.getByPlaceholderText('home_input_filter')).toBeDefined();
     
     // Check that API calls were made
     expect(api.getJSON).toHaveBeenCalledTimes(3);
@@ -206,7 +206,7 @@ describe('Home Component', () => {
       expect(screen.getAllByTestId('note-title').length).toBe(2);
     });
 
-    const searchInput = screen.getByPlaceholderText('Filter tasks & notes');
+    const searchInput = screen.getByPlaceholderText('home_input_filter');
     
     // Test filtering by entering text
     await act(async () => {
@@ -238,7 +238,7 @@ describe('Home Component', () => {
     });
 
     // Select "Only Tasks" radio button
-    const onlyTasksRadio = screen.getByLabelText('Tasks');
+    const onlyTasksRadio = screen.getByLabelText('home_radio_tasks');
     
     await act(async () => {
       fireEvent.click(onlyTasksRadio);
@@ -251,7 +251,7 @@ describe('Home Component', () => {
     });
 
     // Select "Only Notes" radio button
-    const onlyNotesRadio = screen.getByLabelText('Notes');
+    const onlyNotesRadio = screen.getByLabelText('home_radio_notes');
     
     await act(async () => {
       fireEvent.click(onlyNotesRadio);

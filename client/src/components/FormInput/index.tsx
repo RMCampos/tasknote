@@ -21,6 +21,9 @@ interface Props {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onChangeDate?: (date: Date | null) => void;
   data_testid?: string;
+  pwdHideText?: string;
+  pwdShowText?: string;
+  pwdHelperTxt?: string;
 }
 
 /**
@@ -66,7 +69,7 @@ function FormInput(props: React.PropsWithChildren<Props>): React.ReactNode {
             {props.type && props.type === 'password' && (
               <small>
                 <a href="#" onClick={toggleShowPassword}>
-                  {showingPwd ? ' (Hide)' : ' (Show)'}
+                  {showingPwd ? ` (${props.pwdHideText})` : ` (${props.pwdShowText})`}
                 </a>
               </small>
             )}
@@ -109,15 +112,22 @@ function FormInput(props: React.PropsWithChildren<Props>): React.ReactNode {
                   />
                 )
               : (
-                  <Form.Control
-                    required={props.required}
-                    type={formType}
-                    name={props.name}
-                    placeholder={props.placeholder ? props.placeholder : ''}
-                    value={props?.value}
-                    onChange={props.onChange}
-                    data-testid={props.data_testid}
-                  />
+                  <>
+                    <Form.Control
+                      required={props.required}
+                      type={formType}
+                      name={props.name}
+                      placeholder={props.placeholder ? props.placeholder : ''}
+                      value={props?.value}
+                      onChange={props.onChange}
+                      data-testid={props.data_testid}
+                    />
+                    {props.type && props.type === 'password' && (
+                      <Form.Text id="passwordHelpBlock" muted>
+                        {props.pwdHelperTxt}
+                      </Form.Text>
+                    )}
+                  </>
                 )}
           </InputGroup>
         </Form.Group>
