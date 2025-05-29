@@ -2,6 +2,7 @@ package br.com.tasknoteapp.server.service;
 
 import br.com.tasknoteapp.server.entity.UserEntity;
 import br.com.tasknoteapp.server.entity.UserPwdLimitEntity;
+import br.com.tasknoteapp.server.exception.BadLanguageException;
 import br.com.tasknoteapp.server.exception.BadPasswordException;
 import br.com.tasknoteapp.server.exception.BadUuidException;
 import br.com.tasknoteapp.server.exception.EmailAlreadyExistsException;
@@ -27,6 +28,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -65,40 +67,47 @@ public class AuthService {
   /**
    * Create a new user in the app.
    *
-   * @param login User details with email and password.
+   * @param newUser User details with email and password.
    * @return Token
    */
   @Transactional
-  public UserResponseWithToken signUpNewUser(LoginRequest login) {
-    log.info("Signing up new user! {}", login.email());
+  public UserResponseWithToken signUpNewUser(LoginRequest newUser) {
+    log.info("Signing up new user! {}", newUser.email());
 
-    if (findByEmail(login.email()).isPresent()) {
+    if (findByEmail(newUser.email()).isPresent()) {
       throw new EmailAlreadyExistsException();
     }
 
-    Optional<String> passwordValidation = authUtil.validatePassword(login.password());
+    Optional<String> passwordValidation = authUtil.validatePassword(newUser.password());
     if (passwordValidation.isPresent()) {
       throw new BadPasswordException(passwordValidation.get());
     }
 
-    if (Objects.isNull(login.passwordAgain()) || !login.password().equals(login.passwordAgain())) {
+    if (Objects.isNull(newUser.passwordAgain())
+        || !newUser.password().equals(newUser.passwordAgain())) {
       throw new BadPasswordException("The passwords should match");
     }
 
-    UUID emailUuid = new UuidUtil().generateEmailUuid(login.email());
+    String[] validLangs = new String[] {"en", "es", "pt_br", "ru"};
+    if (!Arrays.asList(validLangs).contains(newUser.lang())) {
+      throw new BadLanguageException();
+    }
+
+    UUID emailUuid = new UuidUtil().generateEmailUuid(newUser.email());
 
     UserEntity user = new UserEntity();
-    user.setEmail(login.email());
-    user.setPassword(passwordEncoder.encode(login.password()));
-    user.setAdmin(login.email().equals("ricardompcampos@gmail.com"));
+    user.setEmail(newUser.email());
+    user.setPassword(passwordEncoder.encode(newUser.password()));
+    user.setAdmin(false);
     user.setCreatedAt(LocalDateTime.now());
     user.setEmailUuid(emailUuid);
+    user.setLang(newUser.lang());
     userRepository.save(user);
 
     mailgunEmailService.sendNewUser(user);
 
     log.info("User created! ID {}", user.getId());
-    return UserResponseWithToken.fromEntity(user, null, getGravatarImageUrl(login.email()));
+    return UserResponseWithToken.fromEntity(user, null, getGravatarImageUrl(newUser.email()));
   }
 
   /**
@@ -256,6 +265,7 @@ public class AuthService {
     String email = currentUserEmail.orElseThrow();
     UserEntity currentUser = findByEmail(email).orElseThrow();
     boolean shouldUpdate = false;
+    boolean emailChanged = false;
 
     if (!Objects.isNull(patchRequest.name()) && !patchRequest.name().isBlank()) {
       currentUser.setName(patchRequest.name().trim());
@@ -263,6 +273,11 @@ public class AuthService {
     }
     if (!Objects.isNull(patchRequest.email()) && !patchRequest.email().isBlank()) {
       currentUser.setEmail(patchRequest.email().trim());
+      shouldUpdate = true;
+      emailChanged = true;
+    }
+    if (!Objects.isNull(patchRequest.lang()) && !patchRequest.lang().isBlank()) {
+      currentUser.setLang(patchRequest.lang());
       shouldUpdate = true;
     }
 
@@ -288,6 +303,12 @@ public class AuthService {
 
     if (shouldUpdate) {
       userRepository.save(currentUser);
+    }
+
+    if (emailChanged) {
+      // send email to older and new account
+      log.info("Email changed from {} to {}", email, patchRequest.email());
+      mailgunEmailService.sendEmailChangedNotification(currentUser, email);
     }
 
     return UserResponse.fromEntity(currentUser, getGravatarImageUrl(email));

@@ -8,4 +8,5 @@ public record UserPatchRequest(
     @Schema(description = "User first name. Optional.") String name,
     @Schema(description = "User email. Optional.") String email,
     @Schema(description = "User password. Optional.") String password,
-    @Schema(description = "User password again. Optional.") String passwordAgain) {}
+    @Schema(description = "User password again. Optional.") String passwordAgain,
+    @Schema(description = "User lang. Optional.") String lang) {}

@@ -17,11 +17,11 @@ function About(): React.ReactNode {
   return (
     <Container fluid>
       <ContentHeader
-        h1TextRegular="About the"
-        h1TextBold="TaskNote App"
-        subtitle="Find more information about us and the app"
-        h2BlackText="Tasks and notes made"
-        h2GreenText="Easy"
+        h1TextRegular={t('about_page_title_one')}
+        h1TextBold={t('about_page_title_two')}
+        subtitle={t('about_page_subtitle')}
+        h2BlackText={t('about_page_title_three')}
+        h2GreenText={t('about_page_title_four')}
       />
 
       <Row className="justify-content-center mb-4">
@@ -67,20 +67,19 @@ function About(): React.ReactNode {
               <h2 className="mb-4 poppins-bold about-title">{t('about_dev_title')}</h2>
               <p className="poppins-light">
                 {t('about_dev_description')}
-                <a href="mailto:ricardompcampos@gmail.com" className="text-decoration-none">
-                  ricardompcampos@gmail.com
+                <a href="https://gravatar.com/ricardormcampos" className="text-decoration-none">
+                  gravatar.com/ricardormcampos
                 </a>
                 {t('about_dev_description_two')}
               </p>
               <p className="poppins-light">
-                You can also
-                {' '}
+                {t('about_buy_coffee_one')}
                 <a
                   href="https://buy-me-a-coffee-two-nu.vercel.app/"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Buy me a coffee
+                  {t('about_buy_coffee_link')}
                 </a>
               </p>
             </Card.Body>

@@ -28,6 +28,9 @@ public class LoginRequest {
   @Schema(description = "User password again.")
   String passwordAgain;
 
+  @Schema(description = "User language. (Optional, default English)")
+  String lang;
+
   public String email() {
     return email.trim().toLowerCase();
   }
@@ -38,5 +41,9 @@ public class LoginRequest {
 
   public String passwordAgain() {
     return passwordAgain;
+  }
+
+  public String lang() {
+    return lang;
   }
 }

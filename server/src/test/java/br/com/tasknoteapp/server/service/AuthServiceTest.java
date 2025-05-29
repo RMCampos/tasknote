@@ -77,7 +77,8 @@ class AuthServiceTest {
   @Test
   @DisplayName("SignUp new user happy path should succeed")
   void signUpNewUser_happyPath_shouldSucceed() {
-    LoginRequest request = new LoginRequest("email@domain.com", "123456@abcde!", "123456@abcde!");
+    LoginRequest request =
+        new LoginRequest("email@domain.com", "123456@abcde!", "123456@abcde!", "en");
 
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.empty());
     when(authUtil.validatePassword(request.password())).thenReturn(Optional.empty());
@@ -103,7 +104,8 @@ class AuthServiceTest {
   @Test
   @DisplayName("SignUp new user with existing email should fail")
   void signUpNewUser_emailExists_shouldFail() {
-    LoginRequest request = new LoginRequest("email@domain.com", "123456@abcde!", "123456@abcde!");
+    LoginRequest request =
+        new LoginRequest("email@domain.com", "123456@abcde!", "123456@abcde!", "en");
 
     UserEntity existing = new UserEntity();
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(existing));
@@ -118,7 +120,7 @@ class AuthServiceTest {
   @Test
   @DisplayName("SignUp new user with bad password should fail")
   void signUpNewUser_badPassword_shouldFail() {
-    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456");
+    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456", "en");
 
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.empty());
     when(authUtil.validatePassword(request.password())).thenReturn(Optional.of("Bad password"));
@@ -190,7 +192,7 @@ class AuthServiceTest {
   @Test
   @DisplayName("SignIn user happy path should succeed")
   void signInUser_happyPath_shouldSucceed() {
-    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456");
+    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456", "en");
 
     UserEntity existing = new UserEntity();
     existing.setId(919L);
@@ -213,7 +215,7 @@ class AuthServiceTest {
   @Test
   @DisplayName("SignIn wrong user or password should fail")
   void signInUser_wrongUserOrPassword_shouldFail() {
-    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456");
+    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456", "en");
 
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.empty());
 
@@ -227,7 +229,7 @@ class AuthServiceTest {
   @Test
   @DisplayName("SignIn max login attempt should fail")
   void signInUser_maxLoginAttempt_shouldFail() {
-    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456");
+    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456", "en");
 
     UserEntity existing = new UserEntity();
     existing.setId(919L);
@@ -251,7 +253,7 @@ class AuthServiceTest {
   @Test
   @DisplayName("SignIn bad credentials should fail")
   void signInUser_badCredentials_shouldFail() {
-    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456");
+    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456", "en");
 
     UserEntity existing = new UserEntity();
     existing.setId(919L);
@@ -391,7 +393,8 @@ class AuthServiceTest {
 
     when(userRepository.save(any())).thenReturn(existing);
 
-    UserPatchRequest patchRequest = new UserPatchRequest("Kong", "newemail@domain.com", null, null);
+    UserPatchRequest patchRequest =
+        new UserPatchRequest("Kong", "newemail@domain.com", null, null, null);
     UserResponse response = authService.patchUserInfo(patchRequest);
 
     Assertions.assertNotNull(response);
@@ -416,7 +419,7 @@ class AuthServiceTest {
 
     String newPassword = "TestHackedPw@difficult!#:)";
     UserPatchRequest patchRequest =
-        new UserPatchRequest("Kong", "newemail@domain.com", newPassword, newPassword);
+        new UserPatchRequest("Kong", "newemail@domain.com", newPassword, newPassword, "en");
 
     when(authUtil.validatePassword(patchRequest.password())).thenReturn(Optional.empty());
 

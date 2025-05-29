@@ -5,4 +5,5 @@ export type UserResponse = {
   admin: boolean;
   createdAt: Date;
   gravatarImageUrl: string;
+  lang: string;
 };

@@ -84,6 +84,7 @@ export const serverResponsesTranslations: Record<string, string> = {
   UNKNOWN_pt_br: 'Erro desconhecido',
   WRONG_IDENTIFICATION_pt_br: 'Identificação incorreta ou faltando',
   WRONG_OR_MISSING_INFO_pt_br: 'Informação errada ou incompleta!',
+  NOTHING_TO_UPDATE_pt_br: 'Nada para atualizar!',
 
   BAD_PASSWORD_3_es: 'Contraseña inválida: La contraseña debe tener al menos 8 caracteres, 1 mayúscula y 1 carácter especial',
   BAD_PASSWORD_2_es: 'Contraseña inválida: La contraseña debe tener al menos 1 mayúscula y 1 carácter especial',
@@ -105,6 +106,7 @@ export const serverResponsesTranslations: Record<string, string> = {
   UNKNOWN_es: 'Error desconocido',
   WRONG_IDENTIFICATION_es: 'Identificación incorrecta o faltante',
   WRONG_OR_MISSING_INFO_es: '¡Información incorrecta o incompleta!',
+  NOTHING_TO_UPDATE_es: '¡Nada que actualizar!',
 
   BAD_PASSWORD_3_ru: 'Неправильный пароль: Пароль должен содержать не менее 8 символов, 1 заглавную букву, 1 специальный символ.',
   BAD_PASSWORD_2_ru: 'Неправильный пароль: Пароль должен содержать как минимум 1 заглавную букву и 1 специальный символ.',
@@ -125,5 +127,6 @@ export const serverResponsesTranslations: Record<string, string> = {
   RECOVER_PASSWORD_ru: 'Если введенный вами адрес электронной почты связан с учетной записью, вы вскоре получите ссылку для сброса пароля.',
   UNKNOWN_ru: 'Неизвестная ошибка',
   WRONG_IDENTIFICATION_ru: 'Неправильная или отсутствующая идентификация',
-  WRONG_OR_MISSING_INFO_ru: 'Неверная или отсутствующая информация!'
+  WRONG_OR_MISSING_INFO_ru: 'Неверная или отсутствующая информация!',
+  NOTHING_TO_UPDATE_ru: 'Нечего обновлять!'
 };

@@ -37,4 +37,17 @@ class MailgunTemplateTest {
     Assertions.assertNotNull(signUp.getVariableValuesJson());
     Assertions.assertFalse(signUp.getVariableValuesJson().isBlank());
   }
+
+  @Test
+  void mailgunTemplateEmailChangedTest() {
+    // MailgunTemplateEmailChanged
+
+    MailgunTemplateEmailChanged emailChanged = new MailgunTemplateEmailChanged();
+
+    Assertions.assertNotNull(emailChanged.getName());
+    Assertions.assertEquals("email changed", emailChanged.getName());
+    Assertions.assertNotNull(emailChanged.getVariables());
+    Assertions.assertNotNull(emailChanged.getVariableValuesJson());
+    Assertions.assertFalse(emailChanged.getVariableValuesJson().isBlank());
+  }
 }

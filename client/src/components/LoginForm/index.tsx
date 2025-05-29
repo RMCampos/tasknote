@@ -39,6 +39,7 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
   const [passwordAgain, setPasswordAgain] = useState<string>('');
   const [secondsLeft, setSecondsLeft] = useState<number>(0);
   const [isResendEnabled, setIsResendEnabled] = useState(true);
+  const [langToSave, setLangToSave] = useState<string>('');
 
   /**
    * Navigates to the specified page.
@@ -87,7 +88,7 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
         goTo('/home');
       }
       else if (prefix === 'register') {
-        await register(email, password, passwordAgain);
+        await register({ email, password, passwordAgain, lang: langToSave });
         // Do not clear the email, because user might request to resend
         setPassword('');
         setPasswordAgain('');
@@ -139,7 +140,8 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
   };
 
   useEffect(() => {
-    handleDefaultLang();
+    const lang = handleDefaultLang();
+    setLangToSave(lang);
   }, [formInvalid]);
 
   useEffect(() => {

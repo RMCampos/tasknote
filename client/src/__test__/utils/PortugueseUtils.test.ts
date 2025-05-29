@@ -55,5 +55,6 @@ describe('Portuguese Utils unit tests', () => {
     expect(translateServerResponse(keys[17], 'pt_br')).toBe('Identificação incorreta ou faltando');
     expect(translateServerResponse(keys[18], 'pt_br')).toBe('Informação errada ou incompleta!');
     expect(translateServerResponse(keys[19], 'pt_br')).toBe('E-mail ou senha inválidos!');
+    expect(translateServerResponse(keys[20], 'pt_br')).toBe('Nada para atualizar!');
   });
 });

@@ -114,6 +114,11 @@ const ptBrTranslations = {
   note_table_btn_edit: 'Alterar',
   note_table_btn_delete: 'Excluir',
 
+  about_page_title_one: 'Sobre o',
+  about_page_title_two: 'App TaskNote',
+  about_page_title_three: 'Tarefas e notas de forma',
+  about_page_title_four: 'Fácil',
+  about_page_subtitle: 'Saiba mais sobre nós e sobre o app',
   about_app_title: 'Sobre o TaskNote',
   about_app_description: `TaskNote é sua aplicação ideal para gerenciamento
     de tarefas e notas em apenas um lugar. Esteja você buscando registrar sua
@@ -147,13 +152,26 @@ const ptBrTranslations = {
     Sou apaixonado por criar aplicações que fazem a vida mais fácil e organizada.
     Você pode me contactar em `,
   about_dev_description_two: ' para qualquer dúvida ou comentário.',
+  about_buy_coffee_one: 'Você também pode ',
+  about_buy_coffee_link: 'Me pagar um café',
 
-  account_my_account_title: 'Minha conta',
+  account_header_my: 'Minha',
+  account_header_account: 'Conta',
+  account_header_update_manage: 'Atualize e Gerencie, Seus',
+  account_header_data: 'Dados',
+  account_data_update_header: 'Atualize apenas o que você precisa. Campos em branco não serão atualizados',
+  account_form_first_name_label: 'Primeiro nome',
+  account_form_first_name_placeholder: 'Seu nome',
+  account_form_save: 'Salvar',
+  account_form_gravatar_one: 'Se você quer adicionar sua foto, nós suportamos Gravatar. Por favor acesse ',
+  account_form_gravatar_two: ' para se registrar ou atualizar seu perfil. Uma vez atualizado, por favor aguarde alguns segundos para vê-la aqui.',
   account_my_account_hello: 'Olá! Aqui é onde você pode gerenciar suas preferências.',
   account_my_account_logged: 'Você está logado como: ',
-  account_app_lang_title: 'Idioma do App',
+  account_app_lang_title: 'Mude o idioma do app',
   account_app_lang_description: 'Você pode escolher um destes idiomas:',
+  account_app_lang_available: 'Idiomas disponívels',
   account_privacy_little: 'Sua Privacidade Importa',
+  account_privacy_subtitle: 'Você decide quanto excluir seus dados',
   account_privacy_text: `Estamos comprometidos em proteger sua privacidade e te dar
     controle total sobre seus dados. Você pode solicitar a remoção completa da sua conta
     a qualquer hora. Uma vez processado, todos os seus dados pessoais serão excluídos

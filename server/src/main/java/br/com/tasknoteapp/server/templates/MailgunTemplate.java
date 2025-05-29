@@ -1,6 +1,7 @@
 package br.com.tasknoteapp.server.templates;
 
 import java.util.Map;
+import java.util.Optional;
 
 /** This interface represents a mailgun template structure. */
 public interface MailgunTemplate {
@@ -12,6 +13,10 @@ public interface MailgunTemplate {
   String getName();
 
   Map<String, Object> getVariables();
+
+  default Optional<String> getCarbonCopy() {
+    return Optional.empty();
+  }
 
   /**
    * Default method to get variables in JSON format.

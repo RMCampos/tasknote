@@ -114,6 +114,11 @@ const ruTranslations = {
   note_table_btn_edit: 'Редактировать',
   note_table_btn_delete: 'Удалить',
 
+  about_page_title_one: 'около',
+  about_page_title_two: 'TaskNote App',
+  about_page_title_three: 'Задачи и заметки стали',
+  about_page_title_four: 'проще',
+  about_page_subtitle: '  Узнайте больше о нас и приложении',
   about_app_title: 'О TaskNote',
   about_app_description: `TaskNote — это ваше приложение для управления
     задачами и заметками в одном удобном месте. Независимо от того, отслеживаете ли вы
@@ -146,13 +151,26 @@ const ruTranslations = {
     которые делают жизнь проще и более
     организованной. Вы можете связаться со мной по адресу `,
   about_dev_description_two: ' для любых вопросов или отзывов.',
+  about_buy_coffee_one: 'Ты также можешь ',
+  about_buy_coffee_link: 'купить мне кофе.',
 
-  account_my_account_title: 'Мой аккаунт',
+  account_header_my: 'Мой',
+  account_header_account: 'аккаунт',
+  account_header_update_manage: 'Обновление и управление',
+  account_header_data: 'данные',
+  account_data_update_header: 'Обновляйте только то, что вам нужно. Пустые поля не будут обновлены',
+  account_form_first_name_label: 'имя',
+  account_form_first_name_placeholder: 'Ваше имя',
+  account_form_save: 'Сохранить',
+  account_form_gravatar_one: 'Если вы хотите показать свою фотографию, мы поддерживаем Gravatar. Пожалуйста, перейдите на ',
+  account_form_gravatar_two: ' для регистрации или обновления вашего фото профиля. После обновления, пожалуйста, подождите несколько секунд, чтобы увидеть его здесь.',
   account_my_account_hello: 'Привет! Здесь вы можете управлять своими предпочтениями.',
   account_my_account_logged: 'Вы вошли как:',
-  account_app_lang_title: 'Язык приложения',
+  account_app_lang_title: 'Изменить язык приложения',
   account_app_lang_description: 'Вы можете выбрать один из этих языков:',
+  account_app_lang_available: 'Доступные языки',
   account_privacy_little: 'Ваша конфиденциальность имеет значение',
+  account_privacy_subtitle: 'Вы сами решаете, когда удалять свои данные',
   account_privacy_text: `Мы стремимся защищать вашу конфиденциальность и
     предоставлять вам полный контроль над вашими данными. Вы можете запросить полное удаление
     аккаунта в любое время. После обработки вся ваша личная информация будет

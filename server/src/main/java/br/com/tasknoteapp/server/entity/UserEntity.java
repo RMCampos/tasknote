@@ -55,8 +55,11 @@ public class UserEntity implements UserDetails {
   @Column(name = "reset_password_expiration", nullable = true)
   private LocalDateTime resetPasswordExpiration;
 
-  @Column(name = "reset_token", nullable = true)
+  @Column(name = "reset_token", nullable = true, length = 35)
   private String resetToken;
+
+  @Column(name = "lang", nullable = true, length = 6)
+  private String lang;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

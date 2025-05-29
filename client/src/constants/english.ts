@@ -114,6 +114,11 @@ const enTranslations = {
   note_table_btn_edit: 'Edit',
   note_table_btn_delete: 'Delete',
 
+  about_page_title_one: 'About the',
+  about_page_title_two: 'TaskNote App',
+  about_page_title_three: 'Tasks and notes made',
+  about_page_title_four: 'Easy',
+  about_page_subtitle: 'Find more information about us and the app',
   about_app_title: 'About TaskNote',
   about_app_description: `TaskNote is your go-to application for managing
     tasks and notes in one convenient place. Whether you're keeping track of
@@ -146,13 +151,26 @@ const enTranslations = {
     passionate about building applications that make life easier and more
     organized. You can reach out to me at `,
   about_dev_description_two: ' for any questions or feedback.',
+  about_buy_coffee_one: 'You can also ',
+  about_buy_coffee_link: 'Buy me a coffee',
 
-  account_my_account_title: 'My Account',
+  account_header_my: 'My',
+  account_header_account: 'Account',
+  account_header_update_manage: 'Update and Manage, Your',
+  account_header_data: 'Data',
+  account_data_update_header: 'Update only what you need. Blank fields will not be updated',
+  account_form_first_name_label: 'Fist name',
+  account_form_first_name_placeholder: 'Your name',
+  account_form_save: 'Save',
+  account_form_gravatar_one: 'If you want to display your picture, we support Gravatar. Please head to ',
+  account_form_gravatar_two: ' to register or update your profile picture. Once updated, please wait a few seconds to see it here.',
   account_my_account_hello: 'Hello! This is where you can manage your preferences',
   account_my_account_logged: 'You\'re logged in as: ',
-  account_app_lang_title: 'App Language',
+  account_app_lang_title: 'Change the app language',
   account_app_lang_description: 'You can choose one the languages below',
+  account_app_lang_available: 'Available languages',
   account_privacy_little: 'Your Privacy Matters',
+  account_privacy_subtitle: 'You decide when to delete your data',
   account_privacy_text: `We're committed to protecting your privacy and
     giving you full control over your data. You can request complete account
     deletion at any time. Once processed, all your personal information will be

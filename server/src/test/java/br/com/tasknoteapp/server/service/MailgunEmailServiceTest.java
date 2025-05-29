@@ -96,4 +96,19 @@ class MailgunEmailServiceTest {
 
     verify(restTemplate, times(1)).postForEntity(anyString(), any(), eq(String.class));
   }
+
+  @Test
+  void testSendEmailChanged() {
+    UserEntity user = new UserEntity();
+    user.setEmail("test@example.com");
+
+    when(restTemplate.postForEntity(anyString(), any(), eq(String.class)))
+        .thenReturn(ResponseEntity.ok("Success"));
+
+    String oldEmail = "old@example.com";
+
+    mailgunEmailService.sendEmailChangedNotification(user, oldEmail);
+
+    verify(restTemplate, times(1)).postForEntity(anyString(), any(), eq(String.class));
+  }
 }

@@ -5,6 +5,7 @@ import { SigninResponse } from '../types/SigninResponse';
 import api from '../api-service/api';
 import ApiConfig from '../api-service/apiConfig';
 import { UserResponse } from '../types/UserResponse';
+import { UserRegistration } from '../types/UserRegistration';
 
 interface Props {
   children: React.ReactNode;
@@ -72,9 +73,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     }
   };
 
-  const register = async (email: string, password: string, passwordAgain: string): Promise<string> => {
+  const register = async (payload: UserRegistration): Promise<string> => {
     try {
-      const payload = { email, password, passwordAgain };
       await api.putJSON(ApiConfig.registerUrl, payload);
       return Promise.resolve('OK');
     }
@@ -96,7 +96,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
         email: registerResponse.email,
         admin: registerResponse.admin,
         createdAt: new Date(registerResponse.createdAt),
-        gravatarImageUrl: registerResponse.gravatarImageUrl
+        gravatarImageUrl: registerResponse.gravatarImageUrl,
+        lang: registerResponse.lang
       };
 
       setSigned(true);

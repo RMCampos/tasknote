@@ -19,7 +19,8 @@ public record UserResponseWithToken(
             example = "2023-01-01T00:00:00")
         LocalDateTime inactivatedAt,
     @Schema(description = "The gravatar image URL, if any") String gravatarImageUrl,
-    @Schema(description = "The token created upon login") String token) {
+    @Schema(description = "The token created upon login") String token,
+    @Schema(description = "The language selected upon login") String lang) {
 
   /**
    * Create a {@link UserResponseWithToken} instance from a {@link UserEntity}.
@@ -38,6 +39,7 @@ public record UserResponseWithToken(
         user.getCreatedAt(),
         user.getInactivatedAt(),
         gravatarUrl.orElse(null),
-        token);
+        token,
+        user.getLang());
   }
 }

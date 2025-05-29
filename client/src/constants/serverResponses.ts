@@ -18,5 +18,6 @@ export const serverResponses: Record<string, string> = {
   'Unknown error': 'UNKNOWN',
   'Wrong or missing identification': 'WRONG_IDENTIFICATION',
   'Wrong or missing information!': 'WRONG_OR_MISSING_INFO',
-  'Invalid credentials': 'INVALID_CREDENTIALS'
+  'Invalid credentials': 'INVALID_CREDENTIALS',
+  'Nothing to update!': 'NOTHING_TO_UPDATE'
 };

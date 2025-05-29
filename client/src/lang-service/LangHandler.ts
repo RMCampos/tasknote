@@ -11,11 +11,12 @@ function handleLanguage(lang: string) {
   setDefaultLang(lang);
 }
 
-const handleDefaultLang = () => {
-  const lang = getDefaultLang();
+const handleDefaultLang = (langFromServer?: string): string => {
+  const lang = langFromServer ?? getDefaultLang();
   if (lang !== 'en') {
     handleLanguage(lang);
   }
+  return lang;
 };
 
 export { handleDefaultLang };

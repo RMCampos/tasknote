@@ -263,7 +263,7 @@ function Home(): React.ReactNode {
   const handleCloseModal = () => setShowMarkdownView(false);
 
   useEffect(() => {
-    handleDefaultLang();
+    handleDefaultLang(user?.lang);
     setName(user?.name ?? 'User');
     loadTags();
     loadAllTasks();

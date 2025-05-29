@@ -54,5 +54,7 @@ describe('Spanish Utils unit tests', () => {
     expect(translateServerResponse(keys[16], 'es')).toBe('Error desconocido');
     expect(translateServerResponse(keys[17], 'es')).toBe('Identificación incorrecta o faltante');
     expect(translateServerResponse(keys[18], 'es')).toBe('¡Información incorrecta o incompleta!');
+    expect(translateServerResponse(keys[19], 'es')).toBe('¡Usuario o contraseña incorrectos!');
+    expect(translateServerResponse(keys[20], 'es')).toBe('¡Nada que actualizar!');
   });
 });

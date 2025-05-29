@@ -76,5 +76,6 @@ describe('Russian Utils unit tests', () => {
     expect(translateServerResponse(keys[17], 'ru')).toBe('Неправильная или отсутствующая идентификация');
     expect(translateServerResponse(keys[18], 'ru')).toBe('Неверная или отсутствующая информация!');
     expect(translateServerResponse(keys[19], 'ru')).toBe('Неправильный пользователь или пароль');
+    expect(translateServerResponse(keys[20], 'ru')).toBe('Нечего обновлять!');
   });
 });

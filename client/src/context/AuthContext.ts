@@ -1,5 +1,6 @@
 import { createContext } from 'react';
 import { UserResponse } from '../types/UserResponse';
+import { UserRegistration } from '../types/UserRegistration';
 
 export interface AuthContextData {
   signed: boolean;
@@ -7,7 +8,7 @@ export interface AuthContextData {
   checkCurrentAuthUser: (pathname: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<string>;
   signOut: () => void;
-  register: (email: string, password: string, passwordAgain: string) => Promise<string>;
+  register: (payload: UserRegistration) => Promise<string>;
   isAdmin: boolean;
   updateUser: (userUpdated: UserResponse) => void;
 }

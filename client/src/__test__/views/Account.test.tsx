@@ -36,7 +36,8 @@ const authContextMock = {
     email: 'test@example.com',
     admin: false,
     createdAt: new Date(),
-    gravatarImageUrl: 'http://image.com'
+    gravatarImageUrl: 'http://image.com',
+    lang: 'en'
   },
   checkCurrentAuthUser: vi.fn(),
   signIn: vi.fn(),
@@ -61,7 +62,7 @@ describe('Account Component', () => {
 
   it('should render the Account component', () => {
     const { getByText } = renderAccount();
-    expect(getByText('Update only what you need. Blank fields will not be updated')).toBeDefined();
+    expect(getByText('account_data_update_header')).toBeDefined();
   });
 
   it('should change language when a language button is clicked', () => {
@@ -96,12 +97,12 @@ describe('Account Component', () => {
 
     const { getByLabelText, getByText, getByTestId } = renderAccount();
 
-    fireEvent.change(getByLabelText(/First name/i), { target: { value: 'Jane' } });
-    fireEvent.change(getByLabelText(/Email/i), { target: { value: 'jane.doe@example.com' } });
+    fireEvent.change(getByLabelText('account_form_first_name_label'), { target: { value: 'Jane' } });
+    fireEvent.change(getByLabelText('login_email_label'), { target: { value: 'jane.doe@example.com' } });
     fireEvent.change(getByTestId('account-password-one'), { target: { value: 'password123' } });
-    fireEvent.change(getByLabelText(/Repeat password/i), { target: { value: 'password123' } });
+    fireEvent.change(getByLabelText(/register_password_repeat_label/i), { target: { value: 'password123' } });
 
-    fireEvent.click(getByText(/Save/i));
+    fireEvent.click(getByText('account_form_save'));
 
     await waitFor(() => {
       expect(mockPatchJSON).toHaveBeenCalledWith(expect.any(String), {
@@ -109,6 +110,7 @@ describe('Account Component', () => {
         email: 'jane.doe@example.com',
         password: 'password123',
         passwordAgain: 'password123',
+        lang: ''
       });
     });
 
@@ -118,10 +120,10 @@ describe('Account Component', () => {
   it('should render text based on new contentHeader component', () => {
     const { getByText } = renderAccount();
 
-    expect(getByText('My')).toBeDefined();
-    expect(getByText('Account')).toBeDefined();
+    expect(getByText('account_header_my')).toBeDefined();
+    expect(getByText('account_header_account')).toBeDefined();
     expect(getByText('account_my_account_hello')).toBeDefined();
-    expect(getByText('Update and Manage, Your')).toBeDefined();
-    expect(getByText('Data')).toBeDefined();
+    expect(getByText('account_header_update_manage')).toBeDefined();
+    expect(getByText('account_header_data')).toBeDefined();
   });
 });

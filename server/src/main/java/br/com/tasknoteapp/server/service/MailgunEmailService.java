@@ -3,6 +3,7 @@ package br.com.tasknoteapp.server.service;
 import br.com.tasknoteapp.server.entity.UserEntity;
 import br.com.tasknoteapp.server.exception.MailServiceException;
 import br.com.tasknoteapp.server.templates.MailgunTemplate;
+import br.com.tasknoteapp.server.templates.MailgunTemplateEmailChanged;
 import br.com.tasknoteapp.server.templates.MailgunTemplateResetPwd;
 import br.com.tasknoteapp.server.templates.MailgunTemplateResetPwdConfirm;
 import br.com.tasknoteapp.server.templates.MailgunTemplateSignUp;
@@ -107,6 +108,25 @@ public class MailgunEmailService {
   }
 
   /**
+   * Send a notification about the changed email for both previous and new email.
+   *
+   * @param user The user that should be addressed the message.
+   * @param oldEmail The user previous email
+   */
+  public void sendEmailChangedNotification(UserEntity user, String oldEmail) {
+    log.info("Sending message with changed email notification");
+
+    MailgunTemplateEmailChanged emailChanged = new MailgunTemplateEmailChanged();
+    emailChanged.setEmailFrom(oldEmail);
+    emailChanged.setEmailTo(user.getEmail());
+    emailChanged.setCarbonCopy(oldEmail);
+
+    String subject = "TaskNote App email changed notification";
+
+    sendEmail(user.getEmail(), subject, emailChanged);
+  }
+
+  /**
    * Send an email message.
    *
    * @param to The target email address.
@@ -124,6 +144,9 @@ public class MailgunEmailService {
     MultiValueMap<String, String> mailData = new LinkedMultiValueMap<>();
     mailData.add("from", from);
     mailData.add("to", to);
+    if (template.getCarbonCopy().isPresent()) {
+      mailData.add("cc", template.getCarbonCopy().get());
+    }
     mailData.add("subject", subject);
     mailData.add("template", template.getName());
     if (!template.getVariables().isEmpty()) {

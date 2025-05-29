@@ -40,6 +40,7 @@ function Account(): React.ReactNode {
   const handleLanguage = (lang: string): void => {
     i18n.changeLanguage(lang);
     setDefaultLang(lang);
+    patchLanguage(lang);
   };
 
   /**
@@ -92,31 +93,48 @@ function Account(): React.ReactNode {
     setValidated(false);
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
-    event.preventDefault();
-    event.stopPropagation();
+  const patchLanguage = async (lang: string): Promise<void> => {
+    const patchPayload: UserPatchRequest = {
+      name: null,
+      email: '',
+      password: '',
+      passwordAgain: '',
+      lang: lang
+    };
+
+    await patchUserInfo(patchPayload);
+  };
+
+  const handleSubmit = async (event?: React.FormEvent<HTMLFormElement>): Promise<void> => {
+    event?.preventDefault();
+    event?.stopPropagation();
     setValidated(true);
     setErrorMessage('');
 
-    const form = event.currentTarget;
+    const form = event?.currentTarget;
 
     const patchPayload: UserPatchRequest = {
       name: userName ? DOMPurify.sanitize(userName) : null,
       email: userEmail,
       password: userPassword,
-      passwordAgain: userPasswordAgain
+      passwordAgain: userPasswordAgain,
+      lang: ''
     };
 
     const sizeOfPayload = JSON.stringify(patchPayload).length;
-    if (sizeOfPayload === 57) {
-      setErrorMessage('Nothing to update!');
+    if (sizeOfPayload === 67) {
+      setErrorMessage(translateServerResponse('Nothing to update!', i18n.language));
       return;
     }
 
     const updated: UserResponse | undefined = await patchUserInfo(patchPayload);
     if (updated) {
-      form.reset();
+      form?.reset();
       resetInputs(updated);
+      if (userEmail !== '') {
+        signOut();
+        clearStorage();
+      }
     }
   };
 
@@ -125,11 +143,11 @@ function Account(): React.ReactNode {
   return (
     <Container fluid>
       <ContentHeader
-        h1TextRegular="My"
-        h1TextBold="Account"
+        h1TextRegular={t('account_header_my')}
+        h1TextBold={t('account_header_account')}
         subtitle={t('account_my_account_hello')}
-        h2BlackText="Update and Manage, Your"
-        h2GreenText="Data"
+        h2BlackText={t('account_header_update_manage')}
+        h2GreenText={t('account_header_data')}
       />
 
       <Row>
@@ -137,7 +155,7 @@ function Account(): React.ReactNode {
           <Card className="p-4">
             <Card.Body>
               <Card.Title>
-                Update only what you need. Blank fields will not be updated
+                {t('account_data_update_header')}
               </Card.Title>
 
               <AlertError
@@ -148,11 +166,11 @@ function Account(): React.ReactNode {
               <Form noValidate validated={validated} onSubmit={handleSubmit} className="mt-4">
                 {/* User name */}
                 <FormInput
-                  labelText="First name"
+                  labelText={t('account_form_first_name_label')}
                   iconName="Person"
                   required={false}
                   name="name"
-                  placeholder={user?.name ?? 'Your name'}
+                  placeholder={user?.name ?? t('account_form_first_name_placeholder')}
                   value={userName}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setUserName(e.target.value);
@@ -161,7 +179,7 @@ function Account(): React.ReactNode {
 
                 {/* User email */}
                 <FormInput
-                  labelText="Email"
+                  labelText={t('login_email_label')}
                   iconName="At"
                   required={false}
                   name="email"
@@ -174,12 +192,16 @@ function Account(): React.ReactNode {
 
                 {/* User password */}
                 <FormInput
-                  labelText="Password"
+                  labelText={t('login_password_label')}
                   iconName="Lock"
                   required={false}
                   type="password"
                   name="password"
                   value={userPassword}
+                  placeholder={t('login_password_placeholder')}
+                  pwdShowText={t('password_show_txt')}
+                  pwdHideText={t('password_hide_txt')}
+                  pwdHelperTxt={t('password_helper')}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setUserPassword(e.target.value);
                   }}
@@ -188,12 +210,16 @@ function Account(): React.ReactNode {
 
                 {/* User password again */}
                 <FormInput
-                  labelText="Repeat password"
+                  labelText={t('register_password_repeat_label')}
                   iconName="Lock"
                   required={false}
                   type="password"
                   name="passwordAgain"
                   value={userPasswordAgain}
+                  placeholder={t('login_password_placeholder')}
+                  pwdShowText={t('password_show_txt')}
+                  pwdHideText={t('password_hide_txt')}
+                  pwdHelperTxt={t('password_helper')}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setUserPasswordAgain(e.target.value);
                   }}
@@ -204,19 +230,15 @@ function Account(): React.ReactNode {
                     type="submit"
                     className="home-new-item task-note-btn"
                   >
-                    Save
+                    {t('account_form_save')}
                   </button>
                 </div>
               </Form>
               <hr />
               <p>
-                If you want to display your picture, we support Gravatar.
-                Please head to
-                {' '}
+                {t('account_form_gravatar_one')}
                 <a href="https://gravatar.com" target="_blank" rel="noreferrer">Gravatar</a>
-                {' '}
-                to register or update your profile picture. Once updated, please wait a few
-                minutes to see it here.
+                {t('account_form_gravatar_two')}
               </p>
             </Card.Body>
           </Card>
@@ -224,9 +246,9 @@ function Account(): React.ReactNode {
         <Col xs={12} lg={6} className="mt-4 mt-lg-0">
           <Card className="p-4">
             <Card.Body>
-              <Card.Title>Change the app language</Card.Title>
+              <Card.Title>{t('account_app_lang_title')}</Card.Title>
               <span className="description">{t('account_app_lang_description')}</span>
-              <div className="mt-4 mb-2">Available languages</div>
+              <div className="mt-4 mb-2">{t('account_app_lang_available')}</div>
               <div>
                 {languages.map((lang: LangAvailable) => (
                   <Button
@@ -258,9 +280,9 @@ function Account(): React.ReactNode {
 
           <Card className="mt-4 p-4">
             <Card.Body>
-              <Card.Title>Your Privacy matters</Card.Title>
+              <Card.Title>{t('account_privacy_little')}</Card.Title>
               <span className="description">
-                You decide when to delete your data
+                {t('account_privacy_subtitle')}
               </span>
 
               <p className="mt-4 mb-2">{t('account_privacy_text')}</p>

@@ -114,6 +114,11 @@ const esTranslations = {
   note_table_btn_edit: 'Editar',
   note_table_btn_delete: 'Eliminar',
 
+  about_page_title_one: 'Acerca de',
+  about_page_title_two: 'TaskNote App',
+  about_page_title_three: 'Tareas y notas',
+  about_page_title_four: 'Simplificadas',
+  about_page_subtitle: 'Encuentre más información sobre nosotros y la aplicación.',
   about_app_title: 'Acerca de TaskNote',
   about_app_description: `TaskNote es tu aplicación ideal para gestionar
     tareas y notas en un solo lugar. Ya sea que estés organizando tareas diarias
@@ -146,13 +151,26 @@ const esTranslations = {
     Me apasiona crear aplicaciones que faciliten la vida y ayuden a organizarse.
     Puedes contactarme en `,
   about_dev_description_two: ' para cualquier duda o comentario.',
+  about_buy_coffee_one: 'También puedes ',
+  about_buy_coffee_link: 'Comprarme un café',
 
-  account_my_account_title: 'Mi Cuenta',
+  account_header_my: 'Mi',
+  account_header_account: 'Cuenta',
+  account_header_update_manage: 'Actualize y Administre, Sus',
+  account_header_data: 'Datos',
+  account_data_update_header: 'Actualice solo lo necesario. Los campos en blanco no se actualizarán',
+  account_form_first_name_label: 'Nombre de pila',
+  account_form_first_name_placeholder: 'Su nombre',
+  account_form_save: 'Guardar',
+  account_form_gravatar_one: 'Si quieres mostrar tu foto, admitimos Gravatar. Visita ',
+  account_form_gravatar_two: ' Para registrarte o actualizar tu foto de perfil. Una vez actualizada, espera unos segundos para verla aquí.',
   account_my_account_hello: '¡Hola! Aquí puedes gestionar tus preferencias.',
   account_my_account_logged: 'Has iniciado sesión como: ',
-  account_app_lang_title: 'Idioma del App',
+  account_app_lang_title: 'Cambia el idioma del App',
   account_app_lang_description: 'Puedes elegir uno de estos idiomas:',
+  account_app_lang_available: 'Idiomas disponíbles',
   account_privacy_little: 'Su Privacidad es Importante',
+  account_privacy_subtitle: 'Tú decides cuándo eliminar tus datos',
   account_privacy_text: `Nos comprometemos a proteger su privacidad y a brindarle
     control total sobre sus datos. Puedes solicitar la eliminación completa de su
     cuenta en cualquier momento. Una vez procesada, toda su información personal

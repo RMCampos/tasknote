@@ -3,4 +3,5 @@ export type UserPatchRequest = {
   email: string | null;
   password: string | null;
   passwordAgain: string | null;
+  lang: string | null;
 };
