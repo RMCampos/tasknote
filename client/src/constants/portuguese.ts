@@ -103,6 +103,7 @@ const ptBrTranslations = {
   task_table_action_done_yes: 'Sim',
   task_table_action_done_no: 'Não',
   task_table_action_edit: 'Alterar',
+  task_table_action_clone: 'Clonar',
   task_table_action_delete: 'Excluir',
 
   note_form_title: 'Adicionar nota',

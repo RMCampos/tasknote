@@ -52,7 +52,7 @@ function handleError(httpStatusCode: number) {
 
 async function handleResponse(response: Response) {
   // Successful responses
-  if (response.ok) {
+  if (response?.ok) {
     const codesToIgnore: number[] = [204];
     if (codesToIgnore.includes(response.status)) {
       return;
@@ -61,12 +61,14 @@ async function handleResponse(response: Response) {
   }
 
   // Error responses
-  const contentType = response.headers.get('content-type');
-  if (contentType && contentType.includes('application/json')) {
-    const data = await response.json();
-    throw new Error(data.message);
+  if (response) {
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      const data = await response.json();
+      throw new Error(data.message);
+    }
+    handleError(response.status);
   }
-  handleError(response.status);
 }
 
 function isAddAuth(url: string): boolean {

@@ -103,6 +103,7 @@ const esTranslations = {
   task_table_action_done_yes: 'Sí',
   task_table_action_done_no: 'No',
   task_table_action_edit: 'Editar',
+  task_table_action_clone: 'Clonar',
   task_table_action_delete: 'Eliminar',
 
   note_form_title: 'Añadir nota',

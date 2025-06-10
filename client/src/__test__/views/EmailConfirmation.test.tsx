@@ -7,33 +7,67 @@ import EmailConfirmation from '../../views/EmailConfirmation';
 import { MemoryRouter } from 'react-router';
 import ApiConfig from '../../api-service/apiConfig';
 
-// Mock api.postJSON
-vi.mock('../../api-service/api');
+// Mock the entire api module
+vi.mock('../../api-service/api', () => ({
+  default: {
+    postJSON: vi.fn()
+  }
+}));
 
-const mockedPostJSON = vi.mocked(api.postJSON);
+// Mock the translation hook
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        'email_confirmation_loading': 'Confirming your email address...',
+        'email_confirmation_success': '✅ Email Confirmed!',
+        'email_confirmation_success_text': 'Your email has been successfully confirmed.',
+        'email_confirmation_btn': 'Login'
+      };
+      return translations[key] || key;
+    },
+    i18n: { language: 'en' }
+  })
+}));
+
+// Mock the lang handler
+vi.mock('../../lang-service/LangHandler', () => ({
+  handleDefaultLang: vi.fn()
+}));
+
+// Mock the translator utils
+vi.mock('../../utils/TranslatorUtils', () => ({
+  translateServerResponse: (message: string) => message
+}));
+
+const mockedApi = vi.mocked(api);
 
 describe('EmailConfirmation Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    window.history.pushState({}, '', '/?identification=test-id'); // Default query param
+    vi.resetAllMocks();
   });
 
-  const renderFn = () => {
+  const renderWithRouter = (initialEntries: string[] = ['/?identification=test-id']) => {
     return render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={initialEntries}>
         <EmailConfirmation />
       </MemoryRouter>
     );
   }
 
   test('renders loading state initially', () => {
-    render(<EmailConfirmation />);
+    window.history.pushState({}, '', '/?identification=test-id'); // Default query param
+    // Mock a pending promise to keep loading state
+    mockedApi.postJSON.mockImplementation(() => new Promise(() => {}));
+
+    renderWithRouter(['/?identification=test-id']);
     expect(screen.getByText('Confirming your email address...')).toBeDefined();
   });
 
   test('shows error when identification is missing', async () => {
     window.history.pushState({}, '', '/'); // No query param
-    render(<EmailConfirmation />);
+    renderWithRouter();
 
     await waitFor(() => {
       expect(screen.getByText('❌ Oops!')).toBeDefined();
@@ -42,8 +76,9 @@ describe('EmailConfirmation Component', () => {
   });
 
   test('shows success message when API call succeeds', async () => {
+    window.history.pushState({}, '', '/?identification=test-id');
     vi.spyOn(api, 'postJSON').mockResolvedValue({});
-    renderFn();
+    renderWithRouter(['/?identification=test-id']);
 
     await waitFor(() => {
       expect(screen.getByTestId('email-confirm-success-msg')).toBeDefined();
@@ -51,8 +86,9 @@ describe('EmailConfirmation Component', () => {
   });
 
   test('shows error message when API call fails', async () => {
-    mockedPostJSON.mockRejectedValueOnce(new Error('API error occurred')); // Mock API failure
-    renderFn();
+    window.history.pushState({}, '', '/?identification=test-id');
+    mockedApi.postJSON.mockRejectedValue(new Error('API error occurred')); // Mock API failure
+    renderWithRouter(['/?identification=test-id']);
 
     await waitFor(() => {
       expect(screen.getByText('❌ Oops!')).toBeDefined();
@@ -62,25 +98,27 @@ describe('EmailConfirmation Component', () => {
 
   test('does not call API if identification is missing', async () => {
     window.history.pushState({}, '', '/'); // No query param
-    renderFn();
+    renderWithRouter();
 
     await waitFor(() => {
-      expect(mockedPostJSON).not.toHaveBeenCalled();
+      expect(mockedApi.postJSON).not.toHaveBeenCalled();
     });
   });
 
   test('calls API with correct payload when identification is present', async () => {
-    mockedPostJSON.mockResolvedValueOnce({}); // Mock successful API response
-    renderFn();
+    window.history.pushState({}, '', '/?identification=test-id');
+    mockedApi.postJSON.mockResolvedValueOnce({}); // Mock successful API response
+    renderWithRouter(['/?identification=test-id']);
 
     await waitFor(() => {
-      expect(mockedPostJSON).toHaveBeenCalledWith(ApiConfig.confirmUrl, { identification: 'test-id' });
+      expect(mockedApi.postJSON).toHaveBeenCalledWith(ApiConfig.confirmUrl, { identification: 'test-id' });
     });
   });
 
   test('renders correct styles for success state', async () => {
-    mockedPostJSON.mockResolvedValueOnce({}); // Mock successful API response
-    renderFn();
+    window.history.pushState({}, '', '/?identification=test-id');
+    mockedApi.postJSON.mockResolvedValueOnce({}); // Mock successful API response
+    renderWithRouter(['/?identification=test-id']);
 
     await waitFor(() => {
       const successMessage = screen.getByTestId('email-confirm-success-msg');
@@ -90,8 +128,9 @@ describe('EmailConfirmation Component', () => {
   });
 
   test('renders correct styles for error state', async () => {
-    mockedPostJSON.mockRejectedValueOnce(new Error('API error occurred')); // Mock API failure
-    renderFn();
+    window.history.pushState({}, '', '/?identification=test-id');
+    mockedApi.postJSON.mockRejectedValueOnce(new Error('API error occurred'));
+    renderWithRouter(['/?identification=test-id']);
 
     await waitFor(() => {
       const errorMessage = screen.getByText('❌ Oops!');
@@ -101,8 +140,9 @@ describe('EmailConfirmation Component', () => {
   });
 
   test('renders "Go to Login" button on success', async () => {
-    mockedPostJSON.mockResolvedValueOnce({}); // Mock successful API response
-    renderFn();
+    window.history.pushState({}, '', '/?identification=test-id');
+    mockedApi.postJSON.mockResolvedValueOnce({}); // Mock successful API response
+    renderWithRouter(['/?identification=test-id']);
 
     await waitFor(() => {
       const loginButton = screen.getByText('Login');
@@ -112,8 +152,9 @@ describe('EmailConfirmation Component', () => {
   });
 
   test('does not render "Go to Login" button on error', async () => {
-    mockedPostJSON.mockRejectedValueOnce(new Error('API error occurred')); // Mock API failure
-    renderFn();
+    window.history.pushState({}, '', '/?identification=test-id');
+    mockedApi.postJSON.mockRejectedValueOnce(new Error('API error occurred')); // Mock API failure
+    renderWithRouter(['/?identification=test-id']);
 
     await waitFor(() => {
       const loginButton = screen.queryByText('Go to Login');
@@ -122,8 +163,9 @@ describe('EmailConfirmation Component', () => {
   });
 
   test('shows error message when API call fails', async () => {
-    mockedPostJSON.mockRejectedValueOnce(new Error('API error occurred')); // Mock API failure
-    renderFn();
+    window.history.pushState({}, '', '/?identification=test-id');
+    mockedApi.postJSON.mockRejectedValueOnce(new Error('API error occurred')); // Mock API failure
+    renderWithRouter(['/?identification=test-id']);
 
     await waitFor(() => {
       expect(screen.getByText('❌ Oops!')).toBeDefined();

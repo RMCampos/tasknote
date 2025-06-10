@@ -128,7 +128,8 @@ const authContextValue = {
     email: 'test@example.com',
     admin: false,
     createdAt: new Date(),
-    gravatarImageUrl: 'http://image.com'
+    gravatarImageUrl: 'http://image.com',
+    lang: 'en'
   },
   checkCurrentAuthUser: vi.fn(),
   signIn: vi.fn(),
@@ -376,7 +377,7 @@ describe('Home Component', () => {
     });
 
     // Should call deleteNoContent API
-    expect(api.deleteNoContent).toHaveBeenCalledWith(expect.stringContaining('/1'));
+    expect(api.deleteNoContent).toHaveBeenCalledWith(expect.stringContaining('/2'));
     
     // Should reload notes
     expect(api.getJSON).toHaveBeenCalledWith(expect.stringContaining('notes'));

@@ -12,7 +12,13 @@ import { NoteResponse } from '../../types/NoteResponse';
 import SidebarContext from '../../context/SidebarContext';
 import { beforeEach } from 'node:test';
 
-vi.mock('../../api-service/api');
+// Mock the entire api module
+vi.mock('../../api-service/api', () => ({
+  default: {
+    postJSON: vi.fn(),
+    getJSON: vi.fn(),
+  }
+}));
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -29,16 +35,17 @@ vi.mock('react-i18next', () => ({
   I18nextProvider: ({ children }: any) => children,
 }));
 
-vi.mock("react-router-dom", async () => {
-  const actual = await vi.importActual<any>("react-router-dom");
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual<any>('react-router');
 
   return {
     ...actual,
     useSearchParams: vi.fn(),
+    useParams: vi.fn()
   };
 });
 
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useParams } from 'react-router';
 
 const authContextMock = {
   signed: true,
@@ -48,7 +55,8 @@ const authContextMock = {
     email: 'test@example.com',
     admin: false,
     createdAt: new Date(),
-    gravatarImageUrl: 'http://url.com'
+    gravatarImageUrl: 'http://url.com',
+    lang: 'en'
   },
   checkCurrentAuthUser: vi.fn(),
   signIn: vi.fn(),
@@ -62,6 +70,19 @@ const sidebarContextMock = {
   currentPage: '/home',
   setNewPage: vi.fn()
 };
+
+// Mock the lang handler
+vi.mock('../../lang-service/LangHandler', () => ({
+  handleDefaultLang: vi.fn()
+}));
+
+// Mock the translator utils
+vi.mock('../../utils/TranslatorUtils', () => ({
+  translateServerResponse: (message: string) => message
+}));
+
+const mockedApi = vi.mocked(api);
+const mockedUseParams = vi.mocked(useParams);
 
 describe('NoteAdd Component', () => {
   const renderNoteAdd = () => {
@@ -81,6 +102,8 @@ describe('NoteAdd Component', () => {
   beforeEach(() => {
     // Reset mock between tests
     (useSearchParams as unknown as ReturnType<typeof vi.fn>).mockReset();
+    vi.clearAllMocks();
+    vi.resetAllMocks();
   });
 
   it('should render the NoteAdd component', () => {
@@ -135,5 +158,72 @@ describe('NoteAdd Component', () => {
     expect(getByText('Save your notes in plain text or Markdown format')).toBeDefined();
     expect(getByText('Create, Filter, and Easily Find')).toBeDefined();
     expect(getByText('Them')).toBeDefined();
+  });
+
+  it('should render a note to edit', async () => {
+    mockedUseParams.mockReturnValue({ id: '1' });
+
+    const toEdit: NoteResponse = {
+      id: 1,
+      title: 'Note one',
+      description: 'Description of note one',
+      url: 'http://notes.domain.com',
+      tag: 'dev',
+      lastUpdate: '3 minutes ago',
+    };
+  
+    vi.spyOn(api, 'getJSON').mockResolvedValue(toEdit);
+
+    const { getByLabelText, getByTestId } = renderNoteAdd();
+
+    await waitFor(() => {
+      const noteTitle = getByLabelText('note_form_title_label') as HTMLInputElement;
+      const noteUrl = getByLabelText('task_form_url_label') as HTMLInputElement;
+      const noteContentInput = getByTestId('note-content-input-area') as HTMLAreaElement;
+      expect(noteTitle.value).toBe(toEdit.title);
+      expect(noteUrl.value).toBe(toEdit.url);
+      expect(noteContentInput.innerHTML).toBe(toEdit.description);
+    });
+  });
+
+  it('should render a cloned note', async () => {
+    window.history.pushState({}, '', '?cloneFrom=123');
+
+    const toClone: NoteResponse = {
+      id: 11,
+      title: 'Old title',
+      description: 'Old description',
+      url: 'http://notes.domain.com',
+      tag: 'dev',
+      lastUpdate: '1 minute ago',
+    };
+  
+    vi.spyOn(api, 'getJSON').mockResolvedValue(toClone);
+
+    const { getByLabelText, getByTestId } = renderNoteAdd();
+
+    await waitFor(() => {
+      const noteTitle = getByLabelText('note_form_title_label') as HTMLInputElement;
+      const noteUrl = getByLabelText('task_form_url_label') as HTMLInputElement;
+      const noteContentInput = getByTestId('note-content-input-area') as HTMLAreaElement;
+      expect(noteTitle.value).toBe(toClone.title);
+      expect(noteUrl.value).toBe(toClone.url);
+      expect(noteContentInput.innerHTML).toBe(toClone.description);
+    });
+  });
+
+  it('should not render a cloned note when user is trying to mess up', async () => {
+    window.history.pushState({}, '', '?cloneFrom=12345');
+
+    const { getByLabelText, getByTestId } = renderNoteAdd();
+
+    await waitFor(() => {
+      const noteTitle = getByLabelText('note_form_title_label') as HTMLInputElement;
+      const noteUrl = getByLabelText('task_form_url_label') as HTMLInputElement;
+      const noteContentInput = getByTestId('note-content-input-area') as HTMLAreaElement;
+      expect(noteTitle.value).toBe('');
+      expect(noteUrl.value).toBe('');
+      expect(noteContentInput.innerHTML).toBe('');
+    });
   });
 });

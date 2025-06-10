@@ -103,6 +103,7 @@ const ruTranslations = {
   task_table_action_done_yes: 'Да',
   task_table_action_done_no: 'Нет',
   task_table_action_edit: 'Редактировать',
+  task_table_action_clone: 'Клонировать',
   task_table_action_delete: 'Удалить',
 
   note_form_title: 'Добавить примечание',

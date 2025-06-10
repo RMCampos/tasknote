@@ -190,6 +190,7 @@ function Home(): React.ReactNode {
   const loadAllNotes = async () => {
     try {
       const notesFetched: NoteResponse[] = await api.getJSON(ApiConfig.notesUrl);
+      notesFetched.sort((n1, n2) => (n1.id > n2.id) ? -1 : 1);
       setNotes([...notesFetched]);
       setSavedNotes([...notesFetched]);
     }
@@ -451,6 +452,11 @@ function Home(): React.ReactNode {
                         <NavLink to={`/notes/edit/${note.id}`}>
                           <Dropdown.Item as="span">
                             {t('task_table_action_edit')}
+                          </Dropdown.Item>
+                        </NavLink>
+                        <NavLink to={`/notes/new?cloneFrom=${note.id}`}>
+                          <Dropdown.Item as="span">
+                            {t('task_table_action_clone')}
                           </Dropdown.Item>
                         </NavLink>
                         <Dropdown.Item

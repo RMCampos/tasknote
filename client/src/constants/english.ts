@@ -103,6 +103,7 @@ const enTranslations = {
   task_table_action_done_yes: 'Yes',
   task_table_action_done_no: 'No',
   task_table_action_edit: 'Edit',
+  task_table_action_clone: 'Clone',
   task_table_action_delete: 'Delete',
 
   note_form_title: 'Add note',

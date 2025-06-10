@@ -157,24 +157,52 @@ function NoteAdd(): React.ReactNode {
    * Checks if the URL is for editing a task and loads the task data if it is.
    */
   const checkEditUrl = async (): Promise<void> => {
-    if (params.id) {
+    if (params?.id) {
       try {
         const noteToEdit: NoteResponse = await api.getJSON(`${ApiConfig.notesUrl}/${params.id}`);
-        setNoteId(noteToEdit.id);
-        setNoteTitle(noteToEdit.title);
-        if (noteToEdit.url) {
-          setNoteUrl(noteToEdit.url);
-        }
-        if (noteToEdit.tag) {
-          setNoteTag(noteToEdit.tag);
-        }
-        setNoteContent(noteToEdit.description);
+        setNoteFromServer(noteToEdit);
         setAction('edit');
       }
       catch (e) {
         handleError(e);
       }
     }
+  };
+
+  const checkCloneUrl = async (): Promise<void> => {
+    const { search } = window.location;
+
+    if (!search || !search.startsWith('?') || !search.includes('cloneFrom=')) {
+      return;
+    }
+
+    const index = search.indexOf('=');
+    if (search.length - index > 4) {
+      return;
+    }
+
+    const idToClone = search.substring(index + 1);
+    if (idToClone && !isNaN(parseInt(idToClone))) {
+      try {
+        const noteToClone: NoteResponse = await api.getJSON(`${ApiConfig.notesUrl}/${idToClone}`);
+        setNoteFromServer(noteToClone);
+      }
+      catch (e) {
+        handleError(e);
+      }
+    }
+  };
+
+  const setNoteFromServer = (noteContent: NoteResponse) => {
+    setNoteId(noteContent.id);
+    setNoteTitle(noteContent.title);
+    if (noteContent.url) {
+      setNoteUrl(noteContent.url);
+    }
+    if (noteContent.tag) {
+      setNoteTag(noteContent.tag);
+    }
+    setNoteContent(noteContent.description);
   };
 
   /**
@@ -195,6 +223,7 @@ function NoteAdd(): React.ReactNode {
 
   useEffect(() => {
     checkEditUrl();
+    checkCloneUrl();
   }, []);
 
   return (
