@@ -48,7 +48,7 @@ function Account(): React.ReactNode {
    */
   const deleteAccount = async (): Promise<void> => {
     setShowAlert(false);
-    await api.postJSON(ApiConfig.deleteAccountUrl, {});
+    await api.deleteNoContent(ApiConfig.deleteAccountUrl);
     signOut();
     clearStorage();
   };

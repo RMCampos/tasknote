@@ -11,8 +11,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -52,7 +53,7 @@ public class UserSessionController {
    *
    * @returns {@link UserResponse} with the user information.
    */
-  @PostMapping("/delete-account")
+  @DeleteMapping("/delete-account")
   @Operation(
       summary = "Delete the user account.",
       description = "Delete all the user data and information from the server.",
@@ -63,7 +64,8 @@ public class UserSessionController {
             description = "Unauthorized. Access Denied",
             content = @Content(schema = @Schema(implementation = Void.class)))
       })
-  public UserResponse deleteAccount() {
-    return userSessionService.deleteCurrentUserAccount();
+  public ResponseEntity<UserResponse> deleteAccount() {
+    UserResponse deleted = userSessionService.deleteCurrentUserAccount();
+    return ResponseEntity.ok(deleted);
   }
 }

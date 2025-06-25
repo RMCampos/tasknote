@@ -87,7 +87,7 @@ describe('Account Component', () => {
     fireEvent.click(confirmButton);
 
     await waitFor(() => {
-      expect(api.postJSON).toHaveBeenCalledWith(ApiConfig.deleteAccountUrl, {});
+      expect(api.deleteNoContent).toHaveBeenCalledWith(ApiConfig.deleteAccountUrl);
       expect(authContextMock.signOut).toHaveBeenCalled();
     });
   });
