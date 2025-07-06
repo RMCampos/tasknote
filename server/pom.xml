@@ -42,7 +42,7 @@
     <jacoco.output.data>${project.build.directory}/coverage-reports</jacoco.output.data>
     <timestamp>${maven.build.timestamp}</timestamp>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
-    <hibernate.version>6.6.18.Final</hibernate.version>
+    <hibernate.version>6.6.19.Final</hibernate.version>
     <sonar.organization>ricardo-campos-org</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
   </properties>
@@ -423,7 +423,7 @@
           <dependency>
             <groupId>com.puppycrawl.tools</groupId>
             <artifactId>checkstyle</artifactId>
-            <version>10.25.1</version>
+            <version>10.26.1</version>
           </dependency>
         </dependencies>
         <configuration>
