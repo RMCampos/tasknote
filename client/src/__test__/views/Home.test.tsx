@@ -238,11 +238,17 @@ describe('Home Component', () => {
       expect(screen.getAllByTestId('note-title').length).toBe(2);
     });
 
-    // Select "Only Tasks" radio button
-    const onlyTasksRadio = screen.getByLabelText('home_radio_tasks');
+    const dropdownToggle = screen.getByTestId('main-label-selector');
+
+    await act(async () => {
+      fireEvent.click(dropdownToggle);
+    });
+
+    // Select "Only Tasks" from dropdown
+    const onlyTasksOption = screen.getByRole('button', { name: /home_radio_tasks/i });
     
     await act(async () => {
-      fireEvent.click(onlyTasksRadio);
+      fireEvent.click(onlyTasksOption);
     });
 
     // Should only show tasks
@@ -252,10 +258,10 @@ describe('Home Component', () => {
     });
 
     // Select "Only Notes" radio button
-    const onlyNotesRadio = screen.getByLabelText('home_radio_notes');
-    
+    const onlyNotesOption = screen.getByRole('button', { name: /home_radio_notes/i });
+
     await act(async () => {
-      fireEvent.click(onlyNotesRadio);
+      fireEvent.click(onlyNotesOption);
     });
 
     // Should only show notes
@@ -281,11 +287,17 @@ describe('Home Component', () => {
       expect(screen.getAllByTestId('note-title').length).toBe(2);
     });
 
+    const dropdownToggle = screen.getByTestId('main-label-selector');
+
+    await act(async () => {
+      fireEvent.click(dropdownToggle);
+    });
+
     // Select "work" tag radio button
-    const workTagRadio = screen.getByLabelText('#work');
+    const workTagOption = screen.getByRole('button', { name: /#work/i });
     
     await act(async () => {
-      fireEvent.click(workTagRadio);
+      fireEvent.click(workTagOption);
     });
 
     // Should only show items with "work" tag

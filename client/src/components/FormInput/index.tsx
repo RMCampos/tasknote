@@ -24,21 +24,11 @@ interface Props {
   pwdHideText?: string;
   pwdShowText?: string;
   pwdHelperTxt?: string;
+  helperText?: string; // Added optional helper text prop
 }
 
 /**
  * FormInput component renders a form input with a label, icon, and optional password toggle.
- *
- * @param {Props} props - The properties for the FormInput component.
- * @param {string} props.labelText - The text for the form label.
- * @param {IconName} props.iconName - The name of the icon to display.
- * @param {boolean} props.required - Whether the input is required.
- * @param {string} [props.type] - The type of the input (e.g., 'text', 'password').
- * @param {string} props.name - The name of the input.
- * @param {string} [props.placeholder] - The placeholder text for the input.
- * @param {string} props.value - The value of the input.
- * @param {(e: React.ChangeEvent<HTMLInputElement>) void} props.onChange - The change event handler for the input.
- * @returns {React.ReactNode} The rendered FormInput component.
  */
 function FormInput(props: React.PropsWithChildren<Props>): React.ReactNode {
   const [showingPwd, setShowingPwd] = useState<boolean>(false);
@@ -47,8 +37,6 @@ function FormInput(props: React.PropsWithChildren<Props>): React.ReactNode {
 
   /**
    * Toggle the password visibility.
-   *
-   * @param {React.MouseEvent<Element, MouseEvent>} e the click event.
    */
   const toggleShowPassword = (e: React.MouseEvent<Element, MouseEvent>): void => {
     e.preventDefault();
@@ -74,6 +62,7 @@ function FormInput(props: React.PropsWithChildren<Props>): React.ReactNode {
               </small>
             )}
           </Form.Label>
+
           <InputGroup className="mb-3">
             <InputGroup.Text>
               <Icon />
@@ -104,7 +93,6 @@ function FormInput(props: React.PropsWithChildren<Props>): React.ReactNode {
                         }
                       }
                     ]}
-                    // Mobile-friendly options
                     withPortal
                     showYearDropdown
                     showMonthDropdown
@@ -112,24 +100,31 @@ function FormInput(props: React.PropsWithChildren<Props>): React.ReactNode {
                   />
                 )
               : (
-                  <>
-                    <Form.Control
-                      required={props.required}
-                      type={formType}
-                      name={props.name}
-                      placeholder={props.placeholder ? props.placeholder : ''}
-                      value={props?.value}
-                      onChange={props.onChange}
-                      data-testid={props.data_testid}
-                    />
-                    {props.type && props.type === 'password' && (
-                      <Form.Text id="passwordHelpBlock" muted>
-                        {props.pwdHelperTxt}
-                      </Form.Text>
-                    )}
-                  </>
+                  <Form.Control
+                    required={props.required}
+                    type={formType}
+                    name={props.name}
+                    placeholder={props.placeholder ? props.placeholder : ''}
+                    value={props?.value}
+                    onChange={props.onChange}
+                    data-testid={props.data_testid}
+                  />
                 )}
           </InputGroup>
+
+          {/* Password helper text - moved outside InputGroup */}
+          {props.type && props.type === 'password' && props.pwdHelperTxt && (
+            <Form.Text id="passwordHelpBlock" muted>
+              {props.pwdHelperTxt}
+            </Form.Text>
+          )}
+
+          {/* General helper text - added support for optional helper text */}
+          {props.helperText && (
+            <Form.Text className="text-muted">
+              {props.helperText}
+            </Form.Text>
+          )}
         </Form.Group>
       </Col>
     </Row>

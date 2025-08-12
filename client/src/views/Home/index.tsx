@@ -1,11 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  Badge,
   Card,
   Col,
   Container,
   Dropdown,
   Form,
+  InputGroup,
   Row
 } from 'react-bootstrap';
 import { TaskResponse } from '../../types/TaskResponse';
@@ -263,6 +265,38 @@ function Home(): React.ReactNode {
 
   const handleCloseModal = () => setShowMarkdownView(false);
 
+  const getSelectedLabel = (): string => {
+    if (selectedOption === 'everything') return t('home_radio_everything');
+    if (selectedOption === 'onlyTasks') return t('home_radio_tasks');
+    if (selectedOption === 'onlyNotes') return t('home_radio_notes');
+
+    // Handle tag selections
+    const tagName = selectedOption.replace('radio_', '');
+    if (tags.includes(tagName)) {
+      return `#${tagName}`;
+    }
+
+    return t('home_radio_everything');
+  };
+
+  const getSelectedVariant = (): string => {
+    if (selectedOption === 'everything') {
+      return 'secondary';
+    }
+    if (selectedOption === 'onlyTasks') {
+      return 'primary';
+    }
+    if (selectedOption === 'onlyNotes') {
+      return 'info';
+    }
+    return 'warning'; // for tags
+  };
+
+  const handleOptionChange = (value: string): void => {
+    setSelectedOption(value);
+    filterTasksAndNotes(filterText, value);
+  };
+
   useEffect(() => {
     handleDefaultLang(user?.lang);
     setName(user?.name ?? 'User');
@@ -293,83 +327,105 @@ function Home(): React.ReactNode {
 
       <Row>
         <Col xs={12}>
-          <Form.Control
-            type="text"
-            id="search_term"
-            size="lg"
-            name="search_term"
-            placeholder={t('home_input_filter')}
-            value={filterText}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => filterTasksAndNotes(e.target.value, selectedOption)}
-          />
-        </Col>
-      </Row>
+          <InputGroup size="lg" className="shadow-sm">
+            <Form.Control
+              type="text"
+              placeholder={t('home_input_filter')}
+              value={filterText}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                filterTasksAndNotes(e.target.value, selectedOption)}
+              className="border-0"
+              style={{
+                borderTopRightRadius: 0,
+                borderBottomRightRadius: 0,
+                fontSize: '16px'
+              }}
+            />
 
-      <Row>
-        <Col>
-          <Form className="mt-3 ms-1">
-            <div className="d-flex gap-3">
-              <Form.Check
-                inline
-                type="radio"
-                label={t('home_radio_everything')}
-                name="radioGroup"
-                id="everything"
-                value="everything"
-                checked={selectedOption === 'everything'}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-                  setSelectedOption(e.target.value);
-                  filterTasksAndNotes(filterText, e.target.value);
+            <Dropdown onSelect={eventKey => eventKey && handleOptionChange(eventKey)}>
+              <Dropdown.Toggle
+                variant="success"
+                id="filter-dropdown"
+                className="d-flex align-items-center gap-2 px-3"
+                data-testid="dropdown-tag-filter"
+                style={{
+                  borderTopLeftRadius: 0,
+                  borderBottomLeftRadius: 0,
+                  minWidth: '160px',
+                  justifyContent: 'space-between'
                 }}
-                className="custom-radio-button"
-              />
-              <Form.Check
-                inline
-                type="radio"
-                label={t('home_radio_tasks')}
-                name="radioGroup"
-                id="onlyTasks"
-                value="onlyTasks"
-                checked={selectedOption === 'onlyTasks'}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-                  setSelectedOption(e.target.value);
-                  filterTasksAndNotes(filterText, e.target.value);
-                }}
-                className="custom-radio-button"
-              />
-              <Form.Check
-                inline
-                type="radio"
-                label={t('home_radio_notes')}
-                name="radioGroup"
-                id="onlyNotes"
-                value="onlyNotes"
-                checked={selectedOption === 'onlyNotes'}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-                  setSelectedOption(e.target.value);
-                  filterTasksAndNotes(filterText, e.target.value);
-                }}
-                className="custom-radio-button"
-              />
-              {tags.map((tag: string) => (
-                <Form.Check
-                  key={tag}
-                  inline
-                  type="radio"
-                  label={`#${tag}`}
-                  name="radioGroup"
-                  id={`radio_${tag}`}
-                  value={`radio_${tag}`}
-                  checked={selectedOption === `radio_${tag}`}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-                    setSelectedOption(e.target.value);
-                    filterTasksAndNotes(filterText, e.target.value);
-                  }}
-                  className="custom-radio-button"
-                />
-              ))}
-            </div>
-          </Form>
+              >
+                <Badge
+                  bg={getSelectedVariant()}
+                  className="text-white"
+                  style={{ fontSize: '0.85rem' }}
+                  data-testid="main-label-selector"
+                >
+                  {getSelectedLabel()}
+                </Badge>
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu className="shadow-lg border-0" style={{ minWidth: '200px' }}>
+                <Dropdown.Header className="text-muted small">
+                  <i className="bi bi-funnel me-2"></i>
+                  Filter Options
+                </Dropdown.Header>
+
+                <Dropdown.Item
+                  eventKey="everything"
+                  active={selectedOption === 'everything'}
+                  className="d-flex align-items-center gap-2"
+                >
+                  <Badge bg="secondary" className="badge-sm">
+                    {t('home_radio_everything')}
+                  </Badge>
+                </Dropdown.Item>
+
+                <Dropdown.Item
+                  eventKey="onlyTasks"
+                  active={selectedOption === 'onlyTasks'}
+                  className="d-flex align-items-center gap-2"
+                >
+                  <Badge bg="primary" className="badge-sm">
+                    {t('home_radio_tasks')}
+                  </Badge>
+                </Dropdown.Item>
+
+                <Dropdown.Item
+                  eventKey="onlyNotes"
+                  active={selectedOption === 'onlyNotes'}
+                  className="d-flex align-items-center gap-2"
+                >
+                  <Badge bg="info" className="badge-sm">
+                    {t('home_radio_notes')}
+                  </Badge>
+                </Dropdown.Item>
+
+                {tags.length > 0 && (
+                  <>
+                    <Dropdown.Divider />
+                    <Dropdown.Header className="text-muted small">
+                      <i className="bi bi-tags me-2"></i>
+                      Tags
+                    </Dropdown.Header>
+                    {tags.map((tag: string) => (
+                      <Dropdown.Item
+                        key={tag}
+                        eventKey={`radio_${tag}`}
+                        active={selectedOption === `radio_${tag}`}
+                        className="d-flex align-items-center gap-2"
+                      >
+                        <Badge bg="warning" text="dark" className="badge-sm">
+                          #
+                          {tag}
+                        </Badge>
+                      </Dropdown.Item>
+                    ))}
+                  </>
+                )}
+              </Dropdown.Menu>
+            </Dropdown>
+          </InputGroup>
         </Col>
       </Row>
 
