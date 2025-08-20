@@ -42,7 +42,7 @@
     <jacoco.output.data>${project.build.directory}/coverage-reports</jacoco.output.data>
     <timestamp>${maven.build.timestamp}</timestamp>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
-    <hibernate.version>6.6.25.Final</hibernate.version>
+    <hibernate.version>6.6.26.Final</hibernate.version>
     <sonar.organization>ricardo-campos-org</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
   </properties>
@@ -176,17 +176,17 @@
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-api</artifactId>
-      <version>0.12.6</version>
+      <version>0.12.7</version>
     </dependency>
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-impl</artifactId>
-      <version>0.12.6</version>
+      <version>0.12.7</version>
     </dependency>
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-jackson</artifactId>
-      <version>0.12.6</version>
+      <version>0.12.7</version>
     </dependency>
 
   </dependencies>
@@ -369,7 +369,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.11.2</version>
+        <version>3.11.3</version>
         <configuration>
           <source>17</source>
           <doctitle>Javadoc Documentation for ${project.name} ${project.version}</doctitle>
