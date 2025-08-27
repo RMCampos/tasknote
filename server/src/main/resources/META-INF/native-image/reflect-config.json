@@ -121,6 +121,57 @@
   },
   {
     "condition": {
+      "typeReachable": "io.jsonwebtoken.impl.DefaultJwtParserBuilder"
+    },
+    "name": "io.jsonwebtoken.impl.DefaultJwtParserBuilder$Supplier",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true
+  },
+  {
+    "condition": {
+      "typeReachable": "io.jsonwebtoken.impl.DefaultJwtParserBuilder"
+    },
+    "name": "io.jsonwebtoken.impl.DefaultJwtParser",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "io.jsonwebtoken.impl.DefaultJwtParserBuilder$Supplier",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "io.jsonwebtoken.impl.DefaultJwtParser",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "io.jsonwebtoken.impl.DefaultJwtParserBuilder",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true
+  },
+  {
+    "condition": {
       "typeReachable": "io.jsonwebtoken.CompressionCodecs"
     },
     "name": "io.jsonwebtoken.impl.compression.DeflateCompressionCodec",
