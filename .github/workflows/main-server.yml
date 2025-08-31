@@ -92,7 +92,7 @@ jobs:
           docker tag ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-api:candidate ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-api:latest
 
       - name: Push new tag
-        run: docker push ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-api:prod-${{ steps.inspect.outputs.source_pr }}
+        run: docker push --all-tags ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-api
 
       - name: Checking cURL version
         run: curl --version

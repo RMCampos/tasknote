@@ -84,10 +84,12 @@ jobs:
           echo "source_pr=$SOURCE_PR" >> $GITHUB_OUTPUT
 
       - name: Re-tag the image
-        run: docker tag ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:candidate ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:prod-${{ steps.inspect.outputs.source_pr }}
+        run: |
+          docker tag ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:candidate ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:prod-${{ steps.inspect.outputs.source_pr }}
+          docker tag ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:candidate ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:latest
 
       - name: Push new tag
-        run: docker push ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:prod-${{ steps.inspect.outputs.source_pr }}
+        run: docker push --all-tags ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web
 
       - name: Checking cURL version
         run: curl --version
