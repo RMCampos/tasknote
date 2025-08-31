@@ -139,3 +139,15 @@ docker run \
 docker exec -i my-postgres-db pg_restore -U <user> -d <db-name> < 2025-04-26T20_00_00.114Z.sql
 
 ```
+
+## Updating packages
+
+Node packages:
+
+- npm install -g npm-check-updates
+- Then run `ncu` and `ncu -u`
+
+Angular dependencies:
+
+- First run: `npx @angular/cli update @angular/cli @angular/core`
+- Then run `npx npm-check-updates -u`
