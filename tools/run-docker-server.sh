@@ -14,12 +14,12 @@ echo "Done!"
 
 cd ..
 
-docker build --file server/Dockerfile.dev --tag server:nightly .
+docker build --file server/Dockerfile.dev --tag tasknote-api:nightly .
 
 DB_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' db)
 
 docker run -d --rm \
-  --name server \
+  --name tasknote-api \
   -p 8585:8585 \
   -p 5005:5005 \
   -e POSTGRES_DB=$POSTGRES_DB \
@@ -30,4 +30,4 @@ docker run -d --rm \
   -e CORS_ALLOWED_ORIGINS=$CORS_ALLOWED_ORIGINS \
   -e SERVER_SERVLET_CONTEXT_PATH=$SERVER_SERVLET_CONTEXT_PATH \
   -v ./server:/app \
-  server:nightly  
+  tasknote-api:nightly

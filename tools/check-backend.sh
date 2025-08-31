@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DOCKER_IMG="server:nightly"
+DOCKER_IMG="tasknote-api:nightly"
 
 docker image inspect $DOCKER_IMG --format="ignore me"
 if [ $? -eq 1 ]; then
@@ -19,10 +19,10 @@ if [ $? -eq 1 ]; then
   echo "Done!"
 
   cd ..
-  docker build --file server/Dockerfile.dev --tag server:nightly .
+  docker build --file server/Dockerfile.dev --tag tasknote-api:nightly .
 else
   echo "Image found! Let's keep going."
 fi
 
 
-docker run -it --rm --name server -e CHECK="TRUE" -v ./server:/app server:nightly
+docker run -it --rm --name tasknote-api -e CHECK="TRUE" -v ./server:/app tasknote-api:nightly

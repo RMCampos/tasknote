@@ -1,4 +1,4 @@
-name: Main Client
+name: Main Tasknote-web
 
 on:
   workflow_dispatch:
@@ -17,8 +17,8 @@ on:
       - 'client/Caddyfile'
 
 jobs:
-  client-code-checks:
-    name: Client Code Checks
+  tasknote-web-code-checks:
+    name: Tasknote-web Code Checks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -74,20 +74,20 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pull image with source tag
-        run: docker pull ghcr.io/ricardo-campos-org/react-typescript-todolist/client:candidate
+        run: docker pull ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:candidate
 
       - name: Extract PR number using docker inspect
         id: inspect
         run: |
-          SOURCE_PR=$(docker inspect ghcr.io/ricardo-campos-org/react-typescript-todolist/client:candidate | jq -r '.[0].Config.Env[] | select(startswith("SOURCE_PR="))' | sed -n 's/SOURCE_PR=\(v[0-9]*\).*/\1/p')
+          SOURCE_PR=$(docker inspect ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:candidate | jq -r '.[0].Config.Env[] | select(startswith("SOURCE_PR="))' | sed -n 's/SOURCE_PR=\(v[0-9]*\).*/\1/p')
           echo "SOURCE_PR=$SOURCE_PR" >> $GITHUB_ENV
           echo "source_pr=$SOURCE_PR" >> $GITHUB_OUTPUT
 
       - name: Re-tag the image
-        run: docker tag ghcr.io/ricardo-campos-org/react-typescript-todolist/client:candidate ghcr.io/ricardo-campos-org/react-typescript-todolist/client:prod-${{ steps.inspect.outputs.source_pr }}
+        run: docker tag ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:candidate ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:prod-${{ steps.inspect.outputs.source_pr }}
 
       - name: Push new tag
-        run: docker push ghcr.io/ricardo-campos-org/react-typescript-todolist/client:prod-${{ steps.inspect.outputs.source_pr }}
+        run: docker push ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:prod-${{ steps.inspect.outputs.source_pr }}
 
       - name: Checking cURL version
         run: curl --version
@@ -105,7 +105,7 @@ jobs:
               -H "Content-Type: application/json" \
               -H "x-api-key: ${API_KEY}" \
               -d '{
-                "dockerImage": "ghcr.io/ricardo-campos-org/react-typescript-todolist/client:prod-${{ steps.inspect.outputs.source_pr }}",
+                "dockerImage": "ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:prod-${{ steps.inspect.outputs.source_pr }}",
                 "applicationId": "'"${CLIENT_APPID}"'",
                 "username": "'"${GHCR_USERNAME}"'",
                 "password": "'"${GHCR_PASSWORD}"'",

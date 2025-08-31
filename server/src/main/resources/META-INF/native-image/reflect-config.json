@@ -625,5 +625,41 @@
         "parameterTypes": []
       }
     ]
+  },
+  {
+    "name": "io.jsonwebtoken.impl.DefaultJwtHeaderBuilder$Supplier",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.jsonwebtoken.impl.DefaultClaimsBuilder$Supplier",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.jsonwebtoken.impl.security.DefaultKeyOperationBuilder$Supplier",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.jsonwebtoken.impl.security.DefaultKeyOperationPolicyBuilder$Supplier",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
   }
 ]

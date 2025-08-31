@@ -21,10 +21,10 @@ if [ $? -eq 1 ]; then
   exit 1
 fi
 
-SERVER_HOST="http://"$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' server)":8585"
+SERVER_HOST="http://"$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' tasknote-api):8585"
 
 if [ "$SERVER_HOST" == "http://:8585" ]; then
-  echo "Back-end server not running. Make sure to run it before starting the web app."
+  echo "Back-end tasknote-api not running. Make sure to run it before starting the web app."
   exit 0
 fi
 

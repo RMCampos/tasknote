@@ -41,7 +41,7 @@ response=$(curl -X POST \
   -H "Content-Type: application/json" \
   -H "x-api-key: ${API_KEY}" \
   -d '{
-    "dockerImage": "ghcr.io/ricardo-campos-org/react-typescript-todolist/client:prod-v359",
+    "dockerImage": "ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:prod-v359",
     "applicationId": "'"${CLIENT_APPID}"'",
     "username": "'"${GHCR_USERNAME}"'",
     "password": "'"${GHCR_PASSWORD}"'",

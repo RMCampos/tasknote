@@ -34,6 +34,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -59,6 +60,8 @@ class AuthServiceTest {
 
   @Mock private MailgunEmailService mailgunEmailService;
 
+  @Mock private Environment environment;
+
   private AuthService authService;
 
   @BeforeEach
@@ -71,7 +74,8 @@ class AuthServiceTest {
             authenticationManager,
             authUtil,
             userPwdLimitRepository,
-            mailgunEmailService);
+            mailgunEmailService,
+            environment);
   }
 
   @Test
@@ -509,11 +513,28 @@ class AuthServiceTest {
     existing.setId(919L);
     existing.setEmail(email);
     when(userRepository.findByEmail(email)).thenReturn(Optional.of(existing));
+    when(environment.getProperty("MAILGUN_APIKEY")).thenReturn("abc");
 
     doNothing().when(mailgunEmailService).sendNewUser(existing);
 
     Assertions.assertDoesNotThrow(() -> authService.resendEmailConfirmation(email));
     verify(mailgunEmailService, times(1)).sendNewUser(existing);
+  }
+
+  @Test
+  @DisplayName("Resend email confirmation no mailgun api key should succeed")
+  void resendEmailConfirmation_noMailgunApiKey_shouldSucceed() {
+    String email = "user@domain.com";
+
+    UserEntity existing = new UserEntity();
+    existing.setId(919L);
+    existing.setEmail(email);
+    when(userRepository.findByEmail(email)).thenReturn(Optional.of(existing));
+
+    doNothing().when(mailgunEmailService).sendNewUser(existing);
+
+    Assertions.assertDoesNotThrow(() -> authService.resendEmailConfirmation(email));
+    verify(mailgunEmailService, times(0)).sendNewUser(existing);
   }
 
   @Test
@@ -540,6 +561,7 @@ class AuthServiceTest {
 
     doNothing().when(mailgunEmailService).sendResetPassword(any());
     when(userRepository.save(any())).thenReturn(existing);
+    when(environment.getProperty("MAILGUN_APIKEY")).thenReturn("abc");
 
     Assertions.assertDoesNotThrow(() -> authService.resetPasswordForUser(email));
     verify(userRepository, times(1)).save(existing);
@@ -574,6 +596,7 @@ class AuthServiceTest {
 
     when(userRepository.findByResetToken(token)).thenReturn(Optional.of(user));
     when(authUtil.validatePassword(newPassword)).thenReturn(Optional.empty());
+    when(environment.getProperty("MAILGUN_APIKEY")).thenReturn("abc");
 
     PasswordResetRequest request = new PasswordResetRequest(token, newPassword, newPassword);
 
@@ -581,6 +604,34 @@ class AuthServiceTest {
 
     verify(userRepository, times(1)).save(user);
     verify(mailgunEmailService, times(1)).sendPasswordResetConfirmation(user);
+    Assertions.assertNull(user.getResetToken());
+    Assertions.assertNull(user.getResetPasswordExpiration());
+    Assertions.assertNotNull(user.getPassword());
+  }
+
+  @Test
+  @DisplayName("Confirm reset password no mailgun api token should succeed")
+  void confirmResetPasswordForUser_noMailgunApiToken_shouldSucceed() {
+    String token = "validToken";
+    UserEntity user = new UserEntity();
+    user.setResetToken(token);
+    user.setResetPasswordExpiration(LocalDateTime.now().plusMinutes(30));
+
+    String newPassword = "NewPassword@123";
+
+    String encodedPassword = "hash@abcxasd123!";
+    when(passwordEncoder.encode(newPassword)).thenReturn(encodedPassword);
+    user.setPassword(encodedPassword);
+
+    when(userRepository.findByResetToken(token)).thenReturn(Optional.of(user));
+    when(authUtil.validatePassword(newPassword)).thenReturn(Optional.empty());
+
+    PasswordResetRequest request = new PasswordResetRequest(token, newPassword, newPassword);
+
+    Assertions.assertDoesNotThrow(() -> authService.confirmResetPasswordForUser(request));
+
+    verify(userRepository, times(1)).save(user);
+    verify(mailgunEmailService, times(0)).sendPasswordResetConfirmation(user);
     Assertions.assertNull(user.getResetToken());
     Assertions.assertNull(user.getResetPasswordExpiration());
     Assertions.assertNotNull(user.getPassword());

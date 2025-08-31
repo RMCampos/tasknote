@@ -1,4 +1,4 @@
-name: PR Server
+name: PR Tasknote-api
 
 on:
   pull_request:
@@ -6,12 +6,12 @@ on:
       - 'server/**'
 
 concurrency:
-  group: server-${{ github.event.number }}
+  group: tasknote-api-${{ github.event.number }}
   cancel-in-progress: true
 
 jobs:
   java-code-checks:
-    name: Server Code Checks
+    name: Tasknote-api Code Checks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -61,7 +61,7 @@ jobs:
           ./mvnw -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ricardo-campos-org_react-typescript-todolist_server -Dsonar.coverage.jacoco.xmlReportPaths=target/coverage-reports/merged-test-report/jacoco.xml -Dsonar.exclusions='**/config/**,**/entity/**,**/exception/**,**/filter/**,**/**Builder*,**/RestExceptionEndpoint.*,**/JavaApiApiApplication.*'
 
   java-docker-build:
-    name: Build Server Docker image
+    name: Build Tasknote-api Docker image
     runs-on: ubuntu-latest
     needs: java-code-checks
     steps:
@@ -85,7 +85,7 @@ jobs:
         with:
           push: true
           context: ./server
-          tags: ghcr.io/ricardo-campos-org/react-typescript-todolist/server:candidate
+          tags: ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-api:candidate
           build-args: |
             BUILD=v${{ github.event.number }}-${{ steps.date.outputs.date }}
             SOURCE_PR=v${{ github.event.number }}-${{ github.run_id }}-${{ steps.date.outputs.date }}

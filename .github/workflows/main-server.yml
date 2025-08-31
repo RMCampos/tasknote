@@ -1,4 +1,4 @@
-name: Main Server
+name: Main Tasknote-api
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ on:
 
 jobs:
   java-code-checks:
-    name: Server Code Checks
+    name: Tasknote-api Code Checks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -77,20 +77,22 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pull image with source tag
-        run: docker pull ghcr.io/ricardo-campos-org/react-typescript-todolist/server:candidate
+        run: docker pull ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-api:candidate
 
       - name: Extract PR number using docker inspect
         id: inspect
         run: |
-          SOURCE_PR=$(docker inspect ghcr.io/ricardo-campos-org/react-typescript-todolist/server:candidate | jq -r '.[0].Config.Env[] | select(startswith("SOURCE_PR="))' | sed -n 's/SOURCE_PR=\(v[0-9]*\).*/\1/p')
+          SOURCE_PR=$(docker inspect ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-api:candidate | jq -r '.[0].Config.Env[] | select(startswith("SOURCE_PR="))' | sed -n 's/SOURCE_PR=\(v[0-9]*\).*/\1/p')
           echo "SOURCE_PR=$SOURCE_PR" >> $GITHUB_ENV
           echo "source_pr=$SOURCE_PR" >> $GITHUB_OUTPUT
 
       - name: Re-tag the image
-        run: docker tag ghcr.io/ricardo-campos-org/react-typescript-todolist/server:candidate ghcr.io/ricardo-campos-org/react-typescript-todolist/server:prod-${{ steps.inspect.outputs.source_pr }}
+        run: |
+          docker tag ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-api:candidate ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-api:prod-${{ steps.inspect.outputs.source_pr }}
+          docker tag ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-api:candidate ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-api:latest
 
       - name: Push new tag
-        run: docker push ghcr.io/ricardo-campos-org/react-typescript-todolist/server:prod-${{ steps.inspect.outputs.source_pr }}
+        run: docker push ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-api:prod-${{ steps.inspect.outputs.source_pr }}
 
       - name: Checking cURL version
         run: curl --version
@@ -108,7 +110,7 @@ jobs:
               -H "Content-Type: application/json" \
               -H "x-api-key: ${API_KEY}" \
               -d '{
-                "dockerImage": "ghcr.io/ricardo-campos-org/react-typescript-todolist/server:prod-${{ steps.inspect.outputs.source_pr }}",
+                "dockerImage": "ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-api:prod-${{ steps.inspect.outputs.source_pr }}",
                 "applicationId": "'"${SERVER_APPID}"'",
                 "username": "'"${GHCR_USERNAME}"'",
                 "password": "'"${GHCR_PASSWORD}"'",

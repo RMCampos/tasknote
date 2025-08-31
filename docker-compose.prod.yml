@@ -1,46 +1,50 @@
 ---
 
 services:
-  client:
-    container_name: client
+  tasknote-web:
+    container_name: tasknote-web
     depends_on:
-      server:
+      tasknote-api:
         condition: service_healthy
+    image: ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:candidate
+    build:
+      context: client
+      dockerfile: Dockerfile
+    ports: ["5000:5000"]
     environment:
       VITE_BACKEND_SERVER: http://localhost:8585
-      VITE_BUILD: snapshot
-    image: ghcr.io/ricardo-campos-org/react-typescript-todolist/client:candidate
-    ports: 
-      - "5000:5000"
+      VITE_BUILD: nightly
 
-  server:
-    container_name: server
+  tasknote-api:
+    container_name: tasknote-api
     depends_on:
-      db:
+      tasknote-db:
         condition: service_healthy
     environment:
       POSTGRES_DB: tasknote
-      POSTGRES_HOST: db
+      POSTGRES_HOST: tasknote-db
       POSTGRES_USER: tasknoteuser
       POSTGRES_PASSWORD: default
       POSTGRES_PORT: 5432
-      CORS_ALLOWED_ORIGINS: http://localhost:5000
+      CORS_ALLOWED_ORIGINS: http://tasknote-web:5000, http://localhost:5000
       SERVER_SERVLET_CONTEXT_PATH: /
-      SECURITY_KEY: ${SECURITY_KEY}
-      TARGET_ENV: production
-    ports:
-      - "8585:8585"
-    image: server:candidate
+      TARGET_ENV: development
+      SECURITY_KEY: this-is-a-very-long-security-key-for-dev
+      MAILGUN_APIKEY: invalid-api-key-only-placeholder
+    ports: ["8585:8585"]
+    image: ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-api:candidate
+    build:
+      context: server
+      dockerfile: Dockerfile
 
-  db:
-    container_name: db
+  tasknote-db:
+    container_name: tasknote-db
     image: postgres:15.8-bookworm
     environment:
       POSTGRES_DB: tasknote
       POSTGRES_USER: tasknoteuser
       POSTGRES_PASSWORD: default
-    ports:
-      - "5432:5432"
+    ports: ["5432:5432"]
     healthcheck:
       test: psql -q -U $${POSTGRES_USER} -d $${POSTGRES_DB} -c 'SELECT 1'
       interval: 1m30s

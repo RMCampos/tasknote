@@ -44,6 +44,9 @@ import org.springframework.context.annotation.ImportRuntimeHints;
   io.jsonwebtoken.impl.io.StandardCompressionAlgorithms.class,
   io.jsonwebtoken.impl.DefaultClaimsBuilder.class,
   io.jsonwebtoken.impl.DefaultJwtParserBuilder.class,
+  io.jsonwebtoken.impl.DefaultJwtBuilder.class,
+  io.jsonwebtoken.impl.DefaultJwtBuilder.Supplier.class,
+  io.jsonwebtoken.lang.Supplier.class,
   org.flywaydb.core.internal.publishing.PublishingConfigurationExtension.class,
 })
 @ImportRuntimeHints(value = {HttpServletRequestRuntimeHint.class})
