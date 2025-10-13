@@ -173,7 +173,8 @@ public class AuthService {
       userRepository.save(user);
       return UserResponseWithToken.fromEntity(user, token, getGravatarImageUrl(login.email()));
     } catch (BadCredentialsException e) {
-      log.error("BadCredentialsException when logging in user {}", user.getId());
+      log.error("BadCredentialsException when logging in user {}: {}", user.getId(),
+          e.getMessage());
 
       // store attempt
       UserPwdLimitEntity pwdLimit = new UserPwdLimitEntity();
