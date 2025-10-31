@@ -12,7 +12,7 @@ RUN ./mvnw -B package -Pnative -DskipTests
 
 
 ### Deployer
-FROM debian:12.11-slim AS deploy
+FROM debian:bookworm-20250929-slim AS deploy
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     ca-certificates \

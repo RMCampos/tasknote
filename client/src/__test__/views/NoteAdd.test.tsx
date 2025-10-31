@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router';
 import { I18nextProvider } from 'react-i18next';
 import NoteAdd from '../../views/NoteAdd';
@@ -10,7 +10,6 @@ import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
 import { NoteResponse } from '../../types/NoteResponse';
 import SidebarContext from '../../context/SidebarContext';
-import { beforeEach } from 'node:test';
 
 // Mock the entire api module
 vi.mock('../../api-service/api', () => ({
