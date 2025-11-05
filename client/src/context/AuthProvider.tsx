@@ -126,10 +126,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
   const refreshTokenPvt = async (): Promise<void> => {
     const bearerToken: SigninResponse | undefined = await fetchCurrentSession('/');
     if (bearerToken) {
-      const userLocal = updateUserSession(null, bearerToken.token);
-      if (userLocal) {
-        setUser(userLocal);
-      }
+      updateUserSession(null, bearerToken.token);
     }
     return Promise.resolve();
   };
