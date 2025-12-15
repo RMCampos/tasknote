@@ -1,4 +1,4 @@
-name: Main Tasknote-web
+name: Build and Push App Docker Image
 
 on:
   workflow_dispatch:
@@ -17,157 +17,56 @@ on:
       - 'client/Caddyfile'
 
 jobs:
-  tasknote-web-code-checks:
-    name: Tasknote-web Code Checks
+  build-and-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
+      - name: Checkout code
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.ref }}
 
-      - name: Set up Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: '22'
-      - name: Clean and Install
-        run: cd client && npm ci
-      - name: Build
-        run: cd client && npm run build
-      - name: Lint
-        run: cd client && npm run lint
-      - name: Unit tests
-        run: cd client && npm run test:coverage
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v6.0.0
-        with:
-          projectBaseDir: client
-          args: >
-            -Dsonar.organization=ricardo-campos-org
-            -Dsonar.projectKey=ricardo-campos-org_react-typescript-todolist_client
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-            -Dsonar.typescript.tsconfigPaths=tsconfig.json
-            -Dsonar.sources=src/
-            -Dsonar.exclusions=src/__test__/**
-            -Dsonar.tests=src/__test__/
-            -Dsonar.verbose=false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-  image-promotion-and-deploy:
-    name: Image promotion and deployment
-    runs-on: ubuntu-latest
-    env:
-      DEPLOY_DOMAIN: ${{ vars.DEPLOY_DOMAIN }}
-      GHCR_USERNAME: ${{ vars.GHCR_USERNAME }}
-      GHCR_PASSWORD: ${{ secrets.GHCR_PASSWORD }}
-      API_KEY: ${{ secrets.DOKPLOY_API_KEY }}
-      CLIENT_APPID: ${{ secrets.PROD_WEB_CLIENT_ID }}
-    steps:
-      - uses: docker/login-action@v3
-        name: Login to GitHub Container Registry
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Pull image with source tag
-        run: docker pull ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:candidate
-
-      - name: Extract PR number using docker inspect
-        id: inspect
+      - name: Generate version tag
+        id: version
         run: |
-          SOURCE_PR=$(docker inspect ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:candidate | jq -r '.[0].Config.Env[] | select(startswith("SOURCE_PR="))' | sed -n 's/SOURCE_PR=\(v[0-9]*\).*/\1/p')
-          echo "SOURCE_PR=$SOURCE_PR" >> $GITHUB_ENV
-          echo "source_pr=$SOURCE_PR" >> $GITHUB_OUTPUT
+          DATE=$(date +'%Y.%m.%d')
+          TAG="app-v${DATE}.${{ github.run_number }}"
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "Generated tag: ${TAG}"
 
-      - name: Re-tag the image
-        run: |
-          docker tag ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:candidate ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:prod-${{ steps.inspect.outputs.source_pr }}
-          docker tag ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:candidate ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:latest
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Push new tag
-        run: docker push --all-tags ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web
-
-      - name: Checking cURL version
-        run: curl --version
-
-      - name: Update image tag to be deployed
-        uses: nick-fields/retry@v3.0.2
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
         with:
-          timeout_minutes: 2
-          max_attempts: 3
-          command: |
-            response=$(curl -X POST \
-              "${DEPLOY_DOMAIN}/api/application.saveDockerProvider" \
-              --max-time 30 \
-              -H "accept: application/json" \
-              -H "Content-Type: application/json" \
-              -H "x-api-key: ${API_KEY}" \
-              -d '{
-                "dockerImage": "ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:prod-${{ steps.inspect.outputs.source_pr }}",
-                "applicationId": "'"${CLIENT_APPID}"'",
-                "username": "'"${GHCR_USERNAME}"'",
-                "password": "'"${GHCR_PASSWORD}"'",
-                "registryUrl": "ghcr.io"
-                }' \
-              -w "\n%{http_code}" \
-              -s)
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-            status_code=$(echo "$response" | tail -n1)
-            echo "Status code: $status_code"
-
-            if [ "$status_code" != "200" ]; then
-              body=$(echo "$response" | sed '$d')
-              
-              echo "Update failed with status code $status_code"
-              echo -e "Response body: $body"
-              exit 1
-            else
-              echo "Updated succeeded!"
-            fi
-
-      - name: Trigger Deployment
-        uses: nick-fields/retry@v3.0.2
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
         with:
-          timeout_minutes: 2
-          max_attempts: 3
-          command: |
-            sleep 15
+          images: ${{ secrets.DOCKER_USERNAME }}/tasknote
+          tags: |
+            type=raw,value=${{ steps.version.outputs.tag }}
+            type=raw,value=app-latest,enable={{is_default_branch}}
 
-            response=$(curl -X POST \
-              "${DEPLOY_DOMAIN}/api/application.deploy" \
-              --max-time 30 \
-              -H "accept: application/json" \
-              -H "x-api-key: ${API_KEY}" \
-              -H "Content-Type: application/json" \
-              -d "{\"applicationId\":\"${CLIENT_APPID}\"}" \
-              -w "\n%{http_code}" \
-              -s)
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./app
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-            status_code=$(echo "$response" | tail -n1)
-            echo "Status code: $status_code"
-
-            if [ "$status_code" != "200" ]; then
-              body=$(echo "$response" | sed '$d')
-              
-              echo "Deployment failed with status code $status_code"
-              echo -e "Response body: $body"
-              exit 1
-            else
-              echo "Deployment succeeded!"
-            fi
-
-      - name: Verifying post deployment
+      - name: Create and push Git tag
         run: |
-          # Wait for deployment to complete
-          sleep 15
-    
-          if ! curl -s -f "${{ vars.CLIENT_PROD_URL }}/" > /dev/null; then
-            echo "Prod environment is not healthy"
-            exit 1
-          else
-            echo "Prod environment is healthy"
-          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a ${{ steps.version.outputs.tag }} -m "Release ${{ steps.version.outputs.tag }}"
+          git push origin ${{ steps.version.outputs.tag }}
