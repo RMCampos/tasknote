@@ -1,0 +1,83 @@
+meta {
+  name: 999-Delete account
+  type: http
+  seq: 2
+}
+
+delete {
+  url: {{addr}}/rest/user-sessions/delete-account
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response time is acceptable", function() {
+    expect(res.getResponseTime()).to.be.below(3000);
+  });
+  
+  test("User deletion response is valid", function() {
+    const body = res.getBody();
+    
+    // User ID assertions
+    expect(body.userId).to.exist;
+    expect(body.userId).to.be.a('number');
+    expect(body.userId).to.be.greaterThan(0);
+    
+    // Name should be null after deletion
+    expect(body.name).to.be.null;
+    
+    // Email assertions
+    expect(body.email).to.exist;
+    expect(body.email).to.be.a('string');
+    expect(body.email).to.not.be.empty;
+    expect(body.email).to.match(/^[\w\.-]+@[\w\.-]+\.\w+$/);
+    
+    // Admin flag
+    expect(body.admin).to.exist;
+    expect(body.admin).to.be.a('boolean');
+    
+    // CreatedAt assertions
+    expect(body.createdAt).to.exist;
+    expect(body.createdAt).to.be.a('string');
+    expect(body.createdAt).to.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
+    
+    // InactivatedAt should exist and not be null (user was deleted)
+    expect(body.inactivatedAt).to.exist;
+    expect(body.inactivatedAt).to.not.be.null;
+    expect(body.inactivatedAt).to.be.a('string');
+    expect(body.inactivatedAt).to.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
+    
+    // Gravatar URL
+    expect(body.gravatarImageUrl).to.exist;
+    expect(body.gravatarImageUrl).to.be.a('string');
+    expect(body.gravatarImageUrl).to.have.lengthOf(64); // SHA-256 hash length
+  });
+  
+  test("User was inactivated after creation", function() {
+    const body = res.getBody();
+    
+    const createdAt = new Date(body.createdAt);
+    const inactivatedAt = new Date(body.inactivatedAt);
+    
+    expect(inactivatedAt).to.be.greaterThan(createdAt);
+  });
+  
+  test("Email matches the test user", function() {
+    const body = res.getBody();
+    const expectedEmail = bru.getVar("testEmail");
+    
+    expect(body.email).to.equal(expectedEmail);
+  });
+}
+
+settings {
+  encodeUrl: true
+}

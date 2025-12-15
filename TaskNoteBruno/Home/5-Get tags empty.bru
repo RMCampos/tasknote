@@ -1,0 +1,26 @@
+meta {
+  name: 5-Get tags empty
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{addr}}/rest/home/tasks/tags
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+}
+
+tests {
+  test("Response is an empty array", function() {
+    const body = res.getBody();
+    expect(body).to.be.an('array').that.is.empty;
+  });
+}
+
+settings {
+  encodeUrl: true
+}

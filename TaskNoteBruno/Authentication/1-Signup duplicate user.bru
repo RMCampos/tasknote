@@ -1,0 +1,46 @@
+meta {
+  name: 1-Signup duplicate user
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{addr}}/auth/sign-up
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "{{testEmail}}",
+    "password": "Teste@123.,",
+    "passwordAgain": "Teste@123.,",
+    "lang": "en"
+  }
+}
+
+tests {
+  test("Status code is 409", function() {
+    expect(res.getStatus()).to.equal(409);
+  });
+  
+  test("Response time is acceptable", function() {
+    expect(res.getResponseTime()).to.be.below(3000);
+  });
+  
+  test("Content type is JSON", function() {
+    expect(res.getHeader('content-type')).to.contain('application/json');
+  });
+  
+  test("Response has data property", function() {
+    const body = res.getBody();
+    expect(body).to.have.property('error');
+    expect(body).to.have.property('message');
+    expect(body.message).to.equal('Email already exists!');
+    bru.setVar("authToken", body.token);
+  });
+}
+
+settings {
+  encodeUrl: true
+}
