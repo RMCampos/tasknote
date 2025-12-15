@@ -1,0 +1,53 @@
+meta {
+  name: 3-Sign in user wrong pw
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{addr}}/auth/sign-in
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "{{testEmail}}",
+    "password": "Teste@123.,11",
+    "lang": "en"
+  }
+}
+
+tests {
+  test("Status code is 401", function() {
+    expect(res.getStatus()).to.equal(401);
+  });
+  
+  test("Response time is acceptable", function() {
+    expect(res.getResponseTime()).to.be.below(3000);
+  });
+  
+  test("Content type is JSON", function() {
+    expect(res.getHeader('content-type')).to.contain('application/json');
+  });
+  
+  test("Response has all data well set and defined", function() {
+    const body = res.getBody();
+    
+    expect(body).to.have.property('timestamp');
+    expect(body).to.have.property('status');
+    expect(body).to.have.property('error');
+    expect(body).to.have.property('message');
+    expect(body).to.have.property('path');
+    
+    expect(body.timestamp).to.not.be.null;
+    expect(body.status).to.equal(401);
+    expect(body.error).to.equal('Unauthorized');
+    expect(body.message).to.equal('Invalid credentials');
+    expect(body.path).to.equal('/auth/sign-in');
+  });
+}
+
+settings {
+  encodeUrl: true
+}

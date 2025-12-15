@@ -1,0 +1,21 @@
+meta {
+  name: ReSend Email
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{addr}}/auth/resend-email-confirmation
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "ricardompcampos@gmail.com"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

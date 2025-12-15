@@ -1,0 +1,15 @@
+meta {
+  name: Refresh
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{addr}}/rest/user-sessions/refresh
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

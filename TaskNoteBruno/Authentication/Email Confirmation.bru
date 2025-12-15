@@ -1,0 +1,21 @@
+meta {
+  name: Email Confirmation
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{addr}}/auth/email-confirmation
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "ricardompcampos@gmail.com"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

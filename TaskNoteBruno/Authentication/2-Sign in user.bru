@@ -1,0 +1,63 @@
+meta {
+  name: 2-Sign in user
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{addr}}/auth/sign-in
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "{{testEmail}}",
+    "password": "Teste@123.,",
+    "passwordAgain": "Teste@123.,",
+    "lang": "en"
+  }
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response time is acceptable", function() {
+    expect(res.getResponseTime()).to.be.below(3000);
+  });
+  
+  test("Content type is JSON", function() {
+    expect(res.getHeader('content-type')).to.contain('application/json');
+  });
+  
+  test("Response has all data well set and defined", function() {
+    const body = res.getBody();
+    
+    expect(body).to.have.property('userId');
+    expect(body).to.have.property('name');
+    expect(body).to.have.property('email');
+    expect(body).to.have.property('admin');
+    expect(body).to.have.property('createdAt');
+    expect(body).to.have.property('inactivatedAt');
+    expect(body).to.have.property('gravatarImageUrl');
+    expect(body).to.have.property('token');
+    expect(body).to.have.property('lang');
+    
+    expect(body.userId).to.be.greaterThan(0);
+    expect(body.name).to.be.null;
+    expect(body.email).to.equal(bru.getVar("testEmail"));
+    expect(body.admin).to.equal(false);
+    expect(body.createdAt).to.not.be.null;
+    expect(body.inactivatedAt).to.be.null;
+    expect(body.gravatarImageUrl).to.not.be.null;
+    expect(body.token).to.not.be.null;
+    expect(body.lang).to.equal('en');
+    bru.setVar("authToken", body.token);
+  });
+}
+
+settings {
+  encodeUrl: true
+}
