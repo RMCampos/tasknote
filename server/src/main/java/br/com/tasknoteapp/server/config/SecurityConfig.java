@@ -3,7 +3,6 @@ package br.com.tasknoteapp.server.config;
 import br.com.tasknoteapp.server.filter.JwtAuthenticationFilter;
 import br.com.tasknoteapp.server.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,12 +22,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 /** This class contains security configurations. */
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
   private final UserService userService;
 
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+  public SecurityConfig(UserService userService, JwtAuthenticationFilter jwtAuthenticationFilter) {
+    this.userService = userService;
+    this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+  }
 
   /**
    * Filters a request to add security checks and configurations.

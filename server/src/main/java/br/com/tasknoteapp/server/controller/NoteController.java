@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,11 +29,14 @@ import org.springframework.web.bind.annotation.RestController;
 /** This class provides resources to handle notes requests by the client. */
 @RestController
 @RequestMapping("/rest/notes")
-@AllArgsConstructor
 @Tag(name = "Notes", description = "Notes resources to handle stored notes.")
 public class NoteController {
 
   private final NoteService noteService;
+
+  public NoteController(NoteService noteService) {
+    this.noteService = noteService;
+  }
 
   /**
    * Get all notes.

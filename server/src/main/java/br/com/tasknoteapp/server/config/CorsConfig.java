@@ -1,7 +1,7 @@
 package br.com.tasknoteapp.server.config;
 
 import java.util.Arrays;
-import lombok.extern.slf4j.Slf4j;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
@@ -9,9 +9,10 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /** This class contains configurations for CORS management. */
-@Slf4j
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
+
+  private static final Logger logger = Logger.getLogger(CorsConfig.class.getName());
 
   @Value("${cors.allowed-origins}")
   private String[] allowedOrigins;
@@ -23,8 +24,8 @@ public class CorsConfig implements WebMvcConfigurer {
    */
   public void addCorsMappings(@NonNull CorsRegistry registry) {
     if (allowedOrigins != null && allowedOrigins.length > 0) {
-      log.info("CORS policy allowed origins: {}", Arrays.asList(allowedOrigins));
-      log.debug("CORS policy allowed origins in debug mode: {}", Arrays.asList(allowedOrigins));
+      logger.info("CORS policy allowed origins: " + Arrays.asList(allowedOrigins));
+      logger.fine("CORS policy allowed origins in debug mode: " + Arrays.asList(allowedOrigins));
 
       registry
           .addMapping("/**")

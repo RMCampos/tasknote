@@ -5,20 +5,23 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /** This class contains the implementation for the Home Service class. */
-@Slf4j
 @Service
-@AllArgsConstructor
 public class HomeService {
+
+  private static final Logger logger = Logger.getLogger(HomeService.class.getName());
 
   private final TaskService taskService;
 
-  private static final String N_TASKS_FOUND = "{} tasks found!";
+  private static final String N_TASKS_FOUND = "%d tasks found!";
+
+  public HomeService(TaskService taskService) {
+    this.taskService = taskService;
+  }
 
   /**
    * Get up to 5 most used tags.
@@ -26,10 +29,10 @@ public class HomeService {
    * @return List of String with the tags.
    */
   public List<String> getTopTasksTag() {
-    log.info("Getting top tags for the tasks");
+    logger.info("Getting top tags for the tasks");
 
     List<TaskResponse> tasks = taskService.getTasksByFilter("all");
-    log.info(N_TASKS_FOUND, tasks.size());
+    logger.info(String.format(N_TASKS_FOUND, tasks.size()));
 
     Map<String, Integer> tagsCount = new HashMap<>();
     for (TaskResponse task : tasks) {

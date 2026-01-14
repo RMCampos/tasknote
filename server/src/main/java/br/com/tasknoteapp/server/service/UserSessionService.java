@@ -9,12 +9,10 @@ import br.com.tasknoteapp.server.response.UserResponse;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /** This class contains methods to handle user session and account deletion. */
 @Service
-@AllArgsConstructor
 public class UserSessionService {
 
   private final AuthService authService;
@@ -22,6 +20,20 @@ public class UserSessionService {
   private final TaskService taskService;
 
   private final NoteService noteService;
+
+  /**
+   * Constructor for UserSessionService.
+   *
+   * @param authService the authentication service
+   * @param taskService the task service
+   * @param noteService the note service
+   */
+  public UserSessionService(
+      AuthService authService, TaskService taskService, NoteService noteService) {
+    this.authService = authService;
+    this.taskService = taskService;
+    this.noteService = noteService;
+  }
 
   /**
    * Refresh the current user session with a new JWT token.

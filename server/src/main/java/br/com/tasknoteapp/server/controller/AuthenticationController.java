@@ -16,7 +16,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.Objects;
-import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -30,10 +29,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(
     name = "Authentication",
     description = "Authentication resources to handle user authentication.")
-@AllArgsConstructor
 public class AuthenticationController {
 
   private final AuthService authService;
+
+  public AuthenticationController(AuthService authService) {
+    this.authService = authService;
+  }
 
   /**
    * Signup a new user.

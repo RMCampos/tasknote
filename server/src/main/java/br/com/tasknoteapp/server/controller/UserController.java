@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -21,11 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 /** This class contains resources for handling users admin requests. */
 @RestController
 @RequestMapping("/rest/users")
-@AllArgsConstructor
 @Tag(name = "Users", description = "Users resources to handle stored users.")
 public class UserController {
 
   private final AuthService authService;
+
+  public UserController(AuthService authService) {
+    this.authService = authService;
+  }
 
   /**
    * Get all users.

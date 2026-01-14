@@ -9,8 +9,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,14 +16,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /** This class contains resources for handling user sessions. */
-@Slf4j
 @RestController
 @RequestMapping("/rest/user-sessions")
-@AllArgsConstructor
 @Tag(name = "User Sessions", description = "Resources to handle user sessions.")
 public class UserSessionController {
 
   private final UserSessionService userSessionService;
+
+  public UserSessionController(UserSessionService userSessionService) {
+    this.userSessionService = userSessionService;
+  }
 
   /**
    * Refresh an existing user session, generating a new token.

@@ -10,7 +10,7 @@ import br.com.tasknoteapp.server.templates.MailgunTemplateSignUp;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Objects;
-import lombok.extern.slf4j.Slf4j;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -24,10 +24,10 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 /** This service handles email messages for Mailgun. */
-@Slf4j
 @Service
 public class MailgunEmailService {
 
+  private static final Logger logger = Logger.getLogger(MailgunEmailService.class.getName());
   private final RestTemplate restTemplate;
   private final String targetEnv;
   private String domain;
@@ -61,7 +61,7 @@ public class MailgunEmailService {
    * @param user The user that should be addressed the message.
    */
   public void sendNewUser(UserEntity user) {
-    log.info("Sending message confirming user email address.");
+    logger.info("Sending message confirming user email address.");
 
     String to = user.getEmail();
     String subject = "TaskNote App confirmation email";
@@ -79,7 +79,7 @@ public class MailgunEmailService {
    * @param user The user that should be addressed the message.
    */
   public void sendResetPassword(UserEntity user) {
-    log.info("Sending message with password reset link");
+    logger.info("Sending message with password reset link");
 
     String to = user.getEmail();
     String subject = "TaskNote App password reset";
@@ -97,7 +97,7 @@ public class MailgunEmailService {
    * @param user The user that should be addressed the message.
    */
   public void sendPasswordResetConfirmation(UserEntity user) {
-    log.info("Sending message with password reset confirmation");
+    logger.info("Sending message with password reset confirmation");
 
     String to = user.getEmail();
     String subject = "TaskNote App password confirmation";
@@ -114,7 +114,7 @@ public class MailgunEmailService {
    * @param oldEmail The user previous email
    */
   public void sendEmailChangedNotification(UserEntity user, String oldEmail) {
-    log.info("Sending message with changed email notification");
+    logger.info("Sending message with changed email notification");
 
     MailgunTemplateEmailChanged emailChanged = new MailgunTemplateEmailChanged();
     emailChanged.setEmailFrom(oldEmail);
@@ -151,7 +151,7 @@ public class MailgunEmailService {
     mailData.add("template", template.getName());
     if (!template.getVariables().isEmpty()) {
       mailData.add("h:X-Mailgun-Variables", template.getVariableValuesJson());
-      log.info("JSON template variables: {}", template.getVariableValuesJson());
+      logger.info("JSON template variables: " + template.getVariableValuesJson());
     }
 
     HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(mailData, headers);
@@ -163,9 +163,9 @@ public class MailgunEmailService {
         throw new MailServiceException("Failed to send email: " + response.getStatusCode());
       }
 
-      log.info("Email message send successfully.");
+      logger.info("Email message send successfully.");
     } catch (HttpClientErrorException ex) {
-      log.error("Unable to send email: {} - {}", ex.getMessage(), ex.getCause());
+      logger.severe("Unable to send email: " + ex.getMessage() + " - " + ex.getCause());
     }
   }
 

@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,10 +29,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/rest/tasks")
 @Tag(name = "Tasks", description = "Tasks resources to handle user tasks and urls.")
-@AllArgsConstructor
 public class TaskController {
 
   private final TaskService taskService;
+
+  public TaskController(TaskService taskService) {
+    this.taskService = taskService;
+  }
 
   /**
    * Get all tasks.

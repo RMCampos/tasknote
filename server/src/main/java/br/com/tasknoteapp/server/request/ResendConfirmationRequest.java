@@ -3,25 +3,49 @@ package br.com.tasknoteapp.server.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Setter;
-import lombok.ToString;
 
 /** This class represents a login request with user email and password. */
 @Schema(description = "Resend confirmation request with user email and password.")
-@Setter
 @NotNull
-@EqualsAndHashCode
-@ToString
-@AllArgsConstructor
 public class ResendConfirmationRequest {
   @Schema(description = "User email.")
   @Email
   @NotNull
-  String email;
+  private String email;
+
+  public ResendConfirmationRequest() {}
+
+  public ResendConfirmationRequest(String email) {
+    this.email = email;
+  }
 
   public String email() {
     return email.trim().toLowerCase();
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    ResendConfirmationRequest that = (ResendConfirmationRequest) o;
+    return email().equals(that.email());
+  }
+
+  @Override
+  public int hashCode() {
+    return email().hashCode();
+  }
+
+  @Override
+  public String toString() {
+    return "ResendConfirmationRequest{" + "email='" + email + '\'' + '}';
   }
 }

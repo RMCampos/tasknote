@@ -4,17 +4,19 @@ import br.com.tasknoteapp.server.entity.UserEntity;
 import br.com.tasknoteapp.server.repository.UserRepository;
 import br.com.tasknoteapp.server.service.UserService;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 /** This class contains the implementation for the User Service class. */
 @Service
-@RequiredArgsConstructor
 class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
+
+  public UserServiceImpl(UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
 
   @Override
   public UserDetailsService userDetailsService() {
