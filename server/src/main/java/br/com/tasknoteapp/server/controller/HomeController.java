@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,11 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 /** This class provides resources to handle home requests by the client. */
 @RestController
 @RequestMapping("/rest/home")
-@AllArgsConstructor
 @Tag(name = "Home", description = "Home resources to handle home page.")
 public class HomeController {
 
   private final HomeService homeService;
+
+  public HomeController(HomeService homeService) {
+    this.homeService = homeService;
+  }
 
   /**
    * Get the top 5 tags.

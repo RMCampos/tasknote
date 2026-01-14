@@ -11,12 +11,10 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /** This class represents a User in the database. */
-@Data
 @Entity
 @Table(name = "users")
 public class UserEntity implements UserDetails {
@@ -90,5 +88,111 @@ public class UserEntity implements UserDetails {
   @Override
   public boolean isEnabled() {
     return true;
+  }
+
+  // TODO: generate all Getters and Setters
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  @Override
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  public Boolean getAdmin() {
+    return admin;
+  }
+
+  public void setAdmin(Boolean admin) {
+    this.admin = admin;
+  }
+
+  public LocalDateTime getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public LocalDateTime getInactivatedAt() {
+    return inactivatedAt;
+  }
+
+  public void setInactivatedAt(LocalDateTime inactivatedAt) {
+    this.inactivatedAt = inactivatedAt;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public List<TaskEntity> getTasks() {
+    return tasks;
+  }
+
+  public void setTasks(List<TaskEntity> tasks) {
+    this.tasks = tasks;
+  }
+
+  public LocalDateTime getEmailConfirmedAt() {
+    return emailConfirmedAt;
+  }
+
+  public void setEmailConfirmedAt(LocalDateTime emailConfirmedAt) {
+    this.emailConfirmedAt = emailConfirmedAt;
+  }
+
+  public UUID getEmailUuid() {
+    return emailUuid;
+  }
+
+  public void setEmailUuid(UUID emailUuid) {
+    this.emailUuid = emailUuid;
+  }
+
+  public LocalDateTime getResetPasswordExpiration() {
+    return resetPasswordExpiration;
+  }
+
+  public void setResetPasswordExpiration(LocalDateTime resetPasswordExpiration) {
+    this.resetPasswordExpiration = resetPasswordExpiration;
+  }
+
+  public String getResetToken() {
+    return resetToken;
+  }
+
+  public void setResetToken(String resetToken) {
+    this.resetToken = resetToken;
+  }
+
+  public String getLang() {
+    return lang;
+  }
+
+  public void setLang(String lang) {
+    this.lang = lang;
   }
 }

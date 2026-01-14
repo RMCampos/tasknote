@@ -11,16 +11,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 /** This class represents a note in the database. */
-@Data
 @Entity
 @Table(name = "notes")
-@ToString
-@EqualsAndHashCode
 public class NoteEntity {
 
   @Id
@@ -44,4 +38,96 @@ public class NoteEntity {
 
   @Column(name = "last_update")
   private LocalDateTime lastUpdate;
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public UserEntity getUser() {
+    return user;
+  }
+
+  public void setUser(UserEntity user) {
+    this.user = user;
+  }
+
+  public NoteUrlEntity getNoteUrl() {
+    return noteUrl;
+  }
+
+  public void setNoteUrl(NoteUrlEntity noteUrl) {
+    this.noteUrl = noteUrl;
+  }
+
+  public String getTag() {
+    return tag;
+  }
+
+  public void setTag(String tag) {
+    this.tag = tag;
+  }
+
+  public LocalDateTime getLastUpdate() {
+    return lastUpdate;
+  }
+
+  public void setLastUpdate(LocalDateTime lastUpdate) {
+    this.lastUpdate = lastUpdate;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    NoteEntity that = (NoteEntity) o;
+    return id != null && id.equals(that.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return getClass().hashCode();
+  }
+
+  @Override
+  public String toString() {
+    return "NoteEntity{"
+        + "id="
+        + id
+        + ", title='"
+        + title
+        + '\''
+        + ", description='"
+        + description
+        + '\''
+        + ", tag='"
+        + tag
+        + '\''
+        + ", lastUpdate="
+        + lastUpdate
+        + '}';
+  }
 }

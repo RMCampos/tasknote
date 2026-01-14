@@ -16,15 +16,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.logging.Logger;
 import org.springframework.stereotype.Service;
 
 /** This class implements the NoteService interface methods. */
-@Slf4j
 @Service
-@AllArgsConstructor
 public class NoteService {
+
+  private static final Logger logger = Logger.getLogger(NoteService.class.getName());
 
   private final NoteRepository noteRepository;
 
@@ -35,6 +34,25 @@ public class NoteService {
   private final NoteUrlRepository noteUrlRepository;
 
   /**
+   * Constructor for the NoteService class.
+   *
+   * @param noteRepository The repository for note entities.
+   * @param authService The service for authentication.
+   * @param authUtil Utility class for authentication-related operations.
+   * @param noteUrlRepository The repository for note URL entities.
+   */
+  public NoteService(
+      NoteRepository noteRepository,
+      AuthService authService,
+      AuthUtil authUtil,
+      NoteUrlRepository noteUrlRepository) {
+    this.noteRepository = noteRepository;
+    this.authService = authService;
+    this.authUtil = authUtil;
+    this.noteUrlRepository = noteUrlRepository;
+  }
+
+  /**
    * Get all notes for the current user.
    *
    * @return {@link List} of {@link NoteResponse} with all notes or an empty list.
@@ -42,10 +60,10 @@ public class NoteService {
   public List<NoteResponse> getAllNotes() {
     UserEntity user = getCurrentUser();
 
-    log.info("Get all notes to user {}", user.getId());
+    logger.info("Get all notes to user " + user.getId());
 
     List<NoteEntity> notes = noteRepository.findAllByUser_id(user.getId());
-    log.info("{} notes found!", notes.size());
+    logger.info(notes.size() + " notes found!");
 
     return notes.stream().map(NoteResponse::fromEntity).toList();
   }
@@ -58,14 +76,14 @@ public class NoteService {
    */
   public NoteResponse getNoteById(Long noteId) {
     UserEntity user = getCurrentUser();
-    log.info("Get note {} to user {}", noteId, user.getId());
+    logger.info("Get note " + noteId + " to user " + user.getId());
 
     Optional<NoteEntity> task = noteRepository.findById(noteId);
     if (task.isEmpty()) {
       throw new NoteNotFoundException();
     }
 
-    log.info("Note found! Id {}", noteId);
+    logger.info("Note found! Id " + noteId);
     return NoteResponse.fromEntity(task.get());
   }
 
@@ -78,7 +96,7 @@ public class NoteService {
   public NoteEntity createNote(NoteRequest noteRequest) {
     UserEntity user = getCurrentUser();
 
-    log.info("Creating note to user {}", user.getId());
+    logger.info("Creating note to user " + user.getId());
 
     NoteEntity note = new NoteEntity();
     note.setTitle(noteRequest.title());
@@ -88,14 +106,14 @@ public class NoteService {
     note.setUser(user);
     NoteEntity created = noteRepository.save(note);
 
-    log.info("Note created! Id {}", created.getId());
+    logger.info("Note created! Id " + created.getId());
 
     if (!Objects.isNull(noteRequest.url()) && !noteRequest.url().isEmpty()) {
       NoteUrlEntity urlEntity = saveUrl(note, noteRequest.url());
       note.setNoteUrl(urlEntity);
     }
 
-    log.info("Finished note creation!");
+    logger.info("Finished note creation!");
     return created;
   }
 
@@ -110,7 +128,7 @@ public class NoteService {
   public NoteResponse patchNote(Long noteId, NotePatchRequest patch) {
     UserEntity user = getCurrentUser();
 
-    log.info("Patching task {} to user {}", noteId, user.getId());
+    logger.info("Patching task " + noteId + " to user " + user.getId());
 
     Optional<NoteEntity> note = noteRepository.findById(noteId);
     if (note.isEmpty()) {
@@ -131,19 +149,19 @@ public class NoteService {
 
     noteUrlRepository.deleteByNote_id(noteId);
     noteUrlRepository.flush();
-    log.info("URL deleted from task {}", noteId);
+    logger.info("URL deleted from task " + noteId);
 
     if (!Objects.isNull(patch.url()) && !patch.url().isBlank()) {
       NoteUrlEntity urlEntity = saveUrl(noteEntity, patch.url());
       noteEntity.setNoteUrl(urlEntity);
     } else {
-      log.info("No urls to patch for task {}", noteId);
+      logger.info("No urls to patch for task " + noteId);
     }
 
     NoteEntity patchedNote = noteRepository.save(noteEntity);
     noteRepository.flush();
 
-    log.info("Note patched! Id {}", patchedNote.getId());
+    logger.info("Note patched! Id " + patchedNote.getId());
 
     return NoteResponse.fromEntity(patchedNote);
   }
@@ -157,7 +175,7 @@ public class NoteService {
   public void deleteNote(Long noteId) {
     UserEntity user = getCurrentUser();
 
-    log.info("Deleting note {} to user {}", noteId, user.getId());
+    logger.info("Deleting note " + noteId + " to user " + user.getId());
 
     Optional<NoteEntity> note = noteRepository.findById(noteId);
     if (note.isEmpty()) {
@@ -167,14 +185,14 @@ public class NoteService {
     NoteUrlEntity noteUrl = note.get().getNoteUrl();
     if (!Objects.isNull(noteUrl)) {
       noteUrlRepository.delete(noteUrl);
-      log.info("URL Deleted from task {}", noteId);
+      logger.info("URL Deleted from task " + noteId);
     } else {
-      log.info("No urls to delete for task {}", noteId);
+      logger.info("No urls to delete for task " + noteId);
     }
 
     noteRepository.delete(note.get());
 
-    log.info("Note deleted! Id {}", noteId);
+    logger.info("Note deleted! Id " + noteId);
   }
 
   /**
@@ -186,12 +204,11 @@ public class NoteService {
   public List<NoteResponse> searchNotes(String searchTerm) {
     UserEntity user = getCurrentUser();
 
-    log.info("Searching notes to user {}", user.getId());
+    logger.info("Searching notes to user " + user.getId());
 
     List<NoteEntity> notes =
         noteRepository.findAllBySearchTerm(searchTerm.toUpperCase(), user.getId());
-    log.info("{} tasks found!", notes.size());
-
+    logger.info(notes.size() + " tasks found!");
     return notes.stream().map(NoteResponse::fromEntity).toList();
   }
 
@@ -207,7 +224,7 @@ public class NoteService {
     noteUrl.setNote(noteEntity);
 
     NoteUrlEntity savedUrl = noteUrlRepository.save(noteUrl);
-    log.info("URL saved to note {}", noteEntity.getId());
+    logger.info("URL saved to note " + noteEntity.getId());
 
     return savedUrl;
   }
