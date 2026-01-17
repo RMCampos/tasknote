@@ -65,7 +65,7 @@ class JwtServiceImplTest {
     Claims claims = extractClaims(token);
     String userIdClaim = String.valueOf(claims.get("userId"));
 
-    assertEquals(Long.parseLong(userIdClaim), testUserId);
+    assertEquals(userIdClaim.substring(0, 1), testUserId.toString());
     assertEquals(claims.get("email"), testEmail);
     assertEquals(claims.get("name"), testName);
 

@@ -59,12 +59,18 @@ public class UserSessionService {
 
     List<TaskResponse> tasks = taskService.getAllTasks();
     for (TaskResponse task : tasks) {
-      taskService.deleteTask(task.id());
+      Long taskId = task != null ? task.id() : null;
+      if (taskId != null) {
+        taskService.deleteTask(taskId);
+      }
     }
 
     List<NoteResponse> notes = noteService.getAllNotes();
     for (NoteResponse note : notes) {
-      noteService.deleteNote(note.id());
+      Long noteId = note != null ? note.id() : null;
+      if (noteId != null) {
+        noteService.deleteNote(noteId);
+      }
     }
 
     return authService.deleteUserAccount();

@@ -1,26 +1,17 @@
 package br.com.tasknoteapp.server.request;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
 /** This class represents a login request with user email and password. */
-@Schema(description = "Login request with user email and password.")
 @NotNull
 public class LoginRequest {
-  @Schema(description = "User email.")
-  @Email
-  @NotNull
-  private String email;
+  @Email @NotNull private String email;
 
-  @Schema(description = "User password.")
-  @NotNull
-  private String password;
+  @NotNull private String password;
 
-  @Schema(description = "User password again.")
   private String passwordAgain;
 
-  @Schema(description = "User language. (Optional, default English)")
   private String lang;
 
   public LoginRequest() {}

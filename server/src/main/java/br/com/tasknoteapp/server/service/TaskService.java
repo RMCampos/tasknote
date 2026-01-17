@@ -19,14 +19,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 /** This class contains the implementation for the Task Service class. */
 @Service
 public class TaskService {
 
-  private static final Logger logger = Logger.getLogger(TaskService.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(TaskService.class);
 
   private final TaskRepository taskRepository;
 
@@ -78,7 +80,7 @@ public class TaskService {
    * @param taskId The task id in the database.
    * @return {@link TaskResponse} with the found task or throw a {@link TaskNotFoundException}.
    */
-  public TaskResponse getTaskById(Long taskId) {
+  public TaskResponse getTaskById(@NonNull Long taskId) {
     UserEntity user = getCurrentUser();
     logger.info("Get task " + taskId + " to user " + user.getId());
 
@@ -129,7 +131,7 @@ public class TaskService {
    * @return {@link TaskResponse} with the updated content.
    */
   @Transactional
-  public TaskResponse patchTask(Long taskId, TaskPatchRequest patch) {
+  public TaskResponse patchTask(@NonNull Long taskId, TaskPatchRequest patch) {
     UserEntity user = getCurrentUser();
 
     logger.info("Patching task " + taskId + " to user " + user.getId());
@@ -175,7 +177,7 @@ public class TaskService {
    * @param taskId The task id in the database
    */
   @Transactional
-  public void deleteTask(Long taskId) {
+  public void deleteTask(@NonNull Long taskId) {
     UserEntity user = getCurrentUser();
 
     logger.info("Deleting task " + taskId + " to user " + user.getId());
@@ -185,7 +187,9 @@ public class TaskService {
       throw new TaskNotFoundException();
     }
 
-    List<TaskUrlEntity> urlsToDelete = taskUrlRepository.findAllById_taskId(taskId);
+    TaskEntity taskEntity = task.get();
+
+    List<TaskUrlEntity> urlsToDelete = taskUrlRepository.findAllById_taskId(taskEntity.getId());
     if (!urlsToDelete.isEmpty()) {
       taskUrlRepository.deleteAllById_taskId(taskId);
       logger.info("Deleted " + urlsToDelete.size() + " urls from task " + taskId);
@@ -193,7 +197,7 @@ public class TaskService {
       logger.info("No urls to delete for task " + taskId);
     }
 
-    taskRepository.delete(task.get());
+    taskRepository.delete(taskEntity);
 
     logger.info("Task deleted! Id " + taskId);
   }
@@ -295,7 +299,7 @@ public class TaskService {
       try {
         taskEntity.setDueDate(LocalDate.parse(patch.dueDate()));
       } catch (DateTimeParseException e) {
-        logger.severe(
+        logger.error(
             "Unable to parse the provided date: " + patch.dueDate() + ": " + e.getMessage());
       }
     }

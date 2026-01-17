@@ -6,13 +6,15 @@ services:
     depends_on:
       tasknote-api:
         condition: service_healthy
-    image: ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:candidate
+    image: docker.io/rmcampos/tasknote:app-latest
     build:
       context: client
       dockerfile: Dockerfile
     ports: ["5000:5000"]
     environment:
-      VITE_BACKEND_SERVER: http://localhost:8585
+      VITE_BACKEND_SERVER: http://tasknote-api:8585
+    networks:
+      - tasknote-network
 
   tasknote-api:
     container_name: tasknote-api
@@ -31,10 +33,12 @@ services:
       SECURITY_KEY: this-is-a-very-long-security-key-for-dev
       MAILGUN_APIKEY: invalid-api-key-only-placeholder
     ports: ["8585:8585"]
-    image: ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-api:candidate
+    image: docker.io/rmcampos/tasknote:api-latest
     build:
       context: server
       dockerfile: Dockerfile
+    networks:
+      - tasknote-network
 
   tasknote-db:
     container_name: tasknote-db
@@ -50,3 +54,9 @@ services:
       timeout: 15s
       retries: 3
       start_period: 10s
+    networks:
+      - tasknote-network
+
+networks:
+  tasknote-network:
+    driver: bridge

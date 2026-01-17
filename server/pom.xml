@@ -11,7 +11,7 @@
   
   <groupId>br.com.tasknoteapp</groupId>
   <artifactId>server</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>2.0.0</version>
   <name>tasknote-api</name>
   <description>Java backend REST API to serve TaskNote frontend client</description>
   
@@ -27,6 +27,13 @@
   <developers>
     <developer/>
   </developers>
+
+  <scm>
+    <connection/>
+    <developerConnection/>
+    <tag/>
+    <url/>
+  </scm>
   
   <!-- Properties -->
   <properties>
@@ -42,9 +49,6 @@
     <jacoco.output.data>${project.build.directory}/coverage-reports</jacoco.output.data>
     <timestamp>${maven.build.timestamp}</timestamp>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
-    <hibernate.version>6.6.34.Final</hibernate.version>
-    <sonar.organization>ricardo-campos-org</sonar.organization>
-    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
   </properties>
 
   <!-- Profiles -->
@@ -67,34 +71,6 @@
       <properties>
         <build.profile.id>prod</build.profile.id>
       </properties>
-    </profile>
-
-    <!-- Native -->
-    <profile>
-      <id>native</id>
-      <properties>
-        <build.profile.id>native</build.profile.id>
-        <skip.integration.tests>true</skip.integration.tests>
-        <skip.unit.tests>true</skip.unit.tests>
-        <jacoco.skip>true</jacoco.skip>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.graalvm.buildtools</groupId>
-            <artifactId>native-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>build-native</id>
-                <goals>
-                  <goal>compile-no-fork</goal>
-                </goals>
-                <phase>package</phase>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
   </profiles>
 
@@ -119,20 +95,6 @@
       <artifactId>spring-boot-starter-mail</artifactId>
     </dependency>
 
-    <!-- Devtools -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-devtools</artifactId>
-      <scope>runtime</scope>
-      <optional>true</optional>
-    </dependency>
-
-    <!-- OOps & Tools -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-actuator</artifactId>
-    </dependency>
-
     <!-- Database -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -141,6 +103,7 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.flywaydb</groupId>
@@ -168,28 +131,21 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- Documentation -->
-    <dependency>
-      <groupId>org.springdoc</groupId>
-      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-      <version>2.8.13</version>
-    </dependency>
-
     <!-- Authentication -->
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-api</artifactId>
-      <version>0.13.0</version>
+      <version>0.12.6</version>
     </dependency>
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-impl</artifactId>
-      <version>0.13.0</version>
+      <version>0.12.6</version>
     </dependency>
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
-      <artifactId>jjwt-jackson</artifactId>
-      <version>0.13.0</version>
+      <artifactId>jjwt-gson</artifactId>
+      <version>0.12.6</version>
     </dependency>
 
   </dependencies>
@@ -359,55 +315,6 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.12.0</version>
-        <configuration>
-          <source>17</source>
-          <doctitle>Javadoc Documentation for ${project.name} ${project.version}</doctitle>
-          <windowtitle>${project.name} ${project.version}</windowtitle>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.6.2</version>
-        <executions>
-          <execution>
-            <id>default-cli</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <dependencyConvergence/>
-                <requireMavenVersion>
-                  <version>[3.2,)</version>
-                  <message>Invalid Maven version. It should be at least 3.2</message>
-                </requireMavenVersion>
-                <requireJavaVersion>
-                  <version>17</version>
-                  <message>Invalid Java Version. It should be at least 1.8</message>
-                </requireJavaVersion>
-                <requireNoRepositories>
-                  <allowedRepositories>
-                    <id>central</id>
-                  </allowedRepositories>
-                  <allowedPluginRepositories>
-                    <id>central</id>
-                  </allowedPluginRepositories>
-                </requireNoRepositories>
-                <requireReleaseDeps>
-                  <message>No Snapshots Allowed in releases!</message>
-                  <onlyWhenRelease>true</onlyWhenRelease>
-                </requireReleaseDeps>
-                <banDuplicatePomDependencyVersions/>
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>3.6.0</version>
         <dependencies>
@@ -436,6 +343,26 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.graalvm.buildtools</groupId>
+        <artifactId>native-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <execution>
+              <goals>
+                  <goal>build-info</goal>
+              </goals>
+              <configuration>
+                  <additionalProperties>
+                      <timestamp>${maven.build.timestamp}</timestamp>
+                  </additionalProperties>
+              </configuration>
+          </execution>
+      </executions>
       </plugin>
     </plugins>
 

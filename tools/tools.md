@@ -151,3 +151,23 @@ Angular dependencies:
 
 - First run: `npx @angular/cli update @angular/cli @angular/core`
 - Then run `npx npm-check-updates -u`
+
+---
+
+Build with:
+mvn -Pnative -DskipTests spring-boot:build-image \
+  -Dspring-boot.build-image.imageName=rmcampos/tasknote:api-latest 
+
+Run with:
+docker run --rm -p 8080:8080 \
+  -e SPRING_PROFILES_ACTIVE=native \
+  -e POSTGRES_HOST=localhost \
+  -e POSTGRES_PORT=5432 \
+  -e POSTGRES_DB=tasknote \
+  -e POSTGRES_USER=tasknoteuser \
+  -e POSTGRES_PASSWORD=default \
+  -e SECURITY_KEY=9052e499446dac5fa2d69dd07f1f6381a360c646c63d555244c3a2911494f63a \
+  -e CORS_ALLOWED_ORIGINS=http://localhost:5000 \
+  -e SERVER_SERVLET_CONTEXT_PATH=/ \
+  --network host \
+  docker.io/rmcampos/tasknote:api-latest
