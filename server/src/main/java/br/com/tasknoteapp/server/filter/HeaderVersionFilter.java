@@ -1,11 +1,12 @@
 package br.com.tasknoteapp.server.filter;
 
+import br.com.tasknoteapp.server.service.AppVersionService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -14,8 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class HeaderVersionFilter extends OncePerRequestFilter {
 
-  @Value("${br.com.tasknote.server.version}")
-  private String apiBuildInfo;
+  @Autowired private AppVersionService appVersionService;
 
   @Override
   protected void doFilterInternal(
@@ -23,7 +23,7 @@ public class HeaderVersionFilter extends OncePerRequestFilter {
       @NonNull HttpServletResponse response,
       @NonNull FilterChain filterChain)
       throws ServletException, IOException {
-    response.setHeader("X-BUILD-INFO", apiBuildInfo);
+    response.setHeader("X-BUILD-INFO", appVersionService.getVersion());
     filterChain.doFilter(request, response);
   }
 }

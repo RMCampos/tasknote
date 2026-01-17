@@ -8,12 +8,11 @@ vars:
 tasks:
   docker-build-web:
     desc: Build the tasknote-web prod-ready docker image, tagging it as candidate
-    cmd: docker build --no-cache --build-arg VITE_BUILD="v999-$(date '+%Y-%m-%d-%H%M%S')" --build-arg SOURCE_PR="v999-123456789-$(date '+%Y-%m-%d-%H%M%S')" -t ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-web:candidate ./client
+    cmd: docker build --no-cache --build-arg VITE_BUILD="v999-$(date '+%Y-%m-%d-%H%M%S')" --build-arg SOURCE_PR="v999-123456789-$(date '+%Y-%m-%d-%H%M%S')" -t docker.io/rmcampos/tasknote:app-latest ./client
 
   docker-build-api:
     desc: Build the tasknote-api prod-ready docker image, tagging it as candidate
-    cmd: docker build --no-cache --build-arg BUILD="v999-$(date '+%Y-%m-%d-%H%M%S')" --build-arg SOURCE_PR="v999-123456789-$(date '+%Y-%m-%d-%H%M%S')" -t ghcr.io/ricardo-campos-org/react-typescript-todolist/tasknote-api:candidate ./server
-
+    cmd: docker build --no-cache --build-arg BUILD="v999-$(date '+%Y-%m-%d-%H%M%S')" --build-arg SOURCE_PR="v999-123456789-$(date '+%Y-%m-%d-%H%M%S')" -t docker.io/rmcampos/tasknote:api-latest ./server
   prod-up-web:
     desc: Speed up the tasknote-web prod-like image, building it if required
     cmd: docker compose -f docker-compose.prod.yml up -d tasknote-web

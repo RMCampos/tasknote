@@ -1,4 +1,0 @@
-FROM maven:3.9.9-eclipse-temurin-17
-WORKDIR /app
-HEALTHCHECK CMD timeout 10s bash -c 'true > /dev/tcp/127.0.0.1/8585'
-CMD ["sh", "run-from-docker.sh"]

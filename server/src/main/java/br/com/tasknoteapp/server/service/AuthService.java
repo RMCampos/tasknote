@@ -33,7 +33,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -48,7 +49,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
 
-  private static final Logger logger = Logger.getLogger(AuthService.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
   private final UserRepository userRepository;
 
@@ -105,7 +106,7 @@ public class AuthService {
    */
   @Transactional
   public UserResponseWithToken signUpNewUser(LoginRequest newUser) {
-    logger.info("Signing up new user: " + newUser.email());
+    logger.info("Signing up new user: {}", newUser.email());
 
     if (findByEmail(newUser.email()).isPresent()) {
       throw new EmailAlreadyExistsException();
@@ -203,8 +204,8 @@ public class AuthService {
       userRepository.save(user);
       return UserResponseWithToken.fromEntity(user, token, getGravatarImageUrl(login.email()));
     } catch (BadCredentialsException e) {
-      logger.severe(
-          "BadCredentialsException when logging in user " + user.getId() + ": " + e.getMessage());
+      logger.error(
+          "BadCredentialsException when logging in user {}: {}", user.getId(), e.getMessage());
 
       // store attempt
       UserPwdLimitEntity pwdLimit = new UserPwdLimitEntity();
@@ -225,28 +226,28 @@ public class AuthService {
   public List<UserResponse> getAllUsers() {
     Optional<String> currentUserEmail = authUtil.getCurrentUserEmail();
     if (currentUserEmail.isEmpty()) {
-      logger.severe("Unable to get current user from the request");
+      logger.error("Unable to get current user from the request");
       throw new UserNotFoundException();
     }
 
     Optional<UserEntity> currentUserOpt = findByEmail(currentUserEmail.get());
     if (currentUserOpt.isEmpty()) {
-      logger.severe("Unable to find user by email with value: " + currentUserEmail.get());
+      logger.error("Unable to find user by email with value: {}", currentUserEmail.get());
       throw new UserNotFoundException();
     }
 
     UserEntity currentUser = currentUserOpt.get();
     if (!currentUser.getAdmin()) {
-      logger.warning("User " + currentUser.getId() + " not allowed to list users.");
+      logger.warn("User {} not allowed to list users.", currentUser.getId());
       throw new UserForbiddenException();
     }
 
-    logger.info("Getting all users to user " + currentUser.getId());
+    logger.info("Getting all users to user {}", currentUser.getId());
     List<UserEntity> users = userRepository.findAll();
     List<UserResponse> usersResponse = new ArrayList<>(users.size());
     users.forEach(
         u -> usersResponse.add(UserResponse.fromEntity(u, getGravatarImageUrl(u.getEmail()))));
-    logger.info(usersResponse.size() + " user(s) found!");
+    logger.info("{} user(s) found!", usersResponse.size());
 
     return usersResponse;
   }
@@ -261,11 +262,11 @@ public class AuthService {
     String email = currentUserEmail.orElseThrow();
     UserEntity currentUser = findByEmail(email).orElseThrow();
 
-    logger.info("Refreshing current session to user " + currentUser.getId());
+    logger.info("Refreshing current session to user {}", currentUser.getId());
 
     String token = jwtService.generateToken(currentUser);
 
-    logger.info("User refreshed! Token " + token);
+    logger.info("User refreshed! Token {}", token);
     return token;
   }
 
@@ -279,7 +280,7 @@ public class AuthService {
     String email = currentUserEmail.orElseThrow();
     UserEntity currentUser = findByEmail(email).orElseThrow();
 
-    logger.info("Deleting account for user " + currentUser.getId());
+    logger.info("Deleting account for user {}", currentUser.getId());
 
     currentUser.setInactivatedAt(LocalDateTime.now());
     userPwdLimitRepository.deleteAllForUser(currentUser.getId());
@@ -336,7 +337,7 @@ public class AuthService {
       shouldUpdate = true;
     }
 
-    if (shouldUpdate) {
+    if (shouldUpdate && currentUser != null) {
       userRepository.save(currentUser);
     }
 
@@ -503,10 +504,10 @@ public class AuthService {
         }
         hexString.append(hex);
       }
-      logger.fine("Email hashed: " + hexString);
+      logger.debug("Email hashed: {}", hexString);
       return Optional.of(hexString.toString());
     } catch (NoSuchAlgorithmException | NullPointerException e) {
-      logger.severe("NoSuchAlgorithmException or NullPointerException: " + e.getMessage());
+      logger.error("NoSuchAlgorithmException or NullPointerException: {}", e.getMessage());
     }
     return Optional.empty();
   }
@@ -515,15 +516,15 @@ public class AuthService {
     Sort sort = Sort.by(Direction.DESC, "whenHappened");
     List<UserPwdLimitEntity> userPwdList = userPwdLimitRepository.findAllByUser_id(userId, sort);
 
-    logger.warning("login count attempt for user " + userId + ": " + userPwdList.size());
+    logger.warn("login count attempt for user {}: {}", userId, userPwdList.size());
 
     // if it's more than 3 times in the last 10 minutes, raise timer of 3 hours.
     if (userPwdList.size() >= 3) {
       UserPwdLimitEntity mostRecent = userPwdList.get(0);
-      logger.warning("Oldest: " + mostRecent.getWhenHappened());
+      logger.warn("Oldest: {}", mostRecent.getWhenHappened());
       Duration duration = Duration.between(mostRecent.getWhenHappened(), LocalDateTime.now());
       if (duration.toMinutes() <= 3L) {
-        logger.warning("Wait more " + (3L - duration.toMinutes()));
+        logger.warn("Wait more {}", 3L - duration.toMinutes());
         throw new MaxLoginLimitAttemptException();
       }
     }

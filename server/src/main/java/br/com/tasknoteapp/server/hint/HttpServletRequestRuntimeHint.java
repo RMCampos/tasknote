@@ -1,4 +1,4 @@
-package br.com.tasknoteapp.server.config;
+package br.com.tasknoteapp.server.hint;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.aot.hint.ProxyHints;

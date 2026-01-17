@@ -10,7 +10,8 @@ import br.com.tasknoteapp.server.templates.MailgunTemplateSignUp;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Objects;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -27,7 +28,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class MailgunEmailService {
 
-  private static final Logger logger = Logger.getLogger(MailgunEmailService.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(MailgunEmailService.class);
   private final RestTemplate restTemplate;
   private final String targetEnv;
   private String domain;
@@ -151,7 +152,7 @@ public class MailgunEmailService {
     mailData.add("template", template.getName());
     if (!template.getVariables().isEmpty()) {
       mailData.add("h:X-Mailgun-Variables", template.getVariableValuesJson());
-      logger.info("JSON template variables: " + template.getVariableValuesJson());
+      logger.info("JSON template variables: {}", template.getVariableValuesJson());
     }
 
     HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(mailData, headers);
@@ -165,7 +166,7 @@ public class MailgunEmailService {
 
       logger.info("Email message send successfully.");
     } catch (HttpClientErrorException ex) {
-      logger.severe("Unable to send email: " + ex.getMessage() + " - " + ex.getCause());
+      logger.error("Unable to send email: {} - {}", ex.getMessage(), ex.getCause());
     }
   }
 

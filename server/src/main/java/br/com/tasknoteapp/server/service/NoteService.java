@@ -16,14 +16,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 /** This class implements the NoteService interface methods. */
 @Service
 public class NoteService {
 
-  private static final Logger logger = Logger.getLogger(NoteService.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(NoteService.class);
 
   private final NoteRepository noteRepository;
 
@@ -74,7 +76,7 @@ public class NoteService {
    * @param noteId The task id in the database.
    * @return {@link NoteResponse} with the found task or throw a {@link TaskNotFoundException}.
    */
-  public NoteResponse getNoteById(Long noteId) {
+  public NoteResponse getNoteById(@NonNull Long noteId) {
     UserEntity user = getCurrentUser();
     logger.info("Get note " + noteId + " to user " + user.getId());
 
@@ -125,7 +127,7 @@ public class NoteService {
    * @return {@link NoteResponse} containing the updated note.
    */
   @Transactional
-  public NoteResponse patchNote(Long noteId, NotePatchRequest patch) {
+  public NoteResponse patchNote(@NonNull Long noteId, NotePatchRequest patch) {
     UserEntity user = getCurrentUser();
 
     logger.info("Patching task " + noteId + " to user " + user.getId());
@@ -172,7 +174,7 @@ public class NoteService {
    * @param noteId The note id from the database.
    */
   @Transactional
-  public void deleteNote(Long noteId) {
+  public void deleteNote(@NonNull Long noteId) {
     UserEntity user = getCurrentUser();
 
     logger.info("Deleting note " + noteId + " to user " + user.getId());
@@ -182,7 +184,9 @@ public class NoteService {
       throw new NoteNotFoundException();
     }
 
-    NoteUrlEntity noteUrl = note.get().getNoteUrl();
+    NoteEntity noteEntity = note.get();
+
+    NoteUrlEntity noteUrl = noteEntity.getNoteUrl();
     if (!Objects.isNull(noteUrl)) {
       noteUrlRepository.delete(noteUrl);
       logger.info("URL Deleted from task " + noteId);
@@ -190,7 +194,7 @@ public class NoteService {
       logger.info("No urls to delete for task " + noteId);
     }
 
-    noteRepository.delete(note.get());
+    noteRepository.delete(noteEntity);
 
     logger.info("Note deleted! Id " + noteId);
   }

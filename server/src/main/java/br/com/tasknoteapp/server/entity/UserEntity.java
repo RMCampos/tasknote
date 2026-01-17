@@ -90,7 +90,6 @@ public class UserEntity implements UserDetails {
     return true;
   }
 
-  // TODO: generate all Getters and Setters
   public Long getId() {
     return id;
   }

@@ -5,15 +5,16 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /** This class contains the implementation for the Home Service class. */
 @Service
 public class HomeService {
 
-  private static final Logger logger = Logger.getLogger(HomeService.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(HomeService.class);
 
   private final TaskService taskService;
 
