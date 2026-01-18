@@ -43,6 +43,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@SuppressWarnings("null")
 @ExtendWith(SpringExtension.class)
 class AuthServiceTest {
 

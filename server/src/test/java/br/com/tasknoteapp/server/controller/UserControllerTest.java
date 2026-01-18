@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@SuppressWarnings("null")
 class UserControllerTest {
 
   @Autowired private MockMvc mockMvc;
