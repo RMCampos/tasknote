@@ -27,6 +27,7 @@ class HomeControllerTest {
   @MockitoBean private HomeService homeService;
 
   @Test
+  @SuppressWarnings("null")
   @DisplayName("Get task tags following the happy path it should succeed")
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
   void getTasksTags_happyPath_shouldSucceed() throws Exception {
@@ -45,6 +46,7 @@ class HomeControllerTest {
   }
 
   @Test
+  @SuppressWarnings("null")
   @DisplayName("Get task tags not authorized it should fail")
   void getTasksTags_notAuthorized_shouldSucceed() throws Exception {
     mockMvc

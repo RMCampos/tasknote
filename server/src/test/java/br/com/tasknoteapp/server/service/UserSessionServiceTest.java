@@ -18,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@SuppressWarnings("null")
 @ExtendWith(SpringExtension.class)
 class UserSessionServiceTest {
 
