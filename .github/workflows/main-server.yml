@@ -23,6 +23,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set lowercase repo name
+        id: repo
+        run: echo "name=${GITHUB_REPOSITORY,,}" >> $GITHUB_OUTPUT
+
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
@@ -67,13 +71,13 @@ jobs:
         working-directory: ./server
         run: |
           ./mvnw -Pnative -DskipTests spring-boot:build-image \
-            -Dspring-boot.build-image.imageName=ghcr.io/${{ github.repository }}/api:latest
+            -Dspring-boot.build-image.imageName=ghcr.io/${{ steps.repo.outputs.name }}/api:latest
 
       - name: Tag and push Docker image
         run: |
-          docker tag ghcr.io/${{ github.repository }}/api:latest ghcr.io/${{ github.repository }}/api:${{ steps.version.outputs.version }}
-          docker push ghcr.io/${{ github.repository }}/api:latest
-          docker push ghcr.io/${{ github.repository }}/api:${{ steps.version.outputs.version }}
+          docker tag ghcr.io/${{ steps.repo.outputs.name }}/api:latest ghcr.io/${{ steps.repo.outputs.name }}/api:${{ steps.version.outputs.version }}
+          docker push ghcr.io/${{ steps.repo.outputs.name }}/api:latest
+          docker push ghcr.io/${{ steps.repo.outputs.name }}/api:${{ steps.version.outputs.version }}
 
       - name: Create and push Git tag
         run: |
