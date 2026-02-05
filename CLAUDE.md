@@ -87,9 +87,11 @@ bash tools/check-backend.sh      # Run backend quality checks
 ### Using Taskfile
 Alternatively, use the Taskfile.yml for automated workflows:
 ```bash
-task dev          # Start development environment (docker-compose.dev.yml)
-task prod         # Start production environment (docker-compose.prod.yml)
-task docker-build # Build all Docker images
+task dev-run          # Start development environment (docker-compose.dev.yml)
+task prod-up          # Start production environment (docker-compose.prod.yml)
+task docker-build-api # Build server Docker image
+task docker-build-web # Build app Docker image
+task -l               # List all available tasks
 ```
 
 ### Quality Checks
