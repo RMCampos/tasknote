@@ -40,12 +40,13 @@ bash tools/check-backend.sh      # Run backend quality checks
 
 ### Monorepo Structure
 - `client/` - React TypeScript frontend (Vite + Vitest)
-- `server/` - Java Spring Boot REST API 
-- `angular/` - Alternative Angular frontend (separate implementation)
+- `server/` - Java Spring Boot REST API
 - `tools/` - Development and deployment scripts
-- `docker-compose.yml` - Multi-service development environment
+- `docker-compose.dev.yml` / `docker-compose.prod.yml` - Multi-service development and production environments
+- `Taskfile.yml` - Task automation for docker builds and workflows
 
 ### Frontend Architecture (client/)
+- **Framework**: React 19 with React Router v7
 - **State Management**: React Context API for authentication and sidebar state
 - **Authentication**: JWT tokens stored in localStorage with automatic refresh (2-minute intervals)
 - **Routing**: Dynamic router configuration based on auth status (signed vs not-signed routes)
@@ -55,11 +56,10 @@ bash tools/check-backend.sh      # Run backend quality checks
 - **API Layer**: Centralized API service in `src/api-service/api.ts` with automatic auth headers
 
 ### Backend Architecture (server/)
-- **Framework**: Spring Boot 3.5+ with Java 17
+- **Framework**: Spring Boot 3.5.9 with Java 21
 - **Security**: Spring Security with JWT authentication
-- **Database**: PostgreSQL with JPA/Hibernate and Flyway migrations  
+- **Database**: PostgreSQL with JPA/Hibernate and Flyway migrations
 - **Testing**: Separate unit tests and integration tests with 75% coverage requirement
-- **Documentation**: OpenAPI/Swagger UI available at `/swagger-ui.html`
 - **Build Options**: Traditional JAR or GraalVM native image compilation
 
 ### Key Components
@@ -78,11 +78,21 @@ bash tools/check-backend.sh      # Run backend quality checks
 
 ## Development Workflow
 
+### Manual Setup
 1. Start database: `bash tools/run-docker-db.sh`
 2. Start backend: `bash tools/run-docker-server.sh` or `cd server && ./mvnw spring-boot:run`
 3. Start frontend: `bash tools/run-docker-client.sh` or `cd client && npm start`
 4. Access app at http://localhost:5000
 
+### Using Taskfile
+Alternatively, use the Taskfile.yml for automated workflows:
+```bash
+task dev          # Start development environment (docker-compose.dev.yml)
+task prod         # Start production environment (docker-compose.prod.yml)
+task docker-build # Build all Docker images
+```
+
+### Quality Checks
 Always run quality checks before submitting changes:
 - Frontend: `bash tools/check-frontend.sh`
 - Backend: `bash tools/check-backend.sh`
