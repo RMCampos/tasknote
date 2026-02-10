@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Card,
   Col,
   Container,
   Form,
+  InputGroup,
+  ListGroup,
   Row
 } from 'react-bootstrap';
+import { Hash } from 'react-bootstrap-icons';
 import { useNavigate, useParams } from 'react-router';
 import TaskNoteRequest from '../../types/TaskNoteRequest';
 import { TaskResponse } from '../../types/TaskResponse';
@@ -35,9 +38,22 @@ function TaskAdd(): React.ReactNode {
   const [dueDate, setDueDate] = useState<Date | null>(null);
   const [highPriority, setHighPriority] = useState<boolean>(false);
   const [tag, setTag] = useState<string>('');
+  const [tags, setTags] = useState<string[]>([]);
+  const [showTagDropdown, setShowTagDropdown] = useState<boolean>(false);
   const { i18n, t } = useTranslation();
   const params = useParams();
   const navigate = useNavigate();
+  const tagContainerRef = useRef<HTMLDivElement>(null);
+
+  const loadTags = async (): Promise<void> => {
+    try {
+      const response: string[] = await api.getJSON(`${ApiConfig.homeUrl}/tasks/tags`);
+      setTags(response);
+    }
+    catch (_e) {
+      // silently ignore tag loading errors
+    }
+  };
 
   /**
    * Handles errors by setting the error message and form invalid state.
@@ -190,7 +206,19 @@ function TaskAdd(): React.ReactNode {
   };
 
   useEffect(() => {
+    loadTags();
     checkEditUrl();
+
+    const handleClickOutside = (event: MouseEvent): void => {
+      if (tagContainerRef.current && !tagContainerRef.current.contains(event.target as Node)) {
+        setShowTagDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   return (
@@ -267,19 +295,57 @@ function TaskAdd(): React.ReactNode {
                     />
                   </Col>
                   <Col xs={12} sm={6} xxl={3}>
-                    {/* Tag */}
-                    <FormInput
-                      labelText="Tag"
-                      iconName="Hash"
-                      required={false}
-                      type="text"
-                      name="tag"
-                      placeholder="my-tag (Optional)"
-                      value={tag}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setTag(e.target.value);
-                      }}
-                    />
+                    {/* Tag with suggestion dropdown */}
+                    <Form.Group className="mb-3" ref={tagContainerRef} style={{ position: 'relative' }}>
+                      <Form.Label>Tag</Form.Label>
+                      <InputGroup className="mb-3">
+                        <InputGroup.Text>
+                          <Hash />
+                        </InputGroup.Text>
+                        <Form.Control
+                          type="text"
+                          name="tag"
+                          placeholder="my-tag (Optional)"
+                          value={tag}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            setTag(e.target.value);
+                            setShowTagDropdown(true);
+                          }}
+                          onFocus={() => setShowTagDropdown(true)}
+                          autoComplete="off"
+                        />
+                      </InputGroup>
+                      {showTagDropdown && tags.filter(t => t.toLowerCase().includes(tag.toLowerCase())).length > 0 && (
+                        <ListGroup
+                          style={{
+                            position: 'absolute',
+                            zIndex: 1000,
+                            width: '100%',
+                            maxHeight: '200px',
+                            overflowY: 'auto',
+                            top: '100%',
+                            left: 0
+                          }}
+                        >
+                          {tags
+                            .filter(t => t.toLowerCase().includes(tag.toLowerCase()))
+                            .map(t => (
+                              <ListGroup.Item
+                                key={t}
+                                action
+                                onMouseDown={(e: React.MouseEvent) => {
+                                  e.preventDefault();
+                                  setTag(t);
+                                  setShowTagDropdown(false);
+                                }}
+                              >
+                                #
+                                {t}
+                              </ListGroup.Item>
+                            ))}
+                        </ListGroup>
+                      )}
+                    </Form.Group>
                   </Col>
                 </Row>
 
