@@ -105,14 +105,17 @@ function Home(): React.ReactNode {
   };
 
   /**
-   * Filter notes by a given text.
+   * Apply filters to a given set of tasks and notes, updating displayed state.
+   *
+   * @param {string} text - The text to filter by.
+   * @param {string | undefined} radioFilter - The radio filter option.
+   * @param {TaskResponse[]} allTasks - The full list of tasks to filter from.
+   * @param {NoteResponse[]} allNotes - The full list of notes to filter from.
    */
-  const filterTasksAndNotes = (text: string, radioFilter?: string): void => {
-    setFilterText(text);
-
-    if (!text && !radioFilter) {
-      setNotes([...savedNotes]);
-      setTasks([...savedTasks]);
+  const applyFilter = (text: string, radioFilter: string | undefined, allTasks: TaskResponse[], allNotes: NoteResponse[]): void => {
+    if (!text && (!radioFilter || radioFilter === 'everything')) {
+      setNotes([...allNotes]);
+      setTasks([...allTasks]);
       return;
     }
 
@@ -122,7 +125,7 @@ function Home(): React.ReactNode {
       setNotes([]);
     }
     else {
-      let filteredNotes = savedNotes.filter((note: NoteResponse) => {
+      let filteredNotes = allNotes.filter((note: NoteResponse) => {
         const anyTitleMatch = note.title.toLowerCase().includes(text.toLowerCase());
         const anyContentMatch = note.description.toLowerCase().includes(text.toLowerCase());
         const anyUrlMatch = note.url?.includes(text.toLowerCase());
@@ -143,7 +146,7 @@ function Home(): React.ReactNode {
       setTasks([]);
     }
     else {
-      let filteredTasks = savedTasks.filter((task: TaskResponse) => {
+      let filteredTasks = allTasks.filter((task: TaskResponse) => {
         const shouldFilter = task.description.toLowerCase().includes(text.toLowerCase())
           || task.tag.toLowerCase().includes(text.toLowerCase())
           || task.urls.filter((url: string) => url.includes(text.toLowerCase())).length > 0;
@@ -159,6 +162,14 @@ function Home(): React.ReactNode {
 
       setTasks([...filteredTasks]);
     }
+  };
+
+  /**
+   * Filter notes by a given text.
+   */
+  const filterTasksAndNotes = (text: string, radioFilter?: string): void => {
+    setFilterText(text);
+    applyFilter(text, radioFilter, savedTasks, savedNotes);
   };
 
   /**
@@ -178,8 +189,6 @@ function Home(): React.ReactNode {
         return 1;
       });
       setSavedTasks([...translated]);
-      setTasks([...translated]);
-      setSelectedOption('everything');
     }
     catch (e) {
       handleError(e);
@@ -193,7 +202,6 @@ function Home(): React.ReactNode {
     try {
       const notesFetched: NoteResponse[] = await api.getJSON(ApiConfig.notesUrl);
       notesFetched.sort((n1, n2) => (n1.id > n2.id) ? -1 : 1);
-      setNotes([...notesFetched]);
       setSavedNotes([...notesFetched]);
     }
     catch (e) {
@@ -304,6 +312,10 @@ function Home(): React.ReactNode {
     loadAllTasks();
     loadAllNotes();
   }, [user]);
+
+  useEffect(() => {
+    applyFilter(filterText, selectedOption, savedTasks, savedNotes);
+  }, [savedTasks, savedNotes, filterText, selectedOption]);
 
   return (
     <Container fluid>

@@ -444,6 +444,157 @@ describe('Home Component', () => {
     expect(screen.getByTestId('alert-error')).toBeDefined();
     expect(screen.getByTestId('alert-error').textContent).toBe('API Error');
   });
+
+  test('keeps filter selection after marking task as done', async () => {
+    await act(async () => {
+      render(
+        <AuthContext.Provider value={authContextValue}>
+          <BrowserRouter>
+            <Home />
+          </BrowserRouter>
+        </AuthContext.Provider>
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getAllByTestId('task-title').length).toBe(2);
+    });
+
+    // Select "Only Tasks" filter
+    const dropdownToggle = screen.getByTestId('main-label-selector');
+    await act(async () => {
+      fireEvent.click(dropdownToggle);
+    });
+
+    const onlyTasksOption = screen.getByRole('button', { name: /home_radio_tasks/i });
+    await act(async () => {
+      fireEvent.click(onlyTasksOption);
+    });
+
+    // Verify filter is applied - notes should be hidden
+    await waitFor(() => {
+      expect(screen.queryAllByTestId('note-title').length).toBe(0);
+    });
+
+    // Mark a task as done
+    const dropdownToggles = screen.getAllByTestId('three-dots-icon');
+    await act(async () => {
+      fireEvent.click(dropdownToggles[0]);
+    });
+
+    const dropdownItems = screen.getAllByRole('button');
+    const markAsDoneButton = dropdownItems.find(
+      item => item.textContent === 'task_table_action_done'
+    );
+    await act(async () => {
+      fireEvent.click(markAsDoneButton!);
+    });
+
+    // After reload, filter should still be applied - notes should remain hidden
+    await waitFor(() => {
+      expect(screen.queryAllByTestId('note-title').length).toBe(0);
+      expect(screen.getAllByTestId('task-title').length).toBe(2);
+    });
+  });
+
+  test('keeps filter selection after deleting a note', async () => {
+    await act(async () => {
+      render(
+        <AuthContext.Provider value={authContextValue}>
+          <BrowserRouter>
+            <Home />
+          </BrowserRouter>
+        </AuthContext.Provider>
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getAllByTestId('note-title').length).toBe(2);
+    });
+
+    // Select "Only Notes" filter
+    const dropdownToggle = screen.getByTestId('main-label-selector');
+    await act(async () => {
+      fireEvent.click(dropdownToggle);
+    });
+
+    const onlyNotesOption = screen.getByRole('button', { name: /home_radio_notes/i });
+    await act(async () => {
+      fireEvent.click(onlyNotesOption);
+    });
+
+    // Verify filter is applied - tasks should be hidden
+    await waitFor(() => {
+      expect(screen.queryAllByTestId('task-title').length).toBe(0);
+    });
+
+    // Delete a note
+    const noteDropdownToggles = screen.getAllByTestId('three-dots-icon');
+    await act(async () => {
+      fireEvent.click(noteDropdownToggles[0]);
+    });
+
+    const deleteButtons = screen.getAllByRole('button');
+    const deleteButton = deleteButtons.find(
+      button => button.textContent === 'task_table_action_delete'
+    );
+    await act(async () => {
+      fireEvent.click(deleteButton!);
+    });
+
+    // After reload, filter should still be applied - tasks should remain hidden
+    await waitFor(() => {
+      expect(screen.queryAllByTestId('task-title').length).toBe(0);
+      expect(screen.getAllByTestId('note-title').length).toBe(2);
+    });
+  });
+
+  test('keeps text search after marking task as done', async () => {
+    await act(async () => {
+      render(
+        <AuthContext.Provider value={authContextValue}>
+          <BrowserRouter>
+            <Home />
+          </BrowserRouter>
+        </AuthContext.Provider>
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getAllByTestId('task-title').length).toBe(2);
+    });
+
+    // Enter search text to filter to only 'Task 1'
+    const searchInput = screen.getByPlaceholderText('home_input_filter');
+    await act(async () => {
+      fireEvent.change(searchInput, { target: { value: 'Task 1' } });
+    });
+
+    await waitFor(() => {
+      expect(screen.getAllByTestId('task-title').length).toBe(1);
+      expect(screen.getAllByTestId('task-title')[0].textContent).toBe('Task 1');
+    });
+
+    // Mark the task as done
+    const dropdownToggles = screen.getAllByTestId('three-dots-icon');
+    await act(async () => {
+      fireEvent.click(dropdownToggles[0]);
+    });
+
+    const dropdownItems = screen.getAllByRole('button');
+    const markAsDoneButton = dropdownItems.find(
+      item => item.textContent === 'task_table_action_done'
+    );
+    await act(async () => {
+      fireEvent.click(markAsDoneButton!);
+    });
+
+    // After reload, text filter should still be applied
+    await waitFor(() => {
+      expect(screen.getAllByTestId('task-title').length).toBe(1);
+      expect(screen.getAllByTestId('task-title')[0].textContent).toBe('Task 1');
+    });
+  });
   /*
   test('getFirstRows properly formats note preview', async () => {
     await act(async () => {
