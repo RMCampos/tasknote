@@ -26,7 +26,7 @@ else
   fi
 
   echo "3/3 - Tests started..."
-  npm run test
+  npm run test:no-watch
   if [ $? -eq 1 ]; then
     echo "Issues when running test. Please review.."
     exit 1
