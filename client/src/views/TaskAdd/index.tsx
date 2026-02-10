@@ -50,8 +50,8 @@ function TaskAdd(): React.ReactNode {
       const response: string[] = await api.getJSON(`${ApiConfig.homeUrl}/tasks/tags`);
       setTags(response);
     }
-    catch (_e) {
-      // silently ignore tag loading errors
+    catch (e) {
+      handleError(e);
     }
   };
 
