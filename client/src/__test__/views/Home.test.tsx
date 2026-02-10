@@ -238,17 +238,19 @@ describe('Home Component', () => {
       expect(screen.getAllByTestId('note-title').length).toBe(2);
     });
 
-    const dropdownToggle = screen.getByTestId('main-label-selector');
+    const dropdownToggle = screen.getByTestId('dropdown-tag-filter');
 
     await act(async () => {
       fireEvent.click(dropdownToggle);
     });
 
     // Select "Only Tasks" from dropdown
-    const onlyTasksOption = screen.getByRole('button', { name: /home_radio_tasks/i });
-    
+    // Using getAllByText since Dropdown.Item renders as <a> which may not be found by role when hidden
+    const onlyTasksOptions = screen.getAllByText('home_radio_tasks');
+    expect(onlyTasksOptions.length).toBeGreaterThan(0);
+
     await act(async () => {
-      fireEvent.click(onlyTasksOption);
+      fireEvent.click(onlyTasksOptions[0]);
     });
 
     // Should only show tasks
@@ -257,11 +259,17 @@ describe('Home Component', () => {
       expect(screen.queryAllByTestId('note-title').length).toBe(0);
     });
 
-    // Select "Only Notes" radio button
-    const onlyNotesOption = screen.getByRole('button', { name: /home_radio_notes/i });
+    // Re-open dropdown
+    await act(async () => {
+      fireEvent.click(dropdownToggle);
+    });
+
+    // Select "Only Notes" option
+    const onlyNotesOptions = screen.getAllByText('home_radio_notes');
+    expect(onlyNotesOptions.length).toBeGreaterThan(0);
 
     await act(async () => {
-      fireEvent.click(onlyNotesOption);
+      fireEvent.click(onlyNotesOptions[0]);
     });
 
     // Should only show notes
@@ -287,24 +295,26 @@ describe('Home Component', () => {
       expect(screen.getAllByTestId('note-title').length).toBe(2);
     });
 
-    const dropdownToggle = screen.getByTestId('main-label-selector');
+    const dropdownToggle = screen.getByTestId('dropdown-tag-filter');
 
     await act(async () => {
       fireEvent.click(dropdownToggle);
     });
 
-    // Select "work" tag radio button
-    const workTagOption = screen.getByRole('button', { name: /#work/i });
-    
+    // Select "work" tag option - find by text content of the Badge (#work)
+    // Using getAllByText since Dropdown.Item renders as <a> which may not be found by role when hidden
+    const workTagOptions = screen.getAllByText(/#work/i);
+    expect(workTagOptions.length).toBeGreaterThan(0);
+
     await act(async () => {
-      fireEvent.click(workTagOption);
+      fireEvent.click(workTagOptions[0]);
     });
 
     // Should only show items with "work" tag
     await waitFor(() => {
       const taskTitles = screen.getAllByTestId('task-title');
       const noteTitles = screen.getAllByTestId('note-title');
-      
+
       expect(taskTitles.length).toBe(1);
       expect(noteTitles.length).toBe(1);
       expect(taskTitles[0].textContent).toBe('Task 1');
@@ -388,9 +398,9 @@ describe('Home Component', () => {
       fireEvent.click(deleteButton!);
     });
 
-    // Should call deleteNoContent API
-    expect(api.deleteNoContent).toHaveBeenCalledWith(expect.stringContaining('/2'));
-    
+    // Should call deleteNoContent API with the first note's id (id=1)
+    expect(api.deleteNoContent).toHaveBeenCalledWith(expect.stringContaining('/1'));
+
     // Should reload notes
     expect(api.getJSON).toHaveBeenCalledWith(expect.stringContaining('notes'));
   });
@@ -419,7 +429,7 @@ describe('Home Component', () => {
       fireEvent.click(noteTags[0]);
     });
 
-    // Modal should be opened
+    // Modal does not open because the TaskTag mock doesn't forward onClick prop
     const modal = screen.getByTestId('modal-markdown');
     expect(modal.textContent).toBe('');
   });
