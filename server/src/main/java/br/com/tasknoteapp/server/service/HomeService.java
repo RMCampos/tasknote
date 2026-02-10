@@ -1,5 +1,6 @@
 package br.com.tasknoteapp.server.service;
 
+import br.com.tasknoteapp.server.response.NoteResponse;
 import br.com.tasknoteapp.server.response.TaskResponse;
 import java.util.HashSet;
 import java.util.List;
@@ -16,10 +17,11 @@ public class HomeService {
 
   private final TaskService taskService;
 
-  private static final String N_TASKS_FOUND = "%d tasks found!";
+  private final NoteService noteService;
 
-  public HomeService(TaskService taskService) {
+  public HomeService(TaskService taskService, NoteService noteService) {
     this.taskService = taskService;
+    this.noteService = noteService;
   }
 
   /**
@@ -28,19 +30,23 @@ public class HomeService {
    * @return List of String with the tags.
    */
   public List<String> getTopTasksTag() {
-    logger.info("Getting all tags for the tasks");
+    logger.info("Getting all tags for tasks and notes");
 
     List<TaskResponse> tasks = taskService.getTasksByFilter("all");
-    logger.info(String.format(N_TASKS_FOUND, tasks.size()));
+    List<NoteResponse> notes = noteService.getAllNotes();
 
     Set<String> tags = new HashSet<>();
-    for (TaskResponse task : tasks) {
-      String tag = task.tag();
-      if (tag.isBlank()) {
-        tag = "untagged";
-      }
-      tags.add(tag);
+    tags.addAll(tasks.stream().map(TaskResponse::tag).filter(tag -> !tag.isBlank()).toList());
+    tags.addAll(notes.stream().map(NoteResponse::tag).filter(tag -> !tag.isBlank()).toList());
+
+    boolean hasBlankTags =
+        tasks.stream().anyMatch(task -> task.tag().isBlank())
+            || notes.stream().anyMatch(note -> note.tag().isBlank());
+    if (hasBlankTags) {
+      tags.add("untagged");
     }
+
+    logger.info("Found {} tags", tags.size());
 
     return tags.stream().sorted().toList();
   }

@@ -28,7 +28,7 @@ class HomeServiceTest {
 
   @BeforeEach
   void setUp() {
-    homeService = new HomeService(taskService);
+    homeService = new HomeService(taskService, noteService);
   }
 
   @Test
