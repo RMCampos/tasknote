@@ -189,7 +189,6 @@ function Home(): React.ReactNode {
         return 1;
       });
       setSavedTasks([...translated]);
-      applyFilter(filterText, selectedOption, translated, savedNotes);
     }
     catch (e) {
       handleError(e);
@@ -204,7 +203,6 @@ function Home(): React.ReactNode {
       const notesFetched: NoteResponse[] = await api.getJSON(ApiConfig.notesUrl);
       notesFetched.sort((n1, n2) => (n1.id > n2.id) ? -1 : 1);
       setSavedNotes([...notesFetched]);
-      applyFilter(filterText, selectedOption, savedTasks, notesFetched);
     }
     catch (e) {
       handleError(e);
@@ -314,6 +312,10 @@ function Home(): React.ReactNode {
     loadAllTasks();
     loadAllNotes();
   }, [user]);
+
+  useEffect(() => {
+    applyFilter(filterText, selectedOption, savedTasks, savedNotes);
+  }, [savedTasks, savedNotes, filterText, selectedOption]);
 
   return (
     <Container fluid>
