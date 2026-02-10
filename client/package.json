@@ -37,6 +37,7 @@
     "build": "tsc && vite build",
     "preview": "vite build && vite preview",
     "test": "vitest",
+    "test:no-watch": "vitest --watch=false",
     "test:coverage": "vitest run --coverage --watch=false",
     "lint": "./node_modules/.bin/eslint",
     "lint:fix": "./node_modules/.bin/eslint --fix"
