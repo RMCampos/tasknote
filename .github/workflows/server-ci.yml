@@ -1,0 +1,43 @@
+name: Server API CI
+
+on:
+  workflow_dispatch:
+  # run for all pushes, not only main
+  push:
+    branches:
+      - '**'
+    paths:
+      - 'server/**/*.java'
+      - 'server/**/*.xml'
+      - 'server/pom.xml'
+
+jobs:
+  run-checks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Run Check Style
+        working-directory: ./server
+        run: ./mvnw --no-transfer-progress checkstyle:check -Dcheckstyle.skip=false
+
+      - name: Run build
+        working-directory: ./server
+        run: ./mvnw --no-transfer-progress clean compile -DskipTests
+
+      - name: Run tests
+        working-directory: ./server
+        run: ./mvnw --no-transfer-progress clean verify -P tests --file pom.xml

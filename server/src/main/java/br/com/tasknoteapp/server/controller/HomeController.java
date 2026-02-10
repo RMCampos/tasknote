@@ -18,9 +18,9 @@ public class HomeController {
   }
 
   /**
-   * Get the top 5 tags.
+   * Get all existing tags, ordered alphabetically.
    *
-   * @returns List of String with the tags.
+   * @return List of String with the tags.
    */
   @GetMapping("/tasks/tags")
   public List<String> getTasksTags() {

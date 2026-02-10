@@ -1,5 +1,6 @@
 package br.com.tasknoteapp.server.controller;
 
+import br.com.tasknoteapp.server.service.AppVersionService;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import br.com.tasknoteapp.server.service.AppVersionService;
 
 /** Controller to handle health check requests. */
 @RestController

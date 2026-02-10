@@ -171,3 +171,13 @@ docker run --rm -p 8080:8080 \
   -e SERVER_SERVLET_CONTEXT_PATH=/ \
   --network host \
   docker.io/rmcampos/tasknote:api-latest
+
+## Running a single class test file
+
+```
+# For a single class
+mvn test -P test -Dtest=YourTestClassName
+
+# For a single class method
+mvn test -P test -Dtest=YourTestClassName#method
+```
