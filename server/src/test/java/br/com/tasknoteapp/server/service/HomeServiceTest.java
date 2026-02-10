@@ -32,8 +32,8 @@ class HomeServiceTest {
   }
 
   @Test
-  @DisplayName("Get top tasks tag should return up to 5 most used tags")
-  void getTopTasksTag_shouldReturnTopTags() {
+  @DisplayName("Get top tasks tag should return all tags alphabetically")
+  void getTopTasksTag_shouldReturnAllTagsAlphabetically() {
     TaskResponse task1 =
         new TaskResponse(1L, "Task 1", false, false, null, null, null, "tag1", List.of());
     TaskResponse task2 =
@@ -57,12 +57,8 @@ class HomeServiceTest {
     List<String> topTags = homeService.getTopTasksTag();
 
     Assertions.assertNotNull(topTags);
-    Assertions.assertEquals(5, topTags.size());
-    Assertions.assertTrue(topTags.contains("tag1"));
-    Assertions.assertTrue(topTags.contains("tag2"));
-    Assertions.assertTrue(topTags.contains("tag3"));
-    Assertions.assertTrue(topTags.contains("tag4"));
-    Assertions.assertTrue(topTags.contains("tag5"));
+    Assertions.assertEquals(6, topTags.size());
+    Assertions.assertEquals(List.of("tag1", "tag2", "tag3", "tag4", "tag5", "tag6"), topTags);
   }
 
   @Test
