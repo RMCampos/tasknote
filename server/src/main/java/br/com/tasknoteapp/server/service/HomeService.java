@@ -36,12 +36,20 @@ public class HomeService {
     List<NoteResponse> notes = noteService.getAllNotes();
 
     Set<String> tags = new HashSet<>();
-    tags.addAll(tasks.stream().map(TaskResponse::tag).filter(tag -> !tag.isBlank()).toList());
-    tags.addAll(notes.stream().map(NoteResponse::tag).filter(tag -> !tag.isBlank()).toList());
+    tags.addAll(
+        tasks.stream()
+            .map(TaskResponse::tag)
+            .filter(tag -> tag != null && !tag.isBlank())
+            .toList());
+    tags.addAll(
+        notes.stream()
+            .map(NoteResponse::tag)
+            .filter(tag -> tag != null && !tag.isBlank())
+            .toList());
 
     boolean hasBlankTags =
-        tasks.stream().anyMatch(task -> task.tag().isBlank())
-            || notes.stream().anyMatch(note -> note.tag().isBlank());
+        tasks.stream().anyMatch(task -> task.tag() == null || task.tag().isBlank())
+            || notes.stream().anyMatch(note -> note.tag() == null || note.tag().isBlank());
     if (hasBlankTags) {
       tags.add("untagged");
     }
