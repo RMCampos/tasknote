@@ -1,0 +1,51 @@
+name: React App CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - '**'
+    paths:
+      - 'client/**/*.html'
+      - 'client/**/*.png'
+      - 'client/**/*.json'
+      - 'client/**/*.txt'
+      - 'client/**/*.ts'
+      - 'client/**/*.tsx'
+      - 'client/**/*.js'
+      - 'client/Dockerfile'
+      - 'client/Caddyfile'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./client
+
+      - name: Run lint
+        run: npm run lint
+        working-directory: ./client
+
+      - name: Run build
+        run: npm run build
+        working-directory: ./client
+
+      - name: Run tests
+        run: npm test -- --watchAll=false
+        working-directory: ./client
