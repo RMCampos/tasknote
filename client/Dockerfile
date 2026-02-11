@@ -8,7 +8,7 @@ WORKDIR /app
 COPY *.html *.json *.ts ./
 COPY ./src ./src
 COPY ./public ./public
-RUN npm ci --ignore-scripts --no-update-notifier --omit=dev && \
+RUN npm i --ignore-scripts --no-update-notifier --omit=dev && \
     npm run build && \
     rm -rf node_modules
 
