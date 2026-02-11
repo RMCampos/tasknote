@@ -2,6 +2,7 @@ import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import './style.css';
 
 type Props = {
@@ -41,7 +42,7 @@ const ModalMarkdown: React.FC<Props> = (props: Props): React.ReactNode => {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body className="markdown-modal">
-            <Markdown>{props.markdownText}</Markdown>
+            <Markdown remarkPlugins={[remarkGfm]}>{props.markdownText}</Markdown>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="outline-secondary" onClick={props.onHide}>

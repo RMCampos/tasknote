@@ -2,6 +2,7 @@ import React from 'react';
 import { test, describe, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, act, fireEvent, waitFor } from '@testing-library/react';
 import AuthContext from '../../context/AuthContext';
+import FilterProvider from '../../context/FilterProvider';
 import { BrowserRouter } from 'react-router-dom';
 import api from '../../api-service/api';
 import { TaskResponse } from '../../types/TaskResponse';
@@ -140,9 +141,20 @@ const authContextValue = {
 };
 
 describe('Home Component', () => {
+  const renderHome = () => render(
+    <AuthContext.Provider value={authContextValue}>
+      <FilterProvider>
+        <BrowserRouter>
+          <Home />
+        </BrowserRouter>
+      </FilterProvider>
+    </AuthContext.Provider>
+  );
+
   beforeEach(() => {
     // Reset mocks and setup default responses
     vi.clearAllMocks();
+    localStorage.clear();
     (api.getJSON as any).mockImplementation((url: string) => {
       if (url.includes('tags')) {
         return Promise.resolve(mockTags);
@@ -169,13 +181,7 @@ describe('Home Component', () => {
 
   test('renders with initial data', async () => {
     await act(async () => {
-      render(
-        <AuthContext.Provider value={authContextValue}>
-          <BrowserRouter>
-            <Home />
-          </BrowserRouter>
-        </AuthContext.Provider>
-      );
+      renderHome();
     });
 
     expect(screen.getByTestId('content-header')).toBeDefined();
@@ -193,13 +199,7 @@ describe('Home Component', () => {
 
   test('filters tasks and notes when search text is entered', async () => {
     await act(async () => {
-      render(
-        <AuthContext.Provider value={authContextValue}>
-          <BrowserRouter>
-            <Home />
-          </BrowserRouter>
-        </AuthContext.Provider>
-      );
+      renderHome();
     });
 
     await waitFor(() => {
@@ -224,13 +224,7 @@ describe('Home Component', () => {
 
   test('filters by radio button selection', async () => {
     await act(async () => {
-      render(
-        <AuthContext.Provider value={authContextValue}>
-          <BrowserRouter>
-            <Home />
-          </BrowserRouter>
-        </AuthContext.Provider>
-      );
+      renderHome();
     });
 
     await waitFor(() => {
@@ -273,13 +267,7 @@ describe('Home Component', () => {
 
   test('filters by tag selection', async () => {
     await act(async () => {
-      render(
-        <AuthContext.Provider value={authContextValue}>
-          <BrowserRouter>
-            <Home />
-          </BrowserRouter>
-        </AuthContext.Provider>
-      );
+      renderHome();
     });
 
     await waitFor(() => {
@@ -314,13 +302,7 @@ describe('Home Component', () => {
 
   test('marks task as done', async () => {
     await act(async () => {
-      render(
-        <AuthContext.Provider value={authContextValue}>
-          <BrowserRouter>
-            <Home />
-          </BrowserRouter>
-        </AuthContext.Provider>
-      );
+      renderHome();
     });
 
     await waitFor(() => {
@@ -355,13 +337,7 @@ describe('Home Component', () => {
 
   test('deletes note', async () => {
     await act(async () => {
-      render(
-        <AuthContext.Provider value={authContextValue}>
-          <BrowserRouter>
-            <Home />
-          </BrowserRouter>
-        </AuthContext.Provider>
-      );
+      renderHome();
     });
 
     await waitFor(() => {
@@ -397,13 +373,7 @@ describe('Home Component', () => {
 
   test('opens markdown modal when clicking on note tag', async () => {
     await act(async () => {
-      render(
-        <AuthContext.Provider value={authContextValue}>
-          <BrowserRouter>
-            <Home />
-          </BrowserRouter>
-        </AuthContext.Provider>
-      );
+      renderHome();
     });
 
     await waitFor(() => {
@@ -431,13 +401,7 @@ describe('Home Component', () => {
     });
 
     await act(async () => {
-      render(
-        <AuthContext.Provider value={authContextValue}>
-          <BrowserRouter>
-            <Home />
-          </BrowserRouter>
-        </AuthContext.Provider>
-      );
+      renderHome();
     });
 
     // Should show error message
@@ -447,13 +411,7 @@ describe('Home Component', () => {
 
   test('keeps filter selection after marking task as done', async () => {
     await act(async () => {
-      render(
-        <AuthContext.Provider value={authContextValue}>
-          <BrowserRouter>
-            <Home />
-          </BrowserRouter>
-        </AuthContext.Provider>
-      );
+      renderHome();
     });
 
     await waitFor(() => {
@@ -499,13 +457,7 @@ describe('Home Component', () => {
 
   test('keeps filter selection after deleting a note', async () => {
     await act(async () => {
-      render(
-        <AuthContext.Provider value={authContextValue}>
-          <BrowserRouter>
-            <Home />
-          </BrowserRouter>
-        </AuthContext.Provider>
-      );
+      renderHome();
     });
 
     await waitFor(() => {
@@ -551,13 +503,7 @@ describe('Home Component', () => {
 
   test('keeps text search after marking task as done', async () => {
     await act(async () => {
-      render(
-        <AuthContext.Provider value={authContextValue}>
-          <BrowserRouter>
-            <Home />
-          </BrowserRouter>
-        </AuthContext.Provider>
-      );
+      renderHome();
     });
 
     await waitFor(() => {
@@ -598,13 +544,7 @@ describe('Home Component', () => {
   /*
   test('getFirstRows properly formats note preview', async () => {
     await act(async () => {
-      render(
-        <AuthContext.Provider value={authContextValue}>
-          <BrowserRouter>
-            <Home />
-          </BrowserRouter>
-        </AuthContext.Provider>
-      );
+      renderHome();
     });
 
     await waitFor(() => {

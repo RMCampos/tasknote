@@ -45,7 +45,7 @@ services:
     volumes:
       - "./server:/app"
     healthcheck:
-      test: curl -f http://localhost:8585/actuator/health | grep '"status":"UP"'
+      test: curl -f http://localhost:8585/health | grep '"status":"UP"'
       interval: 1m30s
       timeout: 15s
       retries: 3

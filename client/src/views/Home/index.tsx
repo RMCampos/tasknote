@@ -17,6 +17,7 @@ import ApiConfig from '../../api-service/apiConfig';
 import { handleDefaultLang } from '../../lang-service/LangHandler';
 import { translateServerResponse, translateTaskResponse } from '../../utils/TranslatorUtils';
 import AuthContext from '../../context/AuthContext';
+import FilterContext from '../../context/FilterContext';
 import ContentHeader from '../../components/ContentHeader';
 import AlertError from '../../components/AlertError';
 import { ThreeDotsVertical } from 'react-bootstrap-icons';
@@ -36,6 +37,7 @@ import NoteTitle from '../../components/NoteTitle';
  */
 function Home(): React.ReactNode {
   const { user } = useContext(AuthContext);
+  const { filterText, selectedOption, setFilterText, setSelectedOption } = useContext(FilterContext);
   const { i18n, t } = useTranslation();
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [tags, setTags] = useState<string[]>([]);
@@ -43,12 +45,10 @@ function Home(): React.ReactNode {
   const [showMarkdownView, setShowMarkdownView] = useState<boolean>(false);
   const [modalTitle, setModalTitle] = useState<string>('');
   const [modalContent, setModalContent] = useState<string>('');
-  const [filterText, setFilterText] = useState<string>('');
   const [tasks, setTasks] = useState<TaskResponse[]>([]);
   const [notes, setNotes] = useState<NoteResponse[]>([]);
   const [savedNotes, setSavedNotes] = useState<NoteResponse[]>([]);
   const [savedTasks, setSavedTasks] = useState<TaskResponse[]>([]);
-  const [selectedOption, setSelectedOption] = useState<string>('everything');
 
   /**
    * Handles the error by setting the error message.
@@ -129,7 +129,8 @@ function Home(): React.ReactNode {
         const anyTitleMatch = note.title.toLowerCase().includes(text.toLowerCase());
         const anyContentMatch = note.description.toLowerCase().includes(text.toLowerCase());
         const anyUrlMatch = note.url?.includes(text.toLowerCase());
-        return anyTitleMatch || anyContentMatch || anyUrlMatch;
+        const anyTagMatch = note.tag?.toLowerCase().includes(text.toLowerCase());
+        return anyTitleMatch || anyContentMatch || anyUrlMatch || anyTagMatch;
       });
 
       if (tagToFilter === 'untagged') {
