@@ -1,0 +1,8 @@
+[build]
+  builder = "paketobuildpacks/builder-jammy-tiny:latest"
+
+[[build.buildpacks]]
+  uri = "buildpacks/healthcheck"
+
+[[build.buildpacks]]
+  uri = "urn:cnb:builder:paketo-buildpacks/java-native-image"

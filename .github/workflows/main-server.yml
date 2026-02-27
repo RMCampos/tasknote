@@ -71,7 +71,8 @@ jobs:
         working-directory: ./server
         run: |
           ./mvnw -Pnative -DskipTests spring-boot:build-image \
-            -Dspring-boot.build-image.imageName=ghcr.io/${{ steps.repo.outputs.name }}/api:latest
+            -Dspring-boot.build-image.imageName=ghcr.io/${{ steps.repo.outputs.name }}/api:latest \
+            -Dspring-boot.build-image.builder=paketobuildpacks/builder-jammy-tiny:latest
 
       - name: Tag and push Docker image
         run: |

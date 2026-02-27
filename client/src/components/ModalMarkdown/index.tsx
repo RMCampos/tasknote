@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Markdown from 'react-markdown';
@@ -23,11 +23,31 @@ type Props = {
  * @returns {React.ReactNode} the Markdown component rendered.
  */
 const ModalMarkdown: React.FC<Props> = (props: Props): React.ReactNode => {
+  const [showSource, setShowSource] = useState<boolean>(false);
+  const [copied, setCopied] = useState<boolean>(false);
+
+  const handleToggleSource = () => setShowSource(prev => !prev);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(props.markdownText).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(() => {
+      // clipboard write failed silently; no state change
+    });
+  };
+
+  const handleHide = () => {
+    setShowSource(false);
+    setCopied(false);
+    props.onHide();
+  };
+
   return props.show
     ? (
         <Modal
           show={props.show}
-          onHide={props.onHide}
+          onHide={handleHide}
           backdrop="static"
           keyboard={false}
           size="xl"
@@ -42,11 +62,33 @@ const ModalMarkdown: React.FC<Props> = (props: Props): React.ReactNode => {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body className="markdown-modal">
-            <Markdown remarkPlugins={[remarkGfm]}>{props.markdownText}</Markdown>
+            {showSource
+              ? (
+                  <pre className="markdown-source" data-testid="markdown-source-view">
+                    {props.markdownText}
+                  </pre>
+                )
+              : (
+                  <Markdown remarkPlugins={[remarkGfm]}>{props.markdownText}</Markdown>
+                )}
           </Modal.Body>
-          <Modal.Footer>
-            <Button variant="outline-secondary" onClick={props.onHide}>
+          <Modal.Footer className="d-flex flex-wrap gap-2 justify-content-end">
+            <Button variant="outline-secondary" onClick={handleHide}>
               Close
+            </Button>
+            <Button
+              variant={showSource ? 'info' : 'outline-info'}
+              onClick={handleToggleSource}
+              data-testid="modal-source-button"
+            >
+              Source
+            </Button>
+            <Button
+              variant="outline-primary"
+              onClick={handleCopy}
+              data-testid="modal-copy-button"
+            >
+              {copied ? 'Copied!' : 'Copy'}
             </Button>
           </Modal.Footer>
         </Modal>
