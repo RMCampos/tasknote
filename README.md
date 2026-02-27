@@ -1,21 +1,10 @@
 # TaskNote
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-![Build Status](https://github.com/ricardo-campos-org/react-typescript-todolist/actions/workflows/main.yml/badge.svg)
-
-### TaskNote API
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ricardo-campos-org_react-typescript-todolist_server&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ricardo-campos-org_react-typescript-todolist_server)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=ricardo-campos-org_react-typescript-todolist_server&metric=coverage)](https://sonarcloud.io/summary/new_code?id=ricardo-campos-org_react-typescript-todolist_server)
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=br.com.tasknoteapp%3Aserver&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=br.com.tasknoteapp%3Aserver)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=br.com.tasknoteapp%3Aserver&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=br.com.tasknoteapp%3Aserver)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=br.com.tasknoteapp%3Aserver&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=br.com.tasknoteapp%3Aserver)
-
-### TaskNote WebApp
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ricardo-campos-org_react-typescript-todolist_client&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ricardo-campos-org_react-typescript-todolist_client)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=ricardo-campos-org_react-typescript-todolist_client&metric=coverage)](https://sonarcloud.io/summary/new_code?id=ricardo-campos-org_react-typescript-todolist_client)
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=ricardo-campos-org_react-typescript-todolist_client&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=ricardo-campos-org_react-typescript-todolist_client)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=ricardo-campos-org_react-typescript-todolist_client&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=ricardo-campos-org_react-typescript-todolist_client)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=ricardo-campos-org_react-typescript-todolist_client&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=ricardo-campos-org_react-typescript-todolist_client)
+[![React App CI](https://github.com/RMCampos/tasknote/actions/workflows/client-ci.yml/badge.svg)](https://github.com/RMCampos/tasknote/actions/workflows/client-ci.yml)
+[![Server API CI](https://github.com/RMCampos/tasknote/actions/workflows/server-ci.yml/badge.svg)](https://github.com/RMCampos/tasknote/actions/workflows/server-ci.yml)
+[![Build and Push App Docker Image](https://github.com/RMCampos/tasknote/actions/workflows/main-client.yml/badge.svg)](https://github.com/RMCampos/tasknote/actions/workflows/main-client.yml)
+[![Build and Push API Docker Image](https://github.com/RMCampos/tasknote/actions/workflows/main-server.yml/badge.svg)](https://github.com/RMCampos/tasknote/actions/workflows/main-server.yml)
 
 ## 📋 Table of Contents
 
@@ -49,17 +38,17 @@ The project was born from a month-long technical challenge and has since grown t
 - **Responsive Design**: Mobile-first approach with Bootstrap 5 and dark/light theme support
 - **Data Visualization**: Task completion charts and productivity analytics
 - **File Attachments**: URL attachments for tasks and notes
+- **Tagging System**: `#tag` support for better organization
+- **Mobile App**: Native mobile applications for iOS and Android with PWA plugin
 
 ### Upcoming Features
-- **Tagging System**: `#tag` support for better organization
 - **Advanced Filters**: Enhanced search with date ranges, priority levels, and status filters
 - **Collaboration**: Share tasks and notes with other users
-- **Mobile App**: Native mobile applications for iOS and Android
 - **Notifications**: Email and push notifications for due dates and reminders
 
 ## 🚀 Tech Stack
 
-### Frontend (React TypeScript)
+### Frontend (React & TypeScript)
 - **Framework**: React 19 with TypeScript for type safety
 - **Build Tool**: Vite for fast development and optimized production builds
 - **Testing**: Vitest with React Testing Library and comprehensive coverage reporting
@@ -69,8 +58,8 @@ The project was born from a month-long technical challenge and has since grown t
 - **Internationalization**: i18next with automatic language detection
 - **API Client**: Centralized API service with automatic authentication headers
 
-### Backend (Java Spring Boot)
-- **Framework**: Spring Boot 3.5+ with Java 17
+### Backend (Java & Spring Boot)
+- **Framework**: Spring Boot 4.x.x with Java 25
 - **Security**: Spring Security with JWT authentication and refresh tokens
 - **Database**: PostgreSQL with JPA/Hibernate ORM
 - **Migration**: Flyway for database schema versioning
@@ -84,19 +73,16 @@ The project was born from a month-long technical challenge and has since grown t
 - **Containerization**: Docker and Docker Compose for development environment
 - **Web Server**: Caddy for reverse proxy and SSL termination
 - **CI/CD**: GitHub Actions with automated testing and quality gates
-- **Code Analysis**: SonarCloud integration for security and maintainability
 
 ## 🏗️ Architecture
 
 ### Monorepo Structure
 ```
-react-typescript-todolist/
+tasknote/
 ├── client/          # React TypeScript frontend
 ├── server/          # Java Spring Boot REST API
-├── angular/         # Alternative Angular frontend
 ├── tools/           # Development and deployment scripts
-├── docker-compose.yml
-└── CLAUDE.md        # AI assistant instructions
+└── docker-compose.yml
 ```
 
 ### Frontend Architecture
@@ -117,15 +103,15 @@ react-typescript-todolist/
 
 ### Prerequisites
 - **Docker & Docker Compose** (recommended for easy setup)
-- **Node.js 18+** and **npm** (for frontend development)
-- **Java 17+** and **Maven 3.6+** (for backend development)
-- **PostgreSQL 13+** (if running without Docker)
+- **Node.js 20+** and **npm** (for frontend development)
+- **Java 25+** and **Maven 3.6+** (for backend development)
+- **PostgreSQL 15+** (if running without Docker)
 
 ### Quick Start with Docker
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/ricardo-campos-org/react-typescript-todolist.git
-   cd react-typescript-todolist
+   git clone https://github.com/rmcampos/tasknote.git
+   cd tasknote
    ```
 
 2. **Start the database**
@@ -145,7 +131,6 @@ react-typescript-todolist/
 
 5. **Access the application**
    - Frontend: http://localhost:5000
-   - API Documentation: http://localhost:8080/swagger-ui.html
 
 ## 🛠️ Development
 
@@ -234,7 +219,7 @@ We welcome contributions from the community! This project follows the **Fork & M
 1. **Fork the Project** on GitHub
 2. **Clone your fork** locally
    ```bash
-   git clone https://github.com/YOUR_USERNAME/react-typescript-todolist.git
+   git clone https://github.com/YOUR_USERNAME/tasknote.git
    ```
 3. **Create a feature branch**
    ```bash
@@ -269,9 +254,9 @@ For detailed setup instructions and development workflows, see [CONTRIBUTING.md]
 
 **Ricardo Campos** - Full-Stack Developer & Project Maintainer
 
-- **GitHub**: [@ricardo-campos-org](https://github.com/ricardo-campos-org)
+- **GitHub**: [@RMCampos](https://github.com/RMCampos)
 - **Twitter/X**: [@RMCamposs](https://x.com/RMCamposs)
-- **LinkedIn**: [Ricardo Campos](https://www.linkedin.com/in/ricardo-campos-org/)
+- **LinkedIn**: [Ricardo Campos](https://www.linkedin.com/in/ricardompcampos/)
 
 ### About the Developer
 Ricardo is a passionate full-stack developer with expertise in modern web technologies, cloud architecture, and agile development practices. This project showcases his skills in:
@@ -290,8 +275,8 @@ For questions, suggestions, or collaboration opportunities:
 
 - **Email**: Contact via GitHub issues or discussions
 - **Twitter/X**: [@RMCamposs](https://x.com/RMCamposs) for quick questions
-- **GitHub Issues**: [Create an issue](https://github.com/ricardo-campos-org/react-typescript-todolist/issues) for bugs or feature requests
-- **GitHub Discussions**: [Join discussions](https://github.com/ricardo-campos-org/react-typescript-todolist/discussions) for general questions
+- **GitHub Issues**: [Create an issue](https://github.com/rmcampos/tasknote/issues) for bugs or feature requests
+- **GitHub Discussions**: [Join discussions](https://github.com/rmcampos/tasknote/discussions) for general questions
 
 ## 📄 License
 

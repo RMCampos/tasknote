@@ -85,6 +85,3 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag -a api-v${{ steps.version.outputs.version }} -m "Release API v${{ steps.version.outputs.version }}"
           git push origin api-v${{ steps.version.outputs.version }}
-
-      - name: Trigger Dokploy deployment
-        run: curl -X POST "${{ vars.DOKPLOY_WEBHOOK_API }}"
