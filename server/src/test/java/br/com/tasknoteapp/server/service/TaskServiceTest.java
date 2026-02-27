@@ -36,7 +36,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-@SuppressWarnings("null")
 @ExtendWith(MockitoExtension.class)
 class TaskServiceTest {
 

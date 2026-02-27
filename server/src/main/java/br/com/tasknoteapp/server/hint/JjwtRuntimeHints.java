@@ -7,8 +7,6 @@ import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportRuntimeHints;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 
 /**
  * This class creates RuntimeHints for JJWT exceptions to ensure they are available at runtime in
@@ -20,7 +18,7 @@ public class JjwtRuntimeHints {
 
   static class JjwtHintsRegistrar implements RuntimeHintsRegistrar {
     @Override
-    public void registerHints(@NonNull RuntimeHints hints, @Nullable ClassLoader classLoader) {
+    public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
       // Register JJWT exceptions for reflection
       hints
           .reflection()
