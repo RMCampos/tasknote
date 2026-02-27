@@ -1,0 +1,11 @@
+api = "0.7"
+
+[buildpack]
+  id = "local/healthcheck"
+  version = "0.1.0"
+  name = "Healthcheck Binary Buildpack"
+[[stacks]]
+  id = "io.buildpacks.stacks.jammy"
+
+[[stacks]]
+  id = "*"
