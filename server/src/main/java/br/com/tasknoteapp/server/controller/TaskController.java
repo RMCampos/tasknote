@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -48,7 +47,7 @@ public class TaskController {
    * @throws TaskNotFoundException when task not found.
    */
   @GetMapping("/{id}")
-  public TaskResponse getTaskById(@NonNull @PathVariable Long id) {
+  public TaskResponse getTaskById(@PathVariable Long id) {
     return taskService.getTaskById(id);
   }
 
@@ -62,7 +61,7 @@ public class TaskController {
    */
   @PatchMapping("/{id}")
   public ResponseEntity<TaskResponse> patchTask(
-      @PathVariable @NonNull Long id, @RequestBody @Valid TaskPatchRequest taskRequest) {
+      @PathVariable Long id, @RequestBody @Valid TaskPatchRequest taskRequest) {
     return ResponseEntity.ok(taskService.patchTask(id, taskRequest));
   }
 
@@ -86,7 +85,7 @@ public class TaskController {
    * @throws TaskNotFoundException when task not found.
    */
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteTask(@NonNull @PathVariable Long id) {
+  public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
     taskService.deleteTask(id);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }

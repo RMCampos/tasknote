@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -19,9 +18,9 @@ public class HeaderVersionFilter extends OncePerRequestFilter {
 
   @Override
   protected void doFilterInternal(
-      @NonNull HttpServletRequest request,
-      @NonNull HttpServletResponse response,
-      @NonNull FilterChain filterChain)
+      HttpServletRequest request,
+      HttpServletResponse response,
+      FilterChain filterChain)
       throws ServletException, IOException {
     response.setHeader("X-BUILD-INFO", appVersionService.getVersion());
     filterChain.doFilter(request, response);

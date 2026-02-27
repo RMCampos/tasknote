@@ -34,10 +34,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@SuppressWarnings("null")
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 class TaskServiceTest {
 
   @Mock TaskRepository taskRepository;
@@ -534,8 +533,6 @@ class TaskServiceTest {
     when(authService.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
 
     String searchTerm = null;
-
-    when(taskRepository.findAllBySearchTerm(null, USER_ID)).thenReturn(List.of());
 
     List<TaskResponse> responses = taskService.searchTasks(searchTerm);
 

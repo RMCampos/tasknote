@@ -26,7 +26,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.util.ReflectionTestUtils;
 
-@SuppressWarnings("null")
 @ExtendWith(MockitoExtension.class)
 class JwtServiceImplTest {
 

@@ -10,7 +10,6 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -49,7 +48,7 @@ public class NoteController {
    * @throws NoteNotFoundException when note not found.
    */
   @GetMapping("/{id}")
-  public NoteResponse getTaskById(@NonNull @PathVariable Long id) {
+  public NoteResponse getTaskById(@PathVariable Long id) {
     return noteService.getNoteById(id);
   }
 
@@ -63,7 +62,7 @@ public class NoteController {
    */
   @PatchMapping("/{id}")
   public ResponseEntity<NoteResponse> patchNote(
-      @PathVariable @NonNull Long id, @RequestBody @Valid NotePatchRequest noteRequest) {
+      @PathVariable Long id, @RequestBody @Valid NotePatchRequest noteRequest) {
 
     return ResponseEntity.ok(noteService.patchNote(id, noteRequest));
   }
@@ -88,7 +87,7 @@ public class NoteController {
    * @throws NoteNotFoundException when note not found.
    */
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteNote(@NonNull @PathVariable Long id) {
+  public ResponseEntity<Void> deleteNote(@PathVariable Long id) {
     noteService.deleteNote(id);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }

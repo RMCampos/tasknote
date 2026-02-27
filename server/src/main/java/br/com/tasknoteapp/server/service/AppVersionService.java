@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.event.EventListener;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 /** Service to retrieve application version information. */
@@ -22,7 +21,7 @@ public class AppVersionService {
    *
    * @param buildProperties the build properties injected by Spring Boot
    */
-  public AppVersionService(@Autowired(required = false) @Nullable BuildProperties buildProperties) {
+  public AppVersionService(@Autowired(required = false) BuildProperties buildProperties) {
     this.buildProperties = buildProperties;
   }
 

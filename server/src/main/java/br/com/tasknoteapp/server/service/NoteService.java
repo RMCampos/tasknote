@@ -18,7 +18,6 @@ import java.util.Objects;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 /** This class implements the NoteService interface methods. */
@@ -76,7 +75,7 @@ public class NoteService {
    * @param noteId The task id in the database.
    * @return {@link NoteResponse} with the found task or throw a {@link TaskNotFoundException}.
    */
-  public NoteResponse getNoteById(@NonNull Long noteId) {
+  public NoteResponse getNoteById(Long noteId) {
     UserEntity user = getCurrentUser();
     logger.info("Get note " + noteId + " to user " + user.getId());
 
@@ -127,7 +126,7 @@ public class NoteService {
    * @return {@link NoteResponse} containing the updated note.
    */
   @Transactional
-  public NoteResponse patchNote(@NonNull Long noteId, NotePatchRequest patch) {
+  public NoteResponse patchNote(Long noteId, NotePatchRequest patch) {
     UserEntity user = getCurrentUser();
 
     logger.info("Patching task " + noteId + " to user " + user.getId());
@@ -174,7 +173,7 @@ public class NoteService {
    * @param noteId The note id from the database.
    */
   @Transactional
-  public void deleteNote(@NonNull Long noteId) {
+  public void deleteNote(Long noteId) {
     UserEntity user = getCurrentUser();
 
     logger.info("Deleting note " + noteId + " to user " + user.getId());
