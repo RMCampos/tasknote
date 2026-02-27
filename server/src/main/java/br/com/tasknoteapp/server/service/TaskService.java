@@ -21,7 +21,6 @@ import java.util.Objects;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 /** This class contains the implementation for the Task Service class. */
@@ -80,7 +79,7 @@ public class TaskService {
    * @param taskId The task id in the database.
    * @return {@link TaskResponse} with the found task or throw a {@link TaskNotFoundException}.
    */
-  public TaskResponse getTaskById(@NonNull Long taskId) {
+  public TaskResponse getTaskById(Long taskId) {
     UserEntity user = getCurrentUser();
     logger.info("Get task " + taskId + " to user " + user.getId());
 
@@ -131,7 +130,7 @@ public class TaskService {
    * @return {@link TaskResponse} with the updated content.
    */
   @Transactional
-  public TaskResponse patchTask(@NonNull Long taskId, TaskPatchRequest patch) {
+  public TaskResponse patchTask(Long taskId, TaskPatchRequest patch) {
     UserEntity user = getCurrentUser();
 
     logger.info("Patching task " + taskId + " to user " + user.getId());
@@ -177,7 +176,7 @@ public class TaskService {
    * @param taskId The task id in the database
    */
   @Transactional
-  public void deleteTask(@NonNull Long taskId) {
+  public void deleteTask(Long taskId) {
     UserEntity user = getCurrentUser();
 
     logger.info("Deleting task " + taskId + " to user " + user.getId());
