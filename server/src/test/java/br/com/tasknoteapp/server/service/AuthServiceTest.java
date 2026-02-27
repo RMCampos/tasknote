@@ -41,10 +41,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @SuppressWarnings("null")
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
   @Mock private UserRepository userRepository;
@@ -95,8 +95,6 @@ class AuthServiceTest {
     entity.setEmailUuid(UUID.randomUUID());
 
     when(userRepository.save(any())).thenReturn(entity);
-    when(jwtService.generateToken(any())).thenReturn("a1b2c3");
-    doNothing().when(mailgunEmailService).sendNewUser(any());
 
     UserResponseWithToken token = authService.signUpNewUser(request);
 
@@ -531,8 +529,6 @@ class AuthServiceTest {
     existing.setId(919L);
     existing.setEmail(email);
     when(userRepository.findByEmail(email)).thenReturn(Optional.of(existing));
-
-    doNothing().when(mailgunEmailService).sendNewUser(existing);
 
     Assertions.assertDoesNotThrow(() -> authService.resendEmailConfirmation(email));
     verify(mailgunEmailService, times(0)).sendNewUser(existing);
