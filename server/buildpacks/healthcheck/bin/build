@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+LAYERS_DIR="$1"
+
+echo "CNB_BUILDPACK_DIR: ${CNB_BUILDPACK_DIR}"
+echo "Contents of buildpack dir:"
+ls -la "${CNB_BUILDPACK_DIR}"
+
+BINARY_SOURCE="${CNB_BUILDPACK_DIR}/healthcheck"
+
+if [ ! -f "${BINARY_SOURCE}" ]; then
+  echo "ERROR: binary not found at ${BINARY_SOURCE}"
+  exit 1
+fi
+
+LAYER_DIR="${LAYERS_DIR}/healthcheck"
+mkdir -p "${LAYER_DIR}/bin"
+
+cp "${BINARY_SOURCE}" "${LAYER_DIR}/bin/healthcheck"
+chmod +x "${LAYER_DIR}/bin/healthcheck"
+
+cat > "${LAYER_DIR}.toml" <<EOL
+[types]
+  launch = true
+  build = false
+  cache = false
+EOL

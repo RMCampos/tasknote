@@ -113,6 +113,14 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-flyway</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-database-postgresql</artifactId>
+    </dependency>
 
     <!-- Testing -->
     <dependency>
@@ -351,6 +359,15 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <image>
+            <name>ghcr.io/rmcampos/tasknote/api:latest</name>
+            <buildpacks>
+                <buildpack>file://${project.basedir}/buildpacks/healthcheck</buildpack>
+                <buildpack>urn:cnb:builder:paketo-buildpacks/java-native-image</buildpack>
+            </buildpacks>
+        </image>
+      </configuration>
         <executions>
           <execution>
               <goals>

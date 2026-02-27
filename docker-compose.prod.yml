@@ -6,13 +6,13 @@ services:
     depends_on:
       tasknote-api:
         condition: service_healthy
-    image: docker.io/rmcampos/tasknote:app-latest
+    image: ghcr.io/rmcampos/tasknote/app:latest
     build:
-      context: client
+      context: ./client
       dockerfile: Dockerfile
     ports: ["5000:5000"]
     environment:
-      VITE_BACKEND_SERVER: http://tasknote-api:8585
+      VITE_BACKEND_SERVER: http://localhost:8585
     networks:
       - tasknote-network
 
@@ -33,16 +33,19 @@ services:
       SECURITY_KEY: this-is-a-very-long-security-key-for-dev
       MAILGUN_APIKEY: invalid-api-key-only-placeholder
     ports: ["8585:8585"]
-    image: docker.io/rmcampos/tasknote:api-latest
-    build:
-      context: server
-      dockerfile: Dockerfile
+    image: ghcr.io/rmcampos/tasknote/api:latest
+    healthcheck:
+      test: ["CMD", "/layers/local_healthcheck/healthcheck/bin/healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
     networks:
       - tasknote-network
 
   tasknote-db:
     container_name: tasknote-db
-    image: postgres:15.8-bookworm
+    image: postgres:16
     environment:
       POSTGRES_DB: tasknote
       POSTGRES_USER: tasknoteuser

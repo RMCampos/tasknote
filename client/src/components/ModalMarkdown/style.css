@@ -154,3 +154,24 @@
     text-decoration: line-through;
   }
 }
+
+.markdown-source {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 1em;
+  background-color: var(--bs-tertiary-bg);
+  border-radius: 6px;
+  overflow: auto;
+  max-height: 60vh;
+}
+
+@media (max-width: 576px) {
+  .markdown-source {
+    font-size: 12px;
+    padding: 0.75em;
+    max-height: 50vh;
+  }
+}
