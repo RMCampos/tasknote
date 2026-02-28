@@ -26,6 +26,8 @@ const ApiConfig = {
 
   notesUrl: `${server}/rest/notes`,
 
+  publicNotesUrl: `${server}/public/notes`,
+
   userUrl: `${server}/rest/users`
 };
 

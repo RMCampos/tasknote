@@ -162,4 +162,82 @@ class NoteServiceTest {
     assertEquals("Test Note", notes.get(0).title());
     verify(noteRepository, times(1)).findAllBySearchTerm(anyString(), eq(user.getId()));
   }
+
+  @Test
+  void shareNote() {
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(user.getEmail()));
+    when(authService.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+    when(noteRepository.findById(note.getId())).thenReturn(Optional.of(note));
+    when(noteRepository.save(any(NoteEntity.class))).thenReturn(note);
+
+    NoteResponse response = noteService.shareNote(note.getId());
+
+    assertEquals("Test Note", response.title());
+    verify(noteRepository, times(1)).save(any(NoteEntity.class));
+  }
+
+  @Test
+  void shareNote_notFound() {
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(user.getEmail()));
+    when(authService.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+    when(noteRepository.findById(note.getId())).thenReturn(Optional.empty());
+    Long noteId = note.getId();
+
+    assertThrows(NoteNotFoundException.class, () -> noteService.shareNote(noteId));
+  }
+
+  @Test
+  void unshareNote() {
+    note.setShared(true);
+    note.setShareToken("some-token");
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(user.getEmail()));
+    when(authService.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+    when(noteRepository.findById(note.getId())).thenReturn(Optional.of(note));
+    when(noteRepository.save(any(NoteEntity.class))).thenReturn(note);
+
+    NoteResponse response = noteService.unshareNote(note.getId());
+
+    assertEquals("Test Note", response.title());
+    verify(noteRepository, times(1)).save(any(NoteEntity.class));
+  }
+
+  @Test
+  void unshareNote_notFound() {
+    when(authUtil.getCurrentUserEmail()).thenReturn(Optional.of(user.getEmail()));
+    when(authService.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+    when(noteRepository.findById(note.getId())).thenReturn(Optional.empty());
+    Long noteId = note.getId();
+
+    assertThrows(NoteNotFoundException.class, () -> noteService.unshareNote(noteId));
+  }
+
+  @Test
+  void getSharedNote() {
+    final String token = "share-token-123";
+    note.setShared(true);
+    note.setShareToken(token);
+    when(noteRepository.findByShareToken(token)).thenReturn(Optional.of(note));
+
+    NoteResponse response = noteService.getSharedNote(token);
+
+    assertEquals("Test Note", response.title());
+    verify(noteRepository, times(1)).findByShareToken(token);
+  }
+
+  @Test
+  void getSharedNote_notFound() {
+    when(noteRepository.findByShareToken("bad-token")).thenReturn(Optional.empty());
+
+    assertThrows(NoteNotFoundException.class, () -> noteService.getSharedNote("bad-token"));
+  }
+
+  @Test
+  void getSharedNote_notShared() {
+    final String token = "share-token-456";
+    note.setShared(false);
+    note.setShareToken(token);
+    when(noteRepository.findByShareToken(token)).thenReturn(Optional.of(note));
+
+    assertThrows(NoteNotFoundException.class, () -> noteService.getSharedNote(token));
+  }
 }

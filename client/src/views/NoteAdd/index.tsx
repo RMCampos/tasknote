@@ -140,7 +140,9 @@ function NoteAdd(): React.ReactNode {
         description: noteContent,
         url: noteUrl,
         tag: noteTag,
-        lastUpdate: ''
+        lastUpdate: '',
+        shared: false,
+        shareToken: null
       };
 
       const added: boolean = await addNote(payload);
@@ -157,7 +159,9 @@ function NoteAdd(): React.ReactNode {
         description: noteContent,
         url: noteUrl,
         tag: noteTag,
-        lastUpdate: ''
+        lastUpdate: '',
+        shared: false,
+        shareToken: null
       };
 
       const edited: boolean = await submitEditNote(payload);

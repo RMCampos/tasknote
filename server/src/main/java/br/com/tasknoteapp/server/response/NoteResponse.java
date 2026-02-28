@@ -7,7 +7,8 @@ import java.util.Objects;
 
 /** This record represents a task and its urls object to be returned. */
 public record NoteResponse(
-    Long id, String title, String description, String url, String lastUpdate, String tag) {
+    Long id, String title, String description, String url, String lastUpdate, String tag,
+    boolean shared, String shareToken) {
 
   /**
    * Creates a NoteResponse given a NoteEntity and its Urls.
@@ -26,6 +27,8 @@ public record NoteResponse(
         entity.getDescription(),
         url,
         timeAgoFmt,
-        entity.getTag());
+        entity.getTag(),
+        entity.isShared(),
+        entity.getShareToken());
   }
 }

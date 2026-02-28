@@ -1,28 +1,33 @@
 #!/bin/bash
+# Server - Back-end
 
-DOCKER_IMG="tasknote-api:nightly"
+CURRENT_DIR=$(pwd)
 
-docker image inspect $DOCKER_IMG --format="ignore me"
-if [ $? -eq 1 ]; then
-  echo "Image not found locally! Building it..."
-
-  if [ ! -f "server/.env" ]; then
-    echo "No env file found for back-end. Creating one for you.."
-    bash tools/run-create-env.sh "back"
-  else
-    echo "Env file in place. Moving on.."
-  fi
-
-  echo "Getting env vars and making them visible"
-  cd server/
-  export $(cat .env | xargs)
-  echo "Done!"
-
-  cd ..
-  docker build --file server/Dockerfile.dev --tag tasknote-api:nightly .
-else
-  echo "Image found! Let's keep going."
+if [ ! -f "$CURRENT_DIR/pom.xml" ]; then
+  cd "$CURRENT_DIR/server"
 fi
 
+echo "Running checks..."
+echo "1/3 - Check Style started..."
+./mvnw --no-transfer-progress checkstyle:check -Dcheckstyle.skip=false
+if [ $? -eq 1 ]; then
+  echo "Issues when running Check Style. Please review.."
+  exit 1
+fi
 
-docker run -it --rm --name tasknote-api -e CHECK="TRUE" -v ./server:/app tasknote-api:nightly
+echo "2/3 - Build started..."
+./mvnw --no-transfer-progress clean compile -DskipTests
+if [ $? -eq 1 ]; then
+  echo "Issues when running build. Please review.."
+  exit 1
+fi
+
+echo "3/3 - Tests started..."
+./mvnw --no-transfer-progress clean verify -P tests --file pom.xml
+if [ $? -eq 1 ]; then
+  echo "Issues when running test. Please review.."
+  exit 1
+fi
+
+echo "You're good to go! Good job!"
+exit 0

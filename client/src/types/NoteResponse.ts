@@ -5,6 +5,8 @@ type NoteResponse = {
   url: string | null;
   tag: string;
   lastUpdate: string;
+  shared: boolean;
+  shareToken: string | null;
 };
 
 export type { NoteResponse };

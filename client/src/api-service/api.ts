@@ -81,6 +81,11 @@ const api = {
     return handleResponse(response);
   },
 
+  getJSONNoAuth: async (url: string) => {
+    const response = await fetch(url, getRequestInit('GET', {}, false));
+    return handleResponse(response);
+  },
+
   postJSON: async (url: string, payload: object) => {
     const response = await fetch(url, getRequestInit('POST', payload, isAddAuth(url)));
     return handleResponse(response);

@@ -114,6 +114,9 @@ const ptBrTranslations = {
   note_form_submit: 'Salvar nota',
   note_table_btn_edit: 'Alterar',
   note_table_btn_delete: 'Excluir',
+  note_action_share: 'Compartilhar',
+  note_action_unshare: 'Parar de compartilhar',
+  note_action_copy_link: 'Copiar link',
 
   about_page_title_one: 'Sobre o',
   about_page_title_two: 'App TaskNote',

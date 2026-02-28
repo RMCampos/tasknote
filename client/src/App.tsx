@@ -16,6 +16,7 @@ import Register from './views/Register';
 import EmailConfirmation from './views/EmailConfirmation';
 import ResetPassword from './views/ResetPassword';
 import CompleteResetPassword from './views/CompleteResetPassword';
+import SharedNote from './views/SharedNote';
 import './styles/custom.scss';
 
 /**
@@ -66,6 +67,10 @@ function App(): React.ReactNode {
       element: <CompleteResetPassword />
     },
     {
+      path: '/public/notes/:token',
+      element: <SharedNote />
+    },
+    {
       path: '*',
       element: <Navigate to="/" replace />
     }
@@ -85,6 +90,10 @@ function App(): React.ReactNode {
           children: BrowserRoutes
         }
       ]
+    },
+    {
+      path: '/public/notes/:token',
+      element: <SharedNote />
     },
     {
       path: '*',
