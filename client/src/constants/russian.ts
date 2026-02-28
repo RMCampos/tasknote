@@ -114,6 +114,9 @@ const ruTranslations = {
   note_form_submit: 'Сохранить заметку',
   note_table_btn_edit: 'Редактировать',
   note_table_btn_delete: 'Удалить',
+  note_action_share: 'Поделиться',
+  note_action_unshare: 'Закрыть доступ',
+  note_action_copy_link: 'Копировать ссылку',
 
   about_page_title_one: 'около',
   about_page_title_two: 'TaskNote App',

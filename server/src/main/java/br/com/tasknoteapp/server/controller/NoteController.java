@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -90,5 +91,29 @@ public class NoteController {
   public ResponseEntity<Void> deleteNote(@PathVariable Long id) {
     noteService.deleteNote(id);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+  }
+
+  /**
+   * Share a note publicly.
+   *
+   * @param id Note identification.
+   * @return NoteResponse containing the share token.
+   * @throws NoteNotFoundException when note not found.
+   */
+  @PutMapping("/{id}/share")
+  public ResponseEntity<NoteResponse> shareNote(@PathVariable Long id) {
+    return ResponseEntity.ok(noteService.shareNote(id));
+  }
+
+  /**
+   * Unshare a note, revoking public access.
+   *
+   * @param id Note identification.
+   * @return NoteResponse with the updated note.
+   * @throws NoteNotFoundException when note not found.
+   */
+  @PutMapping("/{id}/unshare")
+  public ResponseEntity<NoteResponse> unshareNote(@PathVariable Long id) {
+    return ResponseEntity.ok(noteService.unshareNote(id));
   }
 }

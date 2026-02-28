@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -213,6 +214,73 @@ public class NoteService {
         noteRepository.findAllBySearchTerm(searchTerm.toUpperCase(), user.getId());
     logger.info(notes.size() + " tasks found!");
     return notes.stream().map(NoteResponse::fromEntity).toList();
+  }
+
+  /**
+   * Share a note publicly, generating a unique share token.
+   *
+   * @param noteId The note id from the database.
+   * @return {@link NoteResponse} containing the updated note with share token.
+   */
+  public NoteResponse shareNote(Long noteId) {
+    UserEntity user = getCurrentUser();
+    logger.info("Sharing note " + noteId + " for user " + user.getId());
+
+    Optional<NoteEntity> noteOpt = noteRepository.findById(noteId);
+    if (noteOpt.isEmpty()) {
+      throw new NoteNotFoundException();
+    }
+
+    NoteEntity noteEntity = noteOpt.get();
+    if (!noteEntity.isShared()) {
+      noteEntity.setShared(true);
+      noteEntity.setShareToken(UUID.randomUUID().toString());
+      noteRepository.save(noteEntity);
+      logger.info("Note " + noteId + " shared with token " + noteEntity.getShareToken());
+    }
+
+    return NoteResponse.fromEntity(noteEntity);
+  }
+
+  /**
+   * Unshare a note, revoking public access.
+   *
+   * @param noteId The note id from the database.
+   * @return {@link NoteResponse} containing the updated note.
+   */
+  public NoteResponse unshareNote(Long noteId) {
+    UserEntity user = getCurrentUser();
+    logger.info("Unsharing note " + noteId + " for user " + user.getId());
+
+    Optional<NoteEntity> noteOpt = noteRepository.findById(noteId);
+    if (noteOpt.isEmpty()) {
+      throw new NoteNotFoundException();
+    }
+
+    NoteEntity noteEntity = noteOpt.get();
+    noteEntity.setShared(false);
+    noteEntity.setShareToken(null);
+    noteRepository.save(noteEntity);
+    logger.info("Note " + noteId + " unshared.");
+
+    return NoteResponse.fromEntity(noteEntity);
+  }
+
+  /**
+   * Get a publicly shared note by its share token (no authentication required).
+   *
+   * @param shareToken The unique share token for the note.
+   * @return {@link NoteResponse} containing the shared note.
+   */
+  public NoteResponse getSharedNote(String shareToken) {
+    logger.info("Fetching shared note with token " + shareToken);
+
+    Optional<NoteEntity> noteOpt = noteRepository.findByShareToken(shareToken);
+    if (noteOpt.isEmpty() || !noteOpt.get().isShared()) {
+      throw new NoteNotFoundException();
+    }
+
+    return NoteResponse.fromEntity(noteOpt.get());
   }
 
   private UserEntity getCurrentUser() {

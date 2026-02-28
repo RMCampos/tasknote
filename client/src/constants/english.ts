@@ -114,6 +114,9 @@ const enTranslations = {
   note_form_submit: 'Save note',
   note_table_btn_edit: 'Edit',
   note_table_btn_delete: 'Delete',
+  note_action_share: 'Share',
+  note_action_unshare: 'Unshare',
+  note_action_copy_link: 'Copy link',
 
   about_page_title_one: 'About the',
   about_page_title_two: 'TaskNote App',
