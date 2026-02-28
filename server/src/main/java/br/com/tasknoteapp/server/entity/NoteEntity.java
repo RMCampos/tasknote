@@ -42,7 +42,7 @@ public class NoteEntity {
   @Column(name = "shared", nullable = false)
   private boolean shared = false;
 
-  @Column(name = "share_token", nullable = true, length = 36)
+  @Column(name = "share_token", length = 36)
   private String shareToken;
 
   public Long getId() {
