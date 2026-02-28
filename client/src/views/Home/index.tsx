@@ -105,6 +105,34 @@ function Home(): React.ReactNode {
   };
 
   /**
+   * Share or unshare a note.
+   *
+   * @param {NoteResponse} note The note to share or unshare.
+   */
+  const toggleShareNote = async (note: NoteResponse): Promise<void> => {
+    try {
+      const action = note.shared ? 'unshare' : 'share';
+      await api.putJSON(`${ApiConfig.notesUrl}/${note.id}/${action}`, {});
+      loadAllNotes();
+    }
+    catch (e) {
+      handleError(e);
+    }
+  };
+
+  /**
+   * Copy share link to clipboard.
+   *
+   * @param {NoteResponse} note The shared note.
+   */
+  const copyShareLink = (note: NoteResponse): void => {
+    const link = `${window.location.origin}/public/notes/${note.shareToken}`;
+    navigator.clipboard.writeText(link).catch(() => {
+      setErrorMessage('Failed to copy link to clipboard.');
+    });
+  };
+
+  /**
    * Apply filters to a given set of tasks and notes, updating displayed state.
    *
    * @param {string} text - The text to filter by.
@@ -528,6 +556,22 @@ function Home(): React.ReactNode {
                             {t('task_table_action_clone')}
                           </Dropdown.Item>
                         </NavLink>
+                        <Dropdown.Item
+                          as="button"
+                          onClick={() => toggleShareNote(note)}
+                          data-testid={`note-dropdown-share-item-${note.id}`}
+                        >
+                          {note.shared ? t('note_action_unshare') : t('note_action_share')}
+                        </Dropdown.Item>
+                        {note.shared && note.shareToken && (
+                          <Dropdown.Item
+                            as="button"
+                            onClick={() => copyShareLink(note)}
+                            data-testid={`note-dropdown-copy-link-${note.id}`}
+                          >
+                            {t('note_action_copy_link')}
+                          </Dropdown.Item>
+                        )}
                         <Dropdown.Item
                           as="button"
                           onClick={() => deleteNote(note.id)}

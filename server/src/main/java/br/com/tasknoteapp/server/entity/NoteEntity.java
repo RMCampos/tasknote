@@ -39,6 +39,12 @@ public class NoteEntity {
   @Column(name = "last_update")
   private LocalDateTime lastUpdate;
 
+  @Column(name = "shared", nullable = false)
+  private boolean shared = false;
+
+  @Column(name = "share_token", nullable = true, length = 36)
+  private String shareToken;
+
   public Long getId() {
     return id;
   }
@@ -93,6 +99,22 @@ public class NoteEntity {
 
   public void setLastUpdate(LocalDateTime lastUpdate) {
     this.lastUpdate = lastUpdate;
+  }
+
+  public boolean isShared() {
+    return shared;
+  }
+
+  public void setShared(boolean shared) {
+    this.shared = shared;
+  }
+
+  public String getShareToken() {
+    return shareToken;
+  }
+
+  public void setShareToken(String shareToken) {
+    this.shareToken = shareToken;
   }
 
   @Override

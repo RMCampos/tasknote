@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,7 +45,7 @@ class NoteControllerTest {
   void getAllNotes_notesFound_shouldSucceed() throws Exception {
     NoteUrlResponse noteUrl = new NoteUrlResponse(111L, "https://test.com");
     NoteResponse note =
-        new NoteResponse(111L, "title", "description", "https://test.com", null, "tag");
+        new NoteResponse(111L, "title", "description", "https://test.com", null, "tag", false, null);
 
     when(noteService.getAllNotes()).thenReturn(List.of(note));
 
@@ -102,7 +103,7 @@ class NoteControllerTest {
 
     NoteResponse response =
         new NoteResponse(
-            noteId, patchRequest.title(), patchRequest.description(), null, null, "tag");
+            noteId, patchRequest.title(), patchRequest.description(), null, null, "tag", false, null);
 
     when(noteService.patchNote(noteId, patchRequest)).thenReturn(response);
 
@@ -313,6 +314,77 @@ class NoteControllerTest {
                 .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isNotFound())
+        .andReturn();
+  }
+
+  @Test
+  @DisplayName("Share note happy path should succeed")
+  @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
+  void shareNote_happyPath_shouldSucceed() throws Exception {
+    final Long noteId = 1L;
+    final String token = "test-token-uuid";
+    NoteResponse response =
+        new NoteResponse(noteId, "title", "description", null, null, "tag", true, token);
+
+    when(noteService.shareNote(noteId)).thenReturn(response);
+
+    mockMvc
+        .perform(
+            put("/rest/notes/{id}/share", noteId)
+                .with(csrf().asHeader())
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.shared").value(true))
+        .andExpect(jsonPath("$.shareToken").value(token))
+        .andReturn();
+  }
+
+  @Test
+  @DisplayName("Share note with 401 unauthorized should fail")
+  void shareNote_unauthorized_shouldFail() throws Exception {
+    mockMvc
+        .perform(
+            put("/rest/notes/{id}/share", 1L)
+                .with(csrf().asHeader())
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isUnauthorized())
+        .andReturn();
+  }
+
+  @Test
+  @DisplayName("Unshare note happy path should succeed")
+  @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
+  void unshareNote_happyPath_shouldSucceed() throws Exception {
+    final Long noteId = 1L;
+    NoteResponse response =
+        new NoteResponse(noteId, "title", "description", null, null, "tag", false, null);
+
+    when(noteService.unshareNote(noteId)).thenReturn(response);
+
+    mockMvc
+        .perform(
+            put("/rest/notes/{id}/unshare", noteId)
+                .with(csrf().asHeader())
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.shared").value(false))
+        .andExpect(jsonPath("$.shareToken", Matchers.nullValue()))
+        .andReturn();
+  }
+
+  @Test
+  @DisplayName("Unshare note with 401 unauthorized should fail")
+  void unshareNote_unauthorized_shouldFail() throws Exception {
+    mockMvc
+        .perform(
+            put("/rest/notes/{id}/unshare", 1L)
+                .with(csrf().asHeader())
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isUnauthorized())
         .andReturn();
   }
 }
