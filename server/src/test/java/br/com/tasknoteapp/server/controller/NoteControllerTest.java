@@ -103,7 +103,14 @@ class NoteControllerTest {
 
     NoteResponse response =
         new NoteResponse(
-            noteId, patchRequest.title(), patchRequest.description(), null, null, "tag", false, null);
+            noteId,
+            patchRequest.title(),
+            patchRequest.description(),
+            null,
+            null,
+            "tag",
+            false,
+            null);
 
     when(noteService.patchNote(noteId, patchRequest)).thenReturn(response);
 
