@@ -40,10 +40,10 @@ The project was born from a month-long technical challenge and has since grown t
 - **File Attachments**: URL attachments for tasks and notes
 - **Tagging System**: `#tag` support for better organization
 - **Mobile App**: Native mobile applications for iOS and Android with PWA plugin
+- **Collaboration**: Share tasks and notes with other users
 
 ### Upcoming Features
 - **Advanced Filters**: Enhanced search with date ranges, priority levels, and status filters
-- **Collaboration**: Share tasks and notes with other users
 - **Notifications**: Email and push notifications for due dates and reminders
 
 ## 🚀 Tech Stack
