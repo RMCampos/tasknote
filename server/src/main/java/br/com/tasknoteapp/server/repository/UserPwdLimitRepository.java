@@ -12,6 +12,8 @@ public interface UserPwdLimitRepository extends JpaRepository<UserPwdLimitEntity
 
   List<UserPwdLimitEntity> findAllByUser_id(Long userId, Sort sort);
 
+  List<UserPwdLimitEntity> findTop3ByUser_idOrderByWhenHappenedDesc(Long userId);
+
   @Modifying
   @Query("delete UserPwdLimitEntity u where u.user.id = ?1")
   void deleteAllForUser(Long userId);
