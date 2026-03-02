@@ -8,6 +8,7 @@ import br.com.tasknoteapp.server.templates.MailgunTemplateResetPwd;
 import br.com.tasknoteapp.server.templates.MailgunTemplateResetPwdConfirm;
 import br.com.tasknoteapp.server.templates.MailgunTemplateSignUp;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Base64;
 import java.util.Objects;
 import org.slf4j.Logger;
@@ -53,7 +54,11 @@ public class MailgunEmailService {
     this.senderEmail = sender;
     this.targetEnv = targetEnv;
     this.restTemplate =
-        templateBuilder.defaultHeader(HttpHeaders.AUTHORIZATION, basicAuth("api", apiKey)).build();
+        templateBuilder
+            .connectTimeout(Duration.ofSeconds(5))
+            .readTimeout(Duration.ofSeconds(10))
+            .defaultHeader(HttpHeaders.AUTHORIZATION, basicAuth("api", apiKey))
+            .build();
   }
 
   /**

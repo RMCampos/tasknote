@@ -13,6 +13,8 @@ public interface NoteRepository extends JpaRepository<NoteEntity, Long> {
 
   Optional<NoteEntity> findByShareToken(String shareToken);
 
+  Optional<NoteEntity> findByIdAndUser_id(Long id, Long userId);
+
   @Query(
       "select n from NoteEntity n where (upper(n.title) like %?1% or upper(n.description) like"
           + " %?1%) and n.user.id = ?2")

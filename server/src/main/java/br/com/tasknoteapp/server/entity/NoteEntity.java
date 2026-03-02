@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
@@ -29,9 +28,6 @@ public class NoteEntity {
   @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, updatable = false)
   @ManyToOne(fetch = FetchType.LAZY)
   private UserEntity user;
-
-  @OneToOne(mappedBy = "note", fetch = FetchType.LAZY)
-  private NoteUrlEntity noteUrl;
 
   @Column(name = "tag", nullable = true, length = 30)
   private String tag;
@@ -75,14 +71,6 @@ public class NoteEntity {
 
   public void setUser(UserEntity user) {
     this.user = user;
-  }
-
-  public NoteUrlEntity getNoteUrl() {
-    return noteUrl;
-  }
-
-  public void setNoteUrl(NoteUrlEntity noteUrl) {
-    this.noteUrl = noteUrl;
   }
 
   public String getTag() {

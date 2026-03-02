@@ -12,7 +12,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import br.com.tasknoteapp.server.entity.NoteEntity;
 import br.com.tasknoteapp.server.exception.NoteNotFoundException;
 import br.com.tasknoteapp.server.request.NotePatchRequest;
 import br.com.tasknoteapp.server.request.NoteRequest;
@@ -199,10 +198,8 @@ class NoteControllerTest {
   void postNotes_happyPath_shouldSucceed() throws Exception {
     NoteRequest request = new NoteRequest("Title", "Description", null, null);
 
-    NoteEntity entity = new NoteEntity();
-    entity.setId(1L);
-    entity.setTitle(request.title());
-    entity.setDescription(request.description());
+    NoteResponse entity = new NoteResponse(1L, request.title(), request.description(),
+        null, null, null, false, null);
 
     when(noteService.createNote(request)).thenReturn(entity);
 
@@ -223,9 +220,9 @@ class NoteControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(payloadJson))
         .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.id").value(entity.getId()))
-        .andExpect(jsonPath("$.title").value(entity.getTitle()))
-        .andExpect(jsonPath("$.description").value(entity.getDescription()))
+        .andExpect(jsonPath("$.id").value(entity.id()))
+        .andExpect(jsonPath("$.title").value(entity.title()))
+        .andExpect(jsonPath("$.description").value(entity.description()))
         .andExpect(jsonPath("$.url", Matchers.nullValue()))
         .andReturn();
   }

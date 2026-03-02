@@ -30,14 +30,15 @@ class MailgunEmailServiceTest {
 
   @BeforeEach
   void setUp() {
+    when(restTemplateBuilder.connectTimeout(any())).thenReturn(restTemplateBuilder);
+    when(restTemplateBuilder.readTimeout(any())).thenReturn(restTemplateBuilder);
+    when(restTemplateBuilder.defaultHeader(any(), any())).thenReturn(restTemplateBuilder);
+    when(restTemplateBuilder.build()).thenReturn(restTemplate);
+
     String apiKey = "abx123";
     String domain = "domain.com";
     String sender = "no-reply@domain.com";
     String target = "development";
-
-    when(restTemplateBuilder.defaultHeader(any(), any())).thenReturn(restTemplateBuilder);
-    when(restTemplateBuilder.build()).thenReturn(restTemplate);
-
     mailgunEmailService =
         new MailgunEmailService(apiKey, domain, sender, target, restTemplateBuilder);
   }
