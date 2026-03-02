@@ -11,26 +11,21 @@ import org.springframework.stereotype.Service;
 @Service
 class UserServiceImpl implements UserService {
 
-  private final UserRepository userRepository;
-
-  private UserDetailsService cachedUserDetailsService;
+  private final UserDetailsService cachedUserDetailsService;
 
   public UserServiceImpl(UserRepository userRepository) {
-    this.userRepository = userRepository;
+    this.cachedUserDetailsService =
+        email -> {
+          Optional<UserEntity> user = userRepository.findByEmail(email);
+          if (user.isEmpty()) {
+            throw new RuntimeException("User not found: " + email);
+          }
+          return user.get();
+        };
   }
 
   @Override
   public UserDetailsService userDetailsService() {
-    if (this.cachedUserDetailsService == null) {
-      this.cachedUserDetailsService =
-          email -> {
-            Optional<UserEntity> user = userRepository.findByEmail(email);
-            if (user.isEmpty()) {
-              throw new RuntimeException("User not found: " + email);
-            }
-            return user.get();
-          };
-    }
     return this.cachedUserDetailsService;
   }
 }
