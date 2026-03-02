@@ -138,15 +138,12 @@ public class NoteService {
 
     logger.info("Patching task " + noteId + " to user " + user.getId());
 
-    Optional<NoteEntity> note = noteRepository.findById(noteId);
+    Optional<NoteEntity> note = noteRepository.findByIdAndUser_id(noteId, user.getId());
     if (note.isEmpty()) {
       throw new NoteNotFoundException();
     }
 
     NoteEntity noteEntity = note.get();
-    if (!noteEntity.getUser().getId().equals(user.getId())) {
-      throw new NoteNotFoundException();
-    }
     if (!Objects.isNull(patch.title()) && !patch.title().isBlank()) {
       noteEntity.setTitle(patch.title().trim());
     }
@@ -187,16 +184,12 @@ public class NoteService {
 
     logger.info("Deleting note " + noteId + " to user " + user.getId());
 
-    Optional<NoteEntity> note = noteRepository.findById(noteId);
+    Optional<NoteEntity> note = noteRepository.findByIdAndUser_id(noteId, user.getId());
     if (note.isEmpty()) {
       throw new NoteNotFoundException();
     }
 
     NoteEntity noteEntity = note.get();
-
-    if (!noteEntity.getUser().getId().equals(user.getId())) {
-      throw new NoteNotFoundException();
-    }
 
     noteUrlRepository.deleteByNote_id(noteId);
     logger.info("URL deleted from task " + noteId);
@@ -229,20 +222,17 @@ public class NoteService {
    * @param noteId The note id from the database.
    * @return {@link NoteResponse} containing the updated note with share token.
    */
+  @Transactional
   public NoteResponse shareNote(Long noteId) {
     UserEntity user = getCurrentUser();
     logger.info("Sharing note " + noteId + " for user " + user.getId());
 
-    Optional<NoteEntity> noteOpt = noteRepository.findById(noteId);
+    Optional<NoteEntity> noteOpt = noteRepository.findByIdAndUser_id(noteId, user.getId());
     if (noteOpt.isEmpty()) {
       throw new NoteNotFoundException();
     }
 
     NoteEntity noteEntity = noteOpt.get();
-
-    if (!noteEntity.getUser().getId().equals(user.getId())) {
-      throw new NoteNotFoundException();
-    }
 
     if (!noteEntity.isShared()) {
       noteEntity.setShared(true);
@@ -264,15 +254,12 @@ public class NoteService {
     UserEntity user = getCurrentUser();
     logger.info("Unsharing note " + noteId + " for user " + user.getId());
 
-    Optional<NoteEntity> noteOpt = noteRepository.findById(noteId);
+    Optional<NoteEntity> noteOpt = noteRepository.findByIdAndUser_id(noteId, user.getId());
     if (noteOpt.isEmpty()) {
       throw new NoteNotFoundException();
     }
 
     NoteEntity noteEntity = noteOpt.get();
-    if (!noteEntity.getUser().getId().equals(user.getId())) {
-      throw new NoteNotFoundException();
-    }
     noteEntity.setShared(false);
     noteEntity.setShareToken(null);
     noteRepository.save(noteEntity);
@@ -310,6 +297,9 @@ public class NoteService {
 
   private List<NoteResponse> getNotesUrl(List<NoteEntity> notes) {
     List<Long> noteIds = notes.stream().map(NoteEntity::getId).toList();
+    if (noteIds.isEmpty()) {
+      return notes.stream().map(n -> NoteResponse.fromEntity(n, null)).toList();
+    }
     List<NoteUrlEntity> urls = noteUrlRepository.findAllByNote_idIn(noteIds);
     Map<Long, String> noteUrls =
         urls.stream().collect(Collectors.toMap(nu -> nu.getNote().getId(), NoteUrlEntity::getUrl));
