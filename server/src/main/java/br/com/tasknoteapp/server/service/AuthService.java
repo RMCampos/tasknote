@@ -36,8 +36,6 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -513,8 +511,10 @@ public class AuthService {
   }
 
   private void checkLoginAttemptLimit(Long userId) {
-    Sort sort = Sort.by(Direction.DESC, "whenHappened");
-    List<UserPwdLimitEntity> userPwdList = userPwdLimitRepository.findAllByUser_id(userId, sort);
+    // Fetch only the 3 most recent failed attempts to avoid loading unbounded rows for
+    // targeted/brute-forced accounts.
+    List<UserPwdLimitEntity> userPwdList =
+        userPwdLimitRepository.findTop3ByUser_idOrderByWhenHappenedDesc(userId);
 
     logger.warn("login count attempt for user {}: {}", userId, userPwdList.size());
 

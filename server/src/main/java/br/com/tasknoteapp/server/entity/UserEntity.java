@@ -5,7 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -40,9 +39,6 @@ public class UserEntity implements UserDetails {
 
   @Column(name = "name", length = 20)
   private String name;
-
-  @OneToMany(mappedBy = "user")
-  private List<TaskEntity> tasks;
 
   @Column(name = "email_confirmed_at", nullable = true)
   private LocalDateTime emailConfirmedAt;
@@ -145,14 +141,6 @@ public class UserEntity implements UserDetails {
 
   public void setName(String name) {
     this.name = name;
-  }
-
-  public List<TaskEntity> getTasks() {
-    return tasks;
-  }
-
-  public void setTasks(List<TaskEntity> tasks) {
-    this.tasks = tasks;
   }
 
   public LocalDateTime getEmailConfirmedAt() {

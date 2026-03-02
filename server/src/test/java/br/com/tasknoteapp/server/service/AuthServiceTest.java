@@ -36,8 +36,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.User;
@@ -201,8 +199,8 @@ class AuthServiceTest {
     existing.setEmail(request.email());
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(existing));
 
-    Sort sort = Sort.by(Direction.DESC, "whenHappened");
-    when(userPwdLimitRepository.findAllByUser_id(existing.getId(), sort)).thenReturn(List.of());
+    when(userPwdLimitRepository.findTop3ByUser_idOrderByWhenHappenedDesc(existing.getId()))
+        .thenReturn(List.of());
     when(authenticationManager.authenticate(any())).thenReturn(null);
     when(jwtService.generateToken(existing)).thenReturn("a1b2c3");
 
@@ -241,8 +239,7 @@ class AuthServiceTest {
     limit1.setWhenHappened(LocalDateTime.now().minusMinutes(1));
     UserPwdLimitEntity limit2 = new UserPwdLimitEntity();
     UserPwdLimitEntity limit3 = new UserPwdLimitEntity();
-    Sort sort = Sort.by(Direction.DESC, "whenHappened");
-    when(userPwdLimitRepository.findAllByUser_id(existing.getId(), sort))
+    when(userPwdLimitRepository.findTop3ByUser_idOrderByWhenHappenedDesc(existing.getId()))
         .thenReturn(List.of(limit1, limit2, limit3));
 
     Assertions.assertThrows(
@@ -261,8 +258,8 @@ class AuthServiceTest {
     existing.setId(919L);
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(existing));
 
-    Sort sort = Sort.by(Direction.DESC, "whenHappened");
-    when(userPwdLimitRepository.findAllByUser_id(existing.getId(), sort)).thenReturn(List.of());
+    when(userPwdLimitRepository.findTop3ByUser_idOrderByWhenHappenedDesc(existing.getId()))
+        .thenReturn(List.of());
     when(authenticationManager.authenticate(any())).thenThrow(new BadCredentialsException("Wrong"));
 
     UserResponseWithToken token = authService.signInUser(request);

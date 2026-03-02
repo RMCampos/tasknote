@@ -105,9 +105,9 @@ class NoteServiceTest {
     when(noteRepository.save(any(NoteEntity.class))).thenReturn(note);
     when(noteUrlRepository.save(any(NoteUrlEntity.class))).thenReturn(new NoteUrlEntity());
 
-    NoteEntity createdNote = noteService.createNote(noteRequest);
+    NoteResponse createdNote = noteService.createNote(noteRequest);
 
-    assertEquals("Test Note", createdNote.getTitle());
+    assertEquals("Test Note", createdNote.title());
     verify(noteRepository, times(1)).save(any(NoteEntity.class));
     verify(noteUrlRepository, times(1)).save(any(NoteUrlEntity.class));
   }

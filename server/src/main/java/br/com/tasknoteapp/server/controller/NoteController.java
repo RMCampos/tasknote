@@ -1,6 +1,5 @@
 package br.com.tasknoteapp.server.controller;
 
-import br.com.tasknoteapp.server.entity.NoteEntity;
 import br.com.tasknoteapp.server.exception.NoteNotFoundException;
 import br.com.tasknoteapp.server.request.NotePatchRequest;
 import br.com.tasknoteapp.server.request.NoteRequest;
@@ -77,8 +76,8 @@ public class NoteController {
    */
   @PostMapping
   public ResponseEntity<NoteResponse> postNotes(@RequestBody @Valid NoteRequest noteRequest) {
-    NoteEntity createdNote = noteService.createNote(noteRequest);
-    return ResponseEntity.status(HttpStatus.CREATED).body(NoteResponse.fromEntity(createdNote));
+    NoteResponse createdNote = noteService.createNote(noteRequest);
+    return ResponseEntity.status(HttpStatus.CREATED).body(createdNote);
   }
 
   /**
