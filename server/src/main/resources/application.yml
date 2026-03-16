@@ -13,8 +13,8 @@ logging:
 
 mailgun:
   api-key: ${MAILGUN_APIKEY:abc123456}
-  domain: tasknoteapp.dev.br
-  sender-email: no-reply@tasknoteapp.dev.br
+  domain: tasknote.darkroasted.vps-kinghost.net
+  sender-email: no-reply@tasknote.darkroasted.vps-kinghost.net
 
 server:
   port: 8585

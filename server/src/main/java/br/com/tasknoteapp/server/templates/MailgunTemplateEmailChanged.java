@@ -7,7 +7,7 @@ import java.util.Optional;
 /** This class represents a template for the email change workflow. */
 public class MailgunTemplateEmailChanged implements MailgunTemplate {
 
-  private String templateName = "email changed";
+  private String templateName = "email_changed";
   private String carbonCopy;
   private final Map<String, Object> props;
 

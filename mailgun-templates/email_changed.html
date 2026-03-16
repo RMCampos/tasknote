@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Email Changed</title>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+				background-color: #f4f6f8;
+				font-family: Arial, Helvetica, sans-serif;
+				color: #1f2937;
+			}
+
+			.wrapper {
+				width: 100%;
+				table-layout: fixed;
+				background-color: #f4f6f8;
+				padding: 24px 12px;
+			}
+
+			.card {
+				width: 100%;
+				max-width: 600px;
+				margin: 0 auto;
+				background: #ffffff;
+				border: 1px solid #e5e7eb;
+				border-radius: 10px;
+				overflow: hidden;
+			}
+
+			.header {
+				padding: 20px 24px;
+				background: #111827;
+				color: #ffffff;
+				font-size: 20px;
+				font-weight: 700;
+			}
+
+			.content {
+				padding: 24px;
+				font-size: 16px;
+				line-height: 1.5;
+			}
+
+			.change-box {
+				margin: 16px 0;
+				padding: 14px;
+				border: 1px solid #d1d5db;
+				border-radius: 8px;
+				background: #f9fafb;
+				font-size: 14px;
+				line-height: 1.6;
+			}
+
+			.label {
+				color: #4b5563;
+				font-weight: 700;
+			}
+
+			.value {
+				color: #111827;
+				word-break: break-word;
+			}
+
+			.footer {
+				padding: 18px 24px 24px;
+				font-size: 13px;
+				line-height: 1.5;
+				color: #6b7280;
+			}
+
+			@media only screen and (max-width: 600px) {
+				.wrapper {
+					padding: 16px 8px;
+				}
+
+				.header,
+				.content,
+				.footer {
+					padding-left: 16px;
+					padding-right: 16px;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="card">
+				<div class="header">Your email was changed</div>
+				<div class="content">
+					<p>Hello,</p>
+					<p>We are confirming that the email address on your account was updated.</p>
+
+					<div class="change-box">
+						<div><span class="label">Old email:</span> <span class="value">{{ EMAIL_FROM }}</span></div>
+						<div><span class="label">New email:</span> <span class="value">{{ EMAIL_TO }}</span></div>
+					</div>
+
+					<p>If you made this change, no further action is needed.</p>
+					<p>If you did not make this change, please secure your account immediately and contact support at <a href="mailto:ricardompcampos@gmail.com">ricardompcampos@gmail.com</a>.</p>
+				</div>
+				<div class="footer">
+					This is an automatic notification, please do not reply.
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

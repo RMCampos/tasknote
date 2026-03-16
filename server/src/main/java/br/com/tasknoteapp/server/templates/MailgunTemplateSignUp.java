@@ -6,7 +6,7 @@ import java.util.Map;
 /** This class represents a template for the sign up workflow. */
 public class MailgunTemplateSignUp implements MailgunTemplate {
 
-  private String templateName = "sign up confirmation";
+  private String templateName = "sign_up_confirmation";
   private final Map<String, Object> props;
 
   public MailgunTemplateSignUp() {
