@@ -64,6 +64,11 @@ export const timeAgoTranslations: Record<string, string> = {
 };
 
 export const serverResponsesTranslations: Record<string, string> = {
+  BAD_PASSWORD_8_pt_br: 'Senha fraca: Senha deve possuir pelo menos 8 letras',
+  BAD_PASSWORD_7_pt_br: 'Senha fraca: Senha deve possuir pelo menos 8 letras, 1 caracter especial',
+  BAD_PASSWORD_6_pt_br: 'Senha fraca: Senha deve possuir pelo menos 8 letras, 1 número, 1 caracter especial',
+  BAD_PASSWORD_5_pt_br: 'Senha fraca: Senha deve possuir pelo menos 8 letras, 1 maiúscula, 1 número, 1 caracter especial',
+  BAD_PASSWORD_4_pt_br: 'Senha fraca: Senha deve possuir pelo menos 1 número',
   BAD_PASSWORD_3_pt_br: 'Senha fraca: Senha deve possuir pelo menos 8 letras, 1 maiúscula, 1 caracter especial',
   BAD_PASSWORD_2_pt_br: 'Senha fraca: Senha deve possuir pelo menos 1 maiúscula, 1 caracter especial',
   BAD_PASSWORD_1_pt_br: 'Senha fraca: Senha deve possuir pelo menos 1 caracter especial',
@@ -74,7 +79,7 @@ export const serverResponsesTranslations: Record<string, string> = {
   INVALID_CREDENTIALS_pt_br: 'E-mail ou senha inválidos!',
   MAX_LOGIN_ATTEMPT_pt_br: 'Limite máximo de tentativas atingido. Por favor aguarde 30 minutos',
   NETWORK_ERROR_pt_br: 'Erro de rede ao tentar obter recursos.',
-  FILL_ALL_FIELDS_pt_br: 'Por ravor, preencha todos os campos',
+  FILL_ALL_FIELDS_pt_br: 'Por favor, preencha todos os campos',
   FILL_NEW_PASSWORD_pt_br: 'Por favor, informe a nova senha',
   FILL_USER_pt_br: 'Por favor, informe seu e-mail',
   FILL_USER_AND_PASS_pt_br: 'Por favor, informe seu e-mail e senha!',
@@ -86,6 +91,11 @@ export const serverResponsesTranslations: Record<string, string> = {
   WRONG_OR_MISSING_INFO_pt_br: 'Informação errada ou incompleta!',
   NOTHING_TO_UPDATE_pt_br: 'Nada para atualizar!',
 
+  BAD_PASSWORD_8_es: 'Contraseña inválida: La contraseña debe tener al menos 8 caracteres',
+  BAD_PASSWORD_7_es: 'Contraseña inválida: La contraseña debe tener al menos 8 caracteres, 1 carácter especial',
+  BAD_PASSWORD_6_es: 'Contraseña inválida: La contraseña debe tener al menos 8 caracteres, 1 número, 1 carácter especial',
+  BAD_PASSWORD_5_es: 'Contraseña inválida: La contraseña debe tener al menos 8 caracteres, 1 mayúscula, 1 número, 1 carácter especial',
+  BAD_PASSWORD_4_es: 'Contraseña inválida: La contraseña debe tener al menos 1 número',
   BAD_PASSWORD_3_es: 'Contraseña inválida: La contraseña debe tener al menos 8 caracteres, 1 mayúscula y 1 carácter especial',
   BAD_PASSWORD_2_es: 'Contraseña inválida: La contraseña debe tener al menos 1 mayúscula y 1 carácter especial',
   BAD_PASSWORD_1_es: 'Contraseña inválida: La contraseña debe tener al menos 1 carácter especial',
@@ -108,6 +118,11 @@ export const serverResponsesTranslations: Record<string, string> = {
   WRONG_OR_MISSING_INFO_es: '¡Información incorrecta o incompleta!',
   NOTHING_TO_UPDATE_es: '¡Nada que actualizar!',
 
+  BAD_PASSWORD_8_ru: 'Неправильный пароль: Пароль должен содержать не менее 8 символов.',
+  BAD_PASSWORD_7_ru: 'Неправильный пароль: Пароль должен содержать не менее 8 символов, 1 специальный символ.',
+  BAD_PASSWORD_6_ru: 'Неправильный пароль: Пароль должен содержать не менее 8 символов, 1 цифру, 1 специальный символ.',
+  BAD_PASSWORD_5_ru: 'Неправильный пароль: Пароль должен содержать не менее 8 символов, 1 заглавную букву, 1 цифру, 1 специальный символ.',
+  BAD_PASSWORD_4_ru: 'Неправильный пароль: Пароль должен содержать не менее 1 цифры.',
   BAD_PASSWORD_3_ru: 'Неправильный пароль: Пароль должен содержать не менее 8 символов, 1 заглавную букву, 1 специальный символ.',
   BAD_PASSWORD_2_ru: 'Неправильный пароль: Пароль должен содержать как минимум 1 заглавную букву и 1 специальный символ.',
   BAD_PASSWORD_1_ru: 'Неправильный пароль: Пароль должен содержать хотя бы 1 специальный символ.',
