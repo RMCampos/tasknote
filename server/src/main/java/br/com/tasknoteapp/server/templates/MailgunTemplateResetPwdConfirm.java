@@ -6,7 +6,7 @@ import java.util.Map;
 /** This class represents a template for the password reset confirmation workflow. */
 public class MailgunTemplateResetPwdConfirm implements MailgunTemplate {
 
-  private String templateName = "password change confirmation";
+  private String templateName = "password_change_confirmation";
   private final Map<String, Object> props;
 
   public MailgunTemplateResetPwdConfirm() {
