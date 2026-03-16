@@ -65,7 +65,13 @@ async function handleResponse(response: Response) {
     const contentType = response.headers.get('content-type');
     if (contentType && contentType.includes('application/json')) {
       const data = await response.json();
-      throw new Error(data.message);
+      if ('message' in data && typeof data.message === 'string') {
+        throw new Error(data.message);
+      }
+      if ('fields' in data && Array.isArray(data.fields)) {
+        const firstError = data.fields[0].fieldMessage as string;
+        throw new Error(firstError);
+      }
     }
     handleError(response.status);
   }

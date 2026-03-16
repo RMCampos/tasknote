@@ -1,7 +1,12 @@
 export const serverResponses: Record<string, string> = {
+  'Bad password: Password must have at least at least 8 characters': 'BAD_PASSWORD_8',
+  'Bad password: Password must have at least at least 8 characters, 1 special character': 'BAD_PASSWORD_7',
+  'Bad password: Password must have at least at least 8 characters, 1 number, 1 special character': 'BAD_PASSWORD_6',
+  'Bad password: Password must have at least at least 8 characters, 1 uppercase, 1 number, 1 special character': 'BAD_PASSWORD_5',
   'Bad password: Password must have at least at least 8 characters, 1 uppercase, 1 special character': 'BAD_PASSWORD_3',
   'Bad password: Password must have at least 1 uppercase, 1 special character': 'BAD_PASSWORD_2',
   'Bad password: Password must have at least 1 special character': 'BAD_PASSWORD_1',
+  'Bad password: Password must have at least 1 number': 'BAD_PASSWORD_4',
   'Email already exists!': 'EMAIL_EXISTS',
   'Forbidden! Access denied!': 'FORBIDDEN',
   'If the email address you entered is associated with an account, you will receive a password reset link shortly.': 'RECOVER_PASSWORD',
