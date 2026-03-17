@@ -1,4 +1,4 @@
-name: Build and Push App Docker Image
+name: Frontend Build & Push
 
 on:
   workflow_dispatch:
@@ -15,9 +15,11 @@ on:
       - 'client/**/*.js'
       - 'client/Dockerfile'
       - 'client/Caddyfile'
+      - '.github/workflows/main-client.yml'
 
 jobs:
   build-and-push:
+    name: Frontend Build & Push
     runs-on: ubuntu-latest
     permissions:
       contents: write

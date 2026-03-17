@@ -1,4 +1,4 @@
-name: Build and Push API Docker Image
+name: Backend Build & Push
 
 on:
   workflow_dispatch:
@@ -9,9 +9,11 @@ on:
       - 'server/**/*.java'
       - 'server/**/*.xml'
       - 'server/pom.xml'
+      - '.github/workflows/main-server.yml'
 
 jobs:
   build-and-push:
+    name: Backend Build & Push
     runs-on: ubuntu-latest
     permissions:
       contents: write
