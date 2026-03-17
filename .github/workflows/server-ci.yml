@@ -1,4 +1,4 @@
-name: Server API CI
+name: Backend CI
 
 on:
   workflow_dispatch:
@@ -10,9 +10,11 @@ on:
       - 'server/**/*.java'
       - 'server/**/*.xml'
       - 'server/pom.xml'
+      - '.github/workflows/server-ci.yml'
 
 jobs:
   run-checks:
+    name: Backend CI
     runs-on: ubuntu-latest
     permissions:
       contents: read
