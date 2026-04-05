@@ -110,6 +110,12 @@ jobs:
             -var="mailgun_apikey=${{ secrets.MAILGUN_API_KEY }}" \
             -var="backend_image=${{ steps.deploy-vars.outputs.backend_image }}" \
             -var="frontend_image=${{ steps.deploy-vars.outputs.frontend_image }}"
+          terraform show -json tfplan > tfplan.json
+          if jq -e '.resource_changes | length == 0' tfplan.json >/dev/null; then
+            echo "no_changes=true" >> "$GITHUB_OUTPUT"
+            echo "No changes to apply."
+            exit 0
+          fi
 
       - name: Upload plan artifact
         uses: actions/upload-artifact@v4
