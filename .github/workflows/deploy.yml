@@ -51,8 +51,8 @@ jobs:
       - name: Determine deployment values
         id: deploy-vars
         run: |
-          backend_image='${{ github.event.inputs.backend_image }}'
-          frontend_image='${{ github.event.inputs.frontend_image }}'
+          backend_image="${{ github.event.inputs.backend_image }}"
+          frontend_image="${{ github.event.inputs.frontend_image }}"
 
           latest_backend_tag="$(git tag --list 'api-v*' --sort=-v:refname | head -n 1)"
           latest_frontend_tag="$(git tag --list 'app-v*' --sort=-v:refname | head -n 1)"
@@ -75,11 +75,9 @@ jobs:
           fi
 
           echo "Resolved backend_image=$backend_image"
-          echo "Resolved migrations_image=$migrations_image"
           echo "Resolved frontend_image=$frontend_image"
 
           echo "backend_image=$backend_image" >> "$GITHUB_OUTPUT"
-          echo "migrations_image=$migrations_image" >> "$GITHUB_OUTPUT"
           echo "frontend_image=$frontend_image" >> "$GITHUB_OUTPUT"
 
       - name: Terraform Fmt -check -diff
@@ -91,7 +89,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-        run: terraform init
+        run: terraform init -input=false
 
       - name: Terraform Validate
         working-directory: terraform
@@ -103,7 +101,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
         run: |
-          terraform plan -out=tfplan \
+          timeout 1m terraform plan -input=false -out=tfplan \
             -var="db_user=${{ secrets.DB_USER }}" \
             -var="db_password=${{ secrets.DB_PASSWORD }}" \
             -var="db_name=${{ secrets.DB_NAME }}" \
@@ -150,7 +148,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-        run: terraform init
+        run: terraform init -input=false
 
       - name: Terraform Apply
         working-directory: terraform
