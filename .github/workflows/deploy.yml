@@ -46,7 +46,7 @@ jobs:
       - name: Validate cluster access
         run: |
           kubectl cluster-info
-          kubectl get namespace gif-mood
+          kubectl get namespace tasknote
 
       - name: Determine deployment values
         id: deploy-vars
