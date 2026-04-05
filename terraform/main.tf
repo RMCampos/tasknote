@@ -150,8 +150,7 @@ resource "kubernetes_deployment_v1" "tasknote_db" {
               }
             }
           }
-          port { container_port = 5432 
-}
+          port { container_port = 5432 }
         }
         volume {
           name = "postgres-storage"
@@ -170,10 +169,8 @@ resource "kubernetes_service_v1" "tasknote_db_svc" {
     namespace = kubernetes_namespace_v1.tasknote.metadata[0].name
   }
   spec {
-    selector = { app = "tasknote-db" 
-}
-    port { port = 5432 
-}
+    selector = { app = "tasknote-db" }
+    port { port = 5432 }
     type = "ClusterIP"
   }
 }
