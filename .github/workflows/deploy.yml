@@ -54,7 +54,8 @@ jobs:
           backend_image="${{ github.event.inputs.backend_image }}"
           frontend_image="${{ github.event.inputs.frontend_image }}"
 
-          latest_backend_tag="$(git tag --list '[0-9]*' | sort -V | tail -n1)"
+          latest_backend_tag_tmp="$(git tag --list 'api-v*' | sort -V | tail -n1)"
+          latest_backend_tag="${latest_backend_tag_tmp#api-v}"
           latest_frontend_tag="$(git tag --list 'app-v*' | sort -V | tail -n1))"
 
           if [ -z "$latest_backend_tag" ]; then
