@@ -54,11 +54,11 @@ jobs:
           backend_image="${{ github.event.inputs.backend_image }}"
           frontend_image="${{ github.event.inputs.frontend_image }}"
 
-          latest_backend_tag="$(git tag --list 'api-*' --sort=-v:refname | head -n 1)"
-          latest_frontend_tag="$(git tag --list 'app-v*' --sort=-v:refname | head -n 1)"
+          latest_backend_tag="$(git tag --list 'v[0-9]*' | sort -V | tail -n1)"
+          latest_frontend_tag="$(git tag --list 'app-v*' | sort -V | tail -n1))"
 
           if [ -z "$latest_backend_tag" ]; then
-            echo "No backend tag found matching api-v*" >&2
+            echo "No backend tag found matching v[0-9]*" >&2
             exit 1
           fi
 
