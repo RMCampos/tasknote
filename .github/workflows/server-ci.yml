@@ -44,10 +44,66 @@ jobs:
         working-directory: ./server
         run: ./mvnw --no-transfer-progress clean verify -P tests --file pom.xml
 
+  deploy-to-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: ["run-checks"]
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set lowercase repo name
+        id: repo
+        run: echo "name=${GITHUB_REPOSITORY,,}" >> $GITHUB_OUTPUT
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '25'
+          cache: 'maven'
+
+      - name: Defines image tag
+        id: version
+        working-directory: ./server
+        run: |
+          # Extract current version from pom.xml
+          CURRENT_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout 2>/dev/null)
+          echo "Current version: ${CURRENT_VERSION}"
+
+          # Increment version
+          NEW_VERSION=$((CURRENT_VERSION + 1))
+          echo "New version candidate: ${NEW_VERSION}"
+
+          # Set the new version with runner number
+          FINAL_TAG="$NEW_VERSION.${{ github.run_number }}"
+          echo "Final TAG version: ${FINAL_TAG}"
+
+          # Output for later steps
+          echo "version=${FINAL_TAG}" >> $GITHUB_OUTPUT
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+  
       - name: Build Docker image with Spring Boot
         working-directory: ./server
         run: |
           ./mvnw -Pnative -DskipTests spring-boot:build-image \
-            -Dspring-boot.build-image.imageName=ghcr.io/rmcampos/tasknote/api:latest \
+            -Dspring-boot.build-image.imageName=ghcr.io/rmcampos/tasknote/api:candidate \
             -Dspring-boot.build-image.builder=paketobuildpacks/builder-jammy-tiny:latest
 
+      - name: Tag and push Docker image
+        run: |
+          docker tag ghcr.io/${{ steps.repo.outputs.name }}/api:candidate ghcr.io/${{ steps.repo.outputs.name }}/api:${{ steps.version.outputs.version }}
+          docker push ghcr.io/${{ steps.repo.outputs.name }}/api:candidate
+          docker push ghcr.io/${{ steps.repo.outputs.name }}/api:${{ steps.version.outputs.version }}
