@@ -13,8 +13,6 @@ on:
         description: "Apply changes after plan"
         required: false
         default: "true"
-  push:
-    branches: [ main ]
   workflow_run:
     workflows: [ "Backend Build & Push", "Frontend Build & Push" ]
     types: [ completed ]
@@ -118,6 +116,9 @@ jobs:
             echo "no_changes=true" >> "$GITHUB_OUTPUT"
             echo "No changes to apply."
             exit 0
+          else
+            echo "Changes detected. Proceeding with apply"
+            echo "no_changes=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Upload plan artifact
