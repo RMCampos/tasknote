@@ -43,3 +43,11 @@ jobs:
       - name: Run tests
         working-directory: ./server
         run: ./mvnw --no-transfer-progress clean verify -P tests --file pom.xml
+
+      - name: Build Docker image with Spring Boot
+        working-directory: ./server
+        run: |
+          ./mvnw -Pnative -DskipTests spring-boot:build-image \
+            -Dspring-boot.build-image.imageName=ghcr.io/rmcampos/tasknote/api:latest \
+            -Dspring-boot.build-image.builder=paketobuildpacks/builder-jammy-tiny:latest
+
