@@ -1,4 +1,4 @@
-name: Backend CI
+name: Backend PR
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ on:
 
 jobs:
   run-checks:
-    name: Backend CI
+    name: Checks
     runs-on: ubuntu-latest
     permissions:
       contents: read

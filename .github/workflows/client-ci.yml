@@ -1,4 +1,4 @@
-name: Frontend CI
+name: Frontend PR
 
 on:
   workflow_dispatch:
@@ -20,7 +20,7 @@ on:
 
 jobs:
   run-checks:
-    name: Frontend CI
+    name: Checks
     runs-on: ubuntu-latest
     permissions:
       contents: read
