@@ -60,7 +60,7 @@ variable "root_log_level" {
 
 variable "backend_image" {
   type    = string
-  default = "pull ghcr.io/rmcampos/tasknote/api:candidate"
+  default = "ghcr.io/rmcampos/tasknote/api:candidate"
 }
 
 variable "frontend_image" {

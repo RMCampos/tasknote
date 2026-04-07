@@ -34,7 +34,7 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}/app
           tags: |
-            type=raw,value=candidade
+            type=raw,value=candidate
 
       - name: Generate version tag
         id: version
