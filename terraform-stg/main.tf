@@ -183,11 +183,17 @@ resource "kubernetes_deployment_v1" "tasknote_stg_backend" {
     replicas = 1
     selector { match_labels = { app = "tasknote-stg-backend" } }
     template {
-      metadata { labels = { app = "tasknote-stg-backend" } }
+      metadata {
+        labels = { app = "tasknote-stg-backend" }
+        annotations = {
+          "timestamp" = timestamp()
+        }
+      }
       spec {
         container {
-          image = var.backend_image
-          name  = "backend"
+          image             = var.backend_image
+          name              = "backend"
+          image_pull_policy = "Always"
           env {
             name = "POSTGRES_DB"
             value_from {
@@ -290,11 +296,17 @@ resource "kubernetes_deployment_v1" "tasknote_stg_frontend" {
     replicas = 1
     selector { match_labels = { app = "tasknote-stg-app" } }
     template {
-      metadata { labels = { app = "tasknote-stg-app" } }
+      metadata {
+        labels = { app = "tasknote-stg-app" }
+        annotations = {
+          "timestamp" = timestamp()
+        }
+      }
       spec {
         container {
-          image = var.frontend_image
-          name  = "frontend"
+          image             = var.frontend_image
+          name              = "frontend"
+          image_pull_policy = "Always"
           port { container_port = 5000 }
           env {
             name  = "VITE_BACKEND_SERVER"
