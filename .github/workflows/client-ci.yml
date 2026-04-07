@@ -2,9 +2,10 @@ name: Frontend CI
 
 on:
   workflow_dispatch:
-  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
     branches:
-      - '**'
+      - 'main'
     paths:
       - 'client/**/*.html'
       - 'client/**/*.png'
@@ -81,7 +82,7 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}/app
           tags: |
-            type=raw,value=candidade
+            type=raw,value=candidate
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
