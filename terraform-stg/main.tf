@@ -68,6 +68,11 @@ variable "frontend_image" {
   default = "ghcr.io/rmcampos/tasknote/app:candidate"
 }
 
+variable "deploy_version" {
+  type    = string
+  default = "manual"
+}
+
 resource "kubernetes_namespace_v1" "tasknote_stg" {
   metadata {
     name = "tasknote-stg"
@@ -186,7 +191,7 @@ resource "kubernetes_deployment_v1" "tasknote_stg_backend" {
       metadata {
         labels = { app = "tasknote-stg-backend" }
         annotations = {
-          "timestamp" = timestamp()
+          "deploy_id" = var.deploy_version
         }
       }
       spec {
@@ -299,7 +304,7 @@ resource "kubernetes_deployment_v1" "tasknote_stg_frontend" {
       metadata {
         labels = { app = "tasknote-stg-app" }
         annotations = {
-          "timestamp" = timestamp()
+          "deploy_id" = var.deploy_version
         }
       }
       spec {

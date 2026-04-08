@@ -75,7 +75,8 @@ jobs:
             -var="security_key=${{ secrets.JWT_SECURITY_KEY }}" \
             -var="mailgun_apikey=${{ secrets.MAILGUN_API_KEY }}" \
             -var="backend_image=${{ steps.deploy-vars.outputs.backend_image }}" \
-            -var="frontend_image=${{ steps.deploy-vars.outputs.frontend_image }}"
+            -var="frontend_image=${{ steps.deploy-vars.outputs.frontend_image }}" \
+            -var="deploy_version=${{ github.run_id }}"
           terraform show -json tfplan > tfplan.json
           if jq -e '.resource_changes | length == 0' tfplan.json >/dev/null; then
             echo "no_changes=true" >> "$GITHUB_OUTPUT"
