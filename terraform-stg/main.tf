@@ -257,7 +257,7 @@ resource "kubernetes_deployment_v1" "tasknote_stg_backend" {
           }
           env {
             name  = "TARGET_ENV"
-            value = "production"
+            value = "staging"
           }
           env {
             name = "MAILGUN_APIKEY"
