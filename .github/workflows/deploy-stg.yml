@@ -90,14 +90,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tfplan
-          path: terraform/tfplan
+          path: terraform-stg/tfplan
 
   terraform-apply:
     runs-on: ubuntu-latest
     needs: terraform-plan-stg
-    if: >
-      (github.event_name == 'push' || github.event_name == 'workflow_run')
-      && needs.terraform-plan-stg.outputs.no_changes == 'false'
+    if: needs.terraform-plan-stg.outputs.no_changes == 'false'
     environment:
       name: staging
     permissions:
