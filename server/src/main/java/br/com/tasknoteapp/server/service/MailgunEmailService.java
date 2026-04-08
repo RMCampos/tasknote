@@ -29,10 +29,10 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class MailgunEmailService {
 
-  private static final Logger logger = LoggerFactory.getLogger(MailgunEmailService.class);
+  private static final Logger logger = LoggerFactory.getLogger(MailgunEmailService.class.getName());
   private final RestTemplate restTemplate;
   private final String targetEnv;
-  private String domain;
+  private final String domain;
   private String senderEmail;
 
   /**
@@ -73,6 +73,8 @@ public class MailgunEmailService {
     String subject = "TaskNote App confirmation email";
     String link = getBaseUrl() + "/email-confirmation?identification=%s";
 
+    logger.info("New user link: {}", link);
+
     MailgunTemplateSignUp signUpTemplate = new MailgunTemplateSignUp();
     signUpTemplate.setConfirmationLink(String.format(link, user.getEmailUuid().toString()));
 
@@ -90,6 +92,8 @@ public class MailgunEmailService {
     String to = user.getEmail();
     String subject = "TaskNote App password reset";
     String link = getBaseUrl() + "/finish-reset-password?token=%s";
+
+    logger.info("Password reset link: {}", link);
 
     MailgunTemplateResetPwd resetTemplate = new MailgunTemplateResetPwd();
     resetTemplate.setResetLink(String.format(link, user.getResetToken()));
@@ -184,7 +188,10 @@ public class MailgunEmailService {
     if ("development".equals(targetEnv) || Objects.isNull(targetEnv)) {
       return "http://localhost:5000";
     }
-    String stage = targetEnv.equals("stage") ? "stage." : "";
-    return String.format("https://%s%s", stage, domain);
+    String baseUrl = domain;
+    if (targetEnv.equals("staging")) {
+      baseUrl = "tasknote-stg" + domain.substring(8);
+    }
+    return String.format("https://%s", baseUrl);
   }
 }
