@@ -32,7 +32,7 @@ public class MailgunEmailService {
   private static final Logger logger = LoggerFactory.getLogger(MailgunEmailService.class.getName());
   private final RestTemplate restTemplate;
   private final String targetEnv;
-  private String domain;
+  private final String domain;
   private String senderEmail;
 
   /**
@@ -190,8 +190,8 @@ public class MailgunEmailService {
     }
     String baseUrl = domain;
     if (targetEnv.equals("staging")) {
-      domain = "tasknote-stg" + domain.substring(8);
+      baseUrl = "tasknote-stg" + domain.substring(8);
     }
-    return String.format("https://%s", domain);
+    return String.format("https://%s", baseUrl);
   }
 }
