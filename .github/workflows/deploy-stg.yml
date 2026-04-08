@@ -1,25 +1,14 @@
-name: Deploy to prod
+name: Deploy to staging
 
 on:
   workflow_dispatch:
-    inputs:
-      backend_image:
-        description: "Backend image tag (full image reference)"
-        required: false
-      frontend_image:
-        description: "Frontend image tag (full image reference)"
-        required: false
-      apply:
-        description: "Apply changes after plan"
-        required: false
-        default: "true"
   workflow_run:
-    workflows: [ "Backend Main", "Frontend Main" ]
+    workflows: [ "Backend PR", "Frontend PR" ]
     types: [ completed ]
 
 jobs:
-  terraform-plan:
-    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+  terraform-plan-stg:
+    name: Plan changs to staging
     runs-on: ubuntu-latest
     outputs:
       no_changes: ${{ steps.check-changes.outputs.no_changes }}
@@ -27,7 +16,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -46,59 +35,35 @@ jobs:
       - name: Validate cluster access
         run: |
           kubectl cluster-info
-          kubectl get namespace tasknote
+          kubectl get namespace tasknote-stg
 
       - name: Determine deployment values
         id: deploy-vars
         run: |
-          backend_image="${{ github.event.inputs.backend_image }}"
-          frontend_image="${{ github.event.inputs.frontend_image }}"
-
-          latest_backend_tag_tmp="$(git tag --list 'api-v*' | sort -V | tail -n1)"
-          latest_backend_tag="${latest_backend_tag_tmp#api-v}"
-          latest_frontend_tag="$(git tag --list 'app-v*' | sort -V | tail -n1)"
-
-          if [ -z "$latest_backend_tag" ]; then
-            echo "No backend tag found matching [0-9]*" >&2
-            exit 1
-          fi
-
-          if [ -z "$latest_frontend_tag" ]; then
-            echo "No frontend tag found matching app-v*" >&2
-            exit 1
-          fi
-
-          if [ -z "$backend_image" ]; then
-            backend_image="ghcr.io/rmcampos/tasknote/api:$latest_backend_tag"
-          fi
-          if [ -z "$frontend_image" ]; then
-            frontend_image="ghcr.io/rmcampos/tasknote/app:$latest_frontend_tag"
-          fi
-
-          echo "Resolved backend_image=$backend_image"
-          echo "Resolved frontend_image=$frontend_image"
+          backend_image="ghcr.io/rmcampos/tasknote/api:candidate"
+          frontend_image="ghcr.io/rmcampos/tasknote/app:candidate"
 
           echo "backend_image=$backend_image" >> "$GITHUB_OUTPUT"
           echo "frontend_image=$frontend_image" >> "$GITHUB_OUTPUT"
 
       - name: Terraform Fmt -check -diff
-        working-directory: terraform
+        working-directory: terraform-stg
         run: terraform fmt -check -diff
 
       - name: Terraform Init
-        working-directory: terraform
+        working-directory: terraform-stg
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
         run: terraform init -input=false
 
       - name: Terraform Validate
-        working-directory: terraform
+        working-directory: terraform-stg
         run: terraform validate
 
       - name: Terraform Plan
         id: check-changes
-        working-directory: terraform
+        working-directory: terraform-stg
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
@@ -129,12 +94,12 @@ jobs:
 
   terraform-apply:
     runs-on: ubuntu-latest
-    needs: terraform-plan
+    needs: terraform-plan-stg
     if: >
-      (github.event_name == 'push' || github.event_name == 'workflow_run' || inputs.apply == 'true')
-      && needs.terraform-plan.outputs.no_changes == 'false'
+      (github.event_name == 'push' || github.event_name == 'workflow_run')
+      && needs.terraform-plan-stg.outputs.no_changes == 'false'
     environment:
-      name: production
+      name: staging
     permissions:
       contents: read
     steps:
@@ -157,14 +122,14 @@ jobs:
           chmod 600 ~/.kube/config
 
       - name: Terraform Init
-        working-directory: terraform
+        working-directory: terraform-stg
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
         run: terraform init -input=false
 
       - name: Terraform Apply
-        working-directory: terraform
+        working-directory: terraform-stg
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}

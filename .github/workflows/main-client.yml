@@ -1,4 +1,4 @@
-name: Frontend Build & Push
+name: Frontend Main
 
 on:
   workflow_dispatch:
@@ -19,7 +19,7 @@ on:
 
 jobs:
   build-and-push:
-    name: Frontend Build & Push
+    name: Build & Push
     runs-on: ubuntu-latest
     permissions:
       contents: write
