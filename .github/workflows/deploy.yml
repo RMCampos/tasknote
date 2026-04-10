@@ -135,6 +135,7 @@ jobs:
       && needs.terraform-plan.outputs.no_changes == 'false'
     environment:
       name: production
+      url: https://tasknote.darkroasted.vps-kinghost.net
     permissions:
       contents: read
     steps:
