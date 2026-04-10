@@ -99,6 +99,7 @@ jobs:
     if: needs.terraform-plan-stg.outputs.no_changes == 'false'
     environment:
       name: staging
+      url: https://tasknote-stg.darkroasted.vps-kinghost.net
     permissions:
       contents: read
     steps:
