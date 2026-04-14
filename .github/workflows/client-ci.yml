@@ -84,6 +84,7 @@ jobs:
           images: ghcr.io/${{ github.repository }}/app
           tags: |
             type=raw,value=candidate
+            type=raw,value=pr-${{ github.event.pull_request.number }}
 
       - name: Generate version tag
         id: version
