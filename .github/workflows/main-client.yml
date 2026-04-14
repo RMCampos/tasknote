@@ -58,7 +58,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PR_NUMBER=$(gh pr list --commit ${{ github.sha }} --state merged --json number --jq '.[0].number')
+          PR_NUMBER=$(gh pr list --search "${{ github.sha }}" --state merged --json number --jq '.[0].number')
           if [ -z "$PR_NUMBER" ]; then
             echo "No merged PR found for this commit. Falling back to 'candidate' tag."
             PR_NUMBER="candidate"
