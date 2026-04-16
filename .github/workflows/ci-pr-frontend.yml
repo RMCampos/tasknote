@@ -60,6 +60,7 @@ jobs:
     permissions:
       contents: write
       packages: write
+      deployments: write
 
     steps:
       - name: Checkout code
@@ -105,3 +106,29 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             VITE_BUILD=${{ steps.version.outputs.tag }}
+
+      - name: Create GitHub deployment for staging
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const ref = context.payload.pull_request.head.sha;
+            const env = 'staging';
+            const resp = await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref,
+              required_contexts: [],
+              environment: env,
+              description: `PR #${context.payload.pull_request.number} preview deployment`,
+              transient_environment: true,
+              auto_merge: false
+            });
+            // create a deployment status pointing to the staging URL
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: resp.data.id,
+              state: 'success',
+              environment_url: 'https://tasknote-stg.darkroasted.vps-kinghost.net'
+            });

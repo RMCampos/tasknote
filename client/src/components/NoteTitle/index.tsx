@@ -1,5 +1,6 @@
 import React from 'react';
 import ExternalLinkIcon from '../../assets/icons8-external-link-30.png';
+import { isSafeUrl } from '../../utils/UrlUtils';
 
 interface Props {
   readonly title: string;
@@ -18,8 +19,8 @@ function NoteTitle(props: React.PropsWithChildren<Props>): React.ReactNode {
     <span className="task-title-icon">
       <span className="poppins-semibold">
         {props.title}
-        {props.noteUrl && props.noteUrl.length > 0 && (
-          <a href={props.noteUrl} target="_blank" rel="noreferrer" className="task-note-external-link">
+        {isSafeUrl(props.noteUrl) && (
+          <a href={props.noteUrl!} target="_blank" rel="noreferrer" className="task-note-external-link">
             <img src={ExternalLinkIcon} width={20} alt="external link" />
           </a>
         )}
