@@ -27,6 +27,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -131,7 +132,8 @@ public class AuthService {
     user.setEmail(newUser.email());
     user.setPassword(passwordEncoder.encode(newUser.password()));
     user.setAdmin(false);
-    user.setCreatedAt(LocalDateTime.now());
+    user.setCreatedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+    user.setLastPasswordChange(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
     user.setEmailUuid(emailUuid);
     user.setLang(newUser.lang());
     userRepository.save(user);
@@ -332,6 +334,7 @@ public class AuthService {
       }
 
       currentUser.setPassword(passwordEncoder.encode(patchRequest.password()));
+      currentUser.setLastPasswordChange(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
       shouldUpdate = true;
     }
 
@@ -433,7 +436,8 @@ public class AuthService {
 
     UserEntity user = userOptional.get();
     user.setResetToken(resetToken);
-    user.setResetPasswordExpiration(LocalDateTime.now().plusHours(2L));
+    user.setResetPasswordExpiration(
+        LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS).plusHours(2L));
 
     userRepository.save(user);
     if (hasValidMailgunApiKey()) {
@@ -477,6 +481,7 @@ public class AuthService {
     user.setResetToken(null);
     user.setResetPasswordExpiration(null);
     user.setPassword(passwordEncoder.encode(request.password()));
+    user.setLastPasswordChange(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
 
     userRepository.save(user);
     if (hasValidMailgunApiKey()) {
