@@ -1,6 +1,6 @@
 import { env } from '../env';
 
-const server = env.VITE_BACKEND_SERVER;
+const server = env.VITE_BACKEND_SERVER || '/api';
 
 const ApiConfig = {
 
