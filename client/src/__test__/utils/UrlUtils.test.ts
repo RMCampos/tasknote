@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isSafeUrl } from './UrlUtils';
+import { isSafeUrl } from '../../utils/UrlUtils';
 
 describe('UrlUtils', () => {
   it('should allow http:// URLs', () => {
