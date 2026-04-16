@@ -276,7 +276,7 @@ class TaskControllerTest {
         """
         {
           "description": "Test task",
-          "urls": ["www.url.com"],
+          "urls": ["https://www.url.com"],
           "highPriority": true,
           "tag": "tag"
         }

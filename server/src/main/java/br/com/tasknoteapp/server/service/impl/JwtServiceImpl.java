@@ -51,6 +51,14 @@ class JwtServiceImpl implements JwtService {
     return null;
   }
 
+  private LocalDateTime extractIssuedAt(String token) {
+    Date date = extractClaim(token, Claims::getIssuedAt);
+    if (!Objects.isNull(date)) {
+      return date.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime();
+    }
+    return null;
+  }
+
   @Override
   public String generateToken(UserEntity user) {
     Map<String, Object> claims = new HashMap<>();
@@ -91,7 +99,18 @@ class JwtServiceImpl implements JwtService {
   @Override
   public boolean validateTokenAndUser(String token, UserDetails user) {
     final String email = user.getUsername();
-    return !isTokenExpired(token) && email.equals(getEmailFromToken(token));
+    boolean basicValid = !isTokenExpired(token) && email.equals(getEmailFromToken(token));
+
+    if (basicValid && user instanceof UserEntity userEntity) {
+      LocalDateTime iat = extractIssuedAt(token);
+      if (iat != null && userEntity.getLastPasswordChange() != null) {
+        // Token must be issued after or at the same time as last password change
+        // We use isBefore to invalidate tokens issued BEFORE the change
+        return !iat.isBefore(userEntity.getLastPasswordChange());
+      }
+    }
+
+    return basicValid;
   }
 
   private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {

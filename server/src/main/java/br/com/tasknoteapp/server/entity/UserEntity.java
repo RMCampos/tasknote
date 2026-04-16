@@ -55,6 +55,9 @@ public class UserEntity implements UserDetails {
   @Column(name = "lang", nullable = true, length = 6)
   private String lang;
 
+  @Column(name = "last_password_change", nullable = false)
+  private LocalDateTime lastPasswordChange;
+
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return List.of();
@@ -181,5 +184,13 @@ public class UserEntity implements UserDetails {
 
   public void setLang(String lang) {
     this.lang = lang;
+  }
+
+  public LocalDateTime getLastPasswordChange() {
+    return lastPasswordChange;
+  }
+
+  public void setLastPasswordChange(LocalDateTime lastPasswordChange) {
+    this.lastPasswordChange = lastPasswordChange;
   }
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import ExternalLinkIcon from '../../assets/icons8-external-link-30.png';
+import { isSafeUrl } from '../../utils/UrlUtils';
 import './style.css';
 
 interface Props {
@@ -24,7 +25,7 @@ function TaskTitle(props: React.PropsWithChildren<Props>): React.ReactNode {
         data-testid={`task-title-text-${props.title}`}
       >
         {props.title}
-        {props.taskUrl && props.taskUrl.length > 0 && (
+        {props.taskUrl && props.taskUrl.length > 0 && isSafeUrl(props.taskUrl[0]) && (
           <a href={props.taskUrl[0]} target="_blank" rel="noreferrer" className="task-note-external-link">
             <img src={ExternalLinkIcon} width={20} alt="external link" />
           </a>

@@ -1,6 +1,6 @@
 -- Create test user
-insert into users (email, password, admin, created_at, inactivated_at)
-select 'test@domain.com', 'a1b2c3d4f5g6', false, current_timestamp, null
+insert into users (email, password, admin, created_at, inactivated_at, last_password_change)
+select 'test@domain.com', 'a1b2c3d4f5g6', false, current_timestamp, null, current_timestamp
 where not exists (select 1 from users where email = 'test@domain.com');
 
 -- Create a task
