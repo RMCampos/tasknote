@@ -1,0 +1,136 @@
+name: Pull Request CD-Deploy to Staging
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: [ "Pull Request CI-Backend", "Pull Request CI-Frontend" ]
+    types: [ completed ]
+
+jobs:
+  terraform-plan-stg:
+    name: Plan changs to staging
+    runs-on: ubuntu-latest
+    outputs:
+      no_changes: ${{ steps.check-changes.outputs.no_changes }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Setup Kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Validate cluster access
+        run: |
+          kubectl cluster-info
+          kubectl get namespace tasknote-stg
+
+      - name: Determine deployment values
+        id: deploy-vars
+        run: |
+          backend_image="ghcr.io/rmcampos/tasknote/api:candidate"
+          frontend_image="ghcr.io/rmcampos/tasknote/app:candidate"
+
+          echo "backend_image=$backend_image" >> "$GITHUB_OUTPUT"
+          echo "frontend_image=$frontend_image" >> "$GITHUB_OUTPUT"
+
+      - name: Terraform Fmt -check -diff
+        working-directory: terraform-stg
+        run: terraform fmt -check -diff
+
+      - name: Terraform Init
+        working-directory: terraform-stg
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: terraform init -input=false
+
+      - name: Terraform Validate
+        working-directory: terraform-stg
+        run: terraform validate
+
+      - name: Terraform Plan
+        id: check-changes
+        working-directory: terraform-stg
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: |
+          timeout 1m terraform plan -input=false -out=tfplan \
+            -var="db_user=${{ secrets.DB_USER }}" \
+            -var="db_password=${{ secrets.DB_PASSWORD }}" \
+            -var="db_name=${{ secrets.DB_NAME }}" \
+            -var="security_key=${{ secrets.JWT_SECURITY_KEY }}" \
+            -var="mailgun_apikey=${{ secrets.MAILGUN_API_KEY }}" \
+            -var="backend_image=${{ steps.deploy-vars.outputs.backend_image }}" \
+            -var="frontend_image=${{ steps.deploy-vars.outputs.frontend_image }}" \
+            -var="deploy_version=${{ github.run_id }}"
+          terraform show -json tfplan > tfplan.json
+          if jq -e '.resource_changes | length == 0' tfplan.json >/dev/null; then
+            echo "no_changes=true" >> "$GITHUB_OUTPUT"
+            echo "No changes to apply."
+            exit 0
+          else
+            echo "Changes detected. Proceeding with apply"
+            echo "no_changes=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: terraform-stg/tfplan
+
+  terraform-apply:
+    runs-on: ubuntu-latest
+    needs: terraform-plan-stg
+    if: needs.terraform-plan-stg.outputs.no_changes == 'false'
+    environment:
+      name: staging
+      url: https://tasknote-stg.darkroasted.vps-kinghost.net
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Download plan artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: terraform-stg
+
+      - name: Setup Kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Terraform Init
+        working-directory: terraform-stg
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: terraform init -input=false
+
+      - name: Terraform Apply
+        working-directory: terraform-stg
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: timeout 1m terraform apply tfplan
