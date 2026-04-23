@@ -1,4 +1,4 @@
-name: Deploy to prod
+name: Main CD-Deploy to Prod
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ on:
         required: false
         default: "true"
   workflow_run:
-    workflows: [ "Backend Main", "Frontend Main" ]
+    workflows: [ "Main CI-Backend", "Main CI-Frontend" ]
     types: [ completed ]
 
 jobs:
@@ -135,6 +135,7 @@ jobs:
       && needs.terraform-plan.outputs.no_changes == 'false'
     environment:
       name: production
+      url: https://tasknote.darkroasted.vps-kinghost.net
     permissions:
       contents: read
     steps:

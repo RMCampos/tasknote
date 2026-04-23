@@ -1,4 +1,4 @@
-name: Frontend Main
+name: Main CI-Frontend
 
 on:
   workflow_dispatch:
@@ -31,6 +31,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set lowercase repo name
+        id: repo
+        run: echo "name=${GITHUB_REPOSITORY,,}" >> $GITHUB_OUTPUT
+
       - name: Generate version tag
         id: version
         run: |
@@ -49,26 +53,26 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository }}/app
-          tags: |
-            type=raw,value=${{ steps.version.outputs.tag }}
-            type=raw,value=latest,enable={{is_default_branch}}
+      - name: Find PR number
+        id: find_pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=$(gh pr list --search "${{ github.sha }}" --state merged --json number --jq '.[0].number')
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No merged PR found for this commit. Falling back to 'candidate' tag."
+            PR_NUMBER="candidate"
+          else
+            PR_NUMBER="pr-${PR_NUMBER}"
+          fi
+          echo "tag=${PR_NUMBER}" >> $GITHUB_OUTPUT
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./client
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          build-args: |
-            VITE_BUILD=v${{ steps.version.outputs.tag }}
+      - name: Promote Docker image
+        run: |
+          docker buildx imagetools create \
+            --tag ghcr.io/${{ steps.repo.outputs.name }}/app:latest \
+            --tag ghcr.io/${{ steps.repo.outputs.name }}/app:${{ steps.version.outputs.tag }} \
+            ghcr.io/${{ steps.repo.outputs.name }}/app:${{ steps.find_pr.outputs.tag }}
 
       - name: Create and push Git tag
         run: |

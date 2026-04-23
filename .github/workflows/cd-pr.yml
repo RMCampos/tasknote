@@ -1,14 +1,15 @@
-name: Deploy to staging
+name: Pull Request CD-Deploy to Staging
 
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: [ "Backend PR", "Frontend PR" ]
+    workflows: [ "Pull Request CI-Backend", "Pull Request CI-Frontend" ]
     types: [ completed ]
 
 jobs:
   terraform-plan-stg:
     name: Plan changs to staging
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     outputs:
       no_changes: ${{ steps.check-changes.outputs.no_changes }}
@@ -99,6 +100,7 @@ jobs:
     if: needs.terraform-plan-stg.outputs.no_changes == 'false'
     environment:
       name: staging
+      url: https://tasknote-stg.darkroasted.vps-kinghost.net
     permissions:
       contents: read
     steps:

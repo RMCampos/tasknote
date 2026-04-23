@@ -166,6 +166,30 @@ class JwtServiceImplTest {
     assertFalse(valid);
   }
 
+  @Test
+  void validateTokenAndUser_shouldReturnFalseIfTokenIssuedBeforeLastPasswordChange()
+      throws InterruptedException {
+    UserEntity user = new UserEntity();
+    user.setId(testUserId);
+    user.setEmail(testEmail);
+    user.setAdmin(false);
+    user.setName(testName);
+    user.setLastPasswordChange(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+
+    // Token issued NOW
+    String token = jwtService.generateToken(user);
+
+    // Update lastPasswordChange to FUTURE (simulating a password change after token issuance)
+    // We wait 1 second to ensure the new timestamp is strictly after token iat (which has second
+    // precision)
+    Thread.sleep(1100);
+    user.setLastPasswordChange(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+
+    boolean valid = jwtService.validateTokenAndUser(token, user);
+
+    assertFalse(valid, "Token issued before password change should be invalid");
+  }
+
   private Claims extractClaims(String token) {
     return Jwts.parser().verifyWith(getKey()).build().parseSignedClaims(token).getPayload();
   }

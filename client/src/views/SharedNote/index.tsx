@@ -6,6 +6,7 @@ import remarkGfm from 'remark-gfm';
 import { NoteResponse } from '../../types/NoteResponse';
 import api from '../../api-service/api';
 import ApiConfig from '../../api-service/apiConfig';
+import { isSafeUrl } from '../../utils/UrlUtils';
 
 /**
  * SharedNote component for displaying a publicly shared note.
@@ -80,9 +81,9 @@ function SharedNote(): React.ReactNode {
             </Card.Header>
             <Card.Body>
               <Card.Title>{note.title}</Card.Title>
-              {note.url && (
+              {isSafeUrl(note.url) && (
                 <p>
-                  <a href={note.url} target="_blank" rel="noopener noreferrer">
+                  <a href={note.url!} target="_blank" rel="noopener noreferrer">
                     {note.url}
                   </a>
                 </p>
