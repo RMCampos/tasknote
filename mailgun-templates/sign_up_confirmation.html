@@ -1,114 +1,168 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Confirm Your Account</title>
-		<style>
-			body {
-				margin: 0;
-				padding: 0;
-				background-color: #f4f6f8;
-				font-family: Arial, Helvetica, sans-serif;
-				color: #1f2937;
-			}
+  <head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Confirm Your Account</title>
+	<style>
+	  body {
+		margin: 0;
+		padding: 0;
+		background-color: #e6f5e9;
+		font-family: 'Poppins', 'Segoe UI', Arial, Helvetica, sans-serif;
+		color: #233c46;
+	  }
 
-			.wrapper {
-				width: 100%;
-				table-layout: fixed;
-				background-color: #f4f6f8;
-				padding: 24px 12px;
-			}
+	  table {
+		border-spacing: 0;
+		border-collapse: collapse;
+	  }
 
-			.card {
-				width: 100%;
-				max-width: 600px;
-				margin: 0 auto;
-				background: #ffffff;
-				border: 1px solid #e5e7eb;
-				border-radius: 10px;
-				overflow: hidden;
-			}
+	  .wrapper {
+		width: 100%;
+		background-color: #e6f5e9;
+		padding: 24px 12px;
+	  }
 
-			.header {
-				padding: 20px 24px;
-				background: #111827;
-				color: #ffffff;
-				font-size: 20px;
-				font-weight: 700;
-			}
+	  .card {
+		width: 100%;
+		max-width: 620px;
+		margin: 0 auto;
+		background-color: #ffffff;
+		border: 1px solid #d9eadf;
+		border-radius: 8px;
+		overflow: hidden;
+		box-shadow: 0 8px 24px rgba(35, 60, 70, 0.08);
+	  }
 
-			.content {
-				padding: 24px;
-				font-size: 16px;
-				line-height: 1.5;
-			}
+	  .header {
+		padding: 18px 24px;
+		background-color: #233c46;
+		border-top: 4px solid #2eb745;
+		color: #ffffff;
+	  }
 
-			.button-wrap {
-				margin: 24px 0;
-				text-align: center;
-			}
+	  .brand {
+		margin: 0;
+		font-size: 12px;
+		letter-spacing: 1px;
+		font-weight: 600;
+		opacity: 0.9;
+	  }
 
-			.button {
-				display: inline-block;
-				padding: 12px 20px;
-				background: #0f766e;
-				color: #ffffff;
-				text-decoration: none;
-				border-radius: 8px;
-				font-weight: 700;
-				font-size: 15px;
-			}
+	  .title {
+		margin: 8px 0 0;
+		font-size: 22px;
+		font-weight: 700;
+		line-height: 1.3;
+	  }
 
-			.fallback-link {
-				margin-top: 8px;
-				font-size: 13px;
-				color: #4b5563;
-				word-break: break-all;
-			}
+	  .content {
+		padding: 24px;
+		font-size: 16px;
+		line-height: 1.6;
+	  }
 
-			.footer {
-				padding: 18px 24px 24px;
-				font-size: 13px;
-				line-height: 1.5;
-				color: #6b7280;
-			}
+	  .content p {
+		margin: 0 0 16px;
+	  }
 
-			@media only screen and (max-width: 600px) {
-				.wrapper {
-					padding: 16px 8px;
-				}
+	  .button-wrap {
+		margin: 24px 0;
+		text-align: center;
+	  }
 
-				.header,
-				.content,
-				.footer {
-					padding-left: 16px;
-					padding-right: 16px;
-				}
-			}
-		</style>
-	</head>
-	<body>
-		<div class="wrapper">
-			<div class="card">
-				<div class="header">Confirm your account</div>
-				<div class="content">
-					<p>Hello,</p>
-					<p>Thank you for signing up. Please confirm your account by clicking the button below.</p>
+	  .button {
+		display: inline-block;
+		padding: 12px 24px;
+		background-color: #2eb745;
+		color: #ffffff;
+		text-decoration: none;
+		border-radius: 4px;
+		font-weight: 600;
+		font-size: 15px;
+	  }
 
-					<div class="button-wrap">
-						<a class="button" href="{{ CONFIRMATION_LINK }}" target="_blank" rel="noopener noreferrer">
-							Confirm Account
-						</a>
-						<div class="fallback-link">If the button does not work, open this link: {{ CONFIRMATION_LINK }}</div>
-					</div>
+	  .fallback-link {
+		margin-top: 12px;
+		padding: 12px;
+		background-color: #f7fbf8;
+		border: 1px solid #d9eadf;
+		border-radius: 4px;
+		font-size: 13px;
+		color: #4c6169;
+		word-break: break-all;
+	  }
 
-					<p>If you did not create this account, you can ignore this email.</p>
+	  .link {
+		color: #2eb745;
+	  }
+
+	  .footer {
+		padding: 18px 24px 24px;
+		font-size: 13px;
+		line-height: 1.6;
+		color: #5f7178;
+	  }
+
+	  @media only screen and (max-width: 600px) {
+		.wrapper {
+		  padding: 16px 8px;
+		}
+
+		.header,
+		.content,
+		.footer {
+		  padding-left: 16px;
+		  padding-right: 16px;
+		}
+
+		.title {
+		  font-size: 20px;
+		}
+	  }
+	</style>
+  </head>
+  <body>
+	<table role="presentation" class="wrapper" width="100%">
+	  <tr>
+		<td align="center">
+		  <table role="presentation" class="card" width="100%">
+			<tr>
+			  <td class="header">
+				<p class="brand">TASKNOTE</p>
+				<p class="title">Confirm your account</p>
+			  </td>
+			</tr>
+			<tr>
+			  <td class="content">
+				<p>Hello,</p>
+				<p>
+				  Welcome to Tasknote. Confirm your account to start organizing tasks and notes in
+				  one place.
+				</p>
+
+				<div class="button-wrap">
+				  <a class="button" href="{{ CONFIRMATION_LINK }}" target="_blank" rel="noopener noreferrer"
+					>Confirm account</a
+				  >
+				  <div class="fallback-link">
+					If the button does not work, copy and open this link: {{ CONFIRMATION_LINK }}
+				  </div>
 				</div>
-				<div class="footer">
-					This is an automatic message, please do not reply.
-				</div>
-			</div>
-		</div>
-	</body>
+
+				<p>If you did not create this account, you can safely ignore this message.</p>
+			  </td>
+			</tr>
+			<tr>
+			  <td class="footer">
+				This is an automatic message from Tasknote, please do not reply.<br />
+				Need help? Contact <a class="link" href="mailto:ricardompcampos@gmail.com">ricardompcampos@gmail.com</a>.
+			  </td>
+			</tr>
+		  </table>
+		</td>
+	  </tr>
+	</table>
+  </body>
 </html>
