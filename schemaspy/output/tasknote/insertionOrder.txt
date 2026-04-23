@@ -1,8 +1,0 @@
-users
-notes
-tasks
-note_urls
-notes_created
-task_url
-user_pwd_limits
-user_tasks_done
