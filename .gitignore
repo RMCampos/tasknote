@@ -30,3 +30,7 @@ yarn-error.log*
 
 # IDE
 .vscode/
+.idea
+
+# Schema Spy
+schemaspy/output/
