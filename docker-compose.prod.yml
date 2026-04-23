@@ -11,8 +11,6 @@ services:
       context: ./client
       dockerfile: Dockerfile
     ports: ["5000:5000"]
-    environment:
-      VITE_BACKEND_SERVER: http://localhost:8585
     networks:
       - tasknote-network
 
@@ -27,7 +25,7 @@ services:
       POSTGRES_USER: tasknoteuser
       POSTGRES_PASSWORD: default
       POSTGRES_PORT: 5432
-      CORS_ALLOWED_ORIGINS: http://tasknote-web:5000, http://localhost:5000
+      CORS_ALLOWED_ORIGINS: http://tasknote-web:5000, http://localhost:5000, https://flattop-depth-dropper.ngrok-free.dev
       SERVER_SERVLET_CONTEXT_PATH: /
       TARGET_ENV: production
       SECURITY_KEY: ${SECURITY_KEY:-default-security-key}
@@ -62,4 +60,4 @@ services:
 
 networks:
   tasknote-network:
-    driver: bridge
+    external: true

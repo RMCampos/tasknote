@@ -1,4 +1,4 @@
-name: Backend Main
+name: Main CI-Backend
 
 on:
   workflow_dispatch:
@@ -69,18 +69,29 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker image with Spring Boot
-        working-directory: ./server
-        run: |
-          ./mvnw -Pnative -DskipTests spring-boot:build-image \
-            -Dspring-boot.build-image.imageName=ghcr.io/${{ steps.repo.outputs.name }}/api:latest \
-            -Dspring-boot.build-image.builder=paketobuildpacks/builder-jammy-tiny:latest
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Tag and push Docker image
+      - name: Find PR number
+        id: find_pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          docker tag ghcr.io/${{ steps.repo.outputs.name }}/api:latest ghcr.io/${{ steps.repo.outputs.name }}/api:${{ steps.version.outputs.version }}
-          docker push ghcr.io/${{ steps.repo.outputs.name }}/api:latest
-          docker push ghcr.io/${{ steps.repo.outputs.name }}/api:${{ steps.version.outputs.version }}
+          PR_NUMBER=$(gh pr list --search "${{ github.sha }}" --state merged --json number --jq '.[0].number')
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No merged PR found for this commit. Falling back to 'candidate' tag."
+            PR_NUMBER="candidate"
+          else
+            PR_NUMBER="pr-${PR_NUMBER}"
+          fi
+          echo "tag=${PR_NUMBER}" >> $GITHUB_OUTPUT
+
+      - name: Promote Docker image
+        run: |
+          docker buildx imagetools create \
+            --tag ghcr.io/${{ steps.repo.outputs.name }}/api:latest \
+            --tag ghcr.io/${{ steps.repo.outputs.name }}/api:${{ steps.version.outputs.version }} \
+            ghcr.io/${{ steps.repo.outputs.name }}/api:${{ steps.find_pr.outputs.tag }}
 
       - name: Create and push Git tag
         run: |
