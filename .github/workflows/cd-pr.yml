@@ -84,6 +84,10 @@ jobs:
           kubectl config view --raw -o jsonpath='{.clusters[0].cluster.certificate-authority-data}' \
             | base64 -d | openssl x509 -noout -dates -subject
 
+      - name: Show Terraform provider versions
+        working-directory: terraform-stg
+        run: terraform version
+
       - name: Terraform Plan
         id: check-changes
         working-directory: terraform-stg
@@ -91,6 +95,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
         run: |
+          echo "Start: $(date)"
           timeout 3m terraform plan -input=false -out=tfplan \
             -var="db_user=${{ secrets.DB_USER }}" \
             -var="db_password=${{ secrets.DB_PASSWORD }}" \
@@ -100,6 +105,7 @@ jobs:
             -var="backend_image=${{ steps.deploy-vars.outputs.backend_image }}" \
             -var="frontend_image=${{ steps.deploy-vars.outputs.frontend_image }}" \
             -var="deploy_version=${{ github.run_id }}"
+          echo "End: $(date)"
           terraform show -json tfplan > tfplan.json
           if jq -e '.resource_changes | length == 0' tfplan.json >/dev/null; then
             echo "no_changes=true" >> "$GITHUB_OUTPUT"
