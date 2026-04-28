@@ -164,6 +164,16 @@ jobs:
       
           cd /tmp && go run test.go /tmp/client.crt /tmp/client.key /tmp/ca.crt
 
+      - name: Debug kubeconfig path
+        working-directory: terraform-stg
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: |
+          echo "HOME is: $HOME"
+          echo "Kubeconfig exists: $(ls -la ~/.kube/config)"
+          terraform console -var="kubeconfig_path=$HOME/.kube/config" <<< "var.kubeconfig_path"
+
       - name: Terraform Plan
         id: check-changes
         working-directory: terraform-stg
