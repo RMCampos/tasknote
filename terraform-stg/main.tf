@@ -19,12 +19,8 @@ terraform {
   }
 }
 
-variable "kubeconfig_path" {
-  default = "~/.kube/config"
-}
-
 provider "kubernetes" {
-  config_path = var.kubeconfig_path
+  config_path = "~/.kube/config"
 }
 
 variable "db_user" {
