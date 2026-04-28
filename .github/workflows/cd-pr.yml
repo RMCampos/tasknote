@@ -79,6 +79,25 @@ jobs:
           bash /tmp/tlstest.sh &
           wait $!
 
+      - name: Check system resources
+        run: |
+          echo "--- Memory ---"
+          free -h
+          echo "--- Ulimits ---"
+          ulimit -a
+          echo "--- OOM kills ---"
+          sudo dmesg | grep -i "killed process\|oom" | tail -20
+
+      - name: Test provider binary directly
+        working-directory: terraform-stg
+        run: |
+          PROVIDER=".terraform/providers/registry.terraform.io/hashicorp/kubernetes/2.38.0/linux_amd64/terraform-provider-kubernetes_v2.38.0_x5"
+          echo "--- Provider binary info ---"
+          ls -lh $PROVIDER
+          file $PROVIDER
+          echo "--- Run provider directly ---"
+          timeout 5 $PROVIDER --help 2>&1 || true
+
       - name: Terraform Plan
         id: check-changes
         working-directory: terraform-stg
