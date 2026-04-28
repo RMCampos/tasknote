@@ -66,6 +66,19 @@ jobs:
         working-directory: terraform-stg
         run: terraform validate
 
+      - name: Test TLS from subprocess
+        run: |
+          cat > /tmp/tlstest.sh << 'EOF'
+          #!/bin/bash
+          echo "Testing from subprocess PID: $$"
+          echo "GODEBUG=$GODEBUG"
+          openssl s_client -connect 191.252.159.227:6443 </dev/null 2>&1 | grep -E "CONNECTED|error|timeout|TLS"
+          EOF
+          chmod +x /tmp/tlstest.sh
+          # Run in a subprocess the same way Terraform spawns providers
+          bash /tmp/tlstest.sh &
+          wait $!
+
       - name: Terraform Plan
         id: check-changes
         working-directory: terraform-stg
