@@ -74,6 +74,16 @@ jobs:
           echo "--- kubectl raw ---"
           kubectl cluster-info --request-timeout=10s
 
+      - name: Check kubeconfig cert expiry
+        run: |
+          echo "--- Client cert in kubeconfig ---"
+          kubectl config view --raw -o jsonpath='{.users[0].user.client-certificate-data}' \
+            | base64 -d | openssl x509 -noout -dates -subject
+
+          echo "--- CA cert in kubeconfig ---"
+          kubectl config view --raw -o jsonpath='{.clusters[0].cluster.certificate-authority-data}' \
+            | base64 -d | openssl x509 -noout -dates -subject
+
       - name: Terraform Plan
         id: check-changes
         working-directory: terraform-stg
