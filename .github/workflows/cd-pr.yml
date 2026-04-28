@@ -98,6 +98,19 @@ jobs:
           echo "--- Run provider directly ---"
           timeout 5 $PROVIDER --help 2>&1 || true
 
+      - name: Test TLS with CA verification like Terraform does
+        run: |
+          kubectl config view --raw -o jsonpath='{.clusters[0].cluster.certificate-authority-data}' | base64 -d > /tmp/ca.crt
+          kubectl config view --raw -o jsonpath='{.users[0].user.client-certificate-data}' | base64 -d > /tmp/client.crt
+          kubectl config view --raw -o jsonpath='{.users[0].user.client-key-data}' | base64 -d > /tmp/client.key
+      
+          echo "--- Test with CA verification (exactly like Terraform) ---"
+          curl -v \
+            --cacert /tmp/ca.crt \
+            --cert /tmp/client.crt \
+            --key /tmp/client.key \
+            https://191.252.159.227:6443/api/v1/namespaces/tasknote-stg 2>&1 | grep -E "TLS|SSL|Connected|error|timeout|HTTP|issuer|subject"
+
       - name: Terraform Plan
         id: check-changes
         working-directory: terraform-stg
