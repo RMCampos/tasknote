@@ -88,6 +88,11 @@ jobs:
         working-directory: terraform-stg
         run: terraform version
 
+      - name: Check API server serving cert
+        run: |
+          echo | openssl s_client -connect 191.252.159.227:6443 2>/dev/null \
+            | openssl x509 -noout -fingerprint -sha256 -dates
+
       - name: Terraform Plan
         id: check-changes
         working-directory: terraform-stg
