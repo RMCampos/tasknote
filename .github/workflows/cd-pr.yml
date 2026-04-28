@@ -94,10 +94,11 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          KUBE_CONFIG_PATH: ${{ runner.temp }}/.kube/config
+          KUBE_CONFIG_PATH: ~/.kube/config
         run: |
           echo "Start: $(date)"
           timeout 3m terraform plan -input=false -out=tfplan \
+            -var="kubeconfig_path=$HOME/.kube/config \"
             -var="db_user=${{ secrets.DB_USER }}" \
             -var="db_password=${{ secrets.DB_PASSWORD }}" \
             -var="db_name=${{ secrets.DB_NAME }}" \
@@ -148,8 +149,8 @@ jobs:
       - name: Setup Kubeconfig
         run: |
           mkdir -p ${{ runner.temp }}/.kube
-          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > ${{ runner.temp }}/.kube/config
-          chmod 600 ${{ runner.temp }}/.kube/config
+          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
 
       - name: Terraform Init
         working-directory: terraform-stg
@@ -163,4 +164,5 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          KUBE_CONFIG_PATH: ~/.kube/config
         run: timeout 1m terraform apply tfplan
