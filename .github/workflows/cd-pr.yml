@@ -126,7 +126,7 @@ jobs:
 
       - name: Setup Kubeconfig
         run: |
-          mkdir -p ${{ runner.temp }}/.kube
+          mkdir -p ~/.kube
           echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > ~/.kube/config
           chmod 600 ~/.kube/config
 
