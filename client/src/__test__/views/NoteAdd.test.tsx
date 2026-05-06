@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { act } from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router';
@@ -105,8 +105,12 @@ describe('NoteAdd Component', () => {
     vi.resetAllMocks();
   });
 
-  it('should render the NoteAdd component', () => {
-    const { getByText } = renderNoteAdd();
+  it('should render the NoteAdd component', async () => {
+    let result: any;
+    await act(async () => {
+      result = renderNoteAdd();
+    });
+    const { getByText } = result;
     expect(getByText('note_form_title_label')).toBeDefined();
     expect(getByText('task_form_url_label')).toBeDefined();
     expect(getByText('note_form_content_label')).toBeDefined();
@@ -114,7 +118,11 @@ describe('NoteAdd Component', () => {
   });
 
   it('should show error message when form is invalid', async () => {
-    const { getByText, getByRole } = renderNoteAdd();
+    let result: any;
+    await act(async () => {
+      result = renderNoteAdd();
+    });
+    const { getByText, getByRole } = result;
     const submitButton = getByRole('button', { name: 'note_form_submit' });
     fireEvent.click(submitButton);
     await waitFor(() => {
@@ -127,7 +135,11 @@ describe('NoteAdd Component', () => {
       new URLSearchParams("backTo=home"),
     ]);
 
-    const { getByLabelText, getByTestId, getByRole } = renderNoteAdd();
+    let result: any;
+    await act(async () => {
+      result = renderNoteAdd();
+    });
+    const { getByLabelText, getByTestId, getByRole } = result;
     const descriptionInput = getByLabelText('note_form_title_label') as HTMLInputElement;
     const noteContentInput = getByTestId('note-content-input-area') as HTMLAreaElement;
     const submitButton = getByRole('button', { name: 'note_form_submit' });
@@ -151,8 +163,12 @@ describe('NoteAdd Component', () => {
     });
   });
 
-  it('should render text based on new contentHeader component', () => {
-    const { getByText } = renderNoteAdd();
+  it('should render text based on new contentHeader component', async () => {
+    let result: any;
+    await act(async () => {
+      result = renderNoteAdd();
+    });
+    const { getByText } = result;
 
     expect(getByText('Add')).toBeDefined();
     expect(getByText('Note')).toBeDefined();

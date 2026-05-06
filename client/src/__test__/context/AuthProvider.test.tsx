@@ -1,7 +1,7 @@
 // AuthProvider.test.tsx
-import React, { useContext } from 'react';
+import React, { useContext, act } from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, act, waitFor, cleanup } from '@testing-library/react';
+import { render, waitFor, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import AuthProvider from '../../context/AuthProvider';
 import AuthContext, { AuthContextData } from '../../context/AuthContext';
@@ -120,9 +120,7 @@ describe('AuthProvider', () => {
       </AuthProvider>
     );
 
-    await act(async () => {
-      userEvent.click(getByTestId('signIn'));
-    });
+    await userEvent.click(getByTestId('signIn'));
 
     await waitFor(() =>
       expect(getByTestId('signed').textContent).toBe('true')
@@ -169,18 +167,14 @@ describe('AuthProvider', () => {
     );
 
     // Make sure that the context initially renders with the signed user by triggering a signIn.
-    await act(async () => {
-      userEvent.click(getByTestId('signIn'));
-    });
+    await userEvent.click(getByTestId('signIn'));
 
     await waitFor(() =>
       expect(getByTestId('signed').textContent).toBe('true')
     );
 
     // Now sign out
-    await act(async () => {
-      userEvent.click(getByTestId('sign-out-btn'));
-    });
+    await userEvent.click(getByTestId('sign-out-btn'));
 
     await waitFor(() =>
       expect(getByTestId('signed').textContent).toBe('false')
@@ -198,14 +192,10 @@ describe('AuthProvider', () => {
       </AuthProvider>
     );
 
-    await act(async () => {
-      userEvent.click(getByTestId('updateUser'));
-    });
+    await userEvent.click(getByTestId('updateUser'));
 
     await waitFor(() => {
-      act(() => {
-        expect(getByTestId('user').textContent).toBe('Updated User')
-      })
+      expect(getByTestId('user').textContent).toBe('Updated User')
       const savedUser = localStorage.getItem(USER_DATA);
       expect(savedUser).not.toBeNull();
       

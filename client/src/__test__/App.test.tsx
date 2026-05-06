@@ -1,14 +1,22 @@
-import React from 'react';
+import React, { act } from 'react';
 import { test, vi } from 'vitest';
 import App from '../App';
-import { act, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import AuthContext from '../context/AuthContext';
 import authContextMock from './__mocks__/authContextMock';
 import SidebarContext from '../context/SidebarContext';
+import FilterContext from '../context/FilterContext';
 
 const sidebarContextMock = {
   currentPage: '/home',
   setNewPage: vi.fn()
+};
+
+const filterContextMock = {
+  filterText: '',
+  selectedOption: 'everything',
+  setFilterText: vi.fn(),
+  setSelectedOption: vi.fn()
 };
 
 vi.mock('react-charts', () => ({
@@ -20,7 +28,9 @@ test('Renders the app', async () => {
     render(
       <AuthContext.Provider value={authContextMock}>
         <SidebarContext.Provider value={sidebarContextMock}>
-          <App />
+          <FilterContext.Provider value={filterContextMock}>
+            <App />
+          </FilterContext.Provider>
         </SidebarContext.Provider>
       </AuthContext.Provider>
     );

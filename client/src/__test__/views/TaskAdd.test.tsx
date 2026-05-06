@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { act } from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router';
@@ -23,7 +23,7 @@ vi.mock('react-i18next', () => ({
   }),
   initReactI18next: {
     type: '3rdParty',
-    init: vi.fn(),
+    init:  vi.fn(),
   },
   I18nextProvider: ({ children }: any) => children,
 }));
@@ -82,8 +82,12 @@ describe('TaskAdd Component', () => {
     (useSearchParams as unknown as ReturnType<typeof vi.fn>).mockReset();
   });
 
-  it('should render the TaskAdd component', () => {
-    const { getByText } = renderTaskAdd();
+  it('should render the TaskAdd component', async () => {
+    let result: any;
+    await act(async () => {
+      result = renderTaskAdd();
+    });
+    const { getByText } = result;
     expect(getByText('task_form_title')).toBeDefined();
     expect(getByText('task_form_desc_label')).toBeDefined();
     expect(getByText('task_form_url_label')).toBeDefined();
@@ -92,7 +96,11 @@ describe('TaskAdd Component', () => {
   });
 
   it('should show error message when form is invalid', async () => {
-    const { getByText, getByRole } = renderTaskAdd();
+    let result: any;
+    await act(async () => {
+      result = renderTaskAdd();
+    });
+    const { getByText, getByRole } = result;
     const submitButton = getByRole('button', { name: 'task_form_submit' });
     fireEvent.click(submitButton);
     await waitFor(() => {
@@ -105,7 +113,11 @@ describe('TaskAdd Component', () => {
       new URLSearchParams("backTo=home"),
     ]);
 
-    const { getByLabelText, getByRole } = renderTaskAdd();
+    let result: any;
+    await act(async () => {
+      result = renderTaskAdd();
+    });
+    const { getByLabelText, getByRole } = result;
     const descriptionInput = getByLabelText('task_form_desc_label') as HTMLInputElement;
     const submitButton = getByRole('button', { name: 'task_form_submit' });
 
@@ -125,12 +137,16 @@ describe('TaskAdd Component', () => {
     });
   });
 
-  it('should render text based on new contentHeader component', () => {
+  it('should render text based on new contentHeader component', async () => {
     (useSearchParams as unknown as ReturnType<typeof vi.fn>).mockReturnValue([
       new URLSearchParams("backTo=home"),
     ]);
 
-    const { getByText } = renderTaskAdd();
+    let result: any;
+    await act(async () => {
+      result = renderTaskAdd();
+    });
+    const { getByText } = result;
 
     expect(getByText('Add')).toBeDefined();
     expect(getByText('Task')).toBeDefined();

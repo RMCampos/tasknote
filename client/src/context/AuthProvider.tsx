@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import AuthContext, { AuthContextData } from './AuthContext';
 import { API_TOKEN, REDIRECT_PATH, USER_DATA } from '../app-constants/app-constants';
 import { SigninResponse } from '../types/SigninResponse';
@@ -136,17 +136,25 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
   const minute = second * 60;
   const REFRESH_TIMER = minute * 2;
 
-  if (intervalInstance == null && signed) {
-    const instance = setInterval(() => {
-      refreshTokenPvt()
-        .then(() => {
-          console.debug('User session successfully refreshed!');
-        })
-        .catch(e => console.error(e));
-    }, REFRESH_TIMER);
+  useEffect(() => {
+    if (signed && intervalInstance == null) {
+      const instance = setInterval(() => {
+        refreshTokenPvt()
+          .then(() => {
+            console.debug('User session successfully refreshed!');
+          })
+          .catch(e => console.error(e));
+      }, REFRESH_TIMER);
 
-    setIntervalInstance(instance);
-  }
+      setIntervalInstance(instance);
+    }
+
+    return () => {
+      if (intervalInstance) {
+        clearInterval(intervalInstance);
+      }
+    };
+  }, [signed, intervalInstance]);
 
   const updateUser = (userUpdated: UserResponse): void => {
     setUser(userUpdated);
