@@ -45,7 +45,7 @@ describe('Authentication', () => {
     });
 
     it('submits the signup form and shows a confirmation message on success', () => {
-      cy.intercept({ method: 'POST', url: /\/auth\/sign-up/ }, {
+      cy.intercept({ method: 'PUT', url: /\/auth\/sign-up/ }, {
         statusCode: 201,
         body: { message: 'User created' }
       }).as('signUp');
@@ -60,7 +60,7 @@ describe('Authentication', () => {
     });
 
     it('displays an error alert when the API returns an error on signup', () => {
-      cy.intercept({ method: 'POST', url: /\/auth\/sign-up/ }, {
+      cy.intercept({ method: 'PUT', url: /\/auth\/sign-up/ }, {
         statusCode: 409,
         body: { message: 'Email already in use' }
       }).as('signUpFail');
