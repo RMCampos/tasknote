@@ -21,6 +21,7 @@ export default [
   {
     ignores: [
       '**/__test__/*',
+      'cypress/**',
       '**/assets/*',
       '**/*.scss',
       '**/*.css',
