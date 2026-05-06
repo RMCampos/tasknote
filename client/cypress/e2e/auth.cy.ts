@@ -45,12 +45,12 @@ describe('Authentication', () => {
     });
 
     it('submits the signup form and shows a confirmation message on success', () => {
-      cy.intercept('POST', '**/auth/sign-up', {
+      cy.intercept({ method: 'POST', url: /\/auth\/sign-up/ }, {
         statusCode: 201,
         body: { message: 'User created' }
       }).as('signUp');
 
-      cy.get('input[name="email"]').type('newuser@example.com');
+      cy.get('input[name="email"]').type(`newuser${Date.now()}@example.com`);
       cy.get('input[name="password"]').type('Password1!');
       cy.get('input[name="passwordAgain"]').type('Password1!');
       cy.get('button[type="submit"]').click();
@@ -60,12 +60,12 @@ describe('Authentication', () => {
     });
 
     it('displays an error alert when the API returns an error on signup', () => {
-      cy.intercept('POST', '**/auth/sign-up', {
+      cy.intercept({ method: 'POST', url: /\/auth\/sign-up/ }, {
         statusCode: 409,
         body: { message: 'Email already in use' }
       }).as('signUpFail');
 
-      cy.get('input[name="email"]').type('existing@example.com');
+      cy.get('input[name="email"]').type(`existing${Date.now()}@example.com`);
       cy.get('input[name="password"]').type('Password1!');
       cy.get('input[name="passwordAgain"]').type('Password1!');
       cy.get('button[type="submit"]').click();
@@ -111,7 +111,7 @@ describe('Authentication', () => {
     });
 
     it('redirects to home after a successful login', () => {
-      cy.intercept('POST', '**/auth/sign-in', {
+      cy.intercept({ method: 'POST', url: /\/auth\/sign-in/ }, {
         statusCode: 200,
         body: { token: 'fake-jwt-token', email: 'user@example.com' }
       }).as('signIn');
@@ -125,7 +125,7 @@ describe('Authentication', () => {
     });
 
     it('displays an error alert when the API returns an error on login', () => {
-      cy.intercept('POST', '**/auth/sign-in', {
+      cy.intercept({ method: 'POST', url: /\/auth\/sign-in/ }, {
         statusCode: 401,
         body: { message: 'Invalid credentials' }
       }).as('signInFail');
