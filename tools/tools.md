@@ -181,3 +181,9 @@ mvn test -P test -Dtest=YourTestClassName
 # For a single class method
 mvn test -P test -Dtest=YourTestClassName#method
 ```
+
+## Running SQL query from the CLI using docker
+
+```bash
+docker exec -it tasknote-db psql -U tasknoteuser -d tasknote -c "SET search_path TO tasknote; SELECT * FROM users;
+```
