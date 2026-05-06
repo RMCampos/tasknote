@@ -34,7 +34,7 @@
       media-src 'self';
       object-src 'none';
       script-src 'unsafe-inline' 'report-sample' 'self' https://*.cloudfront.net;
-      style-src 'report-sample' 'self' https://cdn.jsdelivr.net/ https://fonts.googleapis.com;
+      style-src 'report-sample' 'self' https://cdn.jsdelivr.net/ https://fonts.googleapis.com 'sha256-+OsIn6RhyCZCUkkvtHxFtP0kU3CGdGeLjDd9Fzqdl3o=';
       worker-src 'none';
     "
     Referrer-Policy "same-origin"
