@@ -1,5 +1,5 @@
-import React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import React, { act } from 'react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { BrowserRouter } from 'react-router';
 import { fireEvent, render, screen } from '@testing-library/react';
 import LoginForm from '../../components/LoginForm';
@@ -119,6 +119,7 @@ describe('LoginForm Component test', () => {
   });
 
   it('should disable resend button and show countdown for "register" prefix', async () => {
+    vi.useFakeTimers();
     renderFn("register");
 
     const emailInput = screen.getByTestId('register_email_input');
@@ -129,9 +130,14 @@ describe('LoginForm Component test', () => {
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
     fireEvent.change(passwordInput, { target: { value: 'password123' } });
     fireEvent.change(repeatPasswordInput, { target: { value: 'password123' } });
-    fireEvent.click(submitButton);
+    
+    await act(async () => {
+      fireEvent.click(submitButton);
+    });
 
     const resendButton = screen.queryByRole('button', { name: /resend confirmation email/i }) as HTMLButtonElement;
     expect(resendButton).toBeNull();
+    
+    vi.useRealTimers();
   });
 });
