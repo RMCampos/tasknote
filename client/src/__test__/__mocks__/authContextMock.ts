@@ -2,6 +2,7 @@ import { vi } from "vitest";
 
 const authContextMock = {
   signed: true,
+  loading: false,
   user: undefined,
   checkCurrentAuthUser: vi.fn(),
   signIn: vi.fn(),

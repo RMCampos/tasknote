@@ -15,6 +15,7 @@ vi.mock('../../api-service/api');
 const ConsumerComponent: React.FC = () => {
   const {
     signed,
+    loading,
     user,
     signIn,
     register,
@@ -26,6 +27,7 @@ const ConsumerComponent: React.FC = () => {
   return (
     <div>
       <div data-testid="signed">{signed ? 'true' : 'false'}</div>
+      <div data-testid="loading">{loading ? 'true' : 'false'}</div>
       <div data-testid="user">{user ? user.name : 'none'}</div>
       <button
         data-testid="signIn"
@@ -89,15 +91,57 @@ describe('AuthProvider', () => {
     cleanup();
   });
 
-  it('should render the default context values', () => {
+  it('should render the default context values', async () => {
     const { getByTestId } = render(
       <AuthProvider>
         <ConsumerComponent />
       </AuthProvider>
     );
 
+    await waitFor(() => {
+      expect(getByTestId('signed').textContent).toBe('false');
+      expect(getByTestId('user').textContent).toBe('none');
+    });
+  });
+
+  it('should set loading to false after initial auth check with no token', async () => {
+    // No token in localStorage, so fetchCurrentSession returns immediately.
+    const { getByTestId } = render(
+      <AuthProvider>
+        <ConsumerComponent />
+      </AuthProvider>
+    );
+
+    await waitFor(() =>
+      expect(getByTestId('loading').textContent).toBe('false')
+    );
     expect(getByTestId('signed').textContent).toBe('false');
-    expect(getByTestId('user').textContent).toBe('none');
+  });
+
+  it('should set loading to false and signed to true after successful initial auth check', async () => {
+    const fakeResponse = {
+      token: 'refresh-token',
+      userId: '789',
+      name: 'Refreshed User',
+      email: 'refreshed@example.com',
+      admin: false,
+      createdAt: new Date().toISOString(),
+      gravatarImageUrl: 'http://dummyimage.com'
+    };
+
+    vi.spyOn(api, 'getJSON').mockResolvedValue(fakeResponse);
+    localStorage.setItem(API_TOKEN, 'dummy');
+
+    const { getByTestId } = render(
+      <AuthProvider>
+        <ConsumerComponent />
+      </AuthProvider>
+    );
+
+    await waitFor(() =>
+      expect(getByTestId('loading').textContent).toBe('false')
+    );
+    expect(getByTestId('signed').textContent).toBe('true');
   });
 
   it('should sign in a user successfully', async () => {
