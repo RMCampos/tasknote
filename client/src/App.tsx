@@ -27,7 +27,7 @@ import './styles/custom.scss';
  * @returns {React.ReactNode} The rendered component.
  */
 function App(): React.ReactNode {
-  const { signed, checkCurrentAuthUser } = useContext(AuthContext);
+  const { signed, loading } = useContext(AuthContext);
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem('theme') ?? 'light';
   });
@@ -115,10 +115,6 @@ function App(): React.ReactNode {
   const browserRouter = getBrowserRouter();
 
   useEffect(() => {
-    checkCurrentAuthUser(window.location.pathname);
-  }, []);
-
-  useEffect(() => {
     document.body.setAttribute('data-bs-theme', theme);
     localStorage.setItem('theme', theme);
   }, [theme]);
@@ -138,7 +134,7 @@ function App(): React.ReactNode {
       </button>
 
       {/* Your routes or content here */}
-      <RouterProvider router={browserRouter} />
+      {!loading && <RouterProvider router={browserRouter} />}
     </>
   );
 };

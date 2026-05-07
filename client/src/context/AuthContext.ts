@@ -4,6 +4,7 @@ import { UserRegistration } from '../types/UserRegistration';
 
 export interface AuthContextData {
   signed: boolean;
+  loading: boolean;
   user: UserResponse | undefined;
   checkCurrentAuthUser: (pathname: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<string>;
