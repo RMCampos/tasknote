@@ -401,9 +401,9 @@ resource "kubernetes_secret_v1" "r2_backup_secrets" {
   }
 }
 
-resource "kubernetes_cron_job_v1" "polpa_gestao_db_backup" {
+resource "kubernetes_cron_job_v1" "tasknote_db_backup" {
   metadata {
-    name      = "polpa-gestao-db-backup"
+    name      = "tasknote-db-backup"
     namespace = kubernetes_namespace_v1.tasknote.metadata[0].name
   }
   spec {
