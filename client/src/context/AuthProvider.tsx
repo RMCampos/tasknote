@@ -13,6 +13,7 @@ interface Props {
 
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Props) => {
   const [signed, setSigned] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [user, setUser] = useState<UserResponse | undefined>();
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [intervalInstance, setIntervalInstance] = useState<NodeJS.Timeout | null>(null);
@@ -137,6 +138,11 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
   const REFRESH_TIMER = minute * 2;
 
   useEffect(() => {
+    checkCurrentAuthUser(window.location.pathname)
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
     if (signed && intervalInstance == null) {
       const instance = setInterval(() => {
         refreshTokenPvt()
@@ -163,6 +169,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
 
   const contextValue: AuthContextData = useMemo(() => ({
     signed,
+    loading,
     user,
     checkCurrentAuthUser,
     signIn,
@@ -170,7 +177,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     register,
     isAdmin,
     updateUser
-  }), [signed, user, checkCurrentAuthUser, signIn, signOut, register, isAdmin, updateUser]);
+  }), [signed, loading, user, checkCurrentAuthUser, signIn, signOut, register, isAdmin, updateUser]);
 
   return (
     <AuthContext.Provider value={contextValue}>
