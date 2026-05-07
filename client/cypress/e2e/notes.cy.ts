@@ -199,11 +199,6 @@ describe('Notes Management', () => {
         statusCode: 204
       }).as('deleteNote');
 
-      cy.intercept('GET', /\/rest\/notes$/, {
-        statusCode: 200,
-        body: []
-      }).as('getNotesAfterDelete');
-
       cy.get('[data-testid="note-dropdown-menu-1"]').click();
       cy.get('[data-testid="note-dropdown-delete-item-1"]').click();
 
@@ -235,11 +230,6 @@ describe('Notes Management', () => {
         statusCode: 200,
         body: { ...mockNote, shared: true, shareToken: 'abc123' }
       }).as('shareNote');
-
-      cy.intercept('GET', /\/rest\/notes$/, {
-        statusCode: 200,
-        body: [{ ...mockNote, shared: true, shareToken: 'abc123' }]
-      }).as('getNotesAfterShare');
 
       cy.get('[data-testid="note-dropdown-menu-1"]').click();
       cy.get('[data-testid="note-dropdown-share-item-1"]').click();
