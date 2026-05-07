@@ -192,11 +192,6 @@ describe('Task Management', () => {
         statusCode: 204
       }).as('markDone');
 
-      cy.intercept('GET', /\/rest\/tasks$/, {
-        statusCode: 200,
-        body: [{ ...mockTask, done: true }]
-      }).as('getTasksReloaded');
-
       cy.get('[data-testid="task-dropdown-menu-1"]').click();
       cy.get('[data-testid="task-dropdown-done-item-1"]').click();
 
@@ -212,11 +207,6 @@ describe('Task Management', () => {
       cy.intercept('DELETE', /\/rest\/tasks\/\d+/, {
         statusCode: 204
       }).as('markUndone');
-
-      cy.intercept('GET', /\/rest\/tasks$/, {
-        statusCode: 200,
-        body: [{ ...mockTask, done: false }]
-      }).as('getTasksReloaded');
 
       cy.visit('/home', {
         onBeforeLoad(win) {
