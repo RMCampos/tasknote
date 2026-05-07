@@ -197,8 +197,8 @@ describe('Task Management', () => {
         body: [{ ...mockTask, done: true }]
       }).as('getTasksReloaded');
 
-      cy.contains('.task-card', 'Buy groceries').find('.dropdown-toggle').click();
-      cy.contains('Done').click();
+      cy.get('[data-testid="task-dropdown-menu-1"]').click();
+      cy.get('[data-testid="task-dropdown-done-item-1"]').click();
 
       cy.wait('@markDone');
     });
@@ -227,8 +227,8 @@ describe('Task Management', () => {
 
       cy.wait('@getDoneTasks');
 
-      cy.contains('.task-card', 'Buy groceries').find('.dropdown-toggle').click();
-      cy.contains('Undone').click();
+      cy.get('[data-testid="task-dropdown-menu-1"]').click();
+      cy.get('[data-testid="task-dropdown-done-item-1"]').click();
 
       cy.wait('@markUndone');
     });
