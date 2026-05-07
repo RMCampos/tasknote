@@ -139,6 +139,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
 
   useEffect(() => {
     checkCurrentAuthUser(window.location.pathname)
+      .catch(e => console.error(e))
       .finally(() => setLoading(false));
   }, []);
 
