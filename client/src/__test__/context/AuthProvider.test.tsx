@@ -91,15 +91,17 @@ describe('AuthProvider', () => {
     cleanup();
   });
 
-  it('should render the default context values', () => {
+  it('should render the default context values', async () => {
     const { getByTestId } = render(
       <AuthProvider>
         <ConsumerComponent />
       </AuthProvider>
     );
 
-    expect(getByTestId('signed').textContent).toBe('false');
-    expect(getByTestId('user').textContent).toBe('none');
+    await waitFor(() => {
+      expect(getByTestId('signed').textContent).toBe('false');
+      expect(getByTestId('user').textContent).toBe('none');
+    });
   });
 
   it('should set loading to false after initial auth check with no token', async () => {
