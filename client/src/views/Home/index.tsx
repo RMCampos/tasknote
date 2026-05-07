@@ -487,7 +487,7 @@ function Home(): React.ReactNode {
                   </Col>
                   <Col xs={2} className="text-end">
                     <Dropdown>
-                      <Dropdown.Toggle variant="success">
+                      <Dropdown.Toggle variant="success" data-testid={`task-dropdown-menu-${task.id}`}>
                         <ThreeDotsVertical />
                       </Dropdown.Toggle>
                       <Dropdown.Menu>
@@ -498,7 +498,11 @@ function Home(): React.ReactNode {
                             </Dropdown.Item>
                           </NavLink>
                         )}
-                        <Dropdown.Item as="button" onClick={() => markAsDone(task)}>
+                        <Dropdown.Item
+                          as="button"
+                          onClick={() => markAsDone(task)}
+                          data-testid={`task-dropdown-done-item-${task.id}`}
+                        >
                           {task.done ? t('task_table_action_undone') : t('task_table_action_done')}
                         </Dropdown.Item>
                       </Dropdown.Menu>
