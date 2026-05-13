@@ -41,6 +41,7 @@ schemaspy/output/
 .terraform/
 *.tfstate
 *.tfstate.backup
+*.tfplan
 *.tfvars
 *.tfvars.json
 override.tf
