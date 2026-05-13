@@ -1,0 +1,42 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: tasknote-external-redirect
+  namespace: default
+spec:
+  redirectRegex:
+    regex: "^https?://tasknote.darkroasted.vps-kinghost.net/(.*)"
+    replacement: "https://tasknote.cc/${1}"
+    permanent: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redirect-placeholder
+  namespace: default
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tasknote-redirect-ingress
+  namespace: default
+  annotations:
+    # Note the change to the provider name here as well
+    traefik.ingress.kubernetes.io/router.middlewares: default-tasknote-external-redirect@kubernetescrd
+spec:
+  rules:
+  - host: tasknote.darkroasted.vps-kinghost.net
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: redirect-placeholder
+            port:
+              number: 80
