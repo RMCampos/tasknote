@@ -16,7 +16,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
   const [loading, setLoading] = useState<boolean>(true);
   const [user, setUser] = useState<UserResponse | undefined>();
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const [intervalInstance, setIntervalInstance] = useState<NodeJS.Timeout | null>(null);
 
   const fetchCurrentSession = async (pathname: string): Promise<SigninResponse | undefined> => {
     const token = localStorage.getItem(API_TOKEN);
@@ -115,53 +114,16 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     setSigned(false);
     setUser(undefined);
     setIsAdmin(false);
-    if (intervalInstance) {
-      clearInterval(intervalInstance);
-      setIntervalInstance(null);
-    }
     localStorage.removeItem(API_TOKEN);
     localStorage.removeItem(REDIRECT_PATH);
     localStorage.removeItem(USER_DATA);
   };
-
-  const refreshTokenPvt = async (): Promise<void> => {
-    const bearerToken: SigninResponse | undefined = await fetchCurrentSession('/');
-    if (bearerToken) {
-      updateUserSession(null, bearerToken.token);
-    }
-    return Promise.resolve();
-  };
-
-  // 2 minutes
-  const second = 1000;
-  const minute = second * 60;
-  const REFRESH_TIMER = minute * 2;
 
   useEffect(() => {
     checkCurrentAuthUser(window.location.pathname)
       .catch(e => console.error(e))
       .finally(() => setLoading(false));
   }, []);
-
-  useEffect(() => {
-    if (signed && intervalInstance == null) {
-      const instance = setInterval(() => {
-        refreshTokenPvt()
-          .then(() => {
-            console.debug('User session successfully refreshed!');
-          })
-          .catch(e => console.error(e));
-      }, REFRESH_TIMER);
-
-      setIntervalInstance(instance);
-    }
-
-    return () => {
-      if (intervalInstance) {
-        clearInterval(intervalInstance);
-      }
-    };
-  }, [signed, intervalInstance]);
 
   const updateUser = (userUpdated: UserResponse): void => {
     setUser(userUpdated);
