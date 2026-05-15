@@ -27,7 +27,9 @@ metadata:
   namespace: default
   annotations:
     traefik.ingress.kubernetes.io/router.middlewares: default-tasknote-external-redirect@kubernetescrd
+    traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
 spec:
+  ingressClassName: traefik
   rules:
   - host: tasknote.darkroasted.vps-kinghost.net
     http:
@@ -39,4 +41,3 @@ spec:
             name: redirect-tasknote
             port:
               number: 80
-  
