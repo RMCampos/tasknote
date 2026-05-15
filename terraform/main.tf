@@ -70,7 +70,7 @@ variable "r2_endpoint" {
 
 variable "cors_allowed_origins" {
   type    = string
-  default = "https://tasknote.darkroasted.vps-kinghost.net"
+  default = "https://tasknote.darkroasted.vps-kinghost.net,https://tasknote.cc,https://www.tasknote.cc"
 }
 
 variable "root_log_level" {
