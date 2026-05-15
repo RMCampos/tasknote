@@ -140,4 +140,26 @@ describe('LoginForm Component test', () => {
     
     vi.useRealTimers();
   });
+
+  it('should display resend button when login fails with "Email not confirmed!"', async () => {
+    authContextMock.signIn.mockRejectedValue(new Error('Email not confirmed!'));
+    renderFn("login");
+
+    const emailInput = screen.getByTestId('login_email_input');
+    const passwordInput = screen.getByTestId('account-password-login');
+    const submitButton = screen.getByRole('button', { name: /login/i });
+
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    
+    await act(async () => {
+      fireEvent.click(submitButton);
+    });
+
+    const errorMessage = await screen.findByText(/email not confirmed/i);
+    expect(errorMessage).toBeDefined();
+
+    const resendButton = screen.getByRole('button', { name: /resend confirmation email/i });
+    expect(resendButton).toBeDefined();
+  });
 });

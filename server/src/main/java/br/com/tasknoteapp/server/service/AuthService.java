@@ -6,6 +6,7 @@ import br.com.tasknoteapp.server.exception.BadLanguageException;
 import br.com.tasknoteapp.server.exception.BadPasswordException;
 import br.com.tasknoteapp.server.exception.BadUuidException;
 import br.com.tasknoteapp.server.exception.EmailAlreadyExistsException;
+import br.com.tasknoteapp.server.exception.EmailNotConfirmedException;
 import br.com.tasknoteapp.server.exception.InvalidCredentialsException;
 import br.com.tasknoteapp.server.exception.MaxLoginLimitAttemptException;
 import br.com.tasknoteapp.server.exception.ResetExpiredException;
@@ -189,6 +190,12 @@ public class AuthService {
     checkLoginAttemptLimit(userOptional.get().getId());
 
     UserEntity user = userOptional.get();
+
+    if (Objects.isNull(user.getEmailConfirmedAt())) {
+      logger.warn("User {} tried to login but email is not confirmed", user.getId());
+      throw new EmailNotConfirmedException();
+    }
+
     user.setResetToken(null);
     user.setResetPasswordExpiration(null);
 

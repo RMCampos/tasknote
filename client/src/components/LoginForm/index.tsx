@@ -34,6 +34,7 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
   const [formInvalid, setFormInvalid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [successMessage, setSuccessMessage] = useState<string>('');
+  const [showResend, setShowResend] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [passwordAgain, setPasswordAgain] = useState<string>('');
@@ -82,6 +83,7 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
     }
 
     setFormInvalid(false);
+    setShowResend(false);
     try {
       if (prefix === 'login') {
         await signIn(email, password);
@@ -93,6 +95,7 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
         setPassword('');
         setPasswordAgain('');
         setSuccessMessage(translateServerResponse('Please confirm your email before proceeding', i18n.language));
+        setShowResend(true);
         setSecondsLeft(30);
         setIsResendEnabled(false);
       }
@@ -109,13 +112,19 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
     catch (e) {
       console.log(e);
       setFormInvalid(true);
+      let msg = '';
       if (typeof e === 'string') {
         console.log('string');
-        setErrorMessage(translateServerResponse(e, i18n.language));
+        msg = e;
       }
       else if (e instanceof Error) {
         console.log(e.message);
-        setErrorMessage(translateServerResponse(e.message, i18n.language));
+        msg = e.message;
+      }
+
+      setErrorMessage(translateServerResponse(msg, i18n.language));
+      if (msg === 'Email not confirmed!') {
+        setShowResend(true);
       }
     }
   };
@@ -124,7 +133,9 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
     try {
       await api.postJSON(ApiConfig.resendConfirmUrl, { email });
 
-      setSuccessMessage('Confirmation email re-sent! Please check the spam folder.');
+      setSuccessMessage(translateServerResponse('Confirmation email re-sent! Please check the spam folder.', i18n.language));
+      setFormInvalid(false);
+      setShowResend(true);
       setSecondsLeft(30);
       setIsResendEnabled(false);
     }
@@ -166,32 +177,40 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
                 ? (
                     <Alert variant="danger">
                       { errorMessage }
+                      {showResend && (
+                        <div className="text-center mt-2">
+                          <Button
+                            variant="outline-secondary"
+                            size="sm"
+                            onClick={handleResend}
+                            disabled={!isResendEnabled}
+                          >
+                            {isResendEnabled ? `${t('register_resent_email')}` : `${t('register_resent_email_secs')} ${secondsLeft}`}
+                          </Button>
+                        </div>
+                      )}
                     </Alert>
                   )
                 : null}
 
-              {successMessage.length > 1 && prefix === 'register' && (
+              {successMessage.length > 1 && (
                 <>
                   <Alert variant="success">
                     { successMessage }
                   </Alert>
 
-                  <div className="text-center">
-                    <Button
-                      variant="outline-secondary"
-                      onClick={handleResend}
-                      disabled={!isResendEnabled}
-                    >
-                      {isResendEnabled ? `${t('register_resent_email')}` : `${t('register_resent_email_secs')} ${secondsLeft}`}
-                    </Button>
-                  </div>
+                  {showResend && (
+                    <div className="text-center mb-3">
+                      <Button
+                        variant="outline-secondary"
+                        onClick={handleResend}
+                        disabled={!isResendEnabled}
+                      >
+                        {isResendEnabled ? `${t('register_resent_email')}` : `${t('register_resent_email_secs')} ${secondsLeft}`}
+                      </Button>
+                    </div>
+                  )}
                 </>
-              )}
-
-              {successMessage.length > 1 && prefix !== 'register' && (
-                <Alert variant="success">
-                  { successMessage }
-                </Alert>
               )}
 
               <Form noValidate validated={validated} onSubmit={handleSubmit}>

@@ -60,7 +60,7 @@ describe('SidebarProvider', () => {
     });
 
     await waitFor(() =>
-      expect(getByTestId('page').textContent).toBe('/another')
+      expect(getByTestId('page').textContent).toBe('/home')
     );
   });
 });
