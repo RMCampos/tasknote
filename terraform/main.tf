@@ -353,7 +353,7 @@ resource "kubernetes_ingress_v1" "tasknote_ingress" {
   }
   spec {
     tls {
-      hosts       = [
+      hosts = [
         "tasknote.darkroasted.vps-kinghost.net",
         "tasknoteapi.darkroasted.vps-kinghost.net",
         "tasknote.cc",
