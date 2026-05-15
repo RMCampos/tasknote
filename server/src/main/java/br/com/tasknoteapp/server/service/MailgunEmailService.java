@@ -1,36 +1,29 @@
 package br.com.tasknoteapp.server.service;
 
 import br.com.tasknoteapp.server.entity.UserEntity;
-import br.com.tasknoteapp.server.exception.MailServiceException;
 import br.com.tasknoteapp.server.templates.MailgunTemplate;
 import br.com.tasknoteapp.server.templates.MailgunTemplateEmailChanged;
 import br.com.tasknoteapp.server.templates.MailgunTemplateResetPwd;
 import br.com.tasknoteapp.server.templates.MailgunTemplateResetPwdConfirm;
 import br.com.tasknoteapp.server.templates.MailgunTemplateSignUp;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.Base64;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.restclient.RestTemplateBuilder;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 /** This service handles email messages for Mailgun. */
 @Service
 public class MailgunEmailService {
 
   private static final Logger logger = LoggerFactory.getLogger(MailgunEmailService.class.getName());
-  private final RestTemplate restTemplate;
+  private final RestClient restClient;
   private final String targetEnv;
   private final String domain;
   private String senderEmail;
@@ -42,23 +35,37 @@ public class MailgunEmailService {
    * @param domain The domain to send email from.
    * @param sender The from option.
    * @param targetEnv The environment.
-   * @param templateBuilder The template builder.
+   * @param restClientBuilder The rest client builder.
    */
   public MailgunEmailService(
       @Value("${mailgun.api-key}") String apiKey,
       @Value("${mailgun.domain}") String domain,
       @Value("${mailgun.sender-email}") String sender,
       @Value("${br.com.tasknote.server.target-env}") String targetEnv,
-      RestTemplateBuilder templateBuilder) {
+      RestClient.Builder restClientBuilder) {
     this.domain = domain;
     this.senderEmail = sender;
     this.targetEnv = targetEnv;
-    this.restTemplate =
-        templateBuilder
-            .connectTimeout(Duration.ofSeconds(5))
-            .readTimeout(Duration.ofSeconds(10))
-            .defaultHeader(HttpHeaders.AUTHORIZATION, basicAuth("api", apiKey))
-            .build();
+
+    if (apiKey != null && apiKey.length() > 6) {
+      logger.info(
+          "Mailgun API Key loaded: {}...{}",
+          apiKey.substring(0, 3),
+          apiKey.substring(apiKey.length() - 3));
+    } else {
+      logger.warn("Mailgun API Key is missing or too short!");
+    }
+
+    this.restClient = restClientBuilder
+        .baseUrl("https://api.mailgun.net/v3/" + domain)
+        .defaultStatusHandler(HttpStatusCode::isError, (request, response) -> {
+          logger.error(
+              "Mailgun API Error: {} {}",
+              response.getStatusCode(),
+              response.getStatusText());
+        })
+        .defaultHeaders(headers -> headers.setBasicAuth("api", apiKey))
+        .build();
   }
 
   /**
@@ -141,15 +148,10 @@ public class MailgunEmailService {
    *
    * @param to The target email address.
    * @param subject The message subject.
-   * @param textBody The message text body to be displayed.
-   * @param htmlBody The message html body to be rendered.
+   * @param template The mailgun template.
    */
   private void sendEmail(String to, String subject, MailgunTemplate template) {
-    String url = "https://api.mailgun.net/v3/" + domain + "/messages";
     String from = "TaskNote App <" + senderEmail + ">";
-
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
     MultiValueMap<String, String> mailData = new LinkedMultiValueMap<>();
     mailData.add("from", from);
@@ -164,24 +166,20 @@ public class MailgunEmailService {
       logger.info("JSON template variables: {}", template.getVariableValuesJson());
     }
 
-    HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(mailData, headers);
-
     try {
-      ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
-
-      if (!response.getStatusCode().is2xxSuccessful()) {
-        throw new MailServiceException("Failed to send email: " + response.getStatusCode());
-      }
+      restClient.post()
+          .uri("/messages")
+          .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+          .body(mailData)
+          .retrieve()
+          .toBodilessEntity();
 
       logger.info("Email message send successfully.");
     } catch (HttpClientErrorException ex) {
-      logger.error("Unable to send email: {} - {}", ex.getMessage(), ex.getCause());
+      logger.error("Unable to send email: {} - {}", ex.getMessage(), ex.getStatusCode());
+    } catch (Exception ex) {
+      logger.error("Unexpected error sending email: {}", ex.getMessage());
     }
-  }
-
-  private String basicAuth(String username, String password) {
-    String auth = username + ":" + password;
-    return "Basic " + Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
   }
 
   private String getBaseUrl() {
