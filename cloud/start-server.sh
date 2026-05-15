@@ -17,5 +17,7 @@ docker run -d  --rm \
   -e POSTGRES_HOST=$POSTGRES_HOST \
   -e CORS_ALLOWED_ORIGINS=$CORS_ALLOWED_ORIGINS \
   -e SERVER_SERVLET_CONTEXT_PATH=$SERVER_SERVLET_CONTEXT_PATH \
+  -e MAILGUN_APIKEY=$MAILGUN_APIKEY \
+  -e SECURITY_KEY=$SECURITY_KEY \
   -e BUILD=ghcr.io/ricardo-campos-org/react-typescript-todolist/server:$PR \
   ghcr.io/ricardo-campos-org/react-typescript-todolist/server:$PR
