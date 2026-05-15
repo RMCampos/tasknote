@@ -353,7 +353,12 @@ resource "kubernetes_ingress_v1" "tasknote_ingress" {
   }
   spec {
     tls {
-      hosts       = ["tasknote.darkroasted.vps-kinghost.net", "tasknoteapi.darkroasted.vps-kinghost.net"]
+      hosts       = [
+        "tasknote.darkroasted.vps-kinghost.net",
+        "tasknoteapi.darkroasted.vps-kinghost.net",
+        "tasknote.cc",
+        "www.tasknote.cc"
+      ]
       secret_name = "tasknote-tls-certs"
     }
     rule {
@@ -381,6 +386,36 @@ resource "kubernetes_ingress_v1" "tasknote_ingress" {
             service {
               name = kubernetes_service_v1.tasknote_backend_svc.metadata[0].name
               port { number = 8585 }
+            }
+          }
+        }
+      }
+    }
+    rule {
+      host = "tasknote.cc"
+      http {
+        path {
+          path      = "/"
+          path_type = "Prefix"
+          backend {
+            service {
+              name = kubernetes_service_v1.tasknote_frontend_svc.metadata[0].name
+              port { number = 5000 }
+            }
+          }
+        }
+      }
+    }
+    rule {
+      host = "www.tasknote.cc"
+      http {
+        path {
+          path      = "/"
+          path_type = "Prefix"
+          backend {
+            service {
+              name = kubernetes_service_v1.tasknote_frontend_svc.metadata[0].name
+              port { number = 5000 }
             }
           }
         }

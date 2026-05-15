@@ -9,7 +9,7 @@ resource "google_cloud_run_v2_service" "backend" {
     service_account = google_service_account.cloudrun_sa.email
     vpc_access {
       connector = google_vpc_access_connector.connector.id
-      egress    = "ALL_TRAFFIC"
+      egress    = "PRIVATE_RANGES_ONLY"
     }
 
     containers {
@@ -54,7 +54,7 @@ resource "google_cloud_run_v2_service" "backend" {
         value_source {
           secret_key_ref {
             secret  = google_secret_manager_secret.security_key.secret_id
-            version = "latest"
+            version = google_secret_manager_secret_version.security_key_version.version
           }
         }
       }
@@ -63,7 +63,7 @@ resource "google_cloud_run_v2_service" "backend" {
         value_source {
           secret_key_ref {
             secret  = google_secret_manager_secret.mailgun_apikey.secret_id
-            version = "latest"
+            version = google_secret_manager_secret_version.mailgun_apikey_version.version
           }
         }
       }

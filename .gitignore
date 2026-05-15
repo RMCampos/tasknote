@@ -42,6 +42,7 @@ schemaspy/output/
 *.tfstate
 *.tfstate.backup
 *.tfplan
+tfplan
 *.tfvars
 *.tfvars.json
 override.tf
