@@ -54,16 +54,16 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
   /**
    * Handles the form submit button click event.
    *
-   * When clicked, checks if the form is valid. It it's not, raise an error
-   * message in an Alert. Otherwise, it call the signIn API and navigates to the home page.
+   * When clicked, checks if the form is valid. If it's not, raise an error
+   * message in an Alert. Otherwise, it calls the signIn API and navigates to the home page.
    */
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
     event.stopPropagation();
     setValidated(true);
 
     const form = event.currentTarget;
-    if (form.checkValidity() === false) {
+    if (!form.checkValidity()) {
       setFormInvalid(true);
       if (prefix === 'complete_reset') {
         setErrorMessage(translateServerResponse('Please fill in the new password', i18n.language));
@@ -110,7 +110,6 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
       }
     }
     catch (e) {
-      console.log(e);
       setFormInvalid(true);
       let msg = '';
       if (typeof e === 'string') {
@@ -118,7 +117,6 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
         msg = e;
       }
       else if (e instanceof Error) {
-        console.log(e.message);
         msg = e.message;
       }
 
@@ -175,8 +173,8 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
 
               {formInvalid
                 ? (
-                    <Alert variant="danger">
-                      { errorMessage }
+                    <>
+                      <Alert variant="danger">{errorMessage}</Alert>
                       {showResend && (
                         <div className="text-center mt-2">
                           <Button
@@ -185,11 +183,13 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
                             onClick={handleResend}
                             disabled={!isResendEnabled}
                           >
-                            {isResendEnabled ? `${t('register_resent_email')}` : `${t('register_resent_email_secs')} ${secondsLeft}`}
+                            {isResendEnabled
+                              ? `${t('register_resent_email')}`
+                              : `${t('register_resent_email_secs')} ${secondsLeft}`}
                           </Button>
                         </div>
                       )}
-                    </Alert>
+                    </>
                   )
                 : null}
 
@@ -206,7 +206,9 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
                         onClick={handleResend}
                         disabled={!isResendEnabled}
                       >
-                        {isResendEnabled ? `${t('register_resent_email')}` : `${t('register_resent_email_secs')} ${secondsLeft}`}
+                        {isResendEnabled
+                          ? `${t('register_resent_email')}`
+                          : `${t('register_resent_email_secs')} ${secondsLeft}`}
                       </Button>
                     </div>
                   )}
@@ -221,7 +223,7 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
                     required={true}
                     name="email"
                     placeholder={t(`${prefix}_email_placeholder`)}
-                    data_testid={`${prefix}_email_input`}
+                    dataTestId={`${prefix}_email_input`}
                     value={email}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setEmail(e.target.value);
@@ -244,7 +246,7 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setPassword(e.target.value);
                     }}
-                    data_testid="account-password-login"
+                    dataTestId="account-password-login"
                   />
                 )}
 
@@ -263,7 +265,7 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setPasswordAgain(e.target.value);
                     }}
-                    data_testid={`account-repeat-password-${prefix}`}
+                    dataTestId={`account-repeat-password-${prefix}`}
                   />
                 )}
 
@@ -278,7 +280,10 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
 
               <div className="text-center mt-3">
                 {t(`${prefix}_account`)}
-                <Link to={prefix === 'login' ? '/register' : '/login'} className="text-decoration-none ms-2">
+                <Link
+                  to={prefix === 'login' ? '/register' : '/login'}
+                  className="text-decoration-none ms-2"
+                >
                   {t(`${prefix}_go_other`)}
                 </Link>
               </div>
@@ -290,7 +295,10 @@ function LoginForm({ prefix }: { prefix: string }): React.ReactNode {
               </div>
               <div className="text-center mt-3">
                 {prefix === 'login' && (
-                  <Link to="/reset-password" className="text-decoration-none ms-2">
+                  <Link
+                    to="/reset-password"
+                    className="text-decoration-none ms-2"
+                  >
                     {t('login_forgot_password')}
                   </Link>
                 )}

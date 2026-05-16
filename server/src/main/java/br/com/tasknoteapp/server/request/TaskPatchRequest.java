@@ -10,7 +10,7 @@ public record TaskPatchRequest(
     List<
             @Pattern(
                 regexp = "^(https?://.*|#.*)?$",
-                message = "URL must start with http://, https:// or #")
+                message = "URL must start with https:// or #")
             String>
         urls,
     String dueDate,

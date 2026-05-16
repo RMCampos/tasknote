@@ -7,7 +7,7 @@ describe('AlertError Component tests', () => {
   const dataTestId: string = "alert-error-msg-tests";
   const renderAlert = (message?: string) => {
     return render(
-      <AlertError errorMessage={message} dataTestid={dataTestId} />
+      <AlertError errorMessage={message} dataTestId={dataTestId} />
     );
   };
 

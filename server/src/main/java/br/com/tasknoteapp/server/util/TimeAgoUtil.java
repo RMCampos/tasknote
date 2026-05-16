@@ -14,7 +14,7 @@ public class TimeAgoUtil {
   /**
    * Format a time in the time ago format.
    *
-   * @param pastTime The past time to be formatted.
+   * @param pastTime The pastime to be formatted.
    * @return String with formatted time.
    */
   public static String format(LocalDateTime pastTime) {
@@ -91,7 +91,7 @@ public class TimeAgoUtil {
     int year = futureDate.getYear();
     String dateFmt = String.format(" (%s %d%s, %s %d)", dayOfWeek, dayOfMonth, suffix, month, year);
 
-    return sb.toString()  + dateFmt;
+    return sb + dateFmt;
   }
 
   private static String getDaySuffix(int day) {

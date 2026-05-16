@@ -1,6 +1,7 @@
 package br.com.tasknoteapp.server.hint;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.jspecify.annotations.NonNull;
 import org.springframework.aot.hint.ProxyHints;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
@@ -9,7 +10,7 @@ import org.springframework.aot.hint.RuntimeHintsRegistrar;
 public class HttpServletRequestRuntimeHint implements RuntimeHintsRegistrar {
 
   @Override
-  public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
+  public void registerHints(@NonNull RuntimeHints hints, ClassLoader classLoader) {
     try {
       ProxyHints proxies = hints.proxies();
       proxies.registerJdkProxy(HttpServletRequest.class);

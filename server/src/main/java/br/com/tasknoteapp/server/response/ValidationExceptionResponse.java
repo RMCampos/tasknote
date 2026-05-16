@@ -29,12 +29,4 @@ public class ValidationExceptionResponse {
     this.fields = List.of(new FieldIssueResponse(field, errorMessage));
     this.errorMessage = String.format(MESSAGE_TEMPLATE, fields.size());
   }
-
-  public String getErrorMessage() {
-    return errorMessage;
-  }
-
-  public List<FieldIssueResponse> getFields() {
-    return fields;
-  }
 }

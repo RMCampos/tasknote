@@ -1,6 +1,7 @@
 package br.com.tasknoteapp.server.config;
 
 import java.util.Arrays;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +23,7 @@ public class CorsConfig implements WebMvcConfigurer {
    *
    * @param registry CorsRegistry instance.
    */
-  public void addCorsMappings(CorsRegistry registry) {
+  public void addCorsMappings(@NonNull CorsRegistry registry) {
     if (allowedOrigins != null && allowedOrigins.length > 0) {
       logger.info("CORS policy allowed origins: {}", Arrays.asList(allowedOrigins));
 

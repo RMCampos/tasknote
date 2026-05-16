@@ -4,6 +4,7 @@ import br.com.tasknoteapp.server.exception.BaseBadRequestException;
 import br.com.tasknoteapp.server.exception.BaseNotFoundException;
 import br.com.tasknoteapp.server.exception.BaseServiceUnavailableException;
 import br.com.tasknoteapp.server.exception.EmailAlreadyExistsException;
+import br.com.tasknoteapp.server.exception.EmailNotConfirmedException;
 import br.com.tasknoteapp.server.exception.InvalidCredentialsException;
 import br.com.tasknoteapp.server.exception.UserForbiddenException;
 import br.com.tasknoteapp.server.response.ValidationExceptionResponse;
@@ -43,6 +44,13 @@ public class RestExceptionController {
   @ExceptionHandler(UserForbiddenException.class)
   ResponseEntity<ValidationExceptionResponse> handleUserForbiddenException(
       UserForbiddenException ex) {
+    return ResponseEntity.status(HttpStatus.FORBIDDEN)
+        .body(new ValidationExceptionResponse("access", ex.getReason()));
+  }
+
+  @ExceptionHandler(EmailNotConfirmedException.class)
+  ResponseEntity<ValidationExceptionResponse> handleEmailNotConfirmedException(
+      EmailNotConfirmedException ex) {
     return ResponseEntity.status(HttpStatus.FORBIDDEN)
         .body(new ValidationExceptionResponse("access", ex.getReason()));
   }

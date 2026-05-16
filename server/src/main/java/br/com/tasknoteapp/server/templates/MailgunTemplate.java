@@ -3,12 +3,12 @@ package br.com.tasknoteapp.server.templates;
 import java.util.Map;
 import java.util.Optional;
 
-/** This interface represents a mailgun template structure. */
+/** This interface represents a Mailgun template structure. */
 public interface MailgunTemplate {
 
-  static final String STRING_SCAPE = "\"";
-  static final String COLON = ":";
-  static final String COMMA = ",";
+  String STRING_SCAPE = "\"";
+  String COLON = ":";
+  String COMMA = ",";
 
   String getName();
 

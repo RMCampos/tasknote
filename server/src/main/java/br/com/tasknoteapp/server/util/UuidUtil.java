@@ -33,7 +33,7 @@ public class UuidUtil {
     sha1[6] &= 0x0f;
     sha1[6] |= 0x50;
     sha1[8] &= 0x3f;
-    sha1[8] |= 0x80;
+    sha1[8] |= (byte) 0x80;
 
     return bytesToUuid(sha1);
   }

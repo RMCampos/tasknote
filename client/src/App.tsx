@@ -103,7 +103,7 @@ function App(): React.ReactNode {
 
   /**
    * Determines the appropriate router based on the user's authentication status.
-   * @returns {Router} The configured router.
+   * @returns The configured router.
    */
   const getBrowserRouter = () => {
     if (signed) {
@@ -137,6 +137,6 @@ function App(): React.ReactNode {
       {!loading && <RouterProvider router={browserRouter} />}
     </>
   );
-};
+}
 
 export default App;

@@ -115,10 +115,7 @@ class JwtServiceImpl implements JwtService {
 
   private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
     final Optional<Claims> claims = extractAllClaims(token);
-    if (claims.isPresent()) {
-      return claimsResolver.apply(claims.get());
-    }
-    return null;
+    return claims.map(claimsResolver).orElse(null);
   }
 
   private Optional<Claims> extractAllClaims(String token) {

@@ -6,7 +6,6 @@ import java.util.Map;
 /** This class represents a template for the password reset workflow. */
 public class MailgunTemplateResetPwd implements MailgunTemplate {
 
-  private String templateName = "password_reset";
   private final Map<String, Object> props;
 
   public MailgunTemplateResetPwd() {
@@ -19,7 +18,7 @@ public class MailgunTemplateResetPwd implements MailgunTemplate {
 
   @Override
   public String getName() {
-    return templateName;
+    return "password_reset";
   }
 
   @Override

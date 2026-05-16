@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 import javax.sql.DataSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,9 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HealthController {
 
-  @Autowired private DataSource dataSource;
+  private final DataSource dataSource;
 
-  @Autowired private AppVersionService appVersionService;
+  private final AppVersionService appVersionService;
+
+  HealthController(DataSource dataSource, AppVersionService appVersionService) {
+    this.dataSource = dataSource;
+    this.appVersionService = appVersionService;
+  }
 
   /**
    * Endpoint to check the health of the application and its database connection.

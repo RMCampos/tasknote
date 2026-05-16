@@ -8,15 +8,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 /** This interface contains methods for handling user JWT tokens. */
 public interface JwtService {
 
-  public String getEmailFromToken(String token);
+  String getEmailFromToken(String token);
 
-  public LocalDateTime extractExpiration(String token);
+  LocalDateTime extractExpiration(String token);
 
-  public String generateToken(UserEntity user);
+  String generateToken(UserEntity user);
 
-  public String createToken(Map<String, Object> claims, String email);
+  String createToken(Map<String, Object> claims, String email);
 
-  public boolean isTokenExpired(String token);
+  boolean isTokenExpired(String token);
 
-  public boolean validateTokenAndUser(String token, UserDetails user);
+  boolean validateTokenAndUser(String token, UserDetails user);
 }

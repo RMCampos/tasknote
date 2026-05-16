@@ -143,8 +143,9 @@ public class AuthService {
       mailgunEmailService.sendNewUser(user);
     }
 
-    logger.info("User created! ID " + user.getId());
-    return UserResponseWithToken.fromEntity(user, null, getGravatarImageUrl(newUser.email()));
+    logger.info("User created! ID {}", user.getId());
+    return UserResponseWithToken.fromEntity(
+        user, null, getGravatarImageUrl(newUser.email()).orElse(null));
   }
 
   /**
@@ -180,7 +181,7 @@ public class AuthService {
    */
   @Transactional
   public UserResponseWithToken signInUser(LoginRequest login) {
-    logger.info("Signing in user: " + login.email());
+    logger.info("Signing in user:  {}", login.email());
 
     Optional<UserEntity> userOptional = findByEmail(login.email());
     if (userOptional.isEmpty()) {
@@ -205,11 +206,12 @@ public class AuthService {
 
       String token = jwtService.generateToken(user);
 
-      logger.info("User authenticated! Token " + token);
+      logger.info("User authenticated! Token {}", token.substring(0, 6) + "...");
 
       userPwdLimitRepository.deleteAllForUser(user.getId());
       userRepository.save(user);
-      return UserResponseWithToken.fromEntity(user, token, getGravatarImageUrl(login.email()));
+      return UserResponseWithToken.fromEntity(
+          user, token, getGravatarImageUrl(login.email()).orElse(null));
     } catch (BadCredentialsException e) {
       logger.error(
           "BadCredentialsException when logging in user {}: {}", user.getId(), e.getMessage());
@@ -253,7 +255,9 @@ public class AuthService {
     List<UserEntity> users = userRepository.findAll();
     List<UserResponse> usersResponse = new ArrayList<>(users.size());
     users.forEach(
-        u -> usersResponse.add(UserResponse.fromEntity(u, getGravatarImageUrl(u.getEmail()))));
+        u ->
+            usersResponse.add(
+                UserResponse.fromEntity(u, getGravatarImageUrl(u.getEmail()).orElse(null))));
     logger.info("{} user(s) found!", usersResponse.size());
 
     return usersResponse;
@@ -293,7 +297,7 @@ public class AuthService {
     userPwdLimitRepository.deleteAllForUser(currentUser.getId());
     userRepository.delete(currentUser);
 
-    return UserResponse.fromEntity(currentUser, getGravatarImageUrl(email));
+    return UserResponse.fromEntity(currentUser, getGravatarImageUrl(email).orElse(null));
   }
 
   /**
@@ -345,17 +349,17 @@ public class AuthService {
       shouldUpdate = true;
     }
 
-    if (shouldUpdate && currentUser != null) {
+    if (shouldUpdate) {
       userRepository.save(currentUser);
     }
 
     if (emailChanged && hasValidMailgunApiKey()) {
       // send email to older and new account
-      logger.info("Email changed from " + email + " to " + patchRequest.email());
+      logger.info("Email changed from {} to {}", email, patchRequest.email());
       mailgunEmailService.sendEmailChangedNotification(currentUser, email);
     }
 
-    return UserResponse.fromEntity(currentUser, getGravatarImageUrl(email));
+    return UserResponse.fromEntity(currentUser, getGravatarImageUrl(email).orElse(null));
   }
 
   /**
@@ -382,7 +386,7 @@ public class AuthService {
   @Transactional
   public void confirmUserAccount(String identification) {
     logger.info("Confirming user email account");
-    UUID uuid = null;
+    UUID uuid;
 
     try {
       uuid = UUID.fromString(identification);
@@ -399,11 +403,11 @@ public class AuthService {
     user.setEmailConfirmedAt(LocalDateTime.now());
 
     userRepository.save(user);
-    logger.info("User email address confirmed: " + identification);
+    logger.info("User email address confirmed: {}", identification);
   }
 
   /**
-   * Re-send the confirm email to the user.
+   * Re-send the confirmation email to the user.
    *
    * @param email The email to re-send.
    */
@@ -431,11 +435,11 @@ public class AuthService {
    */
   @Transactional
   public void resetPasswordForUser(String email) {
-    logger.info("Requesting password reset for email " + email);
+    logger.info("Requesting password reset for email {}", email);
 
     Optional<UserEntity> userOptional = userRepository.findByEmail(email);
     if (userOptional.isEmpty()) {
-      logger.info("No user found with this email " + email);
+      logger.info("No user found with email {}", email);
       return;
     }
 
@@ -461,7 +465,7 @@ public class AuthService {
    */
   @Transactional
   public void confirmResetPasswordForUser(PasswordResetRequest request) {
-    logger.info("Saving new password for token " + request.token());
+    logger.info("Saving new password for token {}", request.token());
 
     Optional<UserEntity> userOptional = userRepository.findByResetToken(request.token());
     if (userOptional.isEmpty()) {
@@ -495,12 +499,12 @@ public class AuthService {
       mailgunEmailService.sendPasswordResetConfirmation(user);
     }
 
-    logger.info("New password set for token " + request.token());
+    logger.info("New password set for token {}", request.token());
   }
 
   private Optional<String> getGravatarImageUrl(String email) {
     email = email.toLowerCase().trim();
-    logger.info("Current user email: " + email);
+    logger.info("Current user email: {}", email);
 
     try {
       MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -532,7 +536,7 @@ public class AuthService {
 
     // if it's more than 3 times in the last 10 minutes, raise timer of 3 hours.
     if (userPwdList.size() >= 3) {
-      UserPwdLimitEntity mostRecent = userPwdList.get(0);
+      UserPwdLimitEntity mostRecent = userPwdList.getFirst();
       logger.warn("Oldest: {}", mostRecent.getWhenHappened());
       Duration duration = Duration.between(mostRecent.getWhenHappened(), LocalDateTime.now());
       if (duration.toMinutes() <= 3L) {

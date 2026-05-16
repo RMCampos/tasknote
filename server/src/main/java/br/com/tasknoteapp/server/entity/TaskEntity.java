@@ -39,7 +39,7 @@ public class TaskEntity {
   @Column(name = "high_priority")
   private Boolean highPriority;
 
-  @Column(name = "tag", nullable = true, length = 30)
+  @Column(name = "tag", length = 30)
   private String tag;
 
   public Long getId() {

@@ -26,7 +26,7 @@ public class MailgunEmailService {
   private final RestClient restClient;
   private final String targetEnv;
   private final String domain;
-  private String senderEmail;
+  private final String senderEmail;
 
   /**
    * Creates an instance of the Mail service class.
@@ -56,16 +56,18 @@ public class MailgunEmailService {
       logger.warn("Mailgun API Key is missing or too short!");
     }
 
-    this.restClient = restClientBuilder
-        .baseUrl("https://api.mailgun.net/v3/" + domain)
-        .defaultStatusHandler(HttpStatusCode::isError, (request, response) -> {
-          logger.error(
-              "Mailgun API Error: {} {}",
-              response.getStatusCode(),
-              response.getStatusText());
-        })
-        .defaultHeaders(headers -> headers.setBasicAuth("api", apiKey))
-        .build();
+    this.restClient =
+        restClientBuilder
+            .baseUrl("https://api.mailgun.net/v3/" + domain)
+            .defaultStatusHandler(
+                HttpStatusCode::isError,
+                (request, response) ->
+                    logger.error(
+                        "Mailgun API Error: {} {}",
+                        response.getStatusCode(),
+                        response.getStatusText()))
+            .defaultHeaders(headers -> headers.setBasicAuth("api", apiKey))
+            .build();
   }
 
   /**
@@ -148,7 +150,7 @@ public class MailgunEmailService {
    *
    * @param to The target email address.
    * @param subject The message subject.
-   * @param template The mailgun template.
+   * @param template The Mailgun template.
    */
   private void sendEmail(String to, String subject, MailgunTemplate template) {
     String from = "TaskNote App <" + senderEmail + ">";
@@ -167,7 +169,8 @@ public class MailgunEmailService {
     }
 
     try {
-      restClient.post()
+      restClient
+          .post()
           .uri("/messages")
           .contentType(MediaType.APPLICATION_FORM_URLENCODED)
           .body(mailData)

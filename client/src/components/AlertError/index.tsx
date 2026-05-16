@@ -3,7 +3,7 @@ import { Alert } from 'react-bootstrap';
 
 type Props = {
   errorMessage?: string;
-  dataTestid?: string;
+  dataTestId?: string;
   onClose?: () => void;
 };
 
@@ -12,7 +12,7 @@ type Props = {
  *
  * @param {Props} props the AlertError props with the message to be displayed.
  * @param {string} [props.errorMessage] Optional error message.
- * @param {string} [props.dataTestid] Optional data-testid property.
+ * @param {string} [props.dataTestId] Optional data-testId property.
  * @param {Function} [props.onClose] OnClose function to be called.
  * @returns {React.ReactNode} the AlertError rendered component.
  */
@@ -25,7 +25,7 @@ const AlertError: React.FC<Props> = (props: Props): React.ReactNode => {
     <Alert
       variant="danger"
       dismissible
-      data-testid={props.dataTestid}
+      data-testid={props.dataTestId}
       onClose={props.onClose}
     >
       { props.errorMessage }

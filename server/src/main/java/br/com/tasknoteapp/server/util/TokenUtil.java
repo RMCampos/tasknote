@@ -15,7 +15,7 @@ public class TokenUtil {
    */
   public String generateToken() {
     // 24 bytes ~ 32 chars length after Base64
-    // Base64 encoding expands that by a factor of 4/3.
+    // encoding expands that by a factor of 4/3.
     // 24 bytes * 4/3 = 32 characters
     byte[] randomBytes = new byte[24];
     secureRandom.nextBytes(randomBytes);

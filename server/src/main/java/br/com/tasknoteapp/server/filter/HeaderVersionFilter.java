@@ -6,7 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -14,11 +14,15 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class HeaderVersionFilter extends OncePerRequestFilter {
 
-  @Autowired private AppVersionService appVersionService;
+  private final AppVersionService appVersionService;
+
+  HeaderVersionFilter(AppVersionService appVersionService) {
+    this.appVersionService = appVersionService;
+  }
 
   @Override
   protected void doFilterInternal(
-      HttpServletRequest request,
+      @NonNull HttpServletRequest request,
       HttpServletResponse response,
       FilterChain filterChain)
       throws ServletException, IOException {
