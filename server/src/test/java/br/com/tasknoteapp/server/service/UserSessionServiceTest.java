@@ -51,7 +51,8 @@ class UserSessionServiceTest {
     when(noteService.getAllNotes()).thenReturn(List.of(note));
     when(authService.deleteUserAccount())
         .thenReturn(
-            new UserResponse(user.getId(), "user", user.getEmail(), false, null, null, null));
+            new UserResponse(
+                user.getId(), "user", user.getEmail(), false, null, null, null, null));
 
     // Act
     UserResponse response = userSessionService.deleteCurrentUserAccount();

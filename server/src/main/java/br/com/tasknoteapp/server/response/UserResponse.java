@@ -11,6 +11,7 @@ public record UserResponse(
     Boolean admin,
     LocalDateTime createdAt,
     LocalDateTime inactivatedAt,
+    LocalDateTime lastLogin,
     String gravatarImageUrl) {
 
   /**
@@ -27,6 +28,7 @@ public record UserResponse(
         user.getAdmin(),
         user.getCreatedAt(),
         user.getInactivatedAt(),
+        user.getLastLogin(),
         gravatarUrl);
   }
 }

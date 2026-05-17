@@ -209,6 +209,7 @@ public class AuthService {
 
       logger.info("User authenticated! Token {}", token.substring(0, 6) + "...");
 
+      user.setLastLogin(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
       userPwdLimitRepository.deleteAllForUser(user.getId());
       userRepository.save(user);
       return UserResponseWithToken.fromEntity(

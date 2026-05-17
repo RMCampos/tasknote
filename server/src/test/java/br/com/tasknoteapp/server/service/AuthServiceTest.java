@@ -100,6 +100,7 @@ class AuthServiceTest {
     Assertions.assertNull(token.token());
     Assertions.assertEquals(entity.getEmail(), token.email());
     Assertions.assertNotNull(entity.getEmailUuid());
+    verify(userRepository).save(any(UserEntity.class));
   }
 
   @Test

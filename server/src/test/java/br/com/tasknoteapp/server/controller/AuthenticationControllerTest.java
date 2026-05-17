@@ -37,7 +37,16 @@ class AuthenticationControllerTest {
 
     UserResponseWithToken response =
         new UserResponseWithToken(
-            123L, null, request.email(), false, LocalDateTime.now(), null, null, token, "en");
+            123L,
+            null,
+            request.email(),
+            false,
+            LocalDateTime.now(),
+            null,
+            null,
+            null,
+            token,
+            "en");
     when(authService.signUpNewUser(request)).thenReturn(response);
 
     String jsonString =
@@ -68,7 +77,16 @@ class AuthenticationControllerTest {
 
     UserResponseWithToken response =
         new UserResponseWithToken(
-            123L, null, request.email(), false, LocalDateTime.now(), null, null, token, "en");
+            123L,
+            null,
+            request.email(),
+            false,
+            LocalDateTime.now(),
+            null,
+            null,
+            null,
+            token,
+            "en");
     when(authService.signUpNewUser(request)).thenReturn(response);
 
     String jsonString =
@@ -127,7 +145,16 @@ class AuthenticationControllerTest {
 
     UserResponseWithToken response =
         new UserResponseWithToken(
-            123L, null, request.email(), false, LocalDateTime.now(), null, null, token, "en");
+            123L,
+            null,
+            request.email(),
+            false,
+            LocalDateTime.now(),
+            null,
+            null,
+            null,
+            token,
+            "en");
     when(authService.signInUser(request)).thenReturn(response);
 
     String jsonString =

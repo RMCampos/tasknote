@@ -97,7 +97,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
         admin: registerResponse.admin,
         createdAt: new Date(registerResponse.createdAt),
         gravatarImageUrl: registerResponse.gravatarImageUrl,
-        lang: registerResponse.lang
+        lang: registerResponse.lang,
+        lastLogin: registerResponse.lastLogin
       };
 
       setSigned(true);
