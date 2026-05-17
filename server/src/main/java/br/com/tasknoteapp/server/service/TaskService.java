@@ -100,7 +100,7 @@ public class TaskService {
   public TaskResponse createTask(TaskRequest taskRequest) {
     UserEntity user = getCurrentUser();
 
-    logger.info("Creating task to user {}", user.getId());
+    logger.info("Creating task to user ID {}", user.getId());
 
     TaskEntity task = new TaskEntity();
     task.setDescription(taskRequest.description());
@@ -118,7 +118,7 @@ public class TaskService {
       saveUrls(task, taskRequest.urls());
     }
 
-    logger.info("Task created! Id {}", created.getId());
+    logger.info("Task created! ID {}", created.getId());
     return TaskResponse.fromEntity(created, getAllTasksUrls(created.getId()));
   }
 
@@ -133,7 +133,7 @@ public class TaskService {
   public TaskResponse patchTask(Long taskId, TaskPatchRequest patch) {
     UserEntity user = getCurrentUser();
 
-    logger.info("Patching task {} to user {}", taskId, user.getId());
+    logger.info("Patching task ID {} to user ID {}", taskId, user.getId());
 
     Optional<TaskEntity> task = taskRepository.findById(taskId);
     if (task.isEmpty()) {
@@ -165,7 +165,7 @@ public class TaskService {
 
     TaskEntity patchedTask = taskRepository.save(taskEntity);
 
-    logger.info("Task patched! Id {}", patchedTask.getId());
+    logger.info("Task patched! ID {}", patchedTask.getId());
 
     return TaskResponse.fromEntity(patchedTask, getAllTasksUrls(taskId));
   }
@@ -179,7 +179,7 @@ public class TaskService {
   public void deleteTask(Long taskId) {
     UserEntity user = getCurrentUser();
 
-    logger.info("Deleting task {} to user {}", taskId, user.getId());
+    logger.info("Deleting task ID {} to user ID {}", taskId, user.getId());
 
     Optional<TaskEntity> task = taskRepository.findById(taskId);
     if (task.isEmpty()) {
@@ -198,7 +198,7 @@ public class TaskService {
 
     taskRepository.delete(taskEntity);
 
-    logger.info("Task deleted! Id {}", taskId);
+    logger.info("Task deleted! ID {}", taskId);
   }
 
   /**
@@ -210,7 +210,7 @@ public class TaskService {
   public List<TaskResponse> searchTasks(String searchTerm) {
     UserEntity user = getCurrentUser();
 
-    logger.info("Searching tasks to user {}", user.getId());
+    logger.info("Searching tasks to user ID {}", user.getId());
 
     if (Objects.isNull(searchTerm) || searchTerm.isBlank()) {
       return List.of();
@@ -286,7 +286,7 @@ public class TaskService {
     }
 
     taskUrlRepository.saveAll(tasksUrl);
-    logger.info("Added {} URLs from task {}", tasksUrl.size(), taskEntity.getId());
+    logger.info("Added {} URLs from task ID {}", tasksUrl.size(), taskEntity.getId());
   }
 
   private void patchDueDate(TaskEntity taskEntity, TaskPatchRequest patch) {
@@ -305,9 +305,9 @@ public class TaskService {
     List<TaskUrlEntity> urlsToDelete = taskUrlRepository.findAllById_taskId(taskId);
     if (!urlsToDelete.isEmpty()) {
       taskUrlRepository.deleteAllById_taskId(taskId);
-      logger.info("Deleted {} URLs from task {}", urlsToDelete.size(), taskId);
+      logger.info("Deleted {} URLs from task ID {}", urlsToDelete.size(), taskId);
     } else {
-      logger.info("No URLs to delete for task {}", taskId);
+      logger.info("No URLs to delete for task ID {}", taskId);
     }
 
     if (!Objects.isNull(patch.urls())) {

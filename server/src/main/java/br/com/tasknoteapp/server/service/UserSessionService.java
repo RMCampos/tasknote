@@ -6,14 +6,19 @@ import br.com.tasknoteapp.server.response.JwtAuthenticationResponse;
 import br.com.tasknoteapp.server.response.NoteResponse;
 import br.com.tasknoteapp.server.response.TaskResponse;
 import br.com.tasknoteapp.server.response.UserResponse;
+import br.com.tasknoteapp.server.util.SecurityUtil;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /** This class contains methods to handle user session and account deletion. */
 @Service
 public class UserSessionService {
+
+  private static final Logger logger = LoggerFactory.getLogger(UserSessionService.class.getName());
 
   private final AuthService authService;
 
@@ -57,6 +62,11 @@ public class UserSessionService {
       throw new UserNotFoundException();
     }
 
+    logger.info(
+        "Delete current user account for user ID {} email {}",
+        userOptional.get().getId(),
+        SecurityUtil.redactEmail(userOptional.get().getEmail()));
+
     List<TaskResponse> tasks = taskService.getAllTasks();
     for (TaskResponse task : tasks) {
       Long taskId = task != null ? task.id() : null;
@@ -73,6 +83,8 @@ public class UserSessionService {
       }
     }
 
-    return authService.deleteUserAccount();
+    UserResponse response = authService.deleteUserAccount();
+    logger.info("User account deleted for user ID {}", userOptional.get().getId());
+    return response;
   }
 }

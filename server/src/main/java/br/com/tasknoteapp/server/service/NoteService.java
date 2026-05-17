@@ -63,7 +63,7 @@ public class NoteService {
   public List<NoteResponse> getAllNotes() {
     UserEntity user = getCurrentUser();
 
-    logger.info("Get all notes to user {}", user.getId());
+    logger.info("Get all notes to user ID {}", user.getId());
 
     List<NoteEntity> notes = noteRepository.findAllByUser_id(user.getId());
     logger.info("{} notes found!", notes.size());
@@ -79,7 +79,7 @@ public class NoteService {
    */
   public NoteResponse getNoteById(Long noteId) {
     UserEntity user = getCurrentUser();
-    logger.info("Get note {} to user {}", noteId, user.getId());
+    logger.info("Get note ID {} to user ID {}", noteId, user.getId());
 
     Optional<NoteEntity> note = noteRepository.findById(noteId);
     if (note.isEmpty()) {
@@ -90,7 +90,7 @@ public class NoteService {
       throw new NoteNotFoundException();
     }
 
-    logger.info("Note found! Id {}", noteId);
+    logger.info("Note found! ID {}", noteId);
     return NoteResponse.fromEntity(note.get(), getNoteUrl(noteId));
   }
 
@@ -103,7 +103,7 @@ public class NoteService {
   public NoteResponse createNote(NoteRequest noteRequest) {
     UserEntity user = getCurrentUser();
 
-    logger.info("Creating note to user {}", user.getId());
+    logger.info("Creating note to user ID {}", user.getId());
 
     NoteEntity note = new NoteEntity();
     note.setTitle(noteRequest.title());
@@ -113,7 +113,7 @@ public class NoteService {
     note.setUser(user);
     NoteEntity created = noteRepository.save(note);
 
-    logger.info("Note created! Id {}", created.getId());
+    logger.info("Note created! ID {}", created.getId());
 
     String savedUrl = null;
     if (!Objects.isNull(noteRequest.url()) && !noteRequest.url().isEmpty()) {
@@ -136,7 +136,7 @@ public class NoteService {
   public NoteResponse patchNote(Long noteId, NotePatchRequest patch) {
     UserEntity user = getCurrentUser();
 
-    logger.info("Patching task {} to user {}", noteId, user.getId());
+    logger.info("Patching task ID {} to user ID {}", noteId, user.getId());
 
     Optional<NoteEntity> note = noteRepository.findByIdAndUser_id(noteId, user.getId());
     if (note.isEmpty()) {
@@ -157,18 +157,18 @@ public class NoteService {
 
     noteUrlRepository.deleteByNote_id(noteId);
     noteUrlRepository.flush();
-    logger.info("URL deleted from task {} during patch", noteId);
+    logger.info("URL deleted from note ID {} during patch", noteId);
 
     if (!Objects.isNull(patch.url()) && !patch.url().isBlank()) {
       saveUrl(noteEntity, patch.url());
     } else {
-      logger.info("No URLs to patch for task {}", noteId);
+      logger.info("No URLs to patch for note ID {}", noteId);
     }
 
     NoteEntity patchedNote = noteRepository.save(noteEntity);
     noteRepository.flush();
 
-    logger.info("Note patched! Id {}", patchedNote.getId());
+    logger.info("Note patched! ID {}", patchedNote.getId());
 
     return NoteResponse.fromEntity(patchedNote, getNoteUrl(patchedNote.getId()));
   }
@@ -182,7 +182,7 @@ public class NoteService {
   public void deleteNote(Long noteId) {
     UserEntity user = getCurrentUser();
 
-    logger.info("Deleting note {} to user {}", noteId, user.getId());
+    logger.info("Deleting note ID {} to user ID {}", noteId, user.getId());
 
     Optional<NoteEntity> note = noteRepository.findByIdAndUser_id(noteId, user.getId());
     if (note.isEmpty()) {
@@ -192,11 +192,11 @@ public class NoteService {
     NoteEntity noteEntity = note.get();
 
     noteUrlRepository.deleteByNote_id(noteId);
-    logger.info("URL deleted from task {}", noteId);
+    logger.info("URL deleted from note ID {}", noteId);
 
     noteRepository.delete(noteEntity);
 
-    logger.info("Note deleted! Id {}", noteId);
+    logger.info("Note deleted! ID {}", noteId);
   }
 
   /**
@@ -208,7 +208,7 @@ public class NoteService {
   public List<NoteResponse> searchNotes(String searchTerm) {
     UserEntity user = getCurrentUser();
 
-    logger.info("Searching notes to user {}", user.getId());
+    logger.info("Searching notes for user ID {}", user.getId());
 
     List<NoteEntity> notes =
         noteRepository.findAllBySearchTerm(searchTerm.toUpperCase(), user.getId());
@@ -225,7 +225,7 @@ public class NoteService {
   @Transactional
   public NoteResponse shareNote(Long noteId) {
     UserEntity user = getCurrentUser();
-    logger.info("Sharing note {} for user {}", noteId, user.getId());
+    logger.info("Sharing note ID {} for user ID {}", noteId, user.getId());
 
     Optional<NoteEntity> noteOpt = noteRepository.findByIdAndUser_id(noteId, user.getId());
     if (noteOpt.isEmpty()) {
@@ -238,7 +238,7 @@ public class NoteService {
       noteEntity.setShared(true);
       noteEntity.setShareToken(UUID.randomUUID().toString());
       noteRepository.save(noteEntity);
-      logger.info("Note {} shared with token {}", noteId, noteEntity.getShareToken());
+      logger.info("Note ID {} shared with token {}", noteId, noteEntity.getShareToken());
     }
 
     return NoteResponse.fromEntity(noteEntity, getNoteUrl(noteEntity.getId()));
@@ -252,7 +252,7 @@ public class NoteService {
    */
   public NoteResponse unshareNote(Long noteId) {
     UserEntity user = getCurrentUser();
-    logger.info("Unsharing note {} for user {}", noteId, user.getId());
+    logger.info("Unsharing note ID {} for user ID {}", noteId, user.getId());
 
     Optional<NoteEntity> noteOpt = noteRepository.findByIdAndUser_id(noteId, user.getId());
     if (noteOpt.isEmpty()) {
@@ -263,7 +263,7 @@ public class NoteService {
     noteEntity.setShared(false);
     noteEntity.setShareToken(null);
     noteRepository.save(noteEntity);
-    logger.info("Note {} unshared", noteId);
+    logger.info("Note ID {} unshared", noteId);
 
     return NoteResponse.fromEntity(noteEntity, getNoteUrl(noteEntity.getId()));
   }
@@ -313,7 +313,7 @@ public class NoteService {
     noteUrl.setNote(noteEntity);
 
     NoteUrlEntity savedUrl = noteUrlRepository.save(noteUrl);
-    logger.info("URL saved to note {}", noteEntity.getId());
+    logger.info("URL saved to note ID {}", noteEntity.getId());
 
     return savedUrl;
   }

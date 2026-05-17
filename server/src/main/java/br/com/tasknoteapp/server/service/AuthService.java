@@ -20,6 +20,7 @@ import br.com.tasknoteapp.server.request.UserPatchRequest;
 import br.com.tasknoteapp.server.response.UserResponse;
 import br.com.tasknoteapp.server.response.UserResponseWithToken;
 import br.com.tasknoteapp.server.util.AuthUtil;
+import br.com.tasknoteapp.server.util.SecurityUtil;
 import br.com.tasknoteapp.server.util.TokenUtil;
 import br.com.tasknoteapp.server.util.UuidUtil;
 import jakarta.transaction.Transactional;
@@ -106,7 +107,7 @@ public class AuthService {
    */
   @Transactional
   public UserResponseWithToken signUpNewUser(LoginRequest newUser) {
-    logger.info("Signing up new user: {}", newUser.email());
+    logger.info("Signing up new user: {}", SecurityUtil.redactEmail(newUser.email()));
 
     if (findByEmail(newUser.email()).isPresent()) {
       throw new EmailAlreadyExistsException();
@@ -181,7 +182,7 @@ public class AuthService {
    */
   @Transactional
   public UserResponseWithToken signInUser(LoginRequest login) {
-    logger.info("Signing in user:  {}", login.email());
+    logger.info("Signing in user: {}", SecurityUtil.redactEmail(login.email()));
 
     Optional<UserEntity> userOptional = findByEmail(login.email());
     if (userOptional.isEmpty()) {
@@ -355,7 +356,8 @@ public class AuthService {
 
     if (emailChanged && hasValidMailgunApiKey()) {
       // send email to older and new account
-      logger.info("Email changed from {} to {}", email, patchRequest.email());
+      logger.info(
+          "Email changed from {} to {}", email, SecurityUtil.redactEmail(patchRequest.email()));
       mailgunEmailService.sendEmailChangedNotification(currentUser, email);
     }
 
@@ -504,7 +506,7 @@ public class AuthService {
 
   private Optional<String> getGravatarImageUrl(String email) {
     email = email.toLowerCase().trim();
-    logger.info("Current user email: {}", email);
+    logger.info("Current user email: {}", SecurityUtil.redactEmail(email));
 
     try {
       MessageDigest digest = MessageDigest.getInstance("SHA-256");
