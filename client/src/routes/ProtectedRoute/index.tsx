@@ -19,6 +19,6 @@ function ProtectedRoute(): React.ReactNode {
     return <Navigate to="/" replace />;
   }
   return <Outlet />;
-};
+}
 
 export default ProtectedRoute;

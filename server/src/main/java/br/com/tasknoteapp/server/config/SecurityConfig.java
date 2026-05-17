@@ -39,10 +39,9 @@ public class SecurityConfig {
    *
    * @param http instance of HttpSecurity containing the request.
    * @return SecurityFilterChain with allowed endpoints and all configuration.
-   * @throws Exception due to bad configuration possibilities.
    */
   @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+  public SecurityFilterChain filterChain(HttpSecurity http) {
     http.cors(Customizer.withDefaults())
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(
@@ -99,11 +98,9 @@ public class SecurityConfig {
    *
    * @param config AuthenticationConfiguration instance
    * @return AuthenticationManager instance
-   * @throws Exception if issues occur.
    */
   @Bean
-  public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
-      throws Exception {
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration config) {
     return config.getAuthenticationManager();
   }
 }

@@ -11,6 +11,7 @@ import br.com.tasknoteapp.server.entity.UserPwdLimitEntity;
 import br.com.tasknoteapp.server.exception.BadPasswordException;
 import br.com.tasknoteapp.server.exception.BadUuidException;
 import br.com.tasknoteapp.server.exception.EmailAlreadyExistsException;
+import br.com.tasknoteapp.server.exception.EmailNotConfirmedException;
 import br.com.tasknoteapp.server.exception.InvalidCredentialsException;
 import br.com.tasknoteapp.server.exception.MaxLoginLimitAttemptException;
 import br.com.tasknoteapp.server.exception.ResetExpiredException;
@@ -197,6 +198,7 @@ class AuthServiceTest {
     UserEntity existing = new UserEntity();
     existing.setId(919L);
     existing.setEmail(request.email());
+    existing.setEmailConfirmedAt(LocalDateTime.now());
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(existing));
 
     when(userPwdLimitRepository.findTop3ByUser_idOrderByWhenHappenedDesc(existing.getId()))
@@ -210,6 +212,27 @@ class AuthServiceTest {
 
     Assertions.assertNotNull(token);
     Assertions.assertEquals("a1b2c3", token.token());
+  }
+
+  @Test
+  @DisplayName("SignIn user not confirmed should fail")
+  void signInUser_notConfirmed_shouldFail() {
+    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456", "en");
+
+    UserEntity existing = new UserEntity();
+    existing.setId(919L);
+    existing.setEmail(request.email());
+    existing.setEmailConfirmedAt(null);
+    when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(existing));
+
+    when(userPwdLimitRepository.findTop3ByUser_idOrderByWhenHappenedDesc(existing.getId()))
+        .thenReturn(List.of());
+
+    Assertions.assertThrows(
+        EmailNotConfirmedException.class,
+        () -> {
+          authService.signInUser(request);
+        });
   }
 
   @Test
@@ -233,6 +256,7 @@ class AuthServiceTest {
 
     UserEntity existing = new UserEntity();
     existing.setId(919L);
+    existing.setEmailConfirmedAt(LocalDateTime.now());
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(existing));
 
     UserPwdLimitEntity limit1 = new UserPwdLimitEntity();
@@ -256,6 +280,7 @@ class AuthServiceTest {
 
     UserEntity existing = new UserEntity();
     existing.setId(919L);
+    existing.setEmailConfirmedAt(LocalDateTime.now());
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(existing));
 
     when(userPwdLimitRepository.findTop3ByUser_idOrderByWhenHappenedDesc(existing.getId()))

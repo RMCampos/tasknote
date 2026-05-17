@@ -30,10 +30,21 @@ public class ValidationExceptionResponse {
     this.errorMessage = String.format(MESSAGE_TEMPLATE, fields.size());
   }
 
+  /**
+   * Method used by Spring internals to build the final JSON response.
+   *
+   * @return String describing the error message
+   */
   public String getErrorMessage() {
     return errorMessage;
   }
 
+  /**
+   * Method used by Spring internals to build the final JSON response with failed fields.
+   *
+   * @return List of FieldIssueResponse containing the field name and the error message related to
+   *     it
+   */
   public List<FieldIssueResponse> getFields() {
     return fields;
   }

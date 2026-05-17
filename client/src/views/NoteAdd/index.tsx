@@ -122,13 +122,13 @@ function NoteAdd(): React.ReactNode {
    *
    * @param {React.FormEvent<HTMLFormElement>} event - The form submission event.
    */
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
     event.stopPropagation();
     setValidated(true);
 
     const form = event.currentTarget;
-    if (form.checkValidity() === false) {
+    if (!form.checkValidity()) {
       setErrorMessage(translateServerResponse('Please fill in all the fields', i18n.language));
       return;
     }

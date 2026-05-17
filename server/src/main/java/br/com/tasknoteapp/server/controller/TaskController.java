@@ -32,7 +32,7 @@ public class TaskController {
   /**
    * Get all tasks.
    *
-   * @return List of TaskResponse with all found tasks and its urls, if any.
+   * @return List of TaskResponse with all found tasks and its URLs, if any.
    */
   @GetMapping
   public List<TaskResponse> getAllTasks() {
@@ -43,7 +43,7 @@ public class TaskController {
    * Get a task by its ID.
    *
    * @param id Task identification.
-   * @return TaskResponse with task data and its urls, if any.
+   * @return TaskResponse with task data and its URLs, if any.
    * @throws TaskNotFoundException when task not found.
    */
   @GetMapping("/{id}")
@@ -55,7 +55,7 @@ public class TaskController {
    * Patch a task.
    *
    * @param id The task id to be patched.
-   * @param taskRequest Task data to be patched, including optionally its urls.
+   * @param taskRequest Task data to be patched, including optionally its URLs.
    * @return TaskResponse containing data that was updated.
    * @throws TaskNotFoundException when task not found.
    */
@@ -68,8 +68,8 @@ public class TaskController {
   /**
    * Create a task.
    *
-   * @param taskRequest Task data to be created, including optionally its urls. Following RESTful
-   *     API pattern from https://restfulapi.net/rest-put-vs-post/.
+   * @param taskRequest Task data to be created, including optionally its URLs. Following RESTful
+   *     API pattern from <a href="https://restfulapi.net/rest-put-vs-post/">docs</a>.
    * @return TaskResponse containing data that was created.
    */
   @PostMapping

@@ -2,7 +2,6 @@ package br.com.tasknoteapp.server.response;
 
 import br.com.tasknoteapp.server.entity.UserEntity;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 /** This record represents a User Response object. */
 public record UserResponseWithToken(
@@ -24,7 +23,7 @@ public record UserResponseWithToken(
    * @return UserResponse instance.
    */
   public static UserResponseWithToken fromEntity(
-      UserEntity user, String token, Optional<String> gravatarUrl) {
+      UserEntity user, String token, String gravatarUrl) {
     return new UserResponseWithToken(
         user.getId(),
         user.getName(),
@@ -32,7 +31,7 @@ public record UserResponseWithToken(
         user.getAdmin(),
         user.getCreatedAt(),
         user.getInactivatedAt(),
-        gravatarUrl.orElse(null),
+        gravatarUrl,
         token,
         user.getLang());
   }

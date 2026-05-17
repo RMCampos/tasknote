@@ -34,25 +34,25 @@ public class UserEntity implements UserDetails {
   @Column(name = "created_at", nullable = false)
   private LocalDateTime createdAt;
 
-  @Column(name = "inactivated_at", nullable = true)
+  @Column(name = "inactivated_at")
   private LocalDateTime inactivatedAt;
 
   @Column(name = "name", length = 20)
   private String name;
 
-  @Column(name = "email_confirmed_at", nullable = true)
+  @Column(name = "email_confirmed_at")
   private LocalDateTime emailConfirmedAt;
 
-  @Column(name = "email_uuid", columnDefinition = "uuid", nullable = true, unique = true)
+  @Column(name = "email_uuid", columnDefinition = "uuid", unique = true)
   private UUID emailUuid;
 
-  @Column(name = "reset_password_expiration", nullable = true)
+  @Column(name = "reset_password_expiration")
   private LocalDateTime resetPasswordExpiration;
 
-  @Column(name = "reset_token", nullable = true, length = 35)
+  @Column(name = "reset_token", length = 35)
   private String resetToken;
 
-  @Column(name = "lang", nullable = true, length = 6)
+  @Column(name = "lang", length = 6)
   private String lang;
 
   @Column(name = "last_password_change", nullable = false)
@@ -67,26 +67,6 @@ public class UserEntity implements UserDetails {
   public String getUsername() {
     // email in our case
     return email;
-  }
-
-  @Override
-  public boolean isAccountNonExpired() {
-    return true;
-  }
-
-  @Override
-  public boolean isAccountNonLocked() {
-    return true;
-  }
-
-  @Override
-  public boolean isCredentialsNonExpired() {
-    return true;
-  }
-
-  @Override
-  public boolean isEnabled() {
-    return true;
   }
 
   public Long getId() {

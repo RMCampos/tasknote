@@ -7,9 +7,8 @@ import java.util.Optional;
 /** This class represents a template for the email change workflow. */
 public class MailgunTemplateEmailChanged implements MailgunTemplate {
 
-  private String templateName = "email_changed";
-  private String carbonCopy;
   private final Map<String, Object> props;
+  private String carbonCopy;
 
   public MailgunTemplateEmailChanged() {
     this.props = new HashMap<>();
@@ -25,7 +24,7 @@ public class MailgunTemplateEmailChanged implements MailgunTemplate {
 
   @Override
   public String getName() {
-    return templateName;
+    return "email_changed";
   }
 
   @Override
@@ -33,12 +32,12 @@ public class MailgunTemplateEmailChanged implements MailgunTemplate {
     return props;
   }
 
-  public void setCarbonCopy(String carbonCopy) {
-    this.carbonCopy = carbonCopy;
-  }
-
   @Override
   public Optional<String> getCarbonCopy() {
     return Optional.ofNullable(carbonCopy);
+  }
+
+  public void setCarbonCopy(String carbonCopy) {
+    this.carbonCopy = carbonCopy;
   }
 }

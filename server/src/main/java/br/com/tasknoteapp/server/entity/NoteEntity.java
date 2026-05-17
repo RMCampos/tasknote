@@ -29,7 +29,7 @@ public class NoteEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   private UserEntity user;
 
-  @Column(name = "tag", nullable = true, length = 30)
+  @Column(name = "tag", length = 30)
   private String tag;
 
   @Column(name = "last_update")

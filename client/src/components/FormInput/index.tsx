@@ -20,7 +20,7 @@ interface Props {
   valueDate?: Date | null;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onChangeDate?: (date: Date | null) => void;
-  data_testid?: string;
+  dataTestId?: string;
   pwdHideText?: string;
   pwdShowText?: string;
   pwdHelperTxt?: string;
@@ -107,7 +107,7 @@ function FormInput(props: React.PropsWithChildren<Props>): React.ReactNode {
                     placeholder={props.placeholder ? props.placeholder : ''}
                     value={props?.value}
                     onChange={props.onChange}
-                    data-testid={props.data_testid}
+                    data-testid={props.dataTestId}
                   />
                 )}
           </InputGroup>

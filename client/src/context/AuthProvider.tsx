@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import AuthContext, { AuthContextData } from './AuthContext';
 import { API_TOKEN, REDIRECT_PATH, USER_DATA } from '../app-constants/app-constants';
-import { SigninResponse } from '../types/SigninResponse';
+import { SignInResponse } from '../types/SigninResponse';
 import api from '../api-service/api';
 import ApiConfig from '../api-service/apiConfig';
 import { UserResponse } from '../types/UserResponse';
@@ -17,13 +17,13 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
   const [user, setUser] = useState<UserResponse | undefined>();
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
-  const fetchCurrentSession = async (pathname: string): Promise<SigninResponse | undefined> => {
+  const fetchCurrentSession = async (pathname: string): Promise<SignInResponse | undefined> => {
     const token = localStorage.getItem(API_TOKEN);
     if (!token) {
       return undefined;
     }
     try {
-      const bearerToken: SigninResponse = await api.getJSON(ApiConfig.refreshTokenUrl);
+      const bearerToken: SignInResponse = await api.getJSON(ApiConfig.refreshTokenUrl);
       setSigned(true);
       return bearerToken;
     }
@@ -64,7 +64,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
   };
 
   const checkCurrentAuthUser = async (pathname: string): Promise<void> => {
-    const bearerToken: SigninResponse | undefined = await fetchCurrentSession(pathname);
+    const bearerToken: SignInResponse | undefined = await fetchCurrentSession(pathname);
     if (bearerToken && bearerToken.token) {
       const userLocal = updateUserSession(null, bearerToken.token);
       if (userLocal) {
@@ -89,7 +89,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
   const signIn = async (email: string, password: string): Promise<string> => {
     try {
       const payload = { email, password };
-      const registerResponse: SigninResponse = await api.postJSON(ApiConfig.signInUrl, payload);
+      const registerResponse: SignInResponse = await api.postJSON(ApiConfig.signInUrl, payload);
       const currentUser: UserResponse = {
         userId: registerResponse.userId,
         name: registerResponse.name,

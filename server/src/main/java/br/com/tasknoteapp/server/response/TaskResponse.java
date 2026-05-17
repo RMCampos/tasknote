@@ -18,10 +18,10 @@ public record TaskResponse(
     List<String> urls) {
 
   /**
-   * Creates a TaskResponse given a TaskEntity and its Urls.
+   * Creates a TaskResponse given a TaskEntity and its URLs.
    *
    * @param entity The TaskEntity source data.
-   * @return TaskResponse instance with all task data and urls, if any.
+   * @return TaskResponse instance with all task data and URLs, if any.
    */
   public static TaskResponse fromEntity(TaskEntity entity, List<String> urls) {
     String timeAgoFmt = TimeAgoUtil.format(entity.getLastUpdate());

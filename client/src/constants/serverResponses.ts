@@ -24,5 +24,7 @@ export const serverResponses: Record<string, string> = {
   'Wrong or missing identification': 'WRONG_IDENTIFICATION',
   'Wrong or missing information!': 'WRONG_OR_MISSING_INFO',
   'Invalid credentials': 'INVALID_CREDENTIALS',
-  'Nothing to update!': 'NOTHING_TO_UPDATE'
+  'Nothing to update!': 'NOTHING_TO_UPDATE',
+  'Email not confirmed!': 'EMAIL_NOT_CONFIRMED',
+  'Confirmation email re-sent! Please check the spam folder.': 'CONFIRMATION_RESENT'
 };

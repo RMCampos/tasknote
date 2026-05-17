@@ -3,6 +3,7 @@ package br.com.tasknoteapp.server.service.impl;
 import br.com.tasknoteapp.server.entity.UserEntity;
 import br.com.tasknoteapp.server.repository.UserRepository;
 import br.com.tasknoteapp.server.service.UserService;
+import br.com.tasknoteapp.server.util.SecurityUtil;
 import java.util.Optional;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ class UserServiceImpl implements UserService {
         email -> {
           Optional<UserEntity> user = userRepository.findByEmail(email);
           if (user.isEmpty()) {
-            throw new RuntimeException("User not found: " + email);
+            throw new RuntimeException("User not found: " + SecurityUtil.redactEmail(email));
           }
           return user.get();
         };

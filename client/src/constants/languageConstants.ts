@@ -90,6 +90,8 @@ export const serverResponsesTranslations: Record<string, string> = {
   WRONG_IDENTIFICATION_pt_br: 'Identificação incorreta ou faltando',
   WRONG_OR_MISSING_INFO_pt_br: 'Informação errada ou incompleta!',
   NOTHING_TO_UPDATE_pt_br: 'Nada para atualizar!',
+  EMAIL_NOT_CONFIRMED_pt_br: 'E-mail não confirmado!',
+  CONFIRMATION_RESENT_pt_br: 'E-mail de confirmação reenviado! Por favor, verifique a pasta de spam.',
 
   BAD_PASSWORD_8_es: 'Contraseña inválida: La contraseña debe tener al menos 8 caracteres',
   BAD_PASSWORD_7_es: 'Contraseña inválida: La contraseña debe tener al menos 8 caracteres, 1 carácter especial',
@@ -117,6 +119,8 @@ export const serverResponsesTranslations: Record<string, string> = {
   WRONG_IDENTIFICATION_es: 'Identificación incorrecta o faltante',
   WRONG_OR_MISSING_INFO_es: '¡Información incorrecta o incompleta!',
   NOTHING_TO_UPDATE_es: '¡Nada que actualizar!',
+  EMAIL_NOT_CONFIRMED_es: '¡Correo no confirmado!',
+  CONFIRMATION_RESENT_es: '¡Correo de confirmación reenviado! Por favor, revisa la carpeta de spam.',
 
   BAD_PASSWORD_8_ru: 'Неправильный пароль: Пароль должен содержать не менее 8 символов.',
   BAD_PASSWORD_7_ru: 'Неправильный пароль: Пароль должен содержать не менее 8 символов, 1 специальный символ.',
@@ -143,5 +147,7 @@ export const serverResponsesTranslations: Record<string, string> = {
   UNKNOWN_ru: 'Неизвестная ошибка',
   WRONG_IDENTIFICATION_ru: 'Неправильная или отсутствующая идентификация',
   WRONG_OR_MISSING_INFO_ru: 'Неверная или отсутствующая информация!',
-  NOTHING_TO_UPDATE_ru: 'Нечего обновлять!'
+  NOTHING_TO_UPDATE_ru: 'Нечего обновлять!',
+  EMAIL_NOT_CONFIRMED_ru: 'Электронная почта не подтверждена!',
+  CONFIRMATION_RESENT_ru: 'Письмо с подтверждением отправлено еще раз! Пожалуйста, проверьте папку со спамом.'
 };

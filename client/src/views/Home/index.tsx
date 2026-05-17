@@ -82,7 +82,7 @@ function Home(): React.ReactNode {
   const markAsDone = async (task: TaskResponse): Promise<void> => {
     try {
       await api.deleteNoContent(`${ApiConfig.tasksUrl}/${task.id}`);
-      loadAllTasks();
+      await loadAllTasks();
     }
     catch (e) {
       handleError(e);
@@ -97,7 +97,7 @@ function Home(): React.ReactNode {
   const deleteNote = async (noteIdParam: number) => {
     try {
       await api.deleteNoContent(`${ApiConfig.notesUrl}/${noteIdParam}`);
-      loadAllNotes();
+      await loadAllNotes();
     }
     catch (e) {
       handleError(e);
@@ -113,7 +113,7 @@ function Home(): React.ReactNode {
     try {
       const action = note.shared ? 'unshare' : 'share';
       await api.putJSON(`${ApiConfig.notesUrl}/${note.id}/${action}`, {});
-      loadAllNotes();
+      await loadAllNotes();
     }
     catch (e) {
       handleError(e);
@@ -176,10 +176,9 @@ function Home(): React.ReactNode {
     }
     else {
       let filteredTasks = allTasks.filter((task: TaskResponse) => {
-        const shouldFilter = task.description.toLowerCase().includes(text.toLowerCase())
+        return task.description.toLowerCase().includes(text.toLowerCase())
           || task.tag.toLowerCase().includes(text.toLowerCase())
           || task.urls.filter((url: string) => url.includes(text.toLowerCase())).length > 0;
-        return shouldFilter;
       });
 
       if (tagToFilter === 'untagged') {

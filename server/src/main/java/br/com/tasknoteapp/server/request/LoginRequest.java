@@ -10,11 +10,9 @@ public class LoginRequest {
 
   @NotNull private String password;
 
-  private String passwordAgain;
+  private final String passwordAgain;
 
-  private String lang;
-
-  public LoginRequest() {}
+  private final String lang;
 
   /**
    * Constructs a LoginRequest with the specified email and password.
@@ -51,16 +49,8 @@ public class LoginRequest {
     return passwordAgain;
   }
 
-  public void setPasswordAgain(String passwordAgain) {
-    this.passwordAgain = passwordAgain;
-  }
-
   public String lang() {
     return lang;
-  }
-
-  public void setLang(String lang) {
-    this.lang = lang;
   }
 
   @Override

@@ -105,7 +105,7 @@ function Account(): React.ReactNode {
     await patchUserInfo(patchPayload);
   };
 
-  const handleSubmit = async (event?: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (event?: React.SubmitEvent<HTMLFormElement>): Promise<void> => {
     event?.preventDefault();
     event?.stopPropagation();
     setValidated(true);
@@ -164,7 +164,7 @@ function Account(): React.ReactNode {
               />
 
               <Form noValidate validated={validated} onSubmit={handleSubmit} className="mt-4">
-                {/* User name */}
+                {/* Username */}
                 <FormInput
                   labelText={t('account_form_first_name_label')}
                   iconName="Person"
@@ -205,7 +205,7 @@ function Account(): React.ReactNode {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setUserPassword(e.target.value);
                   }}
-                  data_testid="account-password-one"
+                  dataTestId="account-password-one"
                 />
 
                 {/* User password again */}

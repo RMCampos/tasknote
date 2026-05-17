@@ -33,7 +33,7 @@ public class NoteController {
   /**
    * Get all notes.
    *
-   * @return List of NoteResponse with all found notes and its urls, if any.
+   * @return List of NoteResponse with all found notes and its URLs, if any.
    */
   @GetMapping
   public List<NoteResponse> getAllNotes() {
@@ -44,7 +44,7 @@ public class NoteController {
    * Get a note by its ID.
    *
    * @param id Note identification.
-   * @return NoteResponse with note data and its urls, if any.
+   * @return NoteResponse with note data and its URLs, if any.
    * @throws NoteNotFoundException when note not found.
    */
   @GetMapping("/{id}")
@@ -56,7 +56,7 @@ public class NoteController {
    * Patch a note.
    *
    * @param id The note id to be patched.
-   * @param noteRequest Note data to be patched, including optionally its urls.
+   * @param noteRequest Note data to be patched, including optionally its URLs.
    * @return NoteResponse containing data that was updated.
    * @throws NoteNotFoundException when note not found.
    */
@@ -70,8 +70,8 @@ public class NoteController {
   /**
    * Create a note.
    *
-   * @param noteRequest Note data to be created, including optionally its urls. Following RESTful
-   *     API pattern from https://restfulapi.net/rest-put-vs-post/.
+   * @param noteRequest Note data to be created, including optionally its URLs. Following RESTful
+   *     API pattern from <a href="https://restfulapi.net/rest-put-vs-post/">docs</a>.
    * @return NoteResponse containing data that was created.
    */
   @PostMapping

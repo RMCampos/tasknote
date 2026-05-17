@@ -12,7 +12,7 @@ import './styles.scss';
  * Landing page component.
  *
  * This component displays the landing page of the application,
- * providing navigation to login or register.
+ * providing navigation to log in or register.
  * It also checks for an existing user session.
  *
  * @returns {React.ReactNode} The Landing page component.

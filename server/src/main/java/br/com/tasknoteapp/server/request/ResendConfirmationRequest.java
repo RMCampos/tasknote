@@ -8,12 +8,6 @@ import jakarta.validation.constraints.NotNull;
 public class ResendConfirmationRequest {
   @Email @NotNull private String email;
 
-  public ResendConfirmationRequest() {}
-
-  public ResendConfirmationRequest(String email) {
-    this.email = email;
-  }
-
   public String email() {
     return email.trim().toLowerCase();
   }

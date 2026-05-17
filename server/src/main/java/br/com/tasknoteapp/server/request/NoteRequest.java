@@ -9,6 +9,6 @@ public record NoteRequest(
     @NotNull String description,
     @Pattern(
             regexp = "^(https?://.*|#.*)?$",
-            message = "URL must start with http://, https:// or #")
+            message = "URL must start with https:// or #")
         String url,
     String tag) {}

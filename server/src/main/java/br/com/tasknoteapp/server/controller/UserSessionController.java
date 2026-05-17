@@ -35,7 +35,7 @@ public class UserSessionController {
   /**
    * Delete all the user data and information from the server.
    *
-   * @returns {@link UserResponse} with the user information.
+   * @return {@link UserResponse} with the user information.
    */
   @DeleteMapping("/delete-account")
   public ResponseEntity<UserResponse> deleteAccount() {
