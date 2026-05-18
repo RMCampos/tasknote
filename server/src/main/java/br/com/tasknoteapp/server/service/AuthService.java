@@ -146,7 +146,8 @@ public class AuthService {
 
     logger.info("User created! ID {}", user.getId());
     return UserResponseWithToken.fromEntity(
-        user, null, getGravatarImageUrl(newUser.email()).orElse(null));
+        user, null, getGravatarImageUrl(newUser.email()).orElse(null),
+        null);
   }
 
   /**
@@ -201,6 +202,8 @@ public class AuthService {
     user.setResetToken(null);
     user.setResetPasswordExpiration(null);
 
+    logger.info("Timezone received for user ID: {}: {}", user.getId(), login.timezone());
+
     try {
       authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(login.email(), login.password()));
@@ -213,7 +216,8 @@ public class AuthService {
       userPwdLimitRepository.deleteAllForUser(user.getId());
       userRepository.save(user);
       return UserResponseWithToken.fromEntity(
-          user, token, getGravatarImageUrl(login.email()).orElse(null));
+          user, token, getGravatarImageUrl(login.email()).orElse(null),
+          login.timezone());
     } catch (BadCredentialsException e) {
       logger.error(
           "BadCredentialsException when logging in user {}: {}", user.getId(), e.getMessage());
@@ -259,7 +263,8 @@ public class AuthService {
     users.forEach(
         u ->
             usersResponse.add(
-                UserResponse.fromEntity(u, getGravatarImageUrl(u.getEmail()).orElse(null))));
+                UserResponse.fromEntity(u, getGravatarImageUrl(u.getEmail()).orElse(null),
+                  null)));
     logger.info("{} user(s) found!", usersResponse.size());
 
     return usersResponse;
@@ -299,7 +304,7 @@ public class AuthService {
     userPwdLimitRepository.deleteAllForUser(currentUser.getId());
     userRepository.delete(currentUser);
 
-    return UserResponse.fromEntity(currentUser, getGravatarImageUrl(email).orElse(null));
+    return UserResponse.fromEntity(currentUser, getGravatarImageUrl(email).orElse(null), null);
   }
 
   /**
@@ -362,7 +367,7 @@ public class AuthService {
       mailgunEmailService.sendEmailChangedNotification(currentUser, email);
     }
 
-    return UserResponse.fromEntity(currentUser, getGravatarImageUrl(email).orElse(null));
+    return UserResponse.fromEntity(currentUser, getGravatarImageUrl(email).orElse(null), null);
   }
 
   /**

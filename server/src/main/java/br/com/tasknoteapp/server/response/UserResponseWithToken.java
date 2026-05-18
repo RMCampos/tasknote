@@ -25,7 +25,10 @@ public record UserResponseWithToken(
    * @return UserResponse instance.
    */
   public static UserResponseWithToken fromEntity(
-      UserEntity user, String token, String gravatarUrl) {
+      UserEntity user,
+      String token,
+      String gravatarUrl,
+      String timezone) {
     return new UserResponseWithToken(
         user.getId(),
         user.getName(),
@@ -33,7 +36,7 @@ public record UserResponseWithToken(
         user.getAdmin(),
         user.getCreatedAt(),
         user.getInactivatedAt(),
-        TimeAgoUtil.format(user.getLastLogin()),
+        TimeAgoUtil.formatLastSeen(user.getLastLogin(), timezone),
         gravatarUrl,
         token,
         user.getLang());

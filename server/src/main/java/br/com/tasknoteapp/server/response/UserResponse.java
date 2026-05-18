@@ -21,7 +21,8 @@ public record UserResponse(
    * @param user The user entity instance with user info to be used as source.
    * @return UserResponse instance.
    */
-  public static UserResponse fromEntity(UserEntity user, String gravatarUrl) {
+  public static UserResponse fromEntity(UserEntity user, String gravatarUrl,
+      String timezone) {
     return new UserResponse(
         user.getId(),
         user.getName(),
@@ -29,7 +30,7 @@ public record UserResponse(
         user.getAdmin(),
         user.getCreatedAt(),
         user.getInactivatedAt(),
-        TimeAgoUtil.format(user.getLastLogin()),
+        TimeAgoUtil.formatLastSeen(user.getLastLogin(), timezone),
         gravatarUrl);
   }
 }

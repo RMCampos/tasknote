@@ -81,7 +81,7 @@ class AuthServiceTest {
   @DisplayName("SignUp new user happy path should succeed")
   void signUpNewUser_happyPath_shouldSucceed() {
     LoginRequest request =
-        new LoginRequest("email@domain.com", "123456@abcde!", "123456@abcde!", "en");
+        new LoginRequest("email@domain.com", "123456@abcde!", "123456@abcde!", "en", "UTC");
 
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.empty());
     when(authUtil.validatePassword(request.password())).thenReturn(Optional.empty());
@@ -107,7 +107,7 @@ class AuthServiceTest {
   @DisplayName("SignUp new user with existing email should fail")
   void signUpNewUser_emailExists_shouldFail() {
     LoginRequest request =
-        new LoginRequest("email@domain.com", "123456@abcde!", "123456@abcde!", "en");
+        new LoginRequest("email@domain.com", "123456@abcde!", "123456@abcde!", "en", "UTC");
 
     UserEntity existing = new UserEntity();
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(existing));
@@ -122,7 +122,7 @@ class AuthServiceTest {
   @Test
   @DisplayName("SignUp new user with bad password should fail")
   void signUpNewUser_badPassword_shouldFail() {
-    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456", "en");
+    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456", "en", "UTC");
 
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.empty());
     when(authUtil.validatePassword(request.password())).thenReturn(Optional.of("Bad password"));
@@ -194,7 +194,7 @@ class AuthServiceTest {
   @Test
   @DisplayName("SignIn user happy path should succeed")
   void signInUser_happyPath_shouldSucceed() {
-    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456", "en");
+    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456", "en", "UTC");
 
     UserEntity existing = new UserEntity();
     existing.setId(919L);
@@ -218,7 +218,7 @@ class AuthServiceTest {
   @Test
   @DisplayName("SignIn user not confirmed should fail")
   void signInUser_notConfirmed_shouldFail() {
-    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456", "en");
+    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456", "en", "UTC");
 
     UserEntity existing = new UserEntity();
     existing.setId(919L);
@@ -239,7 +239,7 @@ class AuthServiceTest {
   @Test
   @DisplayName("SignIn wrong user or password should fail")
   void signInUser_wrongUserOrPassword_shouldFail() {
-    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456", "en");
+    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456", "en", "UTC");
 
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.empty());
 
@@ -253,7 +253,7 @@ class AuthServiceTest {
   @Test
   @DisplayName("SignIn max login attempt should fail")
   void signInUser_maxLoginAttempt_shouldFail() {
-    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456", "en");
+    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456", "en", "UTC");
 
     UserEntity existing = new UserEntity();
     existing.setId(919L);
@@ -277,7 +277,7 @@ class AuthServiceTest {
   @Test
   @DisplayName("SignIn bad credentials should fail")
   void signInUser_badCredentials_shouldFail() {
-    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456", "en");
+    LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456", "en", "UTC");
 
     UserEntity existing = new UserEntity();
     existing.setId(919L);

@@ -88,7 +88,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
 
   const signIn = async (email: string, password: string): Promise<string> => {
     try {
-      const payload = { email, password };
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const payload = { email, password, timezone };
       const registerResponse: SignInResponse = await api.postJSON(ApiConfig.signInUrl, payload);
       const currentUser: UserResponse = {
         userId: registerResponse.userId,

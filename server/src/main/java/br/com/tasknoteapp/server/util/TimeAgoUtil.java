@@ -4,6 +4,9 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.Locale;
 import java.util.Objects;
@@ -92,6 +95,26 @@ public class TimeAgoUtil {
     String dateFmt = String.format(" (%s %d%s, %s %d)", dayOfWeek, dayOfMonth, suffix, month, year);
 
     return sb + dateFmt;
+  }
+
+  /**
+   * Format a given local date into last seen format.
+   *
+   * @param localDate LocalDateTime instance to be formatted in the dd/MM/yyyy HH:mm format.
+   * @param timezone Timezone to be used when formatting (optional)
+   * @return The formatted date.
+   */
+  public static String formatLastSeen(LocalDateTime localDate, String timezone) {
+    if (localDate == null) {
+      return "";
+    }
+    if (timezone == null) {
+      timezone = "America/Sao_Paulo";
+    }
+    ZoneId zone = ZoneId.of(timezone);
+    ZonedDateTime zdt = localDate.atZone(zone);
+    DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    return zdt.format(fmt);
   }
 
   private static String getDaySuffix(int day) {

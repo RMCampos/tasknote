@@ -1,6 +1,7 @@
 package br.com.tasknoteapp.server.request;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 /** This class represents a login request with user email and password. */
@@ -14,6 +15,8 @@ public class LoginRequest {
 
   private final String lang;
 
+  @NotBlank private String timezone;
+
   /**
    * Constructs a LoginRequest with the specified email and password.
    *
@@ -21,12 +24,15 @@ public class LoginRequest {
    * @param password the user password
    * @param passwordAgain the user password again
    * @param lang the user language
+   * @param timezone the user timezone (optional)
    */
-  public LoginRequest(String email, String password, String passwordAgain, String lang) {
+  public LoginRequest(String email, String password, String passwordAgain, String lang,
+      String timezone) {
     this.email = email;
     this.password = password;
     this.passwordAgain = passwordAgain;
     this.lang = lang;
+    this.timezone = timezone;
   }
 
   public String email() {
@@ -51,6 +57,10 @@ public class LoginRequest {
 
   public String lang() {
     return lang;
+  }
+
+  public String timezone() {
+    return timezone;
   }
 
   @Override
