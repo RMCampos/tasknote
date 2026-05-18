@@ -1,7 +1,6 @@
 package br.com.tasknoteapp.server.response;
 
 import br.com.tasknoteapp.server.entity.UserEntity;
-import br.com.tasknoteapp.server.util.TimeAgoUtil;
 import java.time.LocalDateTime;
 
 /** This record represents a User Response object. */
@@ -12,7 +11,7 @@ public record UserResponse(
     Boolean admin,
     LocalDateTime createdAt,
     LocalDateTime inactivatedAt,
-    String lastLogin,
+    LocalDateTime lastLogin,
     String gravatarImageUrl) {
 
   /**
@@ -21,8 +20,7 @@ public record UserResponse(
    * @param user The user entity instance with user info to be used as source.
    * @return UserResponse instance.
    */
-  public static UserResponse fromEntity(UserEntity user, String gravatarUrl,
-      String timezone) {
+  public static UserResponse fromEntity(UserEntity user, String gravatarUrl) {
     return new UserResponse(
         user.getId(),
         user.getName(),
@@ -30,7 +28,7 @@ public record UserResponse(
         user.getAdmin(),
         user.getCreatedAt(),
         user.getInactivatedAt(),
-        TimeAgoUtil.formatLastSeen(user.getLastLogin(), timezone),
+        user.getLastLogin(),
         gravatarUrl);
   }
 }
