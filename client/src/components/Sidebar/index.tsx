@@ -49,8 +49,8 @@ function Sidebar(props: React.PropsWithChildren<Props>): React.ReactNode {
 
   useEffect(() => {
     if (user && user.lastLogin) {
-      const fmtted = new Date(user.lastLogin).toLocateString(navigator.language, {
-        timeZone: Intl.DateTimeFormat().resolvedOptions().timezone,
+      const fmtted = new Date(user.lastLogin).toLocaleString(navigator.language, {
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
