@@ -29,6 +29,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -209,14 +210,23 @@ public class AuthService {
 
       logger.info("User authenticated! Token {}", token.substring(0, 6) + "...");
 
-      final UserEntity responseUser = cloneUser(user, user.getLastLogin());
+      final LocalDateTime previousLastLogin = user.getLastLogin();
 
-      user.setLastLogin(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+      user.setLastLogin(LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS));
       userPwdLimitRepository.deleteAllForUser(user.getId());
       userRepository.save(user);
 
-      return UserResponseWithToken.fromEntity(
-          responseUser, token, getGravatarImageUrl(login.email()).orElse(null));
+      return new UserResponseWithToken(
+          user.getId(),
+          user.getName(),
+          user.getEmail(),
+          user.getAdmin(),
+          user.getCreatedAt(),
+          user.getInactivatedAt(),
+          previousLastLogin,
+          getGravatarImageUrl(login.email()).orElse(null),
+          token,
+          user.getLang());
     } catch (BadCredentialsException e) {
       logger.error(
           "BadCredentialsException when logging in user {}: {}", user.getId(), e.getMessage());
@@ -558,22 +568,4 @@ public class AuthService {
         && !"invalid-api-key-only-placeholder".equals(apiKey);
   }
 
-  private UserEntity cloneUser(UserEntity user, LocalDateTime lastLogin) {
-    UserEntity u = new UserEntity();
-    u.setId(user.getId());
-    u.setEmail(user.getEmail());
-    u.setPassword(user.getPassword());
-    u.setAdmin(user.getAdmin());
-    u.setCreatedAt(user.getCreatedAt());
-    u.setInactivatedAt(user.getInactivatedAt());
-    u.setName(user.getName());
-    u.setEmailConfirmedAt(user.getEmailConfirmedAt());
-    u.setEmailUuid(user.getEmailUuid());
-    u.setResetPasswordExpiration(user.getResetPasswordExpiration());
-    u.setResetToken(user.getResetToken());
-    u.setLang(user.getLang());
-    u.setLastPasswordChange(user.getLastPasswordChange());
-    u.setLastLogin(lastLogin);
-    return u;
-  }
 }

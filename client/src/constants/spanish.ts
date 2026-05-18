@@ -187,6 +187,7 @@ const esTranslations = {
   account_delete_btn: 'Sí, borra todo',
 
   footer_my_account: 'Mi Cuenta ',
+  sidebar_last_seen: 'Último acceso {{time}}',
 
   logout: 'Cerrar sesión'
 };

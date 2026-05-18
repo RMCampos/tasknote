@@ -187,6 +187,7 @@ const enTranslations = {
   account_delete_btn: 'Yes, delete everything',
 
   footer_my_account: 'My Account ',
+  sidebar_last_seen: 'Last seen {{time}}',
 
   logout: 'Logout'
 };

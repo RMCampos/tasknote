@@ -188,6 +188,7 @@ const ptBrTranslations = {
   account_delete_btn: 'Sim, deletar tudo',
 
   footer_my_account: 'Minha Conta ',
+  sidebar_last_seen: 'Último acesso {{time}}',
 
   logout: 'Sair'
 };

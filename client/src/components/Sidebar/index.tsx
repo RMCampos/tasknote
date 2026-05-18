@@ -50,7 +50,12 @@ function Sidebar(props: React.PropsWithChildren<Props>): React.ReactNode {
   useEffect(() => {
     if (user && user.lastLogin) {
       const utcString = user.lastLogin.endsWith('Z') ? user.lastLogin : `${user.lastLogin}Z`;
-      const fmtted = new Date(utcString).toLocaleString(navigator.language, {
+      const date = new Date(utcString);
+      if (Number.isNaN(date.getTime())) {
+        setLastSeen('');
+        return;
+      }
+      const fmtted = date.toLocaleString(navigator.language, {
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         day: '2-digit',
         month: '2-digit',
@@ -60,7 +65,7 @@ function Sidebar(props: React.PropsWithChildren<Props>): React.ReactNode {
       });
       setLastSeen(fmtted);
     }
-  }, [user, currentPage]);
+  }, [user]);
 
   return (
     <>
@@ -111,7 +116,7 @@ function Sidebar(props: React.PropsWithChildren<Props>): React.ReactNode {
         <div className="mt-auto text-center text-muted py-3">
           {lastSeen && (
             <div>
-              <small>{`Last seen ${lastSeen}`}</small>
+              <small>{t('sidebar_last_seen', { time: lastSeen })}</small>
             </div>
           )}
           <small data-testid="footer-text">{build}</small>
