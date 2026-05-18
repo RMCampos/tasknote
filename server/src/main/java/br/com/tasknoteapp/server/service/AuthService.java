@@ -209,11 +209,14 @@ public class AuthService {
 
       logger.info("User authenticated! Token {}", token.substring(0, 6) + "...");
 
+      final UserEntity responseUser = cloneUser(user, user.getLastLogin());
+
       user.setLastLogin(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
       userPwdLimitRepository.deleteAllForUser(user.getId());
       userRepository.save(user);
+
       return UserResponseWithToken.fromEntity(
-          user, token, getGravatarImageUrl(login.email()).orElse(null));
+          responseUser, token, getGravatarImageUrl(login.email()).orElse(null));
     } catch (BadCredentialsException e) {
       logger.error(
           "BadCredentialsException when logging in user {}: {}", user.getId(), e.getMessage());
@@ -553,5 +556,24 @@ public class AuthService {
     String apiKey = environment.getProperty("MAILGUN_APIKEY");
     return Optional.ofNullable(apiKey).isPresent()
         && !"invalid-api-key-only-placeholder".equals(apiKey);
+  }
+
+  private UserEntity cloneUser(UserEntity user, LocalDateTime lastLogin) {
+    UserEntity u = new UserEntity();
+    u.setId(user.getId());
+    u.setEmail(user.getEmail());
+    u.setPassword(user.getPassword());
+    u.setAdmin(user.getAdmin());
+    u.setCreatedAt(user.getCreatedAt());
+    u.setInactivatedAt(user.getInactivatedAt());
+    u.setName(user.getName());
+    u.setEmailConfirmedAt(user.getEmailConfirmedAt());
+    u.setEmailUuid(user.getEmailUuid());
+    u.setResetPasswordExpiration(user.getResetPasswordExpiration());
+    u.setResetToken(user.getResetToken());
+    u.setLang(user.getLang());
+    u.setLastPasswordChange(user.getLastPasswordChange());
+    u.setLastLogin(lastLogin);
+    return u;
   }
 }
