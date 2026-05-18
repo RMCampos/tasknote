@@ -64,6 +64,40 @@ class UserControllerTest {
   }
 
   @Test
+  @DisplayName("Get current user happy path should succeed")
+  @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
+  void getCurrentUser_happyPath_shouldSucceed() throws Exception {
+    UserResponse userResponse =
+        new UserResponse(1L, "John", "email@test.com", false, null, null, null, null);
+    when(authService.getCurrentUserResponse()).thenReturn(userResponse);
+
+    mockMvc
+        .perform(
+            get("/rest/users/me")
+                .with(csrf().asHeader())
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.userId").value(userResponse.userId()))
+        .andExpect(jsonPath("$.email").value(userResponse.email()))
+        .andExpect(jsonPath("$.admin").value(userResponse.admin()))
+        .andReturn();
+  }
+
+  @Test
+  @DisplayName("Get current user with 401 unauthorized request should fail")
+  void getCurrentUser_unauthorized_shouldFail() throws Exception {
+    mockMvc
+        .perform(
+            get("/rest/users/me")
+                .with(csrf().asHeader())
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isUnauthorized())
+        .andReturn();
+  }
+
+  @Test
   @DisplayName("Patch user info happy path should succeed")
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
   void patchUserInfo_happyPath_shouldSucceed() throws Exception {

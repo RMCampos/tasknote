@@ -394,6 +394,17 @@ public class AuthService {
   }
 
   /**
+   * Get the current logged user as response object.
+   *
+   * @return An instance of {@link UserResponse} with the current user.
+   * @throws UserNotFoundException when the user was not found
+   */
+  public UserResponse getCurrentUserResponse() {
+    UserEntity user = getCurrentUser().orElseThrow(UserNotFoundException::new);
+    return UserResponse.fromEntity(user, getGravatarImageUrl(user.getEmail()).orElse(null));
+  }
+
+  /**
    * Confirm a user account.
    *
    * @param identification The UUID generated when registering.

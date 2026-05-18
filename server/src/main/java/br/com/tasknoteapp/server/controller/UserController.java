@@ -33,6 +33,16 @@ public class UserController {
     return authService.getAllUsers();
   }
 
+  /**
+   * Get the current logged user.
+   *
+   * @return UserEntity with the current user information.
+   */
+  @GetMapping("/me")
+  public UserResponse getCurrentUser() {
+    return authService.getCurrentUserResponse();
+  }
+
   @PatchMapping
   public ResponseEntity<UserResponse> patchUserInfo(
       @RequestBody @Valid UserPatchRequest taskRequest) {
