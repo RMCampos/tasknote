@@ -96,7 +96,7 @@ function Sidebar(props: React.PropsWithChildren<Props>): React.ReactNode {
         {/* Footer at the bottom */}
         <div className="mt-auto text-center text-muted py-3">
           <div>
-            <small>{`Active ${user?.lastLogin}`}</small>
+            <small>{`Last seen ${user?.lastLogin}`}</small>
           </div>
           <small data-testid="footer-text">{build}</small>
         </div>
@@ -105,7 +105,7 @@ function Sidebar(props: React.PropsWithChildren<Props>): React.ReactNode {
       {props.isMobileOpen && (
         <button
           className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-lg-none"
-          style={{zIndex: 1}}
+          style={{ zIndex: 1 }}
           onClick={() => props.setIsMobileOpen(false)}
           aria-label="Close mobile menu"
         />
