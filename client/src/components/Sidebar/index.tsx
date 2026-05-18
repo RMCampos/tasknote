@@ -49,7 +49,7 @@ function Sidebar(props: React.PropsWithChildren<Props>): React.ReactNode {
 
   useEffect(() => {
     if (user && user.lastLogin) {
-      const utcString = user.lastLogin.endsWith('Z')? user.lastLogin : `${user.lastLogin}Z`;
+      const utcString = user.lastLogin.endsWith('Z') ? user.lastLogin : `${user.lastLogin}Z`;
       const fmtted = new Date(utcString).toLocaleString(navigator.language, {
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         day: '2-digit',
