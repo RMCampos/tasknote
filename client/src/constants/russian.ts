@@ -187,6 +187,7 @@ const ruTranslations = {
   account_delete_btn: 'Да, удалить все',
 
   footer_my_account: 'Мой аккаунт ',
+  sidebar_last_seen: 'Последний вход {{time}}',
 
   logout: 'Выйти'
 };

@@ -11,6 +11,7 @@ public record UserResponseWithToken(
     Boolean admin,
     LocalDateTime createdAt,
     LocalDateTime inactivatedAt,
+    LocalDateTime lastLogin,
     String gravatarImageUrl,
     String token,
     String lang) {
@@ -31,6 +32,7 @@ public record UserResponseWithToken(
         user.getAdmin(),
         user.getCreatedAt(),
         user.getInactivatedAt(),
+        user.getLastLogin(),
         gravatarUrl,
         token,
         user.getLang());

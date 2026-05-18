@@ -7,4 +7,5 @@ export type SignInResponse = {
   token: string;
   gravatarImageUrl: string;
   lang: string;
+  lastLogin: string;
 };

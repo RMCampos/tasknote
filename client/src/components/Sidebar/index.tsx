@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Nav } from 'react-bootstrap';
 import { NavLink } from 'react-router';
 import { useTranslation } from 'react-i18next';
@@ -22,6 +22,7 @@ interface Props {
 function Sidebar(props: React.PropsWithChildren<Props>): React.ReactNode {
   const { signOut, user } = useContext(AuthContext);
   const { currentPage, setNewPage } = useContext(SidebarContext);
+  const [lastSeen, setLastSeen] = useState('');
   const { t } = useTranslation();
   const build = `Build: ${env.VITE_BUILD}`;
 
@@ -46,7 +47,25 @@ function Sidebar(props: React.PropsWithChildren<Props>): React.ReactNode {
     return '';
   };
 
-  useEffect(() => {}, [user, currentPage]);
+  useEffect(() => {
+    if (user && user.lastLogin) {
+      const utcString = user.lastLogin.endsWith('Z') ? user.lastLogin : `${user.lastLogin}Z`;
+      const date = new Date(utcString);
+      if (Number.isNaN(date.getTime())) {
+        setLastSeen('');
+        return;
+      }
+      const fmtted = date.toLocaleString(navigator.language, {
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      setLastSeen(fmtted);
+    }
+  }, [user]);
 
   return (
     <>
@@ -95,9 +114,12 @@ function Sidebar(props: React.PropsWithChildren<Props>): React.ReactNode {
 
         {/* Footer at the bottom */}
         <div className="mt-auto text-center text-muted py-3">
-          <small data-testid="footer-text">
-            {build}
-          </small>
+          {lastSeen && (
+            <div>
+              <small>{t('sidebar_last_seen', { time: lastSeen })}</small>
+            </div>
+          )}
+          <small data-testid="footer-text">{build}</small>
         </div>
       </div>
 

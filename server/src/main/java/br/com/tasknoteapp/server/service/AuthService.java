@@ -29,6 +29,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -209,10 +210,23 @@ public class AuthService {
 
       logger.info("User authenticated! Token {}", token.substring(0, 6) + "...");
 
+      final LocalDateTime previousLastLogin = user.getLastLogin();
+
+      user.setLastLogin(LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS));
       userPwdLimitRepository.deleteAllForUser(user.getId());
       userRepository.save(user);
-      return UserResponseWithToken.fromEntity(
-          user, token, getGravatarImageUrl(login.email()).orElse(null));
+
+      return new UserResponseWithToken(
+          user.getId(),
+          user.getName(),
+          user.getEmail(),
+          user.getAdmin(),
+          user.getCreatedAt(),
+          user.getInactivatedAt(),
+          previousLastLogin,
+          getGravatarImageUrl(login.email()).orElse(null),
+          token,
+          user.getLang());
     } catch (BadCredentialsException e) {
       logger.error(
           "BadCredentialsException when logging in user {}: {}", user.getId(), e.getMessage());
@@ -553,4 +567,5 @@ public class AuthService {
     return Optional.ofNullable(apiKey).isPresent()
         && !"invalid-api-key-only-placeholder".equals(apiKey);
   }
+
 }

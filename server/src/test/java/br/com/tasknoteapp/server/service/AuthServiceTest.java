@@ -100,6 +100,7 @@ class AuthServiceTest {
     Assertions.assertNull(token.token());
     Assertions.assertEquals(entity.getEmail(), token.email());
     Assertions.assertNotNull(entity.getEmailUuid());
+    verify(userRepository).save(any(UserEntity.class));
   }
 
   @Test
@@ -194,11 +195,13 @@ class AuthServiceTest {
   @DisplayName("SignIn user happy path should succeed")
   void signInUser_happyPath_shouldSucceed() {
     LoginRequest request = new LoginRequest("email@domain.com", "123456", "123456", "en");
+    LocalDateTime oldLastLogin = LocalDateTime.of(2026, 5, 1, 10, 20, 30);
 
     UserEntity existing = new UserEntity();
     existing.setId(919L);
     existing.setEmail(request.email());
     existing.setEmailConfirmedAt(LocalDateTime.now());
+    existing.setLastLogin(oldLastLogin);
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(existing));
 
     when(userPwdLimitRepository.findTop3ByUser_idOrderByWhenHappenedDesc(existing.getId()))
@@ -212,6 +215,7 @@ class AuthServiceTest {
 
     Assertions.assertNotNull(token);
     Assertions.assertEquals("a1b2c3", token.token());
+    Assertions.assertEquals(oldLastLogin, token.lastLogin());
   }
 
   @Test
