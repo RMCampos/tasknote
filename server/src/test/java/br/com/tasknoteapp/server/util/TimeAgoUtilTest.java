@@ -22,6 +22,21 @@ class TimeAgoUtilTest {
   }
 
   @Test
+  void formatMidnightRolloverTest() {
+    LocalDateTime now = LocalDateTime.of(2026, 5, 19, 0, 30); // 12:30 AM next day
+    LocalDateTime pastTime = now.minusHours(1); // 11:30 PM previous day
+    Assertions.assertEquals("1 hour ago", TimeAgoUtil.format(pastTime, now));
+
+    // Test exactly 24 hours ago
+    LocalDateTime twentyFourHoursAgo = now.minusDays(1);
+    Assertions.assertEquals("1 day ago", TimeAgoUtil.format(twentyFourHoursAgo, now));
+
+    // Test 23 hours ago across midnight
+    LocalDateTime twentyThreeHoursAgo = now.minusHours(23); // 1:30 AM previous day
+    Assertions.assertEquals("23 hours ago", TimeAgoUtil.format(twentyThreeHoursAgo, now));
+  }
+
+  @Test
   void formatDueDateTest() {
     Assertions.assertNull(TimeAgoUtil.formatDueDate(null));
 
