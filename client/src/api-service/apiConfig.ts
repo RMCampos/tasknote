@@ -28,7 +28,9 @@ const ApiConfig = {
 
   publicNotesUrl: `${server}/public/notes`,
 
-  userUrl: `${server}/rest/users`
+  userUrl: `${server}/rest/users`,
+
+  currentUserUrl: `${server}/rest/users/me`
 };
 
 export default ApiConfig;

@@ -7,6 +7,7 @@ import AuthProvider from '../../context/AuthProvider';
 import AuthContext, { AuthContextData } from '../../context/AuthContext';
 import api from '../../api-service/api';
 import { API_TOKEN, USER_DATA } from '../../app-constants/app-constants';
+import ApiConfig from '../../api-service/apiConfig';
 
 // Mock the API service methods.
 vi.mock('../../api-service/api');
@@ -119,17 +120,29 @@ describe('AuthProvider', () => {
   });
 
   it('should set loading to false and signed to true after successful initial auth check', async () => {
-    const fakeResponse = {
+    const fakeTokenResponse = {
       token: 'refresh-token',
+    };
+    const fakeCurrentUser = {
       userId: '789',
       name: 'Refreshed User',
       email: 'refreshed@example.com',
       admin: false,
       createdAt: new Date().toISOString(),
-      gravatarImageUrl: 'http://dummyimage.com'
+      gravatarImageUrl: 'http://dummyimage.com',
+      lang: 'en',
+      lastLogin: new Date().toISOString()
     };
 
-    vi.spyOn(api, 'getJSON').mockResolvedValue(fakeResponse);
+    vi.spyOn(api, 'getJSON').mockImplementation(async(url: string) => {
+      if (url === ApiConfig.refreshTokenUrl) {
+        return fakeTokenResponse;
+      }
+      if (url === ApiConfig.currentUserUrl) {
+        return fakeCurrentUser;
+      }
+      return undefined;
+    });
     localStorage.setItem(API_TOKEN, 'dummy');
 
     const { getByTestId } = render(
@@ -142,6 +155,7 @@ describe('AuthProvider', () => {
       expect(getByTestId('loading').textContent).toBe('false')
     );
     expect(getByTestId('signed').textContent).toBe('true');
+    expect(getByTestId('user').textContent).toBe('Refreshed User');
   });
 
   it('should sign in a user successfully', async () => {
@@ -251,17 +265,29 @@ describe('AuthProvider', () => {
   });
 
   it('should call fetchCurrentSession when checking current auth user', async () => {
-    const fakeResponse = {
+    const fakeTokenResponse = {
       token: 'refresh-token',
+    };
+    const fakeCurrentUser = {
       userId: '789',
       name: 'Refreshed User',
       email: 'refreshed@example.com',
       admin: false,
       createdAt: new Date().toISOString(),
-      gravatarImageUrl: 'http://dummyimage.com'
+      gravatarImageUrl: 'http://dummyimage.com',
+      lang: 'en',
+      lastLogin: new Date().toISOString()
     };
 
-    vi.spyOn(api, 'getJSON').mockResolvedValue(fakeResponse);
+    vi.spyOn(api, 'getJSON').mockImplementation(async(url: string) => {
+      if (url === ApiConfig.refreshTokenUrl) {
+        return fakeTokenResponse;
+      }
+      if (url === ApiConfig.currentUserUrl) {
+        return fakeCurrentUser;
+      }
+      return undefined;
+    });
 
     // Store API_TOKEN so that fetchCurrentSession runs the refresh logic.
     localStorage.setItem(API_TOKEN, 'dummy');
@@ -283,8 +309,9 @@ describe('AuthProvider', () => {
 
     await user.click(getByTestIdFunction('checkCurrentAuthUser'));
 
-    await waitFor(() =>
-      expect(localStorage.getItem(API_TOKEN)).toBe('refresh-token')
-    );
+    await waitFor(() => {
+      expect(localStorage.getItem(API_TOKEN)).toBe('refresh-token');
+      expect(localStorage.getItem(USER_DATA)).toContain('Refreshed User');
+    });
   });
 });

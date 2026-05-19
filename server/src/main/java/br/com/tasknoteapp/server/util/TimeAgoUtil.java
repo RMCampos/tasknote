@@ -18,10 +18,20 @@ public class TimeAgoUtil {
    * @return String with formatted time.
    */
   public static String format(LocalDateTime pastTime) {
+    return format(pastTime, LocalDateTime.now());
+  }
+
+  /**
+   * Format a time in the time ago format.
+   *
+   * @param pastTime The pastime to be formatted.
+   * @param now The current time.
+   * @return String with formatted time.
+   */
+  public static String format(LocalDateTime pastTime, LocalDateTime now) {
     if (Objects.isNull(pastTime)) {
       return "Some time ago";
     }
-    LocalDateTime now = LocalDateTime.now();
     Period period = Period.between(pastTime.toLocalDate(), now.toLocalDate());
     Duration duration = Duration.between(pastTime, now);
     if (period.getYears() > 1) {
@@ -32,10 +42,12 @@ public class TimeAgoUtil {
       return String.format("%d months ago", period.getMonths());
     } else if (period.getMonths() > 0) {
       return String.format("%d month ago", period.getMonths());
-    } else if (period.getDays() > 1) {
-      return String.format("%d days ago", period.getDays());
-    } else if (period.getDays() > 0) {
-      return String.format("%d day ago", period.getDays());
+    } else if (duration.toHours() >= 24) {
+      if (period.getDays() > 1) {
+        return String.format("%d days ago", period.getDays());
+      } else {
+        return String.format("%d day ago", period.getDays());
+      }
     } else if (duration.toHours() > 1L) {
       return String.format("%d hours ago", duration.toHours());
     } else if (duration.toHours() > 0L) {

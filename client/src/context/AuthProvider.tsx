@@ -24,7 +24,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
     }
     try {
       const bearerToken: SignInResponse = await api.getJSON(ApiConfig.refreshTokenUrl);
-      setSigned(true);
       return bearerToken;
     }
     catch (e) {
@@ -66,8 +65,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }: Pro
   const checkCurrentAuthUser = async (pathname: string): Promise<void> => {
     const bearerToken: SignInResponse | undefined = await fetchCurrentSession(pathname);
     if (bearerToken && bearerToken.token) {
-      const userLocal = updateUserSession(null, bearerToken.token);
+      const currentUser: UserResponse = await api.getJSON(ApiConfig.currentUserUrl);
+      const userLocal = updateUserSession(currentUser, bearerToken.token);
       if (userLocal) {
+        setSigned(true);
         setUser(userLocal);
       }
     }
