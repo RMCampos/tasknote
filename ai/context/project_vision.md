@@ -31,7 +31,7 @@ The primary users of TaskNote are:
 - **Search and Organization**: Provide powerful search capabilities and organizational tools to help users find and manage their tasks and notes efficiently.
 - **Multi-Language Support**: Support multiple languages to cater to a global user base.
 
-## Constraints
+## General Constraints
 
 - **GraalVM Compatibility**: The application must be compatible with GraalVM to leverage its performance benefits and support for multiple languages.
 - **Mobile-first UI**: The user interface should be designed with a mobile-first approach to ensure a seamless experience across devices.
