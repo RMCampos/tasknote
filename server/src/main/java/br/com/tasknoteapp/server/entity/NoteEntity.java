@@ -1,20 +1,17 @@
 package br.com.tasknoteapp.server.entity;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.util.HashSet;
-import java.util.Set;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
 /** This class represents a note in the database. */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "notes")
 public class NoteEntity {
@@ -32,7 +29,8 @@ public class NoteEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   private UserEntity user;
 
-
+  @Column(name = "tag", length = 30)
+  private String tag;
 
   @Column(name = "last_update")
   private LocalDateTime lastUpdate;
@@ -42,9 +40,6 @@ public class NoteEntity {
 
   @Column(name = "share_token", length = 36)
   private String shareToken;
-
-  @OneToMany(mappedBy = "note", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-  private Set<NoteTagEntity> noteTags = new HashSet<>();
 
   public Long getId() {
     return id;
@@ -78,7 +73,13 @@ public class NoteEntity {
     this.user = user;
   }
 
+  public String getTag() {
+    return tag;
+  }
 
+  public void setTag(String tag) {
+    this.tag = tag;
+  }
 
   public LocalDateTime getLastUpdate() {
     return lastUpdate;
@@ -132,13 +133,11 @@ public class NoteEntity {
         + ", description='"
         + description
         + '\''
+        + ", tag='"
+        + tag
+        + '\''
         + ", lastUpdate="
         + lastUpdate
-        + ", shared="
-        + shared
-        + ", shareToken='"
-        + shareToken
-        + '\''
         + '}';
   }
 }
