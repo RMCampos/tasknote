@@ -1,18 +1,21 @@
 package br.com.tasknoteapp.server.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.HashSet;
+import java.util.Set;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /** This class represents a task in the database. */
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "tasks")
 public class TaskEntity {
@@ -39,8 +42,10 @@ public class TaskEntity {
   @Column(name = "high_priority")
   private Boolean highPriority;
 
-  @Column(name = "tag", length = 30)
-  private String tag;
+  @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  private Set<TaskTagEntity> taskTags = new HashSet<>();
+
+
 
   public Long getId() {
     return id;
@@ -98,13 +103,7 @@ public class TaskEntity {
     this.highPriority = highPriority;
   }
 
-  public String getTag() {
-    return tag;
-  }
 
-  public void setTag(String tag) {
-    this.tag = tag;
-  }
 
   @Override
   public boolean equals(Object o) {
@@ -139,9 +138,6 @@ public class TaskEntity {
         + dueDate
         + ", highPriority="
         + highPriority
-        + ", tag='"
-        + tag
-        + '\''
         + '}';
   }
 }
