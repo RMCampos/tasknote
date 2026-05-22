@@ -69,6 +69,7 @@ public class NoteService {
    *
    * @return {@link List} of {@link NoteResponse} with all notes or an empty list.
    */
+  @Transactional
   public List<NoteResponse> getAllNotes() {
     UserEntity user = getCurrentUser();
 
@@ -86,6 +87,7 @@ public class NoteService {
    * @param noteId The note id in the database.
    * @return {@link NoteResponse} with the found note or throw a {@link NoteNotFoundException}.
    */
+  @Transactional
   public NoteResponse getNoteById(Long noteId) {
     UserEntity user = getCurrentUser();
     logger.info("Get note ID {} to user ID {}", noteId, user.getId());
@@ -109,6 +111,7 @@ public class NoteService {
    * @param noteRequest The note content.
    * @return {@link NoteResponse} with created note data.
    */
+  @Transactional
   public NoteResponse createNote(NoteRequest noteRequest) {
     UserEntity user = getCurrentUser();
 
@@ -131,6 +134,8 @@ public class NoteService {
       NoteUrlEntity urlEntity = saveUrl(created, noteRequest.url());
       savedUrl = urlEntity.getUrl();
     }
+
+    tagRepository.deleteOrphanedTags(user.getId());
 
     logger.info("Finished note creation!");
     return NoteResponse.fromEntity(created, savedUrl);
@@ -179,6 +184,8 @@ public class NoteService {
     NoteEntity patchedNote = noteRepository.save(noteEntity);
     noteRepository.flush();
 
+    tagRepository.deleteOrphanedTags(user.getId());
+
     logger.info("Note patched! ID {}", patchedNote.getId());
 
     return NoteResponse.fromEntity(patchedNote, getNoteUrl(patchedNote.getId()));
@@ -207,6 +214,8 @@ public class NoteService {
 
     noteRepository.delete(noteEntity);
 
+    tagRepository.deleteOrphanedTags(user.getId());
+
     logger.info("Note deleted! ID {}", noteId);
   }
 
@@ -216,6 +225,7 @@ public class NoteService {
    * @param searchTerm The term to be used for the search.
    * @return {@link List} of {@link NoteResponse} with found records or an empty list.
    */
+  @Transactional
   public List<NoteResponse> searchNotes(String searchTerm) {
     UserEntity user = getCurrentUser();
 
@@ -261,6 +271,7 @@ public class NoteService {
    * @param noteId The note id from the database.
    * @return {@link NoteResponse} containing the updated note.
    */
+  @Transactional
   public NoteResponse unshareNote(Long noteId) {
     UserEntity user = getCurrentUser();
     logger.info("Unsharing note ID {} for user ID {}", noteId, user.getId());
@@ -285,6 +296,7 @@ public class NoteService {
    * @param shareToken The unique share token for the note.
    * @return {@link NoteResponse} containing the shared note.
    */
+  @Transactional
   public NoteResponse getSharedNote(String shareToken) {
     logger.info("Fetching shared note with token {}", shareToken);
 

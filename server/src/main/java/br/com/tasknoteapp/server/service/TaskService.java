@@ -71,6 +71,7 @@ public class TaskService {
    *
    * @return {@link List} of {@link TaskResponse} with all Tasks found or an empty list.
    */
+  @Transactional
   public List<TaskResponse> getAllTasks() {
     UserEntity user = getCurrentUser();
     logger.info("Get all tasks to user ID {}", user.getId());
@@ -89,6 +90,7 @@ public class TaskService {
    * @param taskId The task id in the database.
    * @return {@link TaskResponse} with the found task or throw a {@link TaskNotFoundException}.
    */
+  @Transactional
   public TaskResponse getTaskById(Long taskId) {
     UserEntity user = getCurrentUser();
     logger.info("Get task ID {} to user ID {}", taskId, user.getId());
@@ -107,6 +109,7 @@ public class TaskService {
    *
    * @param taskRequest The {@link TaskRequest} containing all task data.
    */
+  @Transactional
   public TaskResponse createTask(TaskRequest taskRequest) {
     UserEntity user = getCurrentUser();
 
@@ -129,6 +132,8 @@ public class TaskService {
     if (!Objects.isNull(taskRequest.urls()) && !taskRequest.urls().isEmpty()) {
       saveUrls(task, taskRequest.urls());
     }
+
+    tagRepository.deleteOrphanedTags(user.getId());
 
     logger.info("Task created! ID {}", created.getId());
     return TaskResponse.fromEntity(created, getAllTasksUrls(created.getId()));
@@ -175,6 +180,8 @@ public class TaskService {
 
     TaskEntity patchedTask = taskRepository.save(taskEntity);
 
+    tagRepository.deleteOrphanedTags(user.getId());
+
     logger.info("Task patched! ID {}", patchedTask.getId());
 
     return TaskResponse.fromEntity(patchedTask, getAllTasksUrls(taskId));
@@ -208,6 +215,8 @@ public class TaskService {
 
     taskRepository.delete(taskEntity);
 
+    tagRepository.deleteOrphanedTags(user.getId());
+
     logger.info("Task deleted! ID {}", taskId);
   }
 
@@ -217,6 +226,7 @@ public class TaskService {
    * @param searchTerm The term to be used for the search.
    * @return {@link List} of {@link TaskResponse} with found records or an empty list.
    */
+  @Transactional
   public List<TaskResponse> searchTasks(String searchTerm) {
     UserEntity user = getCurrentUser();
 
@@ -241,6 +251,7 @@ public class TaskService {
    * @param filter The filter to get the tasks.
    * @return {@link List} of {@link TaskResponse} with found records or an empty list.
    */
+  @Transactional
   public List<TaskResponse> getTasksByFilter(String filter) {
     UserEntity user = getCurrentUser();
 
