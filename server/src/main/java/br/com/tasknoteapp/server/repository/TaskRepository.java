@@ -16,9 +16,10 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
       select distinct t
       from TaskEntity t
       left join TaskUrlEntity tu on tu.id.taskId = t.id
+      left join t.tags tg
       where (
         upper(t.description) like upper(concat('%', :searchTerm, '%')) or
-        upper(t.tag) like upper(concat('%', :searchTerm, '%')) or
+        upper(tg.name) like upper(concat('%', :searchTerm, '%')) or
         upper(tu.id.url) like upper(concat('%', :searchTerm, '%'))
         ) and t.user.id = :userId and t.done = false
       """)

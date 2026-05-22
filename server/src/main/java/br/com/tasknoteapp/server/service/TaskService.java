@@ -1,10 +1,12 @@
 package br.com.tasknoteapp.server.service;
 
+import br.com.tasknoteapp.server.entity.TagEntity;
 import br.com.tasknoteapp.server.entity.TaskEntity;
 import br.com.tasknoteapp.server.entity.TaskUrlEntity;
 import br.com.tasknoteapp.server.entity.TaskUrlEntityPk;
 import br.com.tasknoteapp.server.entity.UserEntity;
 import br.com.tasknoteapp.server.exception.TaskNotFoundException;
+import br.com.tasknoteapp.server.repository.TagRepository;
 import br.com.tasknoteapp.server.repository.TaskRepository;
 import br.com.tasknoteapp.server.repository.TaskUrlRepository;
 import br.com.tasknoteapp.server.request.TaskPatchRequest;
@@ -16,9 +18,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -37,6 +42,8 @@ public class TaskService {
 
   private final TaskUrlRepository taskUrlRepository;
 
+  private final TagRepository tagRepository;
+
   /**
    * Constructor for the TaskService class.
    *
@@ -44,16 +51,19 @@ public class TaskService {
    * @param authService The service for authentication.
    * @param authUtil Utility class for authentication-related operations.
    * @param taskUrlRepository The repository for task URL entities.
+   * @param tagRepository The repository for tag entities.
    */
   public TaskService(
       TaskRepository taskRepository,
       AuthService authService,
       AuthUtil authUtil,
-      TaskUrlRepository taskUrlRepository) {
+      TaskUrlRepository taskUrlRepository,
+      TagRepository tagRepository) {
     this.taskRepository = taskRepository;
     this.authService = authService;
     this.authUtil = authUtil;
     this.taskUrlRepository = taskUrlRepository;
+    this.tagRepository = tagRepository;
   }
 
   /**
@@ -111,7 +121,9 @@ public class TaskService {
       task.setDueDate(LocalDate.parse(taskRequest.dueDate()));
     }
     task.setHighPriority(taskRequest.highPriority());
-    task.setTag(taskRequest.tag().trim().toLowerCase());
+    if (!Objects.isNull(taskRequest.tags())) {
+      task.setTags(getOrCreateTags(taskRequest.tags(), user));
+    }
     TaskEntity created = taskRepository.save(task);
 
     if (!Objects.isNull(taskRequest.urls()) && !taskRequest.urls().isEmpty()) {
@@ -150,13 +162,11 @@ public class TaskService {
 
     patchDueDate(taskEntity, patch);
 
-    taskEntity.setHighPriority(false);
     if (!Objects.isNull(patch.highPriority())) {
       taskEntity.setHighPriority(patch.highPriority());
     }
-    taskEntity.setTag(null);
-    if (!Objects.isNull(patch.tag())) {
-      taskEntity.setTag(patch.tag().trim().toLowerCase());
+    if (!Objects.isNull(patch.tags())) {
+      taskEntity.setTags(getOrCreateTags(patch.tags(), user));
     }
 
     taskEntity.setLastUpdate(LocalDateTime.now());
@@ -254,15 +264,37 @@ public class TaskService {
               .toList();
       case "untagged" ->
           allTasks.stream()
-              .filter(t -> t.getTag() == null || t.getTag().isBlank())
+              .filter(t -> t.getTags().isEmpty())
               .map((TaskEntity tr) -> TaskResponse.fromEntity(tr, getAllTasksUrls(tr.getId())))
               .toList();
       default ->
           allTasks.stream()
-              .filter(t -> t.getTag().equals(filter))
+              .filter(t -> t.getTags().stream().anyMatch(tag -> tag.getName().equals(filter)))
               .map((TaskEntity tr) -> TaskResponse.fromEntity(tr, getAllTasksUrls(tr.getId())))
               .toList();
     };
+  }
+
+  private Set<TagEntity> getOrCreateTags(List<String> tagNames, UserEntity user) {
+    if (Objects.isNull(tagNames) || tagNames.isEmpty()) {
+      return new HashSet<>();
+    }
+
+    Set<String> normalizedNames =
+        tagNames.stream()
+            .filter(name -> !Objects.isNull(name) && !name.isBlank())
+            .map(name -> name.trim().toLowerCase())
+            .collect(Collectors.toSet());
+
+    Set<TagEntity> tags = new HashSet<>();
+    for (String name : normalizedNames) {
+      TagEntity tag =
+          tagRepository
+              .findByNameAndUser_id(name, user.getId())
+              .orElseGet(() -> tagRepository.save(new TagEntity(name, user)));
+      tags.add(tag);
+    }
+    return tags;
   }
 
   private UserEntity getCurrentUser() {
@@ -291,7 +323,7 @@ public class TaskService {
 
   private void patchDueDate(TaskEntity taskEntity, TaskPatchRequest patch) {
     taskEntity.setDueDate(null);
-    if (!Objects.isNull(patch.dueDate()) && !patch.description().isBlank()) {
+    if (!Objects.isNull(patch.dueDate()) && !patch.dueDate().isBlank()) {
       try {
         taskEntity.setDueDate(LocalDate.parse(patch.dueDate()));
       } catch (DateTimeParseException e) {

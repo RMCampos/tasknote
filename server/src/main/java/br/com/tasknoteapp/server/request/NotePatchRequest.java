@@ -1,6 +1,7 @@
 package br.com.tasknoteapp.server.request;
 
 import jakarta.validation.constraints.Pattern;
+import java.util.List;
 
 /** This record represents a note patch payload. */
 public record NotePatchRequest(
@@ -10,4 +11,4 @@ public record NotePatchRequest(
             regexp = "^(https?://.*|#.*)?$",
             message = "URL must start with https:// or #")
         String url,
-    String tag) {}
+    List<String> tags) {}

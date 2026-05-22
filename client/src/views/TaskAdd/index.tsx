@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  Badge,
   Card,
   Col,
   Container,
@@ -37,7 +38,8 @@ function TaskAdd(): React.ReactNode {
   const [action, setAction] = useState<TaskAction>('add');
   const [dueDate, setDueDate] = useState<Date | null>(null);
   const [highPriority, setHighPriority] = useState<boolean>(false);
-  const [tag, setTag] = useState<string>('');
+  const [currentTag, setCurrentTag] = useState<string>('');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [showTagDropdown, setShowTagDropdown] = useState<boolean>(false);
   const { i18n, t } = useTranslation();
@@ -114,10 +116,24 @@ function TaskAdd(): React.ReactNode {
     setTaskUrl('');
     setDueDate(null);
     setHighPriority(false);
-    setTag('');
+    setCurrentTag('');
+    setSelectedTags([]);
 
     setAction('add');
     setValidated(false);
+  };
+
+  const addTag = (tagName: string): void => {
+    const normalized = tagName.trim().toLowerCase();
+    if (normalized && !selectedTags.includes(normalized)) {
+      setSelectedTags([...selectedTags, normalized]);
+    }
+    setCurrentTag('');
+    setShowTagDropdown(false);
+  };
+
+  const removeTag = (tagToRemove: string): void => {
+    setSelectedTags(selectedTags.filter((t) => t !== tagToRemove));
   };
 
   /**
@@ -141,12 +157,21 @@ function TaskAdd(): React.ReactNode {
       dueDateFormatted = dueDate.toISOString().substring(0, 10);
     }
 
+    // Add current tag if not empty before submitting
+    const finalTags = [...selectedTags];
+    if (currentTag.trim()) {
+      const normalized = currentTag.trim().toLowerCase();
+      if (!finalTags.includes(normalized)) {
+        finalTags.push(normalized);
+      }
+    }
+
     if (action === 'add') {
       const addPayload: TaskNoteRequest = {
         description: taskDescription.trim(),
         highPriority: highPriority,
         dueDate: dueDateFormatted,
-        tag: tag,
+        tags: finalTags,
         urls: taskUrl ? [taskUrl] : []
       };
 
@@ -166,7 +191,7 @@ function TaskAdd(): React.ReactNode {
         dueDate: dueDateFormatted,
         dueDateFmt: '',
         lastUpdate: '',
-        tag: tag,
+        tags: finalTags,
         urls: taskUrl ? [taskUrl] : []
       };
 
@@ -194,8 +219,8 @@ function TaskAdd(): React.ReactNode {
           setDueDate(new Date(taskToEdit.dueDate));
         }
         setHighPriority(taskToEdit.highPriority);
-        if (taskToEdit.tag) {
-          setTag(taskToEdit.tag);
+        if (taskToEdit.tags) {
+          setSelectedTags(taskToEdit.tags);
         }
         setAction('edit');
       }
@@ -297,7 +322,24 @@ function TaskAdd(): React.ReactNode {
                   <Col xs={12} sm={6} xxl={3}>
                     {/* Tag with suggestion dropdown */}
                     <Form.Group className="mb-3" ref={tagContainerRef} style={{ position: 'relative' }}>
-                      <Form.Label>Tag</Form.Label>
+                      <Form.Label>Tags</Form.Label>
+                      <div className="mb-2 d-flex flex-wrap gap-1">
+                        {selectedTags.map((t) => (
+                          <Badge
+                            key={t}
+                            bg="warning"
+                            text="dark"
+                            className="p-2"
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => removeTag(t)}
+                          >
+                            #
+                            {t}
+                            {' '}
+                            &times;
+                          </Badge>
+                        ))}
+                      </div>
                       <InputGroup className="mb-3">
                         <InputGroup.Text>
                           <Hash />
@@ -306,16 +348,22 @@ function TaskAdd(): React.ReactNode {
                           type="text"
                           name="tag"
                           placeholder="my-tag (Optional)"
-                          value={tag}
+                          value={currentTag}
                           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            setTag(e.target.value);
+                            setCurrentTag(e.target.value);
                             setShowTagDropdown(true);
+                          }}
+                          onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                            if (e.key === 'Enter' && currentTag.trim()) {
+                              e.preventDefault();
+                              addTag(currentTag);
+                            }
                           }}
                           onFocus={() => setShowTagDropdown(true)}
                           autoComplete="off"
                         />
                       </InputGroup>
-                      {showTagDropdown && tags.filter(t => t.toLowerCase().includes(tag.toLowerCase())).length > 0 && (
+                      {showTagDropdown && tags.filter(t => t.toLowerCase().includes(currentTag.toLowerCase())).length > 0 && (
                         <ListGroup
                           style={{
                             position: 'absolute',
@@ -328,15 +376,14 @@ function TaskAdd(): React.ReactNode {
                           }}
                         >
                           {tags
-                            .filter(t => t.toLowerCase().includes(tag.toLowerCase()))
+                            .filter(t => t.toLowerCase().includes(currentTag.toLowerCase()))
                             .map(t => (
                               <ListGroup.Item
                                 key={t}
                                 action
                                 onMouseDown={(e: React.MouseEvent) => {
                                   e.preventDefault();
-                                  setTag(t);
-                                  setShowTagDropdown(false);
+                                  addTag(t);
                                 }}
                               >
                                 #

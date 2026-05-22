@@ -16,4 +16,4 @@ public record TaskRequest(
         urls,
     String dueDate,
     Boolean highPriority,
-    String tag) {}
+    List<String> tags) {}

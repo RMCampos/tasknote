@@ -1,10 +1,13 @@
 package br.com.tasknoteapp.server.service;
 
+import br.com.tasknoteapp.server.entity.TagEntity;
+import br.com.tasknoteapp.server.entity.UserEntity;
+import br.com.tasknoteapp.server.repository.TagRepository;
 import br.com.tasknoteapp.server.response.NoteResponse;
 import br.com.tasknoteapp.server.response.TaskResponse;
-import java.util.HashSet;
+import br.com.tasknoteapp.server.util.AuthUtil;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,9 +22,32 @@ public class HomeService {
 
   private final NoteService noteService;
 
-  public HomeService(TaskService taskService, NoteService noteService) {
+  private final TagRepository tagRepository;
+
+  private final AuthService authService;
+
+  private final AuthUtil authUtil;
+
+  /**
+   * Constructor for the HomeService class.
+   *
+   * @param taskService The service for task operations.
+   * @param noteService The service for note operations.
+   * @param tagRepository The repository for tag entities.
+   * @param authService The service for authentication.
+   * @param authUtil Utility class for authentication-related operations.
+   */
+  public HomeService(
+      TaskService taskService,
+      NoteService noteService,
+      TagRepository tagRepository,
+      AuthService authService,
+      AuthUtil authUtil) {
     this.taskService = taskService;
     this.noteService = noteService;
+    this.tagRepository = tagRepository;
+    this.authService = authService;
+    this.authUtil = authUtil;
   }
 
   /**
@@ -30,32 +56,35 @@ public class HomeService {
    * @return List of String with the tags.
    */
   public List<String> getTopTasksTag() {
-    logger.info("Getting all tags for tasks and notes");
+    UserEntity user = getCurrentUser();
+    logger.info("Getting all tags for user ID {}", user.getId());
+
+    List<String> tags =
+        tagRepository.findAllByUser_idOrderByNameAsc(user.getId()).stream()
+            .map(TagEntity::getName)
+            .toList();
 
     List<TaskResponse> tasks = taskService.getTasksByFilter("all");
     List<NoteResponse> notes = noteService.getAllNotes();
 
-    Set<String> tags = new HashSet<>();
-    tags.addAll(
-        tasks.stream()
-            .map(TaskResponse::tag)
-            .filter(tag -> tag != null && !tag.isBlank())
-            .toList());
-    tags.addAll(
-        notes.stream()
-            .map(NoteResponse::tag)
-            .filter(tag -> tag != null && !tag.isBlank())
-            .toList());
+    boolean hasUntagged =
+        tasks.stream().anyMatch(task -> task.tags().isEmpty())
+            || notes.stream().anyMatch(note -> note.tags().isEmpty());
 
-    boolean hasBlankTags =
-        tasks.stream().anyMatch(task -> task.tag() == null || task.tag().isBlank())
-            || notes.stream().anyMatch(note -> note.tag() == null || note.tag().isBlank());
-    if (hasBlankTags) {
+    if (hasUntagged) {
+      tags = new java.util.ArrayList<>(tags);
       tags.add("untagged");
+      tags = tags.stream().sorted().toList();
     }
 
     logger.info("Found {} tags", tags.size());
 
-    return tags.stream().sorted().toList();
+    return tags;
+  }
+
+  private UserEntity getCurrentUser() {
+    Optional<String> currentUserEmail = authUtil.getCurrentUserEmail();
+    String email = currentUserEmail.orElseThrow();
+    return authService.findByEmail(email).orElseThrow();
   }
 }

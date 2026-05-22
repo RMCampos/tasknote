@@ -72,10 +72,9 @@ function SharedNote(): React.ReactNode {
           <Card>
             <Card.Header className="d-flex justify-content-between align-items-center">
               <small className="text-muted">TaskNote · Shared Note (Read only)</small>
-              {note.tag && (
+              {note.tags && note.tags.length > 0 && (
                 <small className="text-muted">
-                  #
-                  {note.tag}
+                  {note.tags.map((t) => `#${t}`).join(' ')}
                 </small>
               )}
             </Card.Header>

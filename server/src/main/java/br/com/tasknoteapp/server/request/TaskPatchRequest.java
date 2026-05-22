@@ -15,4 +15,4 @@ public record TaskPatchRequest(
         urls,
     String dueDate,
     Boolean highPriority,
-    String tag) {}
+    List<String> tags) {}

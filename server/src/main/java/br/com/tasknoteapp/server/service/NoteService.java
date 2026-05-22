@@ -2,20 +2,24 @@ package br.com.tasknoteapp.server.service;
 
 import br.com.tasknoteapp.server.entity.NoteEntity;
 import br.com.tasknoteapp.server.entity.NoteUrlEntity;
+import br.com.tasknoteapp.server.entity.TagEntity;
 import br.com.tasknoteapp.server.entity.UserEntity;
 import br.com.tasknoteapp.server.exception.NoteNotFoundException;
 import br.com.tasknoteapp.server.repository.NoteRepository;
 import br.com.tasknoteapp.server.repository.NoteUrlRepository;
+import br.com.tasknoteapp.server.repository.TagRepository;
 import br.com.tasknoteapp.server.request.NotePatchRequest;
 import br.com.tasknoteapp.server.request.NoteRequest;
 import br.com.tasknoteapp.server.response.NoteResponse;
 import br.com.tasknoteapp.server.util.AuthUtil;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -36,6 +40,8 @@ public class NoteService {
 
   private final NoteUrlRepository noteUrlRepository;
 
+  private final TagRepository tagRepository;
+
   /**
    * Constructor for the NoteService class.
    *
@@ -43,16 +49,19 @@ public class NoteService {
    * @param authService The service for authentication.
    * @param authUtil Utility class for authentication-related operations.
    * @param noteUrlRepository The repository for note URL entities.
+   * @param tagRepository The repository for tag entities.
    */
   public NoteService(
       NoteRepository noteRepository,
       AuthService authService,
       AuthUtil authUtil,
-      NoteUrlRepository noteUrlRepository) {
+      NoteUrlRepository noteUrlRepository,
+      TagRepository tagRepository) {
     this.noteRepository = noteRepository;
     this.authService = authService;
     this.authUtil = authUtil;
     this.noteUrlRepository = noteUrlRepository;
+    this.tagRepository = tagRepository;
   }
 
   /**
@@ -108,7 +117,9 @@ public class NoteService {
     NoteEntity note = new NoteEntity();
     note.setTitle(noteRequest.title());
     note.setDescription(noteRequest.description());
-    note.setTag(noteRequest.tag());
+    if (!Objects.isNull(noteRequest.tags())) {
+      note.setTags(getOrCreateTags(noteRequest.tags(), user));
+    }
     note.setLastUpdate(LocalDateTime.now());
     note.setUser(user);
     NoteEntity created = noteRepository.save(note);
@@ -150,8 +161,8 @@ public class NoteService {
     if (!Objects.isNull(patch.description()) && !patch.description().isBlank()) {
       noteEntity.setDescription(patch.description());
     }
-    if (!Objects.isNull(patch.tag()) && !patch.tag().isBlank()) {
-      noteEntity.setTag(patch.tag().trim());
+    if (!Objects.isNull(patch.tags())) {
+      noteEntity.setTags(getOrCreateTags(patch.tags(), user));
     }
     noteEntity.setLastUpdate(LocalDateTime.now());
 
@@ -283,6 +294,28 @@ public class NoteService {
     }
 
     return NoteResponse.fromEntity(noteOpt.get(), getNoteUrl(noteOpt.get().getId()));
+  }
+
+  private Set<TagEntity> getOrCreateTags(List<String> tagNames, UserEntity user) {
+    if (Objects.isNull(tagNames) || tagNames.isEmpty()) {
+      return new HashSet<>();
+    }
+
+    Set<String> normalizedNames =
+        tagNames.stream()
+            .filter(name -> !Objects.isNull(name) && !name.isBlank())
+            .map(name -> name.trim().toLowerCase())
+            .collect(Collectors.toSet());
+
+    Set<TagEntity> tags = new HashSet<>();
+    for (String name : normalizedNames) {
+      TagEntity tag =
+          tagRepository
+              .findByNameAndUser_id(name, user.getId())
+              .orElseGet(() -> tagRepository.save(new TagEntity(name, user)));
+      tags.add(tag);
+    }
+    return tags;
   }
 
   private UserEntity getCurrentUser() {

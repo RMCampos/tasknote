@@ -157,15 +157,15 @@ function Home(): React.ReactNode {
         const anyTitleMatch = note.title.toLowerCase().includes(text.toLowerCase());
         const anyContentMatch = note.description.toLowerCase().includes(text.toLowerCase());
         const anyUrlMatch = note.url?.includes(text.toLowerCase());
-        const anyTagMatch = note.tag?.toLowerCase().includes(text.toLowerCase());
+        const anyTagMatch = note.tags?.some((tag) => tag.toLowerCase().includes(text.toLowerCase()));
         return anyTitleMatch || anyContentMatch || anyUrlMatch || anyTagMatch;
       });
 
       if (tagToFilter === 'untagged') {
-        filteredNotes = filteredNotes.filter((note: NoteResponse) => !note.tag);
+        filteredNotes = filteredNotes.filter((note: NoteResponse) => !note.tags || note.tags.length === 0);
       }
       else if (tagToFilter) {
-        filteredNotes = filteredNotes.filter((note: NoteResponse) => note.tag && note.tag === tagToFilter);
+        filteredNotes = filteredNotes.filter((note: NoteResponse) => note.tags && note.tags.includes(tagToFilter));
       }
 
       setNotes([...filteredNotes]);
@@ -177,15 +177,15 @@ function Home(): React.ReactNode {
     else {
       let filteredTasks = allTasks.filter((task: TaskResponse) => {
         return task.description.toLowerCase().includes(text.toLowerCase())
-          || task.tag.toLowerCase().includes(text.toLowerCase())
+          || task.tags?.some((tag) => tag.toLowerCase().includes(text.toLowerCase()))
           || task.urls.filter((url: string) => url.includes(text.toLowerCase())).length > 0;
       });
 
       if (tagToFilter === 'untagged') {
-        filteredTasks = filteredTasks.filter((task: TaskResponse) => !task.tag);
+        filteredTasks = filteredTasks.filter((task: TaskResponse) => !task.tags || task.tags.length === 0);
       }
       else if (tagToFilter) {
-        filteredTasks = filteredTasks.filter((task: TaskResponse) => task.tag && task.tag === tagToFilter);
+        filteredTasks = filteredTasks.filter((task: TaskResponse) => task.tags && task.tags.includes(tagToFilter));
       }
 
       setTasks([...filteredTasks]);
@@ -519,7 +519,7 @@ function Home(): React.ReactNode {
               </Card.Body>
               <Card.Footer className="task-card-footer">
                 <TaskTag
-                  tag={task.tag}
+                  tags={task.tags}
                   lastUpdate={task.lastUpdate}
                   taskOrNote="task"
                 />
@@ -593,7 +593,7 @@ function Home(): React.ReactNode {
               </Card.Body>
               <Card.Footer className="task-card-footer">
                 <TaskTag
-                  tag={note.tag}
+                  tags={note.tags}
                   lastUpdate={note.lastUpdate}
                   taskOrNote="note"
                   onClick={(e: React.MouseEvent<Element, MouseEvent>) => {

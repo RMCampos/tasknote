@@ -1,7 +1,7 @@
 # Orchestration Prompt
 
 Using the orchestrator workflow defined at `ai/orchestration/orchestrator.md`,
-execute the specs incrementally.
+execute the first spec file, 001-add-multiple-tags.md.
 
 Respect:
 - architecture principles
