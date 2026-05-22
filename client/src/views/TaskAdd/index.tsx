@@ -322,7 +322,7 @@ function TaskAdd(): React.ReactNode {
                   <Col xs={12} sm={12} xxl={12}>
                     {/* Tag with suggestion dropdown */}
                     <Form.Group className="mb-3" ref={tagContainerRef} style={{ position: 'relative' }}>
-                      <Form.Label>Tags</Form.Label> 
+                      <Form.Label>Tags</Form.Label>
                       <InputGroup className="mb-3">
                         <InputGroup.Text>
                           <Hash />

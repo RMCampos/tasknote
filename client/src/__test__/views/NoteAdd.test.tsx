@@ -1,5 +1,6 @@
 import React, { act } from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router';
 import { I18nextProvider } from 'react-i18next';
@@ -16,6 +17,7 @@ vi.mock('../../api-service/api', () => ({
   default: {
     postJSON: vi.fn(),
     getJSON: vi.fn(),
+    patchJSON: vi.fn(),
   }
 }));
 
@@ -82,6 +84,7 @@ vi.mock('../../utils/TranslatorUtils', () => ({
 
 const mockedApi = vi.mocked(api);
 const mockedUseParams = vi.mocked(useParams);
+const mockedUseSearchParams = vi.mocked(useSearchParams);
 
 describe('NoteAdd Component', () => {
   const renderNoteAdd = () => {
@@ -100,9 +103,9 @@ describe('NoteAdd Component', () => {
 
   beforeEach(() => {
     // Reset mock between tests
-    (useSearchParams as unknown as ReturnType<typeof vi.fn>).mockReset();
+    mockedUseSearchParams.mockReturnValue([new URLSearchParams(), vi.fn()]);
+    mockedUseParams.mockReturnValue({});
     vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it('should render the NoteAdd component', async () => {
@@ -118,28 +121,23 @@ describe('NoteAdd Component', () => {
   });
 
   it('should show error message when form is invalid', async () => {
-    let result: any;
-    await act(async () => {
-      result = renderNoteAdd();
-    });
-    const { getByText, getByRole } = result;
+    const { getByText, getByRole } = renderNoteAdd();
     const submitButton = getByRole('button', { name: 'note_form_submit' });
+    
     fireEvent.click(submitButton);
+
     await waitFor(() => {
       expect(getByText('Please fill in all the fields')).toBeDefined();
     });
   });
 
   it('should add a new note when form is valid', async () => {
-    (useSearchParams as unknown as ReturnType<typeof vi.fn>).mockReturnValue([
+    mockedUseSearchParams.mockReturnValue([
       new URLSearchParams("backTo=home"),
+      vi.fn(),
     ]);
 
-    let result: any;
-    await act(async () => {
-      result = renderNoteAdd();
-    });
-    const { getByLabelText, getByTestId, getByRole } = result;
+    const { getByLabelText, getByTestId, getByRole } = renderNoteAdd();
     const descriptionInput = getByLabelText('note_form_title_label') as HTMLInputElement;
     const noteContentInput = getByTestId('note-content-input-area') as HTMLAreaElement;
     const submitButton = getByRole('button', { name: 'note_form_submit' });

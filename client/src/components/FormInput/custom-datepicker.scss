@@ -1,6 +1,19 @@
 @import '../../styles/theme.scss';
 
 /* custom-datepicker.scss */
+.react-datepicker-wrapper,
+.react-datepicker__input-container {
+  flex: 1 1 auto !important;
+  width: 1% !important;
+  display: flex !important;
+}
+
+.react-datepicker__input-container {
+  /* Ensure it takes full width of the flex item */
+  width: 100%;
+}
+
+
 .react-datepicker__input-container input {
   font-size: 16px; /* Prevents iOS zoom on focus */
   width: 100%;
