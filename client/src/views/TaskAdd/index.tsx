@@ -304,7 +304,7 @@ function TaskAdd(): React.ReactNode {
                       }}
                     />
                   </Col>
-                  <Col xs={12} sm={6} xxl={3}>
+                  <Col xs={12} sm={6} xxl={6}>
                     {/* Due date */}
                     <FormInput
                       labelText={t('task_form_duedate_label')}
@@ -319,27 +319,10 @@ function TaskAdd(): React.ReactNode {
                       }}
                     />
                   </Col>
-                  <Col xs={12} sm={6} xxl={3}>
+                  <Col xs={12} sm={12} xxl={12}>
                     {/* Tag with suggestion dropdown */}
                     <Form.Group className="mb-3" ref={tagContainerRef} style={{ position: 'relative' }}>
-                      <Form.Label>Tags</Form.Label>
-                      <div className="mb-2 d-flex flex-wrap gap-1">
-                        {selectedTags.map(t => (
-                          <Badge
-                            key={t}
-                            bg="warning"
-                            text="dark"
-                            className="p-2"
-                            style={{ cursor: 'pointer' }}
-                            onClick={() => removeTag(t)}
-                          >
-                            #
-                            {t}
-                            {' '}
-                            &times;
-                          </Badge>
-                        ))}
-                      </div>
+                      <Form.Label>Tags</Form.Label> 
                       <InputGroup className="mb-3">
                         <InputGroup.Text>
                           <Hash />
@@ -363,6 +346,23 @@ function TaskAdd(): React.ReactNode {
                           autoComplete="off"
                         />
                       </InputGroup>
+                      <div className="mb-2 d-flex flex-wrap gap-1">
+                        {selectedTags.map(t => (
+                          <Badge
+                            key={t}
+                            bg="warning"
+                            text="dark"
+                            className="p-2"
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => removeTag(t)}
+                          >
+                            #
+                            {t}
+                            {' '}
+                            &times;
+                          </Badge>
+                        ))}
+                      </div>
                       {showTagDropdown && tags.filter(t => t.toLowerCase().includes(currentTag.toLowerCase())).length > 0 && (
                         <ListGroup
                           style={{
@@ -371,7 +371,6 @@ function TaskAdd(): React.ReactNode {
                             width: '100%',
                             maxHeight: '200px',
                             overflowY: 'auto',
-                            top: '100%',
                             left: 0
                           }}
                         >

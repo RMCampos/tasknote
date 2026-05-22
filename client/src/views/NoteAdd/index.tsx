@@ -344,23 +344,6 @@ function NoteAdd(): React.ReactNode {
                     {/* Tag with suggestion dropdown */}
                     <Form.Group className="mb-3" ref={tagContainerRef} style={{ position: 'relative' }}>
                       <Form.Label>Tags</Form.Label>
-                      <div className="mb-2 d-flex flex-wrap gap-1">
-                        {selectedTags.map(t => (
-                          <Badge
-                            key={t}
-                            bg="warning"
-                            text="dark"
-                            className="p-2"
-                            style={{ cursor: 'pointer' }}
-                            onClick={() => removeTag(t)}
-                          >
-                            #
-                            {t}
-                            {' '}
-                            &times;
-                          </Badge>
-                        ))}
-                      </div>
                       <InputGroup className="mb-3">
                         <InputGroup.Text>
                           <Hash />
@@ -384,6 +367,23 @@ function NoteAdd(): React.ReactNode {
                           autoComplete="off"
                         />
                       </InputGroup>
+                      <div className="mb-2 d-flex flex-wrap gap-1">
+                        {selectedTags.map(t => (
+                          <Badge
+                            key={t}
+                            bg="warning"
+                            text="dark"
+                            className="p-2"
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => removeTag(t)}
+                          >
+                            #
+                            {t}
+                            {' '}
+                            &times;
+                          </Badge>
+                        ))}
+                      </div>
                       {showTagDropdown && tags.filter(t => t.toLowerCase().includes(currentTag.toLowerCase())).length > 0 && (
                         <ListGroup
                           style={{
@@ -392,7 +392,6 @@ function NoteAdd(): React.ReactNode {
                             width: '100%',
                             maxHeight: '200px',
                             overflowY: 'auto',
-                            top: '100%',
                             left: 0
                           }}
                         >
