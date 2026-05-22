@@ -157,7 +157,7 @@ function Home(): React.ReactNode {
         const anyTitleMatch = note.title.toLowerCase().includes(text.toLowerCase());
         const anyContentMatch = note.description.toLowerCase().includes(text.toLowerCase());
         const anyUrlMatch = note.url?.includes(text.toLowerCase());
-        const anyTagMatch = note.tags?.some((tag) => tag.toLowerCase().includes(text.toLowerCase()));
+        const anyTagMatch = note.tags?.some(tag => tag.toLowerCase().includes(text.toLowerCase()));
         return anyTitleMatch || anyContentMatch || anyUrlMatch || anyTagMatch;
       });
 
@@ -177,7 +177,7 @@ function Home(): React.ReactNode {
     else {
       let filteredTasks = allTasks.filter((task: TaskResponse) => {
         return task.description.toLowerCase().includes(text.toLowerCase())
-          || task.tags?.some((tag) => tag.toLowerCase().includes(text.toLowerCase()))
+          || task.tags?.some(tag => tag.toLowerCase().includes(text.toLowerCase()))
           || task.urls.filter((url: string) => url.includes(text.toLowerCase())).length > 0;
       });
 

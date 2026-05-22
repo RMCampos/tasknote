@@ -19,7 +19,7 @@ interface Props {
  */
 function TaskTag(props: React.PropsWithChildren<Props>): React.ReactNode {
   const tagContent = props.tags && props.tags.length > 0
-    ? props.tags.map((tag) => `#${tag}`).join(' ')
+    ? props.tags.map(tag => `#${tag}`).join(' ')
     : '#untagged';
 
   return (

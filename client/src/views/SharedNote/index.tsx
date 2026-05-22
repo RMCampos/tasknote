@@ -74,7 +74,7 @@ function SharedNote(): React.ReactNode {
               <small className="text-muted">TaskNote · Shared Note (Read only)</small>
               {note.tags && note.tags.length > 0 && (
                 <small className="text-muted">
-                  {note.tags.map((t) => `#${t}`).join(' ')}
+                  {note.tags.map(t => `#${t}`).join(' ')}
                 </small>
               )}
             </Card.Header>

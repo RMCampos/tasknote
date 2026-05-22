@@ -130,7 +130,7 @@ function NoteAdd(): React.ReactNode {
   };
 
   const removeTag = (tagToRemove: string): void => {
-    setSelectedTags(selectedTags.filter((t) => t !== tagToRemove));
+    setSelectedTags(selectedTags.filter(t => t !== tagToRemove));
   };
 
   /**
@@ -345,7 +345,7 @@ function NoteAdd(): React.ReactNode {
                     <Form.Group className="mb-3" ref={tagContainerRef} style={{ position: 'relative' }}>
                       <Form.Label>Tags</Form.Label>
                       <div className="mb-2 d-flex flex-wrap gap-1">
-                        {selectedTags.map((t) => (
+                        {selectedTags.map(t => (
                           <Badge
                             key={t}
                             bg="warning"

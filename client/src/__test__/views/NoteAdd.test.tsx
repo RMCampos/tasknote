@@ -154,7 +154,7 @@ describe('NoteAdd Component', () => {
         title: 'New Note',
         description: 'Note content',
         url: '',
-        tag: '',
+        tags: [],
         lastUpdate: '',
         shared: false,
         shareToken: null
@@ -185,8 +185,10 @@ describe('NoteAdd Component', () => {
       title: 'Note one',
       description: 'Description of note one',
       url: 'http://notes.domain.com',
-      tag: 'dev',
+      tags: ['dev'],
       lastUpdate: '3 minutes ago',
+      shared: false,
+      shareToken: null
     };
   
     vi.spyOn(api, 'getJSON').mockResolvedValue(toEdit);
@@ -211,8 +213,10 @@ describe('NoteAdd Component', () => {
       title: 'Old title',
       description: 'Old description',
       url: 'http://notes.domain.com',
-      tag: 'dev',
+      tags: ['dev'],
       lastUpdate: '1 minute ago',
+      shared: false,
+      shareToken: null
     };
   
     vi.spyOn(api, 'getJSON').mockResolvedValue(toClone);

@@ -17,7 +17,7 @@ const mockNote = {
   title: 'Meeting notes',
   description: 'Discuss quarterly goals',
   url: null,
-  tag: 'work',
+  tags: ['work'],
   lastUpdate: '2026-05-01',
   shared: false,
   shareToken: null
@@ -34,6 +34,11 @@ describe('Notes Management', () => {
       statusCode: 200,
       body: { token: 'fake-jwt-token', ...mockUser }
     }).as('refreshToken');
+
+    cy.intercept('GET', /\/rest\/users\/me/, {
+      statusCode: 200,
+      body: mockUser
+    }).as('getCurrentUser');
 
     cy.intercept('GET', /\/rest\/home\/tasks\/tags/, {
       statusCode: 200,
@@ -84,7 +89,7 @@ describe('Notes Management', () => {
           title: 'New note',
           description: 'Some content',
           url: null,
-          tag: '',
+          tags: [],
           lastUpdate: '',
           shared: false,
           shareToken: null
