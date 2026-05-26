@@ -130,7 +130,7 @@ describe('TaskAdd Component', () => {
         description: 'New Task',
         dueDate: '',
         highPriority: false,
-        tag: '',
+        tags: [],
         urls: []
       }
       expect(api.postJSON).toHaveBeenCalledWith(ApiConfig.tasksUrl, newTask);

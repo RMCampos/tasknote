@@ -6,7 +6,7 @@ type TaskResponse = {
   dueDate: string;
   dueDateFmt: string;
   lastUpdate: string;
-  tag: string;
+  tags: string[];
   urls: string[];
 };
 

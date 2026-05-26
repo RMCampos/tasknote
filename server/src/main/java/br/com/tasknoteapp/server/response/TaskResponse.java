@@ -1,5 +1,6 @@
 package br.com.tasknoteapp.server.response;
 
+import br.com.tasknoteapp.server.entity.TagEntity;
 import br.com.tasknoteapp.server.entity.TaskEntity;
 import br.com.tasknoteapp.server.util.TimeAgoUtil;
 import java.time.LocalDate;
@@ -14,13 +15,14 @@ public record TaskResponse(
     LocalDate dueDate,
     String dueDateFmt,
     String lastUpdate,
-    String tag,
+    List<String> tags,
     List<String> urls) {
 
   /**
    * Creates a TaskResponse given a TaskEntity and its URLs.
    *
    * @param entity The TaskEntity source data.
+   * @param urls The URLs associated with the task.
    * @return TaskResponse instance with all task data and URLs, if any.
    */
   public static TaskResponse fromEntity(TaskEntity entity, List<String> urls) {
@@ -35,7 +37,7 @@ public record TaskResponse(
         entity.getDueDate(),
         dueDateFmt,
         timeAgoFmt,
-        entity.getTag(),
+        entity.getTags().stream().map(TagEntity::getName).toList(),
         urls);
   }
 }

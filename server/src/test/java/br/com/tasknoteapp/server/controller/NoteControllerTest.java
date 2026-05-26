@@ -44,7 +44,7 @@ class NoteControllerTest {
   void getAllNotes_notesFound_shouldSucceed() throws Exception {
     NoteUrlResponse noteUrl = new NoteUrlResponse(111L, "https://test.com");
     NoteResponse note =
-        new NoteResponse(111L, "title", "description", "https://test.com", null, "tag", false, null);
+        new NoteResponse(111L, "title", "description", "https://test.com", null, List.of("tag"), false, null);
 
     when(noteService.getAllNotes()).thenReturn(List.of(note));
 
@@ -98,7 +98,7 @@ class NoteControllerTest {
   void patchNote_happyPath_shouldSucceed() throws Exception {
     Long noteId = 123L;
     NotePatchRequest patchRequest =
-        new NotePatchRequest("New title", "New description", null, null);
+        new NotePatchRequest("New title", "New description", null, List.of("tag"));
 
     NoteResponse response =
         new NoteResponse(
@@ -107,7 +107,7 @@ class NoteControllerTest {
             patchRequest.description(),
             null,
             null,
-            "tag",
+            List.of("tag"),
             false,
             null);
 
@@ -118,7 +118,8 @@ class NoteControllerTest {
         {
           "title": "New title",
           "description": "New description",
-          "url": null
+          "url": null,
+          "tags": ["tag"]
         }
         """;
 
@@ -143,7 +144,7 @@ class NoteControllerTest {
   void patchNote_notFound_shouldFail() throws Exception {
     Long noteId = 123L;
     NotePatchRequest patchRequest =
-        new NotePatchRequest("New title", "New description", null, null);
+        new NotePatchRequest("New title", "New description", null, List.of("tag"));
 
     when(noteService.patchNote(noteId, patchRequest)).thenThrow(new NoteNotFoundException());
 
@@ -152,7 +153,8 @@ class NoteControllerTest {
         {
           "title": "New title",
           "description": "New description",
-          "url": null
+          "url": null,
+          "tags": ["tag"]
         }
         """;
 
@@ -196,10 +198,10 @@ class NoteControllerTest {
   @DisplayName("Post create note happy path should succeed and return 201")
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
   void postNotes_happyPath_shouldSucceed() throws Exception {
-    NoteRequest request = new NoteRequest("Title", "Description", null, null);
+    NoteRequest request = new NoteRequest("Title", "Description", null, List.of("tag"));
 
     NoteResponse entity = new NoteResponse(1L, request.title(), request.description(),
-        null, null, null, false, null);
+        null, null, List.of("tag"), false, null);
 
     when(noteService.createNote(request)).thenReturn(entity);
 
@@ -208,7 +210,8 @@ class NoteControllerTest {
         {
           "title": "Title",
           "description": "Description",
-          "url": null
+          "url": null,
+          "tags": ["tag"]
         }
         """;
 
@@ -328,7 +331,7 @@ class NoteControllerTest {
     final Long noteId = 1L;
     final String token = "test-token-uuid";
     NoteResponse response =
-        new NoteResponse(noteId, "title", "description", null, null, "tag", true, token);
+        new NoteResponse(noteId, "title", "description", null, null, List.of("tag"), true, token);
 
     when(noteService.shareNote(noteId)).thenReturn(response);
 
@@ -363,7 +366,7 @@ class NoteControllerTest {
   void unshareNote_happyPath_shouldSucceed() throws Exception {
     final Long noteId = 1L;
     NoteResponse response =
-        new NoteResponse(noteId, "title", "description", null, null, "tag", false, null);
+        new NoteResponse(noteId, "title", "description", null, null, List.of("tag"), false, null);
 
     when(noteService.unshareNote(noteId)).thenReturn(response);
 

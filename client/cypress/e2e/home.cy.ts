@@ -21,7 +21,7 @@ const mockTasks = [
     dueDate: '2026-06-01',
     dueDateFmt: 'Jun 1, 2026',
     lastUpdate: '2026-05-01',
-    tag: 'personal',
+    tags: ['personal'],
     urls: []
   },
   {
@@ -32,7 +32,7 @@ const mockTasks = [
     dueDate: '',
     dueDateFmt: '',
     lastUpdate: '2026-05-02',
-    tag: 'work',
+    tags: ['work'],
     urls: []
   }
 ];
@@ -43,7 +43,7 @@ const mockNotes = [
     title: 'Meeting notes',
     description: 'Discuss quarterly goals',
     url: null,
-    tag: 'work',
+    tags: ['work'],
     lastUpdate: '2026-05-01',
     shared: false,
     shareToken: null
@@ -53,7 +53,7 @@ const mockNotes = [
     title: 'Recipe',
     description: 'Pasta carbonara recipe',
     url: null,
-    tag: 'personal',
+    tags: ['personal'],
     lastUpdate: '2026-05-02',
     shared: false,
     shareToken: null
@@ -68,6 +68,11 @@ describe('Home Management', () => {
       statusCode: 200,
       body: { token: 'fake-jwt-token', ...mockUser }
     }).as('refreshToken');
+
+    cy.intercept('GET', /\/rest\/users\/me/, {
+      statusCode: 200,
+      body: mockUser
+    }).as('getCurrentUser');
 
     cy.intercept('GET', /\/rest\/home\/tasks\/tags/, {
       statusCode: 200,

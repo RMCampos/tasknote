@@ -20,7 +20,7 @@ const mockTask = {
   dueDate: '',
   dueDateFmt: '',
   lastUpdate: '2026-05-01',
-  tag: 'personal',
+  tags: ['personal'],
   urls: []
 };
 
@@ -35,6 +35,11 @@ describe('Task Management', () => {
       statusCode: 200,
       body: { token: 'fake-jwt-token', ...mockUser }
     }).as('refreshToken');
+
+    cy.intercept('GET', /\/rest\/users\/me/, {
+      statusCode: 200,
+      body: mockUser
+    }).as('getCurrentUser');
 
     cy.intercept('GET', /\/rest\/home\/tasks\/tags/, {
       statusCode: 200,
@@ -82,7 +87,7 @@ describe('Task Management', () => {
           dueDate: '',
           dueDateFmt: '',
           lastUpdate: '',
-          tag: '',
+          tags: [],
           urls: []
         }
       }).as('createTask');

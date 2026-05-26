@@ -3,7 +3,7 @@ type NoteResponse = {
   title: string;
   description: string;
   url: string | null;
-  tag: string;
+  tags: string[];
   lastUpdate: string;
   shared: boolean;
   shareToken: string | null;

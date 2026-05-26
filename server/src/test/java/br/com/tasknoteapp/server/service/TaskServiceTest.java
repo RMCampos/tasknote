@@ -7,16 +7,20 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import br.com.tasknoteapp.server.entity.TagEntity;
 import br.com.tasknoteapp.server.entity.TaskEntity;
 import br.com.tasknoteapp.server.entity.TaskUrlEntity;
 import br.com.tasknoteapp.server.entity.TaskUrlEntityPk;
 import br.com.tasknoteapp.server.entity.UserEntity;
 import br.com.tasknoteapp.server.exception.TaskNotFoundException;
+import br.com.tasknoteapp.server.repository.TagRepository;
 import br.com.tasknoteapp.server.repository.TaskRepository;
 import br.com.tasknoteapp.server.repository.TaskUrlRepository;
 import br.com.tasknoteapp.server.request.TaskPatchRequest;
@@ -27,6 +31,7 @@ import br.com.tasknoteapp.server.util.TimeAgoUtil;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,6 +52,8 @@ class TaskServiceTest {
 
   @Mock TaskUrlRepository taskUrlRepository;
 
+  @Mock TagRepository tagRepository;
+
   private static final Long USER_ID = 123L;
 
   private static final String USER_EMAIL = "test@domain.com";
@@ -57,7 +64,7 @@ class TaskServiceTest {
   void setup() {
     taskService =
         new TaskService(
-            taskRepository, authService, authUtil, taskUrlRepository);
+            taskRepository, authService, authUtil, taskUrlRepository, tagRepository);
   }
 
   @Test
@@ -76,7 +83,7 @@ class TaskServiceTest {
     taskEntity.setId(taskId);
     taskEntity.setDescription("Test task");
     taskEntity.setHighPriority(true);
-    taskEntity.setTag("test");
+    taskEntity.setTags(Set.of(new TagEntity("test", userEntity)));
     taskEntity.setUser(userEntity);
     when(taskRepository.findById(taskId)).thenReturn(Optional.of(taskEntity));
 
@@ -86,7 +93,7 @@ class TaskServiceTest {
     assertEquals(taskEntity.getId(), taskResponse.id());
     assertEquals(taskEntity.getDescription(), taskResponse.description());
     assertEquals(taskEntity.getHighPriority(), taskResponse.highPriority());
-    assertEquals(taskEntity.getTag(), taskResponse.tag());
+    assertTrue(taskResponse.tags().contains("test"));
   }
 
   @Test
@@ -116,18 +123,23 @@ class TaskServiceTest {
     userEntity.setEmail(USER_EMAIL);
     when(authService.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
 
-    TaskRequest request = new TaskRequest("Write unit tests", null, null, false, "development");
+    List<String> tags = List.of("development");
+    TaskRequest request = new TaskRequest("Write unit tests", null, null, false, tags);
+
+    TagEntity tagEntity = new TagEntity("development", userEntity);
+    when(tagRepository.findByNameAndUser_id(anyString(), anyLong()))
+        .thenReturn(Optional.of(tagEntity));
 
     TaskEntity entity = new TaskEntity();
     entity.setDescription(request.description());
     entity.setHighPriority(request.highPriority());
-    entity.setTag(request.tag());
-    when(taskRepository.save(any())).thenReturn(new TaskEntity());
+    entity.setTags(Set.of(tagEntity));
+    when(taskRepository.save(any())).thenReturn(entity);
 
     taskService.createTask(request);
 
     assertNotNull(entity);
-    assertEquals("development", entity.getTag());
+    assertTrue(entity.getTags().stream().anyMatch(t -> t.getName().equals("development")));
   }
 
   @ParameterizedTest
@@ -141,18 +153,23 @@ class TaskServiceTest {
     userEntity.setEmail(USER_EMAIL);
     when(authService.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
 
-    TaskRequest request = new TaskRequest("Write unit tests", null, dueDate, false, "development");
+    List<String> tags = List.of("development");
+    TaskRequest request = new TaskRequest("Write unit tests", null, dueDate, false, tags);
+
+    TagEntity tagEntity = new TagEntity("development", userEntity);
+    when(tagRepository.findByNameAndUser_id(anyString(), anyLong()))
+        .thenReturn(Optional.of(tagEntity));
 
     TaskEntity entity = new TaskEntity();
     entity.setDescription(request.description());
     entity.setHighPriority(request.highPriority());
-    entity.setTag(request.tag());
-    when(taskRepository.save(any())).thenReturn(new TaskEntity());
+    entity.setTags(Set.of(tagEntity));
+    when(taskRepository.save(any())).thenReturn(entity);
 
     taskService.createTask(request);
 
     assertNotNull(entity);
-    assertEquals("development", entity.getTag());
+    assertTrue(entity.getTags().stream().anyMatch(t -> t.getName().equals("development")));
   }
 
   @Test
@@ -165,15 +182,20 @@ class TaskServiceTest {
     userEntity.setEmail(USER_EMAIL);
     when(authService.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
 
+    List<String> tags = List.of("development");
     TaskRequest request =
-        new TaskRequest("Write unit tests", null, "2025-12-12", false, "development");
+        new TaskRequest("Write unit tests", null, "2025-12-12", false, tags);
+
+    TagEntity tagEntity = new TagEntity("development", userEntity);
+    when(tagRepository.findByNameAndUser_id(anyString(), anyLong()))
+        .thenReturn(Optional.of(tagEntity));
 
     TaskEntity entity = new TaskEntity();
     entity.setId(123L);
     entity.setDescription(request.description());
     entity.setHighPriority(request.highPriority());
-    entity.setTag(request.tag());
-    when(taskRepository.save(any())).thenReturn(new TaskEntity());
+    entity.setTags(Set.of(tagEntity));
+    when(taskRepository.save(any())).thenReturn(entity);
 
     TaskResponse response = taskService.createTask(request);
 
@@ -191,15 +213,20 @@ class TaskServiceTest {
     userEntity.setEmail(USER_EMAIL);
     when(authService.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
 
+    List<String> tags = List.of("development");
     TaskRequest request =
-        new TaskRequest("Write unit tests", List.of(), "2025-12-12", false, "development");
+        new TaskRequest("Write unit tests", List.of(), "2025-12-12", false, tags);
+
+    TagEntity tagEntity = new TagEntity("development", userEntity);
+    when(tagRepository.findByNameAndUser_id(anyString(), anyLong()))
+        .thenReturn(Optional.of(tagEntity));
 
     TaskEntity entity = new TaskEntity();
     entity.setId(123L);
     entity.setDescription(request.description());
     entity.setHighPriority(request.highPriority());
-    entity.setTag(request.tag());
-    when(taskRepository.save(any())).thenReturn(new TaskEntity());
+    entity.setTags(Set.of(tagEntity));
+    when(taskRepository.save(any())).thenReturn(entity);
 
     TaskResponse response = taskService.createTask(request);
 
@@ -217,15 +244,20 @@ class TaskServiceTest {
     userEntity.setEmail(USER_EMAIL);
     when(authService.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
 
+    List<String> tags = List.of("development");
     TaskRequest request =
         new TaskRequest(
-            "Write unit tests", List.of("debian.org"), "2025-12-12", false, "development");
+            "Write unit tests", List.of("debian.org"), "2025-12-12", false, tags);
+
+    TagEntity tagEntity = new TagEntity("development", userEntity);
+    when(tagRepository.findByNameAndUser_id(anyString(), anyLong()))
+        .thenReturn(Optional.of(tagEntity));
 
     TaskEntity entity = new TaskEntity();
     entity.setId(123L);
     entity.setDescription(request.description());
     entity.setHighPriority(request.highPriority());
-    entity.setTag(request.tag());
+    entity.setTags(Set.of(tagEntity));
     when(taskRepository.save(any())).thenReturn(entity);
 
     TaskUrlEntity urlEntity = new TaskUrlEntity();
@@ -252,14 +284,14 @@ class TaskServiceTest {
     TaskEntity entity = new TaskEntity();
     entity.setDescription("Writ unit tests");
     entity.setHighPriority(true);
-    entity.setTag("dev");
+    entity.setTags(Set.of(new TagEntity("dev", userEntity)));
     when(taskRepository.findAllByUser_id(USER_ID)).thenReturn(List.of(entity));
 
     List<TaskResponse> responses = taskService.getAllTasks();
 
     assertFalse(responses.isEmpty());
     assertEquals(1, responses.size());
-    assertEquals(entity.getTag(), responses.get(0).tag());
+    assertTrue(responses.get(0).tags().contains("dev"));
   }
 
   @Test
@@ -278,7 +310,7 @@ class TaskServiceTest {
     taskEntity.setId(taskId);
     taskEntity.setDescription("Test task");
     taskEntity.setHighPriority(true);
-    taskEntity.setTag("test");
+    taskEntity.setTags(Set.of(new TagEntity("test", userEntity)));
     taskEntity.setUser(userEntity);
     when(taskRepository.findById(taskId)).thenReturn(Optional.of(taskEntity));
 
@@ -325,24 +357,29 @@ class TaskServiceTest {
     taskEntity.setDescription("Test task");
     taskEntity.setHighPriority(true);
     taskEntity.setDone(false);
-    taskEntity.setTag("test");
+    taskEntity.setTags(Set.of(new TagEntity("test", userEntity)));
     taskEntity.setUser(userEntity);
     when(taskRepository.findById(taskId)).thenReturn(Optional.of(taskEntity));
 
     when(taskUrlRepository.findAllById_taskId(taskId)).thenReturn(List.of());
 
-    String dueDate = "2026-12-31";
+    final String dueDate = "2026-12-31";
+
+    TagEntity tagEntity = new TagEntity("test", userEntity);
+    when(tagRepository.findByNameAndUser_id(anyString(), anyLong()))
+        .thenReturn(Optional.of(tagEntity));
 
     TaskEntity savedTask = new TaskEntity();
     savedTask.setDescription("Test task updated");
     savedTask.setHighPriority(false);
     savedTask.setDueDate(LocalDate.parse(dueDate));
     savedTask.setDone(true);
-    savedTask.setTag(taskEntity.getTag());
+    savedTask.setTags(taskEntity.getTags());
     when(taskRepository.save(any())).thenReturn(savedTask);
 
+    List<String> tags = List.of("test");
     TaskPatchRequest patch =
-        new TaskPatchRequest("Test task updated", true, null, dueDate, false, "test");
+        new TaskPatchRequest("Test task updated", true, null, dueDate, false, tags);
     TaskResponse patched = taskService.patchTask(taskId, patch);
 
     assertNotNull(patched);
@@ -350,7 +387,7 @@ class TaskServiceTest {
     assertTrue(patched.done());
     assertEquals(TimeAgoUtil.formatDueDate(LocalDate.parse(dueDate)), patched.dueDateFmt());
     assertFalse(patched.highPriority());
-    assertEquals("test", patched.tag());
+    assertTrue(patched.tags().contains("test"));
     assertTrue(patched.urls().isEmpty());
   }
 
@@ -371,7 +408,7 @@ class TaskServiceTest {
     taskEntity.setDescription("Test task");
     taskEntity.setHighPriority(true);
     taskEntity.setDone(false);
-    taskEntity.setTag("test");
+    taskEntity.setTags(Set.of(new TagEntity("test", userEntity)));
     taskEntity.setUser(userEntity);
     when(taskRepository.findById(taskId)).thenReturn(Optional.of(taskEntity));
 
@@ -380,19 +417,24 @@ class TaskServiceTest {
     when(taskUrlRepository.findAllById_taskId(taskId)).thenReturn(List.of(urlEntity));
     doNothing().when(taskUrlRepository).deleteAllById_taskId(taskId);
 
-    String dueDate = "2026-12-31";
+    final String dueDate = "2026-12-31";
+
+    TagEntity tagEntity = new TagEntity("test", userEntity);
+    when(tagRepository.findByNameAndUser_id(anyString(), anyLong()))
+        .thenReturn(Optional.of(tagEntity));
 
     TaskEntity savedTask = new TaskEntity();
     savedTask.setDescription("Test task updated");
     savedTask.setHighPriority(false);
     savedTask.setDueDate(LocalDate.parse(dueDate));
     savedTask.setDone(true);
-    savedTask.setTag(taskEntity.getTag());
+    savedTask.setTags(taskEntity.getTags());
     when(taskRepository.save(any())).thenReturn(savedTask);
 
     String url = "http://test.com";
+    List<String> tags = List.of("test");
     TaskPatchRequest patch =
-        new TaskPatchRequest("Test task updated", true, List.of(url), dueDate, false, "test");
+        new TaskPatchRequest("Test task updated", true, List.of(url), dueDate, false, tags);
 
     when(taskUrlRepository.saveAll(any())).thenReturn(List.of());
     TaskResponse patched = taskService.patchTask(taskId, patch);
@@ -402,7 +444,7 @@ class TaskServiceTest {
     assertTrue(patched.done());
     assertEquals(TimeAgoUtil.formatDueDate(LocalDate.parse(dueDate)), patched.dueDateFmt());
     assertFalse(patched.highPriority());
-    assertEquals("test", patched.tag());
+    assertTrue(patched.tags().contains("test"));
     assertFalse(patched.urls().isEmpty());
   }
 
@@ -420,8 +462,9 @@ class TaskServiceTest {
 
     when(taskRepository.findById(taskId)).thenReturn(Optional.empty());
 
+    List<String> tags = List.of("test");
     TaskPatchRequest patch =
-        new TaskPatchRequest("Test task updated", true, null, "2025-12-31", false, "test");
+        new TaskPatchRequest("Test task updated", true, null, "2025-12-31", false, tags);
 
     assertThrows(TaskNotFoundException.class, () -> taskService.patchTask(taskId, patch));
   }
@@ -443,24 +486,29 @@ class TaskServiceTest {
     taskEntity.setDescription("Test task");
     taskEntity.setHighPriority(true);
     taskEntity.setDone(false);
-    taskEntity.setTag("test");
+    taskEntity.setTags(Set.of(new TagEntity("test", userEntity)));
     taskEntity.setUser(userEntity);
     when(taskRepository.findById(taskId)).thenReturn(Optional.of(taskEntity));
 
     when(taskUrlRepository.findAllById_taskId(taskId)).thenReturn(List.of());
 
+    TagEntity tagEntity = new TagEntity("test", userEntity);
+    when(tagRepository.findByNameAndUser_id(anyString(), anyLong()))
+        .thenReturn(Optional.of(tagEntity));
+
     TaskEntity savedTask = new TaskEntity();
     savedTask.setDescription("Test task updated");
     savedTask.setHighPriority(false);
     savedTask.setDone(true);
-    savedTask.setTag(taskEntity.getTag());
+    savedTask.setTags(taskEntity.getTags());
     when(taskRepository.save(any())).thenReturn(savedTask);
 
     // wrong due date
     String dueDate = "2026-31-31";
 
+    List<String> tags = List.of("test");
     TaskPatchRequest patch =
-        new TaskPatchRequest("Test task updated", true, null, dueDate, false, "test");
+        new TaskPatchRequest("Test task updated", true, null, dueDate, false, tags);
     TaskResponse patched = taskService.patchTask(taskId, patch);
 
     assertNotNull(patched);
@@ -469,7 +517,7 @@ class TaskServiceTest {
     assertNull(patched.dueDate());
     assertNull(patched.dueDateFmt());
     assertFalse(patched.highPriority());
-    assertEquals("test", patched.tag());
+    assertTrue(patched.tags().contains("test"));
     assertTrue(patched.urls().isEmpty());
   }
 
@@ -487,7 +535,7 @@ class TaskServiceTest {
     taskEntity.setId(1L);
     taskEntity.setDescription("Write unit tests");
     taskEntity.setHighPriority(false);
-    taskEntity.setTag("development");
+    taskEntity.setTags(Set.of(new TagEntity("development", userEntity)));
 
     String searchTerm = "unit";
     when(taskRepository.findAllBySearchTerm(searchTerm.toUpperCase(), USER_ID))
@@ -555,22 +603,22 @@ class TaskServiceTest {
     task1.setDescription("Task 1");
     task1.setHighPriority(false);
     task1.setDone(false);
-    task1.setTag("tag1");
+    task1.setTags(Set.of(new TagEntity("tag1", userEntity)));
 
     TaskEntity task2 = new TaskEntity();
     task2.setId(2L);
     task2.setDescription("Task 2");
     task2.setHighPriority(true);
     task2.setDone(false);
-    task2.setTag("tag2");
+    task2.setTags(Set.of(new TagEntity("tag2", userEntity)));
 
     when(taskRepository.findAllByUser_id(USER_ID)).thenReturn(List.of(task1, task2));
 
     List<TaskResponse> responses = taskService.getTasksByFilter("all");
 
     assertEquals(2, responses.size());
-    assertEquals("tag1", responses.get(0).tag());
-    assertEquals("tag2", responses.get(1).tag());
+    assertTrue(responses.get(0).tags().contains("tag1"));
+    assertTrue(responses.get(1).tags().contains("tag2"));
   }
 
   @Test
@@ -588,21 +636,21 @@ class TaskServiceTest {
     task1.setDescription("Task 1");
     task1.setHighPriority(false);
     task1.setDone(false);
-    task1.setTag("tag1");
+    task1.setTags(Set.of(new TagEntity("tag1", userEntity)));
 
     TaskEntity task2 = new TaskEntity();
     task2.setId(2L);
     task2.setDescription("Task 2");
     task2.setHighPriority(true);
     task2.setDone(false);
-    task2.setTag("tag2");
+    task2.setTags(Set.of(new TagEntity("tag2", userEntity)));
 
     when(taskRepository.findAllByUser_id(USER_ID)).thenReturn(List.of(task1, task2));
 
     List<TaskResponse> responses = taskService.getTasksByFilter("high");
 
     assertEquals(1, responses.size());
-    assertEquals("tag2", responses.get(0).tag());
+    assertTrue(responses.get(0).tags().contains("tag2"));
   }
 
   @Test
@@ -620,22 +668,22 @@ class TaskServiceTest {
     task1.setDescription("Task 1");
     task1.setHighPriority(false);
     task1.setDone(false);
-    task1.setTag(null);
+    task1.setTags(Set.of());
 
     TaskEntity task2 = new TaskEntity();
     task2.setId(2L);
     task2.setDescription("Task 2");
     task2.setHighPriority(true);
     task2.setDone(false);
-    task2.setTag("");
+    task2.setTags(Set.of());
 
     when(taskRepository.findAllByUser_id(USER_ID)).thenReturn(List.of(task1, task2));
 
     List<TaskResponse> responses = taskService.getTasksByFilter("untagged");
 
     assertEquals(2, responses.size());
-    assertNull(responses.get(0).tag());
-    assertTrue(responses.get(1).tag().isBlank());
+    assertTrue(responses.get(0).tags().isEmpty());
+    assertTrue(responses.get(1).tags().isEmpty());
   }
 
   @Test
@@ -653,21 +701,21 @@ class TaskServiceTest {
     task1.setDescription("Task 1");
     task1.setHighPriority(false);
     task1.setDone(false);
-    task1.setTag("tag1");
+    task1.setTags(Set.of(new TagEntity("tag1", userEntity)));
 
     TaskEntity task2 = new TaskEntity();
     task2.setId(2L);
     task2.setDescription("Task 2");
     task2.setHighPriority(true);
     task2.setDone(false);
-    task2.setTag("tag2");
+    task2.setTags(Set.of(new TagEntity("tag2", userEntity)));
 
     when(taskRepository.findAllByUser_id(USER_ID)).thenReturn(List.of(task1, task2));
 
     List<TaskResponse> responses = taskService.getTasksByFilter("tag1");
 
     assertEquals(1, responses.size());
-    assertEquals("tag1", responses.get(0).tag());
+    assertTrue(responses.get(0).tags().contains("tag1"));
   }
 
   @Test

@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import br.com.tasknoteapp.server.exception.NoteNotFoundException;
 import br.com.tasknoteapp.server.response.NoteResponse;
 import br.com.tasknoteapp.server.service.NoteService;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ class PublicNoteControllerTest {
   void getSharedNote_happyPath_shouldSucceed() throws Exception {
     final String token = "test-share-token";
     NoteResponse response =
-        new NoteResponse(1L, "title", "description", null, null, "tag", true, token);
+        new NoteResponse(1L, "title", "description", null, null, List.of("tag"), true, token);
 
     when(noteService.getSharedNote(token)).thenReturn(response);
 

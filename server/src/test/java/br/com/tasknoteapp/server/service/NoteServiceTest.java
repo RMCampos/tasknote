@@ -15,6 +15,7 @@ import br.com.tasknoteapp.server.entity.UserEntity;
 import br.com.tasknoteapp.server.exception.NoteNotFoundException;
 import br.com.tasknoteapp.server.repository.NoteRepository;
 import br.com.tasknoteapp.server.repository.NoteUrlRepository;
+import br.com.tasknoteapp.server.repository.TagRepository;
 import br.com.tasknoteapp.server.request.NotePatchRequest;
 import br.com.tasknoteapp.server.request.NoteRequest;
 import br.com.tasknoteapp.server.response.NoteResponse;
@@ -39,6 +40,8 @@ class NoteServiceTest {
 
   @Mock private NoteUrlRepository noteUrlRepository;
 
+  @Mock private TagRepository tagRepository;
+
   @InjectMocks private NoteService noteService;
 
   private UserEntity user;
@@ -58,9 +61,11 @@ class NoteServiceTest {
     note.setDescription("Test Description");
     note.setUser(user);
 
-    noteRequest = new NoteRequest("Test Note", "Test Description", "http://example.com", "tag");
+    noteRequest =
+        new NoteRequest("Test Note", "Test Description", "http://example.com", List.of("tag"));
     notePatchRequest =
-        new NotePatchRequest("Updated Note", "Updated Description", "http://example.com", "tag");
+        new NotePatchRequest(
+            "Updated Note", "Updated Description", "http://example.com", List.of("tag"));
   }
 
   @Test
@@ -104,6 +109,8 @@ class NoteServiceTest {
     when(authService.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
     when(noteRepository.save(any(NoteEntity.class))).thenReturn(note);
     when(noteUrlRepository.save(any(NoteUrlEntity.class))).thenReturn(new NoteUrlEntity());
+    when(tagRepository.findByNameAndUser_id(anyString(), eq(user.getId())))
+        .thenReturn(Optional.of(new br.com.tasknoteapp.server.entity.TagEntity("tag", user)));
 
     NoteResponse createdNote = noteService.createNote(noteRequest);
 
@@ -119,6 +126,8 @@ class NoteServiceTest {
     when(noteRepository.findByIdAndUser_id(note.getId(), user.getId()))
         .thenReturn(Optional.of(note));
     when(noteRepository.save(any(NoteEntity.class))).thenReturn(note);
+    when(tagRepository.findByNameAndUser_id(anyString(), eq(user.getId())))
+        .thenReturn(Optional.of(new br.com.tasknoteapp.server.entity.TagEntity("tag", user)));
 
     NoteResponse patchedNote = noteService.patchNote(note.getId(), notePatchRequest);
 

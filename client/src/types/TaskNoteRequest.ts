@@ -4,7 +4,7 @@ type TaskNoteRequest = {
   urls?: string[];
   dueDate?: string;
   highPriority?: boolean;
-  tag: string;
+  tags: string[];
 };
 
 export default TaskNoteRequest;

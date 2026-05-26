@@ -1,6 +1,6 @@
 import React from 'react';
-import { describe, vi, it, expect, beforeEach } from 'vitest';
-import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
+import { describe, vi, it, expect, beforeEach, afterEach } from 'vitest';
+import { render, screen, fireEvent, act, waitFor, cleanup } from '@testing-library/react';
 import ModalMarkdown from '../../components/ModalMarkdown';
 
 describe('ModalMarkdown Component', () => {
@@ -12,11 +12,17 @@ describe('ModalMarkdown Component', () => {
   };
 
   beforeEach(() => {
-    Object.assign(navigator, {
+    vi.stubGlobal('navigator', {
       clipboard: {
         writeText: vi.fn().mockResolvedValue(undefined),
       },
     });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+    cleanup();
   });
 
   it('should render the modal with the correct title and markdown text', () => {
@@ -84,15 +90,29 @@ describe('ModalMarkdown Component', () => {
   });
 
   it('should show "Copied!" text after Copy button is clicked', async () => {
+    vi.useFakeTimers();
     render(<ModalMarkdown {...props} />);
 
+    const copyButton = screen.getByTestId('modal-copy-button');
+
     await act(async () => {
-      fireEvent.click(screen.getByTestId('modal-copy-button'));
+      fireEvent.click(copyButton);
     });
 
-    await waitFor(() => {
-      expect(screen.getByTestId('modal-copy-button').textContent).toBe('Copied!');
+    // Resolve microtasks for the clipboard promise
+    await act(async () => {
+      await vi.runAllTicks();
     });
+
+    expect(screen.getByTestId('modal-copy-button').textContent).toBe('Copied!');
+
+    // Advance timers to see it go back to "Copy"
+    await act(async () => {
+      vi.advanceTimersByTime(2000);
+    });
+
+    expect(screen.getByTestId('modal-copy-button').textContent).toBe('Copy');
+    vi.useRealTimers();
   });
 
   it('should reset source view state when modal is closed', () => {

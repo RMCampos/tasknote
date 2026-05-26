@@ -42,7 +42,7 @@ class TaskControllerTest {
   void getAllTasks_tasksFound_shouldSucceed() throws Exception {
     TaskResponse taskResponse =
         new TaskResponse(
-            1L, "Desc", false, true, null, null, "Moments ago", "tag", List.of("http://test.com"));
+            1L, "Desc", false, true, null, null, "Moments ago", List.of("tag"), List.of("http://test.com"));
     when(taskService.getAllTasks()).thenReturn(List.of(taskResponse));
 
     mockMvc
@@ -107,7 +107,7 @@ class TaskControllerTest {
             null,
             null,
             "Moments ago",
-            "tag",
+            List.of("tag"),
             List.of("http://test.com"));
     when(taskService.getTaskById(taskId)).thenReturn(taskResponse);
 
@@ -167,7 +167,7 @@ class TaskControllerTest {
   void patchTask_happyPath_shouldSucceed() throws Exception {
     Long taskId = 111L;
     TaskPatchRequest patchRequest =
-        new TaskPatchRequest("Description patched", false, List.of(), null, true, "tag");
+        new TaskPatchRequest("Description patched", false, List.of(), null, true, List.of("tag"));
 
     TaskResponse taskResponse =
         new TaskResponse(
@@ -178,7 +178,7 @@ class TaskControllerTest {
             null,
             null,
             "Moments ago",
-            "tag",
+            List.of("tag"),
             List.of());
     when(taskService.patchTask(taskId, patchRequest)).thenReturn(taskResponse);
 
@@ -209,7 +209,7 @@ class TaskControllerTest {
   void patchTask_notFound_shouldFail() throws Exception {
     Long taskId = 118L;
     TaskPatchRequest patchRequest =
-        new TaskPatchRequest("Description patched", false, List.of(), null, true, "tag");
+        new TaskPatchRequest("Description patched", false, List.of(), null, true, List.of("tag"));
 
     when(taskService.patchTask(taskId, patchRequest)).thenThrow(new TaskNotFoundException());
 
@@ -220,7 +220,7 @@ class TaskControllerTest {
           "done": false,
           "urls": [],
           "highPriority": true,
-          "tag": "tag"
+          "tags": ["tag"]
         }
         """;
 
@@ -265,11 +265,20 @@ class TaskControllerTest {
   @DisplayName("Post create task happy path should succeed and return 201")
   @WithMockUser(username = "user@domain.com", password = "abcde123456A@")
   void postTasks_happyPath_shouldSucceed() throws Exception {
-    TaskRequest request = new TaskRequest("Test task", List.of("www.url.com"), null, true, "tag");
+    TaskRequest request =
+        new TaskRequest("Test task", List.of("www.url.com"), null, true, List.of("tag"));
 
     TaskResponse taskResponse =
         new TaskResponse(
-            858L, "Description patched", false, true, null, null, "Moments ago", "tag", List.of());
+            858L,
+            "Description patched",
+            false,
+            true,
+            null,
+            null,
+            "Moments ago",
+            List.of("tag"),
+            List.of());
     when(taskService.createTask(request)).thenReturn(taskResponse);
 
     final String payloadJson =
@@ -278,7 +287,7 @@ class TaskControllerTest {
           "description": "Test task",
           "urls": ["https://www.url.com"],
           "highPriority": true,
-          "tag": "tag"
+          "tags": ["tag"]
         }
         """;
 

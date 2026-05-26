@@ -63,7 +63,7 @@ function FormInput(props: React.PropsWithChildren<Props>): React.ReactNode {
             )}
           </Form.Label>
 
-          <InputGroup className="mb-3">
+          <InputGroup className="mb-3 flex-nowrap">
             <InputGroup.Text>
               <Icon />
             </InputGroup.Text>

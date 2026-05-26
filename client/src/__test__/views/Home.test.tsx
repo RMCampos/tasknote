@@ -81,7 +81,7 @@ const mockTasks: TaskResponse[] = [
     description: 'Task 1',
     done: false,
     urls: ['http://example.com'],
-    tag: 'work',
+    tags: ['work'],
     lastUpdate: '2023-10-10',
     highPriority: true,
     dueDateFmt: '2 days left',
@@ -92,7 +92,7 @@ const mockTasks: TaskResponse[] = [
     description: 'Task 2',
     done: true,
     urls: [],
-    tag: 'home',
+    tags: ['home'],
     lastUpdate: '2023-10-09',
     highPriority: false,
     dueDateFmt: '',
@@ -105,17 +105,21 @@ const mockNotes: NoteResponse[] = [
     id: 1,
     title: 'Note 1',
     description: 'Line 1\nLine 2\nLine 3',
-    tag: 'work',
+    tags: ['work'],
     lastUpdate: '2023-10-10',
-    url: 'http://example.com'
+    url: 'http://example.com',
+    shared: false,
+    shareToken: null
   },
   {
     id: 2,
     title: 'Note 2',
     description: 'This is a sample\nnote content',
-    tag: 'personal',
+    tags: ['personal'],
     lastUpdate: '2023-10-09',
-    url: null
+    url: null,
+    shared: false,
+    shareToken: null
   }
 ];
 

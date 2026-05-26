@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  Badge,
   Card,
   Col,
   Container,
@@ -34,7 +35,8 @@ function NoteAdd(): React.ReactNode {
   const [noteTitle, setNoteTitle] = useState<string>('');
   const [noteContent, setNoteContent] = useState<string>('');
   const [noteUrl, setNoteUrl] = useState<string>('');
-  const [noteTag, setNoteTag] = useState<string>('');
+  const [currentTag, setCurrentTag] = useState<string>('');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [showTagDropdown, setShowTagDropdown] = useState<boolean>(false);
   const [action, setAction] = useState<NoteAction>('add');
@@ -71,8 +73,8 @@ function NoteAdd(): React.ReactNode {
   /**
    * Adds a new note.
    *
-   * @param {TaskNoteRequest} payload - The task data to add.
-   * @returns {Promise<boolean>} True if the task was added successfully, false otherwise.
+   * @param {NoteResponse} payload - The note data to add.
+   * @returns {Promise<boolean>} True if the note was added successfully, false otherwise.
    */
   const addNote = async (payload: NoteResponse): Promise<boolean> => {
     try {
@@ -87,10 +89,10 @@ function NoteAdd(): React.ReactNode {
   };
 
   /**
-   * Submits the edited task.
+   * Submits the edited note.
    *
-   * @param {TaskResponse} payload - The task data to edit.
-   * @returns {Promise<boolean>} True if the task was edited successfully, false otherwise.
+   * @param {NoteResponse} payload - The note data to edit.
+   * @returns {Promise<boolean>} True if the note was edited successfully, false otherwise.
    */
   const submitEditNote = async (payload: NoteResponse): Promise<boolean> => {
     try {
@@ -111,10 +113,24 @@ function NoteAdd(): React.ReactNode {
     setNoteTitle('');
     setNoteUrl('');
     setNoteContent('');
-    setNoteTag('');
+    setCurrentTag('');
+    setSelectedTags([]);
 
     setAction('add');
     setValidated(false);
+  };
+
+  const addTag = (tagName: string): void => {
+    const normalized = tagName.trim().toLowerCase();
+    if (normalized && !selectedTags.includes(normalized)) {
+      setSelectedTags([...selectedTags, normalized]);
+    }
+    setCurrentTag('');
+    setShowTagDropdown(false);
+  };
+
+  const removeTag = (tagToRemove: string): void => {
+    setSelectedTags(selectedTags.filter(t => t !== tagToRemove));
   };
 
   /**
@@ -133,13 +149,22 @@ function NoteAdd(): React.ReactNode {
       return;
     }
 
+    // Add current tag if not empty before submitting
+    const finalTags = [...selectedTags];
+    if (currentTag.trim()) {
+      const normalized = currentTag.trim().toLowerCase();
+      if (!finalTags.includes(normalized)) {
+        finalTags.push(normalized);
+      }
+    }
+
     if (action === 'add') {
       const payload: NoteResponse = {
         id: 0,
         title: noteTitle,
         description: noteContent,
         url: noteUrl,
-        tag: noteTag,
+        tags: finalTags,
         lastUpdate: '',
         shared: false,
         shareToken: null
@@ -158,7 +183,7 @@ function NoteAdd(): React.ReactNode {
         title: noteTitle,
         description: noteContent,
         url: noteUrl,
-        tag: noteTag,
+        tags: finalTags,
         lastUpdate: '',
         shared: false,
         shareToken: null
@@ -174,7 +199,7 @@ function NoteAdd(): React.ReactNode {
   };
 
   /**
-   * Checks if the URL is for editing a task and loads the task data if it is.
+   * Checks if the URL is for editing a note and loads the note data if it is.
    */
   const checkEditUrl = async (): Promise<void> => {
     if (params?.id) {
@@ -219,8 +244,8 @@ function NoteAdd(): React.ReactNode {
     if (noteContent.url) {
       setNoteUrl(noteContent.url);
     }
-    if (noteContent.tag) {
-      setNoteTag(noteContent.tag);
+    if (noteContent.tags) {
+      setSelectedTags(noteContent.tags);
     }
     setNoteContent(noteContent.description);
   };
@@ -318,7 +343,7 @@ function NoteAdd(): React.ReactNode {
                   <Col xs={12} xl={3}>
                     {/* Tag with suggestion dropdown */}
                     <Form.Group className="mb-3" ref={tagContainerRef} style={{ position: 'relative' }}>
-                      <Form.Label>Tag</Form.Label>
+                      <Form.Label>Tags</Form.Label>
                       <InputGroup className="mb-3">
                         <InputGroup.Text>
                           <Hash />
@@ -327,16 +352,39 @@ function NoteAdd(): React.ReactNode {
                           type="text"
                           name="tag"
                           placeholder="my-tag (Optional)"
-                          value={noteTag}
+                          value={currentTag}
                           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            setNoteTag(e.target.value);
+                            setCurrentTag(e.target.value);
                             setShowTagDropdown(true);
+                          }}
+                          onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                            if (e.key === 'Enter' && currentTag.trim()) {
+                              e.preventDefault();
+                              addTag(currentTag);
+                            }
                           }}
                           onFocus={() => setShowTagDropdown(true)}
                           autoComplete="off"
                         />
                       </InputGroup>
-                      {showTagDropdown && tags.filter(t => t.toLowerCase().includes(noteTag.toLowerCase())).length > 0 && (
+                      <div className="mb-2 d-flex flex-wrap gap-1">
+                        {selectedTags.map(t => (
+                          <Badge
+                            key={t}
+                            bg="warning"
+                            text="dark"
+                            className="p-2"
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => removeTag(t)}
+                          >
+                            #
+                            {t}
+                            {' '}
+                            &times;
+                          </Badge>
+                        ))}
+                      </div>
+                      {showTagDropdown && tags.filter(t => t.toLowerCase().includes(currentTag.toLowerCase())).length > 0 && (
                         <ListGroup
                           style={{
                             position: 'absolute',
@@ -344,20 +392,18 @@ function NoteAdd(): React.ReactNode {
                             width: '100%',
                             maxHeight: '200px',
                             overflowY: 'auto',
-                            top: '100%',
                             left: 0
                           }}
                         >
                           {tags
-                            .filter(t => t.toLowerCase().includes(noteTag.toLowerCase()))
+                            .filter(t => t.toLowerCase().includes(currentTag.toLowerCase()))
                             .map(t => (
                               <ListGroup.Item
                                 key={t}
                                 action
                                 onMouseDown={(e: React.MouseEvent) => {
                                   e.preventDefault();
-                                  setNoteTag(t);
-                                  setShowTagDropdown(false);
+                                  addTag(t);
                                 }}
                               >
                                 #
