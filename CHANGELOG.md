@@ -16,7 +16,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Bumped frontend dependencies to latest versions;
-- Docker composer files for dev and ngrok to run using local users id and group id;
+  - `@types/node` from `25.9.1` to `25.9.2`
+  - `dompurify` from `3.4.7` to `3.4.8`
+  - `i18next` from `26.3.0` to `26.3.1`
+  - `react` from `19.2.6` to `19.2.7`
+  - `react-dom` from `19.2.6` to `19.2.7`
+  - `react-router` from `7.16.0` to `7.17.0`
+  - `@types/react` from `19.2.15` to `19.2.17`
+  - `eslint-plugin-n` from `18.0.1` to `18.1.0`
+  - `typescript-eslint` from `8.60.0` to `8.61.0`
+- Ngrok and Dev Docker composer files to run using local users id and group id (`UID` and `GID`);
 
 ---
 
