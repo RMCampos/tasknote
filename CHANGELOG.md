@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [app-] - 2026-06-08
+
+### Added
+- Shell Script to confirm new users using docker and sql;
+
+### Changed
+- Bumped frontend dependencies to latest versions;
+- Docker composer files for dev and ngrok to run using local users id and group id;
+
 ---
 
 ## [app-v2026.06.08.21](https://github.com/RMCampos/tasknote/releases/tag/app-v2026.06.08.21) - 2026-06-08
