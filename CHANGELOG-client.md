@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [app-v2026.06.08.22](https://github.com/RMCampos/tasknote/releases/tag/app-v2026.06.08.22) - 2026-06-08
+
 ### Added
 - Shell Script to confirm new users using docker and sql;
 
