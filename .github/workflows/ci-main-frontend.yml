@@ -81,3 +81,25 @@ jobs:
           git tag -a ${{ steps.version.outputs.tag }} -m "Release ${{ steps.version.outputs.tag }}"
           git push origin ${{ steps.version.outputs.tag }}
 
+      - name: Promote changelog
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          DATE=$(date +'%Y-%m-%d')
+          TAG="${{ steps.version.outputs.tag }}"
+          for i in 1 2 3; do
+            git pull --rebase origin main
+            python3 tools/promote-changelog.py "${TAG}" "${DATE}" CHANGELOG-client.md
+            if git diff --quiet CHANGELOG-client.md; then
+              echo "No changelog changes to commit"
+              exit 0
+            fi
+            git add CHANGELOG-client.md
+            git commit -m "docs: promote [Unreleased] to ${TAG} [skip ci]"
+            git push && exit 0
+            git reset HEAD~1
+            sleep 5
+          done
+          echo "ERROR: Failed to push changelog after 3 attempts"
+          exit 1
+

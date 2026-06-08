@@ -58,7 +58,9 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add server/pom.xml
+          DATE=$(date +'%Y-%m-%d')
+          python3 tools/promote-changelog.py "api-v${{ steps.version.outputs.version }}" "${DATE}" CHANGELOG-server.md
+          git add server/pom.xml CHANGELOG-server.md
           git commit -m "chore: bump api version to ${{ steps.version.outputs.version }} [skip ci]"
           git push
 
