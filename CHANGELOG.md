@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Updated About page to list all current features and tech stack. (#62)
+
 ---
 
 ## [app-v2026.06.01.20] - 2026-06-01

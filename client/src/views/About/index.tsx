@@ -35,6 +35,12 @@ function About(): React.ReactNode {
                 <li>{t('about_app_features_one')}</li>
                 <li>{t('about_app_features_two')}</li>
                 <li>{t('about_app_features_three')}</li>
+                <li>{t('about_app_features_four')}</li>
+                <li>{t('about_app_features_five')}</li>
+                <li>{t('about_app_features_six')}</li>
+                <li>{t('about_app_features_seven')}</li>
+                <li>{t('about_app_features_eight')}</li>
+                <li>{t('about_app_features_nine')}</li>
               </ul>
               <h4 className="mt-4 poppins-medium">{t('about_app_help_title')}</h4>
               <p className="poppins-light">{t('about_app_help_description')}</p>
@@ -57,6 +63,9 @@ function About(): React.ReactNode {
                 <li>{t('about_tech_list_five')}</li>
                 <li>{t('about_tech_list_six')}</li>
                 <li>{t('about_tech_list_seven')}</li>
+                <li>{t('about_tech_list_eight')}</li>
+                <li>{t('about_tech_list_nine')}</li>
+                <li>{t('about_tech_list_ten')}</li>
               </ul>
             </Card.Body>
           </Card>
@@ -75,7 +84,7 @@ function About(): React.ReactNode {
               <p className="poppins-light">
                 {t('about_buy_coffee_one')}
                 <a
-                  href="https://buy-me-a-coffee-two-nu.vercel.app/"
+                  href="https://rmcampos.github.io/buy-me-a-coffee/"
                   target="_blank"
                   rel="noreferrer"
                 >
