@@ -9,8 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [app-v2026.06.08.21](https://github.com/RMCampos/tasknote/releases/tag/app-v2026.06.08.21) - 2026-06-08
+
 ### Changed
-- Updated About page to list all current features and tech stack. (#62)
+- The About page to list all current features and tech stack. ([#62](https://github.com/RMCampos/tasknote/issues/62))
 
 ---
 
