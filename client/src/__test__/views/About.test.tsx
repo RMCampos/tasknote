@@ -25,5 +25,8 @@ describe('Renders the about view', () => {
     expect(getByText('Find more information about us and the app')).toBeDefined();
     expect(getByText('Tasks and notes made')).toBeDefined();
     expect(getByText('Easy')).toBeDefined();
+    expect(getByText('About TaskNote')).toBeDefined();
+    expect(getByText('Technology')).toBeDefined();
+    expect(getByText('About the Developer')).toBeDefined();
   });
 });

@@ -132,23 +132,31 @@ const enTranslations = {
   about_app_features_one: 'Quickly add and manage tasks and notes',
   about_app_features_two: 'Search and filter notes for easy access',
   about_app_features_three: 'Intuitive and clean user interface',
+  about_app_features_four: 'Dark and light theme support with responsive design',
+  about_app_features_five: 'URL attachments for tasks and notes',
+  about_app_features_six: 'Tagging system with multiple tags per item',
+  about_app_features_seven: 'Public note sharing via public links',
+  about_app_features_eight: 'Markdown formatting toolbar for rich text editing',
+  about_app_features_nine: 'Email confirmation required for account security',
   about_app_help_title: 'Help & How to Use',
   about_app_help_description: `To get started, simply sign up or log in, and
     you'll have access to your personalized dashboard. From there, you can
     create, edit, and delete tasks and notes, and organize them however you
-    like. Need assistance? Visit our Help page (in the future) for tutorials
-    and FAQs.`,
+    like. Need assistance? Check out the sidebar for quick navigation.`,
 
   about_tech_title: 'Technology',
   about_tech_description: `TaskNote was built using modern web technologies
     that ensure speed, reliability, and security.`,
-  about_tech_list_one: 'React with TypeScript for the front-end',
-  about_tech_list_two: 'Bootstrap 5 for components and responsive design',
-  about_tech_list_three: 'Java and Spring Boot plus GraalVM for the back-end and Cloud Native',
-  about_tech_list_four: 'PostgreSQL for database management',
-  about_tech_list_five: 'Docker for containerization and deployment',
-  about_tech_list_six: 'GitHub Actions for CI/CD, testing and linting enforcement',
-  about_tech_list_seven: 'SonarCloud, and GitHub QL for security and improvements checks',
+  about_tech_list_one: 'React 19 with TypeScript for the front-end',
+  about_tech_list_two: 'Vite for fast builds and development',
+  about_tech_list_three: 'React Router 7 for client-side routing',
+  about_tech_list_four: 'i18next for internationalization support',
+  about_tech_list_five: 'Bootstrap 5 for components and responsive design',
+  about_tech_list_six: 'Java and Spring Boot 4.x plus GraalVM for the back-end and Cloud Native',
+  about_tech_list_seven: 'PostgreSQL for database management',
+  about_tech_list_eight: 'Docker for containerization and deployment',
+  about_tech_list_nine: 'GitHub Actions for CI/CD, testing and linting enforcement',
+  about_tech_list_ten: 'SonarCloud and GitHub QL for security and improvements checks',
 
   about_dev_title: 'About the Developer',
   about_dev_description: `Hi! I'm Ricardo, the developer of TaskNote. I'm
